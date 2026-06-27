@@ -103,10 +103,6 @@ class ExamGrader
                 if (($element['answer'] ?? '') !== '' && in_array($type, ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true)) {
                     $items[] = $element;
                 }
-
-                if ($type === 'speaking') {
-                    $items[] = $element;
-                }
             }
         }
 

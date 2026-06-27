@@ -6,6 +6,7 @@ Route::view('/', 'welcome')->name('home');
 
 Route::view('pricing', 'pricing')->name('pricing');
 Route::get('free-exam', \App\Livewire\GuestExam::class)->name('free.exam');
+Route::view('premium-exam', 'premium-exam')->name('premium.exam');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

@@ -12,6 +12,8 @@ class GuestExam extends Component
 {
     public ?int $selectedTemplateId = null;
 
+    public bool $hasReachedLimit = false;
+
     /** @var array<string, mixed> */
     public array $template = [];
 
@@ -29,13 +31,20 @@ class GuestExam extends Component
 
     public function mount(): void
     {
-        $limit = (int) Setting::value('free_exams_per_session', 2);
+        $this->checkLimit();
+    }
 
-        if ($limit > 0) {
-            $count = (int) session('guest_exam_count', 0);
-            if ($count >= $limit) {
-                $this->redirectRoute('pricing');
-                return;
+    public function checkLimit(): void
+    {
+        $today = today()->toDateString();
+        $tracker = request()->cookie('free_exams_limit_tracker');
+        if ($tracker) {
+            $parts = explode(':', $tracker);
+            if (count($parts) === 2) {
+                [$date, $count] = $parts;
+                if ($date === $today && (int) $count >= 2) {
+                    $this->hasReachedLimit = true;
+                }
             }
         }
     }
@@ -53,14 +62,10 @@ class GuestExam extends Component
 
     public function loadTemplate(int $id): void
     {
-        $limit = (int) Setting::value('free_exams_per_session', 2);
+        $this->checkLimit();
 
-        if ($limit > 0) {
-            $count = (int) session('guest_exam_count', 0);
-            if ($count >= $limit) {
-                $this->redirectRoute('pricing');
-                return;
-            }
+        if ($this->hasReachedLimit) {
+            return;
         }
 
         $record = ExamTemplate::query()
@@ -117,8 +122,28 @@ class GuestExam extends Component
             'submitted_at' => now(),
         ]);
 
-        $count = (int) session('guest_exam_count', 0);
-        session(['guest_exam_count' => $count + 1]);
+        $today = today()->toDateString();
+        $tracker = request()->cookie('free_exams_limit_tracker');
+        $count = 0;
+        if ($tracker) {
+            $parts = explode(':', $tracker);
+            if (count($parts) === 2) {
+                [$date, $cookieCount] = $parts;
+                if ($date === $today) {
+                    $count = (int) $cookieCount;
+                }
+            }
+        }
+        $count++;
+
+        \Illuminate\Support\Facades\Cookie::queue('free_exams_limit_tracker', "$today:$count", 1440);
+
+        if ($count >= 2) {
+            $this->hasReachedLimit = true;
+        }
+
+        $sessionCount = (int) session('guest_exam_count', 0);
+        session(['guest_exam_count' => $sessionCount + 1]);
 
         $ids = (array) session('guest_exam_ids', []);
         $ids[] = $this->selectedTemplateId;

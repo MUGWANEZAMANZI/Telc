@@ -10,8 +10,10 @@ class TelcTemplateFactory
     public static function presets(): array
     {
         return [
+            'B1' => self::b1(),
             'B2' => self::b2(),
             'C1' => self::c1(),
+            'C2' => self::c2(),
         ];
     }
 
@@ -21,6 +23,65 @@ class TelcTemplateFactory
     public static function forLevel(string $level): array
     {
         return self::presets()[$level] ?? self::c1();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function b1(): array
+    {
+        return [
+            'title' => 'telc Deutsch B1 (Zertifikat Deutsch)',
+            'level' => 'B1',
+            'source_pdf' => 'telc_deutsch_b1_zd_uebungstest_1.pdf',
+            'theme' => self::theme('#ffcc00', '#202020', 'Instrument Sans'),
+            'timings' => [
+                ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 90],
+                ['label' => 'Hoerverstehen', 'minutes' => 30],
+                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 30],
+                ['label' => 'Muendliche Pruefung', 'minutes' => 15],
+            ],
+            'sections' => [
+                self::section('b1-reading-language', 'Leseverstehen und Sprachbausteine', 90, [
+                    ...self::answerElements('B1-LV1-', 1, ['a', 'b', 'b', 'a', 'a'], 'matching', 2, 'a,b,c'),
+                    ...self::answerElements('B1-LV2-', 6, ['b', 'c', 'a', 'b', 'c'], 'multiple_choice', 2, 'a,b,c'),
+                    self::inlineGap('B1-SB-inline', 'Sprachbausteine Teil 1', "Sehr geehrter Herr Meyer,\nich schreibe Ihnen, weil --0-- am letzten Donnerstag mein Arbeitsvertrag verlängert wurde. Ich möchte mich herzlich für das --1-- Vertrauen bedanken. Für die Zukunft --2-- ich mir eine weiterhin gute Zusammenarbeit.\nMit freundlichen Grüßen\nMax Mustermann", [
+                        ['options' => 'a|ich,b|mir,c|mich', 'answer' => 'a'],
+                        ['options' => 'a|gezeigte,b|gezeigtem,c|gezeigten', 'answer' => 'a'],
+                        ['options' => 'a|wünsche,b|hoffe,c|denke', 'answer' => 'a'],
+                    ], 1),
+                ], self::pages(1, 5)),
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function c2(): array
+    {
+        return [
+            'title' => 'telc Deutsch C2',
+            'level' => 'C2',
+            'source_pdf' => null,
+            'theme' => self::theme('#000000', '#202020', 'Instrument Sans'),
+            'timings' => [
+                ['label' => 'Leseverstehen', 'minutes' => 80],
+                ['label' => 'Hoerverstehen', 'minutes' => 60],
+                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 80],
+                ['label' => 'Muendliche Pruefung', 'minutes' => 15],
+            ],
+            'sections' => [
+                self::section('c2-reading', 'Leseverstehen', 80, [
+                    ...self::answerElements('C2-LV1-', 1, ['c', 'd', 'b', 'a', 'd', 'c'], 'multiple_choice', 2, 'a,b,c,d'),
+                    self::inlineGap('C2-SB-inline', 'Sprachbausteine (Wissenschaftssprache)', "In der heutigen Debatte um die Nachhaltigkeit --0-- es von entscheidender Bedeutung, alternative Energiequellen umfassend zu erforschen. Zwar existieren bereits zahlreiche Ansätze, doch --1-- viele davon an der mangelnden Skalierbarkeit. Um einen substanziellen Beitrag leisten zu --2--, bedarf es einer verstärkten Kooperation zwischen Wissenschaft und Wirtschaft.", [
+                        ['options' => 'a|ist,b|wäre,c|wird', 'answer' => 'a'],
+                        ['options' => 'a|scheitern,b|gelingen,c|verzögern', 'answer' => 'a'],
+                        ['options' => 'a|können,b|dürfen,c|sollen', 'answer' => 'a'],
+                    ], 2),
+                ], self::pages(1, 6)),
+            ],
+        ];
     }
 
     /**
@@ -112,11 +173,11 @@ class TelcTemplateFactory
                     ...self::answerElements('C1-HV3-', 65, ['fließenden Übergang', 'mehr als 9 Millionen', 'Emotionen nicht an', 'Off-White', 'Dimensionen', 'kräftigen Farben', 'Kontrast', 'kurz aufhalten', 'Beleuchtungen', 'steril'], 'fill_blank', 2),
                 ], self::pages(17, 19)),
                 self::section('c1-writing', 'Schriftlicher Ausdruck', 70, [
-                    self::input('C1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 0),
+                    self::input('C1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 48),
                 ], self::pages(20, 20)),
                 self::section('c1-speaking', 'Mündliche Prüfung', 36, [
-                    self::speakingElement('C1-SP-1', 'Vortrag', 'Stellen Sie Ihrem Gesprächspartner ein aktuelles gesellschaftliches Thema Ihrer Wahl vor. Gehen Sie dabei auf Ursachen, Auswirkungen und Lösungsmöglichkeiten ein.', 25),
-                    self::speakingElement('C1-SP-2', 'Diskussion', 'Diskutieren Sie mit Ihrem Gesprächspartner über die Vor- und Nachteile von Homeoffice. Vertreten Sie Ihre Meinung und gehen Sie auf Gegenargumente ein.', 25),
+                    self::speakingElement('C1-SP-1', 'Vortrag', 'Stellen Sie Ihrem Gesprächspartner ein aktuelles gesellschaftliches Thema Ihrer Wahl vor. Gehen Sie dabei auf Ursachen, Auswirkungen und Lösungsmöglichkeiten ein.', 24),
+                    self::speakingElement('C1-SP-2', 'Diskussion', 'Diskutieren Sie mit Ihrem Gesprächspartner über die Vor- und Nachteile von Homeoffice. Vertreten Sie Ihre Meinung und gehen Sie auf Gegenargumente ein.', 24),
                 ], self::pages(21, 22)),
             ],
         ];

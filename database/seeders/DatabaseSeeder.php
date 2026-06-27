@@ -15,11 +15,36 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            UserSeeder::class,
+            ExamTemplateSeeder::class,
+            LearningModuleSeeder::class,
         ]);
+
+        \App\Models\Plan::updateOrCreate(
+            ['stripe_price_id' => 'price_premium_monthly'],
+            [
+                'name' => 'Premium Monatlich',
+                'description' => 'Voller Zugang zu allen Prüfungen und Gemini-Sprachtraining.',
+                'price' => 19.99,
+                'currency' => 'eur',
+                'interval' => 'month',
+                'features' => ['Unbegrenzte Prüfungen (B1, B2, C1, C2)', 'Gemini-KI-Sprechübung', 'Schreibkorrekturen', 'Offizielle TELC-Zertifikatssimulation'],
+                'is_active' => true,
+            ]
+        );
+
+        \App\Models\Plan::updateOrCreate(
+            ['stripe_price_id' => 'price_premium_yearly'],
+            [
+                'name' => 'Premium Jährlich',
+                'description' => 'Sparen Sie über 50% mit unserem Jahresabo.',
+                'price' => 99.99,
+                'currency' => 'eur',
+                'interval' => 'year',
+                'features' => ['Unbegrenzte Prüfungen (B1, B2, C1, C2)', 'Gemini-KI-Sprechübung', 'Schreibkorrekturen', 'Offizielle TELC-Zertifikatssimulation', 'Vorrangiger Support'],
+                'is_active' => true,
+            ]
+        );
     }
 }

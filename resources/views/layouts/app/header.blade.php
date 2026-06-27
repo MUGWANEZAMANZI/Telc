@@ -41,7 +41,11 @@
                 </flux:tooltip>
             </flux:navbar>
 
-            <x-desktop-user-menu />
+            @auth
+                <x-desktop-user-menu />
+            @else
+                <a href="{{ route('login') }}" class="text-sm font-mono font-bold text-zinc-700 dark:text-zinc-300 hover:underline">Anmelden</a>
+            @endauth
         </flux:header>
 
         <!-- Mobile Menu -->

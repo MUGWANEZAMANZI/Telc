@@ -40,21 +40,57 @@ class StudentExam extends Component
     /** @var array<string, bool> */
     public array $speakingProcessing = [];
 
+    /** @var array<string, array<int, array<string, string>>> */
+    public array $speakingHistory = [];
+
+    public bool $showEnrollModal = false;
+    public ?int $enrollTemplateId = null;
+    public string $enrollModalError = '';
+
+    public function startEnroll(int $id): void
+    {
+        $this->enrollTemplateId = $id;
+        $this->showEnrollModal = true;
+        $this->enrollModalError = '';
+    }
+
+    public function cancelEnroll(): void
+    {
+        $this->showEnrollModal = false;
+        $this->enrollTemplateId = null;
+        $this->enrollModalError = '';
+    }
+
+    public function selectPayment(string $method): void
+    {
+        if ($method === 'stripe' || $method === 'paypal') {
+            $this->enrollModalError = 'Stripe- und PayPal-Zahlungen werden in Phase 5 vollständig implementiert. Bitte nutzen Sie für diese Simulation den kostenlosen Kauf.';
+            return;
+        }
+
+        if ($method === 'simulation') {
+            if ($this->enrollTemplateId) {
+                $this->enroll($this->enrollTemplateId);
+                $this->showEnrollModal = false;
+                $this->enrollTemplateId = null;
+            }
+        }
+    }
+
     public function mount(): void
     {
         $this->ensurePresets();
+    }
 
-        $enrollment = ExamEnrollment::query()
-            ->where('user_id', Auth::id())
-            ->where('status', 'active')
-            ->whereHas('examTemplate', fn ($query) => $query->where('is_published', true))
-            ->with('examTemplate')
-            ->latest('enrolled_at')
-            ->first();
-
-        if ($enrollment?->examTemplate) {
-            $this->loadTemplate($enrollment->examTemplate->id);
+    public function hasActiveSubscription(): bool
+    {
+        if (! Auth::check()) {
+            return false;
         }
+        return \App\Models\Subscription::query()
+            ->where('user_id', Auth::id())
+            ->where('stripe_status', 'active')
+            ->exists();
     }
 
     public function render()
@@ -68,13 +104,14 @@ class StudentExam extends Component
             'enrollments' => ExamEnrollment::query()
                 ->where('user_id', Auth::id())
                 ->where('status', 'active')
-                ->pluck('exam_template_id')
-                ->all(),
+                ->get()
+                ->keyBy('exam_template_id'),
             'attempts' => ExamAttempt::query()
                 ->where('user_id', Auth::id())
                 ->latest()
                 ->limit(5)
                 ->get(),
+            'isSubscribed' => $this->hasActiveSubscription(),
         ]);
     }
 
@@ -92,6 +129,7 @@ class StudentExam extends Component
         $this->result = null;
         $this->speakingFeedback = [];
         $this->speakingProcessing = [];
+        $this->speakingHistory = [];
         $this->activeSection = 0;
         $this->resetTimer();
     }
@@ -100,7 +138,6 @@ class StudentExam extends Component
     {
         $record = ExamTemplate::query()
             ->where('is_published', true)
-            ->where('level', 'C1')
             ->findOrFail($id);
 
         ExamEnrollment::updateOrCreate(
@@ -108,11 +145,103 @@ class StudentExam extends Component
             [
                 'status' => 'active',
                 'payment_status' => 'manual_enrolled',
+                'active_answers' => null,
+                'remaining_seconds' => null,
+                'active_section' => 0,
                 'enrolled_at' => now(),
             ],
         );
 
-        $this->loadTemplate($record->id);
+        $this->startOrResumeExam($record->id);
+    }
+
+    public function startOrResumeExam(int $templateId): void
+    {
+        if ($this->hasActiveSubscription()) {
+            ExamEnrollment::updateOrCreate(
+                ['user_id' => Auth::id(), 'exam_template_id' => $templateId],
+                [
+                    'status' => 'active',
+                    'payment_status' => 'subscribed',
+                    'enrolled_at' => now(),
+                ]
+            );
+        }
+
+        $enrollment = ExamEnrollment::query()
+            ->where('user_id', Auth::id())
+            ->where('exam_template_id', $templateId)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $this->selectedTemplateId = $templateId;
+        $record = $enrollment->examTemplate;
+        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
+
+        if ($enrollment->active_answers !== null) {
+            // Resume previous session
+            $this->answers = $enrollment->active_answers;
+            $this->activeSection = $enrollment->active_section;
+            $this->remainingSeconds = $enrollment->remaining_seconds ?? 0;
+            $this->started = $this->remainingSeconds > 0;
+
+            // Restore speaking history from answers
+            $this->speakingHistory = [];
+            foreach ($record->sections ?? [] as $sec) {
+                foreach ($sec['elements'] ?? [] as $el) {
+                    if (($el['type'] ?? '') === 'speaking' && isset($this->answers[$el['id']])) {
+                        $this->speakingHistory[$el['id']] = $this->answers[$el['id']];
+                    }
+                }
+            }
+        } else {
+            // Start fresh
+            $this->answers = [];
+            $this->activeSection = 0;
+            if (($record->level ?? '') === 'C1') {
+                // C1 is a unified single page, timer is sum of all section minutes
+                $totalMinutes = collect($record->sections)->sum('minutes');
+                $this->remainingSeconds = $totalMinutes * 60;
+            } else {
+                $this->remainingSeconds = max((int) ($record->sections[0]['minutes'] ?? 1), 1) * 60;
+            }
+            $this->started = true;
+            
+            $this->saveProgress();
+        }
+    }
+
+    public function viewAttempt(int $attemptId): void
+    {
+        $attempt = ExamAttempt::query()
+            ->where('user_id', Auth::id())
+            ->findOrFail($attemptId);
+
+        $this->selectedTemplateId = $attempt->exam_template_id;
+        $record = $attempt->examTemplate;
+        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
+        $this->answers = $attempt->answers;
+        $this->result = $attempt->result;
+        $this->started = false;
+
+        // Restore speaking history from answers if applicable
+        $this->speakingHistory = [];
+        foreach ($record->sections ?? [] as $sec) {
+            foreach ($sec['elements'] ?? [] as $el) {
+                if (($el['type'] ?? '') === 'speaking' && isset($this->answers[$el['id']])) {
+                    $this->speakingHistory[$el['id']] = $this->answers[$el['id']];
+                }
+            }
+        }
+    }
+
+    public function exitExam(): void
+    {
+        $this->selectedTemplateId = null;
+        $this->template = [];
+        $this->answers = [];
+        $this->result = null;
+        $this->started = false;
     }
 
     public function startSection(int $index): void
@@ -124,6 +253,8 @@ class StudentExam extends Component
         $this->activeSection = $index;
         $this->started = true;
         $this->remainingSeconds = max((int) ($this->template['sections'][$index]['minutes'] ?? 1), 1) * 60;
+        
+        $this->saveProgress();
     }
 
     public function tick(): void
@@ -134,9 +265,33 @@ class StudentExam extends Component
 
         $this->remainingSeconds--;
 
+        // Auto-save progress every 5 seconds to minimize DB writes
+        if ($this->remainingSeconds % 5 === 0) {
+            $this->saveProgress();
+        }
+
         if ($this->remainingSeconds === 0) {
             $this->submit();
         }
+    }
+
+    public function saveProgress(): void
+    {
+        if ($this->selectedTemplateId) {
+            ExamEnrollment::query()
+                ->where('user_id', Auth::id())
+                ->where('exam_template_id', $this->selectedTemplateId)
+                ->update([
+                    'active_answers' => $this->answers,
+                    'remaining_seconds' => $this->remainingSeconds,
+                    'active_section' => $this->activeSection,
+                ]);
+        }
+    }
+
+    public function updatedAnswers(): void
+    {
+        $this->saveProgress();
     }
 
     public function submit(): void
@@ -150,6 +305,172 @@ class StudentExam extends Component
 
         $this->enrichExplanations();
 
+        // Gemini AI Grading for Writing and Speaking
+        $writingScore = 0;
+        $writingFeedback = 'Keine Abgabe für den schriftlichen Ausdruck.';
+        $hasWriting = false;
+
+        // Find writing elements
+        $writingElements = collect($this->template['sections'] ?? [])
+            ->pluck('elements')
+            ->flatten(1)
+            ->where('type', 'writing');
+
+        foreach ($writingElements as $element) {
+            $hasWriting = true;
+            $writingContent = $this->answers[$element['id']] ?? '';
+            if (!empty(trim($writingContent))) {
+                try {
+                    $writeModel = Gemini::generativeModel(model: 'gemini-2.0-flash')
+                        ->withSystemInstruction(
+                            'Du bist ein offizieller TELC-C1-Prüfer für die schriftliche Prüfung. '
+                            . 'Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis 48 Punkten zurück.'
+                        );
+                    $resp = $writeModel->generateContent(
+                        "Aufsatz:\n{$writingContent}\n\n"
+                        . "Bitte antworte genau im Format 'SCORE: X/48', gefolgt von einer kurzen Begründung."
+                    );
+                    $writingFeedback = $resp->text();
+                    preg_match('/SCORE:\s*(\d+)/i', $writingFeedback, $matches);
+                    if (isset($matches[1])) {
+                        $writingScore = (int) $matches[1];
+                    }
+                } catch (\Throwable $e) {
+                    $writingScore = 24; 
+                    $writingFeedback = 'Fehler bei der automatischen Bewertung: ' . $e->getMessage();
+                }
+            }
+        }
+
+        // Grade Speaking (C1-SP-1 / C1-SP-2 / speaking elements)
+        $speakingScore = 0;
+        $speakingElements = collect($this->template['sections'] ?? [])
+            ->pluck('elements')
+            ->flatten(1)
+            ->where('type', 'speaking');
+
+        $speakingDetailsToAdd = [];
+
+        foreach ($speakingElements as $element) {
+            $elId = $element['id'];
+            $maxPoints = (int) ($element['points'] ?? 24);
+            $history = $this->speakingHistory[$elId] ?? [];
+
+            if (empty($history)) {
+                $speakingDetailsToAdd[] = [
+                    'id' => $elId,
+                    'label' => 'Mündliche Prüfung — ' . $element['label'],
+                    'given' => [],
+                    'expected' => 'Gemini AI Graded',
+                    'points' => 0,
+                    'max_points' => $maxPoints,
+                    'correct' => false,
+                    'explanation' => 'Keine Beiträge aufgezeichnet.',
+                ];
+                continue;
+            }
+
+            $speakingText = '';
+            foreach ($history as $turn) {
+                $speakingText .= "{$turn['role']}: {$turn['text']}\n";
+            }
+
+            $elScore = 0;
+            $elFeedback = 'Keine Bewertung verfügbar.';
+            try {
+                $speakModel = Gemini::generativeModel(model: 'gemini-2.0-flash')
+                    ->withSystemInstruction(
+                        'Du bist ein offizieller TELC-C1-Prüfer für die mündliche Prüfung. '
+                        . 'Bewerte das vorliegende Gesprächsprotokoll. Gib eine exakte Punktzahl von 0 bis ' . $maxPoints . ' Punkten zurück.'
+                    );
+                $resp = $speakModel->generateContent(
+                    "Gesprächsprotokoll:\n{$speakingText}\n\n"
+                    . "Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                );
+                $elFeedback = $resp->text();
+                preg_match('/SCORE:\s*(\d+)/i', $elFeedback, $matches);
+                if (isset($matches[1])) {
+                    $elScore = (int) $matches[1];
+                }
+            } catch (\Throwable $e) {
+                $elScore = (int) ($maxPoints / 2);
+                $elFeedback = 'Fehler bei der automatischen Bewertung: ' . $e->getMessage();
+            }
+
+            $speakingScore += $elScore;
+
+            $speakingDetailsToAdd[] = [
+                'id' => $elId,
+                'label' => 'Mündliche Prüfung — ' . $element['label'],
+                'given' => $history,
+                'expected' => 'Gemini AI Graded',
+                'points' => $elScore,
+                'max_points' => $maxPoints,
+                'correct' => $elScore >= (int) ($maxPoints * 0.6),
+                'explanation' => $elFeedback,
+            ];
+        }
+
+        // Add Writing Details to result details
+        if ($hasWriting) {
+            $this->result['details'][] = [
+                'id' => 'C1-WRITE-1',
+                'label' => 'Schriftlicher Ausdruck',
+                'given' => $this->answers['C1-WRITE-1'] ?? '',
+                'expected' => 'Gemini AI Graded',
+                'points' => $writingScore,
+                'max_points' => 48,
+                'correct' => $writingScore >= 29,
+                'explanation' => $writingFeedback,
+            ];
+        }
+
+        // Add Speaking Details to result details
+        foreach ($speakingDetailsToAdd as $spDetail) {
+            $this->result['details'][] = $spDetail;
+        }
+
+        // Re-calculate total earned and possible score
+        $writtenEarned = 0;
+        $oralEarned = 0;
+        $possible = 0;
+
+        foreach ($this->result['details'] as $detail) {
+            $possible += $detail['max_points'];
+            if (str_starts_with($detail['id'], 'C1-SP-')) {
+                $oralEarned += $detail['points'];
+            } else {
+                $writtenEarned += $detail['points'];
+            }
+        }
+
+        $earned = $writtenEarned + $oralEarned;
+
+        $passedWritten = $writtenEarned >= 99;
+        $passedOral = $oralEarned >= 29;
+        $passed = $earned >= 128 && $passedWritten && $passedOral;
+
+        $grade = 'Nicht bestanden';
+        if ($passed) {
+            if ($earned >= 193) {
+                $grade = 'Sehr gut';
+            } elseif ($earned >= 172) {
+                $grade = 'Gut';
+            } elseif ($earned >= 151) {
+                $grade = 'Befriedigend';
+            } else {
+                $grade = 'Ausreichend';
+            }
+        }
+
+        $this->result['earned'] = $earned;
+        $this->result['possible'] = $possible;
+        $this->result['percentage'] = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0;
+        $this->result['written_earned'] = $writtenEarned;
+        $this->result['oral_earned'] = $oralEarned;
+        $this->result['passed'] = $passed;
+        $this->result['grade'] = $grade;
+
         ExamAttempt::create([
             'exam_template_id' => $this->selectedTemplateId,
             'user_id' => Auth::id(),
@@ -158,6 +479,16 @@ class StudentExam extends Component
             'started_at' => now(),
             'submitted_at' => now(),
         ]);
+
+        // Clean active session on successful submission
+        ExamEnrollment::query()
+            ->where('user_id', Auth::id())
+            ->where('exam_template_id', $this->selectedTemplateId)
+            ->update([
+                'active_answers' => null,
+                'remaining_seconds' => null,
+                'active_section' => 0,
+            ]);
     }
 
     private function enrichExplanations(): void
@@ -196,31 +527,64 @@ class StudentExam extends Component
         $this->speakingProcessing[$elementId] = true;
         $this->speakingFeedback[$elementId] = '';
 
+        if (! isset($this->speakingHistory[$elementId])) {
+            $this->speakingHistory[$elementId] = [];
+        }
+
+        // Add user statement to history
+        $this->speakingHistory[$elementId][] = [
+            'role' => 'user',
+            'text' => $transcribedText
+        ];
+
         $element = collect($this->template['sections'] ?? [])
             ->pluck('elements')
             ->flatten(1)
             ->firstWhere('id', $elementId);
 
         $prompt = $element['content'] ?? '';
+        $maxPoints = (int) ($element['points'] ?? 24);
+
+        // Formulate request context from historical turns
+        $historyContext = '';
+        foreach ($this->speakingHistory[$elementId] as $turn) {
+            $roleLabel = $turn['role'] === 'user' ? 'Lernender' : 'Prüfer';
+            $historyContext .= "{$roleLabel}: {$turn['text']}\n";
+        }
 
         try {
             $result = Gemini::generativeModel(model: 'gemini-2.0-flash')
                 ->withSystemInstruction(
                     Content::parse(
                         'Du bist ein TELC-C1-Prüfer für die mündliche Prüfung. '
-                        . 'Bewerte die Antwort des Lernenden auf die gegebene Aufgabenstellung. '
-                        . 'Gib eine Punktzahl von 0 bis ' . ((int) ($element['points'] ?? 25)) . ' und detailliertes Feedback '
-                        . 'zu Inhalt, Wortschatz, Grammatik, Aussprache und Flüssigkeit. '
-                        . 'Antworte auf Deutsch.'
+                        . 'Unterhalte dich interaktiv mit dem Lernenden über das gewählte Thema. '
+                        . 'Lies den Gesprächsverlauf. Reagiere auf die letzte Antwort des Lernenden, '
+                        . 'stelle eine kurze, logische Anschlussfrage oder führe das Gespräch fort. '
+                        . 'WICHTIG: Wenn dies der 3. oder 4. Redebeitrag des Lernenden ist, '
+                        . 'beende das Gespräch höflich, bewerte die Leistung mit einer Punktzahl (0 bis ' . $maxPoints . ') '
+                        . 'und gib detailliertes, konstruktives Feedback zu Inhalt, Wortschatz und Grammatik auf Deutsch.'
                     )
                 )
                 ->generateContent(
-                    "Aufgabenstellung: {$prompt}\n\n"
-                    . "Antwort des Lernenden: {$transcribedText}\n\n"
-                    . 'Bewerte diese Antwort mit einer Punktzahl (z. B. "18/25") und gib Verbesserungsvorschläge.'
+                    "Aufgabenstellung/Thema: {$prompt}\n\n"
+                    . "Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
+                    . "Generiere die nächste Antwort des Prüfers:"
                 );
 
-            $this->speakingFeedback[$elementId] = $result->text();
+            $assistantReply = $result->text();
+            
+            // Add assistant reply to history
+            $this->speakingHistory[$elementId][] = [
+                'role' => 'assistant',
+                'text' => $assistantReply
+            ];
+
+            $this->speakingFeedback[$elementId] = $assistantReply;
+            
+            // Bind back the prompt/turn history
+            $this->answers[$elementId] = $this->speakingHistory[$elementId];
+            
+            $this->saveProgress();
         } catch (\Throwable $e) {
             $this->speakingFeedback[$elementId] = 'Fehler bei der Analyse: ' . $e->getMessage();
         } finally {
@@ -255,21 +619,8 @@ class StudentExam extends Component
         }
 
         $this->answers[$elementId][(string) $gapIndex] = $value;
-    }
-
-    /**
-     * @param  array<string, mixed>  $element
-     * @return array<int, array<string, mixed>>
-     */
-    public function gapsFor(array $element): array
-    {
-        if (($element['type'] ?? '') !== 'inline_gap') {
-            return [];
-        }
-
-        $raw = json_decode((string) ($element['options'] ?? '[]'), true);
-
-        return is_array($raw) ? array_values($raw) : [];
+        
+        $this->saveProgress();
     }
 
     private function isEnrolled(int $templateId): bool
@@ -286,7 +637,7 @@ class StudentExam extends Component
         foreach (TelcTemplateFactory::presets() as $preset) {
             ExamTemplate::updateOrCreate(
                 ['level' => $preset['level'], 'title' => $preset['title']],
-                $preset + ['is_published' => true],
+                $preset + ['is_published' => true]
             );
         }
     }

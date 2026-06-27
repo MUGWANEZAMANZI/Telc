@@ -1764,3 +1764,156 @@ select:focus[data-flux-control] {
     line-height: 1.6;
     white-space: pre-wrap;
 }
+
+/* ===== PUBLIC PRICING PAGE ===== */
+.pricing-page {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.pricing-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: #f4f4f5;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.pricing-header p {
+    font-size: 1.15rem;
+    color: #a1a1aa;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    justify-content: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.pricing-card {
+    background-color: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 16px;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.pricing-card:hover {
+    transform: translateY(-4px);
+    border-color: #facc15; /* yellow-400 */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Teutonic Crimson Accent on the first/primary card */
+.pricing-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right, #dc2626, #facc15); /* Crimson Red to Yellow */
+}
+
+.pricing-card h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f4f4f5;
+    margin: 0 0 1rem;
+}
+
+.pricing-amount {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+}
+
+.pricing-amount .price {
+    font-family: monospace;
+    font-size: 3rem;
+    font-weight: 850;
+    color: #facc15; /* Yellow */
+}
+
+.pricing-amount .currency {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f4f4f5;
+    margin-left: 0.25rem;
+    text-transform: uppercase;
+}
+
+.pricing-amount .interval {
+    font-size: 0.95rem;
+    color: #a1a1aa;
+    margin-left: 0.5rem;
+}
+
+.pricing-desc {
+    color: #d4d4d8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.pricing-features li {
+    color: #a1a1aa;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: left;
+}
+
+.pricing-features li::before {
+    content: "✓";
+    color: #facc15; /* Yellow checkmark */
+    font-weight: 900;
+}
+
+/* Premium Teutonic Yellow Action Button */
+.pricing-card .telc-button.primary {
+    background-color: #facc15 !important;
+    color: #09090b !important;
+    font-family: monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    border-radius: 8px;
+    padding: 0.85rem 1.5rem;
+    text-align: center;
+    transition: background-color 0.15s ease;
+}
+
+.pricing-card .telc-button.primary:hover {
+    background-color: #eab308 !important; /* darker yellow */
+}

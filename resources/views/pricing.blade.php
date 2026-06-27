@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-layouts::app :title="__('Pricing')">
     <div class="pricing-page">
         <div class="pricing-header">
             <h1>{{ __('Pricing') }}</h1>
@@ -38,4 +38,4 @@
             @endforelse
         </div>
     </div>
-</x-app-layout>
+</x-layouts::app>
