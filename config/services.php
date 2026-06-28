@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'paypal' => [
+        'me_url' => env('PAYPAL_ME_URL', 'https://www.paypal.me/Durira373'),
+    ],
+
 ];

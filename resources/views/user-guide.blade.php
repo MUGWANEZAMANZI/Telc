@@ -1,73 +1,79 @@
-<x-layouts::app :title="__('User Guide')">
-    <div class="mx-auto max-w-4xl space-y-8 p-6">
-        <div>
-            <h1 class="text-3xl font-bold">{{ __('User Guide') }}</h1>
-            <p class="mt-2 text-zinc-600 dark:text-zinc-400">Learn how to use the TELC Exam Platform effectively.</p>
+<x-layouts::app :title="__('Studenten-Handbuch – Anleitung zur Prüfungssimulation')">
+    <div class="user-guide-shell">
+        <div class="user-guide-header">
+            <h1>Studenten-Handbuch</h1>
+            <p>Anleitung zur Durchführung von Prüfungen, Sprechübungen & Abonnement-Details</p>
         </div>
 
-        <section class="space-y-4 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 class="text-xl font-semibold">Getting Started</h2>
-            <p>Welcome to the TELC Exam Platform. This guide will help you understand how to navigate the platform, take exams, and interpret your results.</p>
-            <ul class="list-disc space-y-1 pl-6">
-                <li><strong>Dashboard</strong> &mdash; Your main hub. Students see available exams; admins see the exam builder and student performance.</li>
-                <li><strong>Voice Practice</strong> &mdash; Practice speaking with AI-powered feedback using speech recognition.</li>
-                <li><strong>Free Exam</strong> &mdash; Try any published exam for free (limited attempts per session).</li>
-                <li><strong>Pricing</strong> &mdash; View available subscription plans and choose one that fits your needs.</li>
-                <li><strong>Billing</strong> &mdash; Manage your subscription and view payment history.</li>
-            </ul>
-        </section>
-
-        <section class="space-y-4 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 class="text-xl font-semibold">Taking an Exam</h2>
-            <ol class="list-decimal space-y-2 pl-6">
-                <li>Navigate to the <strong>Dashboard</strong> and select an exam from the catalog.</li>
-                <li>Click <strong>Buy Exam / Enroll</strong> or <strong>Start Free Exam</strong> to begin.</li>
-                <li>Work through each section within the allotted time. The timer counts down automatically.</li>
-                <li>For multiple-choice questions, select your answer from the available options.</li>
-                <li>For fill-in-the-blank tasks, type your answer in the text field.</li>
-                <li>For inline gap exercises, click on a gap to see the available options and select one.</li>
-                <li>When finished, click <strong>Submit & Mark</strong> to see your score.</li>
+        <div class="guide-section">
+            <h2>1. Durchführung einer Prüfungssimulation</h2>
+            <p>Die Prüfungsdurchführung wurde speziell dem originalen telc und Goethe Dokumenten-Layout nachempfunden. Folgen Sie diesen Schritten für ein optimales Ergebnis:</p>
+            <ol>
+                <li>Navigieren Sie zum <strong>Dashboard</strong> und wählen Sie die gewünschte Prüfung aus dem Katalog aus.</li>
+                <li>Sind Sie für die Prüfung freigeschaltet, klicken Sie auf <strong>Prüfung starten</strong>.</li>
+                <li>Arbeiten Sie die Aufgabenstellungen linear ab. Der Timer am oberen/unteren Rand zeigt Ihnen die verbleibende Restzeit an.</li>
+                <li>Bei <strong>Lückentexten</strong> wählen Sie Ihre Antwort per Klick auf die Lücke direkt im Fließtext aus.</li>
+                <li>Bei <strong>Schreibaufgaben</strong> nutzen Sie das linierte Textfeld für Ihren Aufsatz.</li>
+                <li>Klicken Sie nach Abschluss aller Abschnitte auf <strong>Prüfung abgeben</strong>, um das Prüfungsergebnis einzureichen.</li>
             </ol>
-        </section>
+        </div>
 
-        <section class="space-y-4 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 class="text-xl font-semibold">Voice Practice</h2>
-            <p>The Voice Practice feature uses speech recognition and AI to help you improve your spoken German.</p>
-            <ol class="list-decimal space-y-2 pl-6">
-                <li>Go to <strong>Voice Practice</strong> from the sidebar.</li>
-                <li>Read the question displayed on screen.</li>
-                <li>Click <strong>Start Recording</strong> and speak your answer.</li>
-                <li>Click <strong>Stop Recording</strong> when you are done.</li>
-                <li>Review the transcribed text and edit if needed.</li>
-                <li>Click <strong>Analyze with AI</strong> to receive feedback on your response.</li>
-            </ol>
-        </section>
-
-        <section class="space-y-4 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 class="text-xl font-semibold">Understanding Results</h2>
-            <p>After submitting an exam, you will see:</p>
-            <ul class="list-disc space-y-1 pl-6">
-                <li><strong>Total Score</strong> &mdash; Your earned points out of the total possible.</li>
-                <li><strong>Percentage</strong> &mdash; Your overall score as a percentage.</li>
-                <li><strong>Per-Question Results</strong> &mdash; Correct answers are marked in green; incorrect ones show the expected answer.</li>
-                <li><strong>Explanations</strong> &mdash; For incorrect answers, an AI-generated explanation helps you understand the correct response.</li>
+        <div class="guide-section">
+            <h2>2. Mündliches KI-Sprachtraining (Voice Practice)</h2>
+            <p>Das Sprechübungsmodul nutzt Spracherkennung (Web Speech API) und das Gemini-KI-Modell, um Sie interaktiv zu prüfen:</p>
+            <ul>
+                <li><strong>Themenauswahl:</strong> Wählen Sie ein C1-Prüfungsthema aus den Optionen aus.</li>
+                <li><strong>Aufnahme starten:</strong> Klicken Sie auf <strong>Sprechen (🎤)</strong> und antworten Sie laut und deutlich in Ihr Mikrofon. Klicken Sie nach Beendigung auf Stopp.</li>
+                <li><strong>KI-Analyse:</strong> Unser virtueller C1-Prüfer wertet Ihre Aussprache, Satzstrukturen, Wortwahl und Grammatik aus und führt die Konversation über 3 Runden fort.</li>
             </ul>
-        </section>
+        </div>
 
-        <section class="space-y-4 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 class="text-xl font-semibold">Subscription & Billing</h2>
-            <p>The platform offers subscription plans for unlimited access:</p>
-            <ul class="list-disc space-y-1 pl-6">
-                <li>Free users get a limited number of exam attempts per session.</li>
-                <li>Subscribers enjoy unlimited exam attempts and all features.</li>
-                <li>Visit the <strong>Pricing</strong> page to view plans and subscribe.</li>
-                <li>Manage your subscription in the <strong>Billing</strong> section.</li>
-            </ul>
-        </section>
+        <div class="guide-section">
+            <h2>3. Tarife & Abonnement-Struktur</h2>
+            <p>Der Zugriff auf kostenpflichtige Prüfungen wird über folgende Optionen gesteuert:</p>
+            <div class="pricing-overview">
+                <div class="price-box">
+                    <h3>Einzelprüfung</h3>
+                    <strong>5,00 €</strong>
+                    <p>Einmalige Freischaltung einer Prüfung Ihrer Wahl.</p>
+                </div>
+                <div class="price-box highlighted">
+                    <h3>Monatstraining</h3>
+                    <strong>19,00 €</strong>
+                    <p>Voller Zugriff auf bis zu 30 Prüfungssimulationen pro Monat.</p>
+                </div>
+                <div class="price-box">
+                    <h3>Intensivkurs</h3>
+                    <strong>69,00 €</strong>
+                    <p>Voller Zugriff auf bis zu 60 Prüfungssimulationen pro Monat.</p>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem;">Zahlungen werden sicher via PayPal abgewickelt. Nachdem Sie den Betrag überwiesen haben, übermitteln Sie einfach Ihre PayPal-Transaktions-ID im Portal über die Schaltfläche <strong>"Beleg senden"</strong>. Ein Administrator schaltet Ihren Zugang anschließend frei.</p>
+        </div>
 
-        <section class="space-y-4 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 class="text-xl font-semibold">Need Help?</h2>
-            <p>If you encounter any issues or have questions, please contact your platform administrator.</p>
-        </section>
+        <div class="guide-section">
+            <h2>4. Schutz vor Account-Sharing</h2>
+            <p>Um die missbräuchliche Weitergabe von Zugängen zu verhindern, erlaubt die Plattform nur <strong>eine aktive Anmeldung pro Benutzerkonto zur gleichen Zeit</strong>. Sobald Sie sich auf einem neuen Gerät einloggen, wird die Sitzung auf Ihrem vorherigen Gerät automatisch beendet.</p>
+        </div>
     </div>
+
+    @push('styles')
+        <style>
+            .user-guide-shell { max-width: 900px; margin: 0 auto; padding: 2rem; font-family: 'Plus Jakarta Sans', sans-serif; color: #1f2937; }
+            .user-guide-header { margin-bottom: 3rem; text-align: center; }
+            .user-guide-header h1 { font-family: 'Playfair Display', serif; font-size: 2.6rem; color: #111827; margin: 0; }
+            .user-guide-header p { color: #6b7280; margin-top: 0.5rem; font-size: 1.1rem; }
+            .guide-section { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
+            .guide-section h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #111827; margin-top: 0; margin-bottom: 1rem; border-bottom: 2px solid #f3f4f6; padding-bottom: 0.5rem; }
+            .guide-section p { line-height: 1.7; font-size: 0.95rem; color: #4b5563; }
+            .guide-section ol, .guide-section ul { padding-left: 1.5rem; margin-bottom: 0; }
+            .guide-section li { margin-bottom: 0.75rem; line-height: 1.6; font-size: 0.95rem; color: #4b5563; }
+            .pricing-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 2rem; }
+            .price-box { border: 1px solid #e5e7eb; border-radius: 6px; padding: 1.5rem; text-align: center; background: #fafafa; }
+            .price-box.highlighted { border-color: #d8232a; background: #fffcfc; }
+            .price-box h3 { margin: 0 0 0.5rem; font-size: 1.1rem; color: #111827; }
+            .price-box strong { font-size: 1.8rem; color: #d8232a; display: block; margin-bottom: 0.5rem; }
+            .price-box p { font-size: 0.85rem; margin: 0; color: #666666; }
+        </style>
+    @endpush
 </x-layouts::app>

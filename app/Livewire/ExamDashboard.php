@@ -39,25 +39,68 @@ class ExamDashboard extends Component
 
     public bool $started = false;
 
+    public string $providerFilter = 'telc';
+
     public function mount(): void
     {
         abort_unless(Auth::user()?->isAdmin(), 403);
 
         $this->ensurePresets();
 
-        $template = ExamTemplate::query()->orderBy('level')->firstOrFail();
-        $this->loadTemplate($template->id);
+        $template = ExamTemplate::query()->where('exam_provider', $this->providerFilter)->orderBy('level')->first();
+        if ($template) {
+            $this->loadTemplate($template->id);
+        }
     }
 
     public function render()
     {
         return view('livewire.exam-dashboard', [
-            'templates' => ExamTemplate::query()->orderBy('level')->get(),
+            'templates' => ExamTemplate::query()->where('exam_provider', $this->providerFilter)->orderBy('level')->get(),
             'presets' => array_keys(TelcTemplateFactory::presets()),
             'elementTypes' => $this->elementTypes(),
             'metrics' => $this->metrics(),
             'performanceRows' => $this->performanceRows(),
+            'participants' => $this->selectedTemplateId ? ExamAttempt::query()->where('exam_template_id', $this->selectedTemplateId)->with('user')->latest()->get() : collect(),
+            'pendingPayments' => \App\Models\ExamEnrollment::query()->where('status', 'pending')->with(['user', 'examTemplate'])->latest()->get(),
         ]);
+    }
+
+    public function approvePayment(int $enrollmentId): void
+    {
+        $enrollment = \App\Models\ExamEnrollment::findOrFail($enrollmentId);
+        $enrollment->update([
+            'status' => 'active',
+            'payment_status' => 'manual_enrolled',
+            'enrolled_at' => now(),
+        ]);
+
+        session()->flash('payment_message', "Zahlung für {$enrollment->user->name} freigegeben.");
+    }
+
+    public function rejectPayment(int $enrollmentId): void
+    {
+        $enrollment = \App\Models\ExamEnrollment::findOrFail($enrollmentId);
+        // Delete receipt file if exists
+        if ($enrollment->receipt_path) {
+            Storage::disk('public')->delete($enrollment->receipt_path);
+        }
+
+        $enrollment->delete();
+
+        session()->flash('payment_message', 'Zahlung abgelehnt und Antrag gelöscht.');
+    }
+
+    public function changeProvider(string $provider): void
+    {
+        $this->providerFilter = $provider;
+        $template = ExamTemplate::query()->where('exam_provider', $this->providerFilter)->orderBy('level')->first();
+        if ($template) {
+            $this->loadTemplate($template->id);
+        } else {
+            $this->selectedTemplateId = null;
+            $this->template = [];
+        }
     }
 
     public function loadTemplate(int $id): void
@@ -65,7 +108,8 @@ class ExamDashboard extends Component
         $record = ExamTemplate::findOrFail($id);
 
         $this->selectedTemplateId = $record->id;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published']);
+        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published', 'exam_provider', 'price']);
+        $this->providerFilter = $record->exam_provider ?? 'telc';
         $this->activeSection = 0;
         $this->studentAnswers = [];
         $this->result = null;
@@ -77,6 +121,7 @@ class ExamDashboard extends Component
         $preset = TelcTemplateFactory::forLevel($level);
         $preset['title'] .= ' Custom';
         $preset['is_published'] = false;
+        $preset['exam_provider'] = $this->providerFilter;
 
         $record = ExamTemplate::create($preset);
 
@@ -277,8 +322,8 @@ class ExamDashboard extends Component
     {
         foreach (TelcTemplateFactory::presets() as $preset) {
             ExamTemplate::updateOrCreate(
-                ['level' => $preset['level'], 'title' => $preset['title']],
-                $preset + ['is_published' => true],
+                ['title' => $preset['title']],
+                $preset + ['is_published' => true]
             );
         }
     }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published'])]
+#[Fillable(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published', 'exam_provider', 'price'])]
 class ExamTemplate extends Model
 {
     protected function casts(): array

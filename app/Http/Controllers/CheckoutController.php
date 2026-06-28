@@ -15,35 +15,19 @@ class CheckoutController extends Controller
     public function checkout(Request $request): RedirectResponse
     {
         $plan = Plan::query()->findOrFail($request->query('plan_id'));
+        $payLink = config('services.paypal.me_url');
 
-        Stripe::setApiKey(config('stripe.secret'));
-
+        // Automatically activate subscription/enrollment simulation when clicking checkout
         $user = Auth::user();
+        Subscription::updateOrCreate(
+            ['user_id' => $user->id, 'plan_id' => $plan->id],
+            [
+                'stripe_subscription_id' => 'paypal_sub_' . uniqid(),
+                'stripe_status' => 'active',
+            ]
+        );
 
-        if (! $user->stripe_customer_id) {
-            $customer = \Stripe\Customer::create([
-                'email' => $user->email,
-                'name' => $user->name,
-            ]);
-            $user->update(['stripe_customer_id' => $customer->id]);
-        }
-
-        $session = Session::create([
-            'customer' => $user->stripe_customer_id,
-            'mode' => 'subscription',
-            'line_items' => [[
-                'price' => $plan->stripe_price_id,
-                'quantity' => 1,
-            ]],
-            'success_url' => route('dashboard').'?checkout=success',
-            'cancel_url' => route('dashboard').'?checkout=cancel',
-            'metadata' => [
-                'plan_id' => (string) $plan->id,
-                'user_id' => (string) $user->id,
-            ],
-        ]);
-
-        return redirect()->away($session->url);
+        return redirect()->away($payLink);
     }
 
     public function webhook(Request $request): void

@@ -88,7 +88,7 @@
 
         .cloze-select-wrapper {
             position: relative;
-            display: inline-block;
+            display: inline;
             margin: 0 0.35rem;
         }
 
@@ -104,6 +104,8 @@
             outline: none;
             cursor: pointer;
             border-radius: 0;
+            max-width: 100%;
+            white-space: normal;
         }
 
         .cloze-select:focus {
@@ -296,33 +298,108 @@
             color: #c5221f;
         }
 
-        /* Document Header Nav style */
+        /* Floating Right Timer Widget */
         .doc-timer-bar {
-            position: sticky;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(252, 252, 252, 0.98);
-            border-top: 1px solid #e5e5e5;
-            padding: 1.25rem 2rem;
-            z-index: 99;
+            position: fixed;
+            top: 2rem;
+            right: 1.5rem;
+            width: 140px;
+            background: #ffffff;
+            border: 2px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            z-index: 1000;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             align-items: center;
         }
 
         .doc-timer-text {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: #1a1a1a;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #d8232a;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.35rem;
+        }
+
+        /* Responsive Mobile Styles */
+        @media (max-width: 768px) {
+            .premium-document {
+                margin: 1rem auto;
+                padding: 3rem 1.5rem 6rem 1.5rem;
+                border-radius: 4px;
+            }
+
+            .premium-document::before,
+            .premium-document::after {
+                display: none; /* Hide margins line guides on mobile */
+            }
+
+            .c1-title {
+                font-size: 2rem;
+            }
+
+            .c1-subtitle {
+                margin-bottom: 2rem;
+            }
+
+            .doc-timer-bar {
+                position: fixed;
+                top: auto;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                border-radius: 0;
+                border: none;
+                border-top: 2px solid #1a1a1a;
+                padding: 0.6rem 1rem;
+                flex-direction: row;
+                justify-content: space-between;
+                box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+                box-sizing: border-box;
+            }
+
+            .doc-timer-bar .save-indicator {
+                display: none !important; /* Hide save logs on small timer bar */
+            }
+
+            .doc-timer-bar .submit-button {
+                width: auto !important;
+                padding: 0.4rem 1rem !important;
+                font-size: 0.85rem !important;
+            }
+
+            /* Adjust flex tables */
+            .tf-option-table th, .tf-option-table td {
+                padding: 0.6rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .tf-choice-label {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+
+            .mc-option-item {
+                padding: 0.6rem 0.85rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 
     @if (empty($template))
         <section class="exam-store">
+            @if (session()->has('receipt_success'))
+                <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; padding: 1rem 1.5rem; border-radius: 8px; font-weight: 700; margin-bottom: 2rem; font-size: 0.95rem; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
+                    {{ session('receipt_success') }}
+                </div>
+            @endif
+
             <div class="exam-store-header">
                 <p>TELC Exam Store</p>
                 <h1>Erwerben Sie eine Prüfungssimulation vor dem Start</h1>
@@ -350,23 +427,39 @@
                         @endif
 
                         @if ($enrollment)
-                            @if ($enrollment->active_answers !== null)
-                                <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #137333; border-color: #137333;">
-                                    Sitzung fortsetzen
-                                </button>
-                            @else
-                                <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #1a1a1a; border-color: #1a1a1a;">
-                                    Prüfung starten
-                                </button>
+                            @if ($enrollment->status === 'active')
+                                @if ($enrollment->active_answers !== null)
+                                    <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #137333; border-color: #137333;">
+                                        Sitzung fortsetzen
+                                    </button>
+                                @else
+                                    <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #1a1a1a; border-color: #1a1a1a;">
+                                        Prüfung starten
+                                    </button>
+                                @endif
+                            @elseif ($enrollment->status === 'pending')
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                                    <span style="background: #fef3c7; color: #d97706; text-align: center; padding: 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 700; border: 1px solid #fde68a;">
+                                        ⌛ Warten auf Freigabe
+                                    </span>
+                                    <button type="button" wire:click="openReceiptModal({{ $record->id }})" class="telc-button wide" style="font-size: 0.8rem; padding: 0.4rem 0.5rem;">
+                                        Beleg erneut senden
+                                    </button>
+                                </div>
                             @endif
                         @elseif ($isSubscribed)
                             <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #1a1a1a; border-color: #1a1a1a;">
                                 Prüfung starten
                             </button>
                         @else
-                            <button type="button" wire:click="startEnroll({{ $record->id }})" class="telc-button primary wide">
-                                Kostenpflichtige Prüfung freischalten
-                            </button>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                                <button type="button" wire:click="startEnroll({{ $record->id }})" class="telc-button primary wide">
+                                    Kostenpflichtige Prüfung freischalten
+                                </button>
+                                <button type="button" wire:click="openReceiptModal({{ $record->id }})" class="telc-button wide" style="font-size: 0.8rem; padding: 0.4rem 0.5rem;">
+                                    Bereits bezahlt? Beleg senden
+                                </button>
+                            </div>
                         @endif
                     </article>
                 @empty
@@ -391,17 +484,13 @@
                         @endif
 
                         <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
-                            <button type="button" wire:click="selectPayment('stripe')" style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e5e5; padding: 1rem; border-radius: 4px; background: none; cursor: pointer; transition: all 0.2s; text-align: left;">
+                            <button type="button" wire:click="selectPayment('paypal')" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%;">
+                                <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit PayPal bezahlen (Einmalig 5,00 €)</strong>
+                                <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Jetzt freischalten</span>
+                            </button>
+                            <button type="button" wire:click="selectPayment('stripe')" style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e5e5; padding: 1rem; border-radius: 4px; background: none; cursor: pointer; transition: all 0.2s; text-align: left; opacity: 0.6; width: 100%;">
                                 <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit Kreditkarte (Stripe) zahlen</strong>
-                                <span style="font-size: 0.85rem; color: #666666;">Demnächst</span>
-                            </button>
-                            <button type="button" wire:click="selectPayment('paypal')" style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e5e5; padding: 1rem; border-radius: 4px; background: none; cursor: pointer; transition: all 0.2s; text-align: left;">
-                                <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit PayPal zahlen</strong>
-                                <span style="font-size: 0.85rem; color: #666666;">Demnächst</span>
-                            </button>
-                            <button type="button" wire:click="selectPayment('simulation')" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left;">
-                                <strong style="font-size: 0.95rem; color: #1a1a1a;">Simulation (Kostenlose Freischaltung)</strong>
-                                <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Jetzt starten</span>
+                                <span style="font-size: 0.85rem; color: #666666;">In Kürze</span>
                             </button>
                         </div>
 
@@ -409,6 +498,35 @@
                             <button type="button" wire:click="cancelEnroll" style="border: none; background: none; padding: 0.5rem 1rem; cursor: pointer; color: #666666; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Abbrechen</button>
                         </div>
                     </div>
+                </div>
+            @endif
+
+            {{-- Receipt Upload Modal --}}
+            @if ($showReceiptModal)
+                <div class="store-modal-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                    <form wire:submit.prevent="submitReceipt" class="store-modal-body" style="background: #ffffff; padding: 2.5rem; max-width: 500px; width: 90%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid #d8232a; font-family: 'Plus Jakarta Sans', sans-serif;">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.5rem; color: #1a1a1a;">Zahlung belegen</h3>
+                        <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">
+                            Tragen Sie bitte Ihre PayPal-Transaktions-ID ein und laden Sie optional einen Screenshot Ihres Belegs hoch.
+                        </p>
+
+                        <div style="margin-bottom: 1.25rem;">
+                            <label style="font-size: 0.85rem; font-weight: 700; color: #1a1a1a; display: block; margin-bottom: 0.4rem;">Transaktions-ID (Pflichtfeld)</label>
+                            <input type="text" wire:model="transactionIdInput" class="telc-input" placeholder="z.B. F-8972304987" required style="width: 100%; box-sizing: border-box;">
+                            @error('transactionIdInput') <span style="color: #d8232a; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <label style="font-size: 0.85rem; font-weight: 700; color: #1a1a1a; display: block; margin-bottom: 0.4rem;">Überweisungsbeleg hochladen (Optional)</label>
+                            <input type="file" wire:model="receiptImageUpload" accept="image/*" class="telc-input" style="width: 100%; box-sizing: border-box; padding: 0.35rem 0.5rem;">
+                            @error('receiptImageUpload') <span style="color: #d8232a; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                            <button type="button" wire:click="closeReceiptModal" style="border: none; background: none; padding: 0.5rem 1rem; cursor: pointer; color: #666666; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Abbrechen</button>
+                            <button type="submit" class="telc-button primary" style="padding: 0.5rem 1.5rem;">Einreichen</button>
+                        </div>
+                    </form>
                 </div>
             @endif
 
@@ -436,11 +554,13 @@
             @endif
         </section>
     @else
-        {{-- Check if this is a Premium C1 exam layout --}}
-        @if (($template['level'] ?? '') === 'C1')
+        {{-- Check if this is a Premium C1/B2/B1 exam layout --}}
+        @if (in_array($template['level'] ?? '', ['B1', 'B2', 'C1'], true))
             <div class="premium-document" wire:poll.1s="tick">
                 <header style="text-align: center; margin-bottom: 5rem;">
-                    <div class="c1-badge">Goethe / telc C1</div>
+                    <div class="c1-badge">
+                        {{ ($template['exam_provider'] ?? 'telc') === 'goethe' ? 'Goethe' : 'telc' }} {{ $template['level'] ?? 'C1' }}
+                    </div>
                     <h1 class="c1-title">ERFOLG</h1>
                     <p class="c1-subtitle">Deutsches Sprachzertifikat — Offizieller Übungstest</p>
 
@@ -478,6 +598,19 @@
                     @endif
                 </header>
 
+                @php
+                    $c1LueckeOptions = [
+                        'a' => 'a (Allerdings war die Atmosphäre niemals so dicht wie bei der Erde.)',
+                        'b' => 'b (Auf lange Sicht wären die besten Stromlieferanten aber wohl Fusionsreaktoren.)',
+                        'c' => 'c (Aus eigener Erfahrung wissen wir auch, wie man einen kühlen Planeten aufheizt:)',
+                        'd' => 'd (Das 1000-Jahres-Projekt beginnt mit einer Reihe von Expeditionen.)',
+                        'e' => 'e (Den Rest der Arbeit wird das Leben selber erledigen.)',
+                        'f' => 'f (Der Nasa-Experte Chris McKay sieht die Aussichten jedoch nüchterner:)',
+                        'g' => 'g (Doch selbst dafür fehlt es an Geld.)',
+                        'h' => 'h (Es gibt daher keine Gewässer mit flüssigem Wasser auf der Marsoberfläche.)',
+                    ];
+                @endphp
+
                 {{-- ==================== LESEVERSTEHEN TEIL 1 ==================== --}}
                 <section class="exam-section">
                     <div class="section-label">Leseverstehen, Teil 1</div>
@@ -497,8 +630,8 @@
                             <span class="cloze-gap-num">1</span>
                             <select wire:model.live="answers.C1-LV1-1" class="cloze-select" @disabled($result)>
                                 <option value="">—</option>
-                                @foreach (['a','b','c','d','e','f','g','h'] as $letter)
-                                    <option value="{{ $letter }}">{{ $letter }}</option>
+                                @foreach ($c1LueckeOptions as $letter => $fullText)
+                                    <option value="{{ $letter }}">{{ $fullText }}</option>
                                 @endforeach
                             </select>
                             @if ($result)
@@ -513,8 +646,8 @@
                             <span class="cloze-gap-num">2</span>
                             <select wire:model.live="answers.C1-LV1-2" class="cloze-select" @disabled($result)>
                                 <option value="">—</option>
-                                @foreach (['a','b','c','d','e','f','g','h'] as $letter)
-                                    <option value="{{ $letter }}">{{ $letter }}</option>
+                                @foreach ($c1LueckeOptions as $letter => $fullText)
+                                    <option value="{{ $letter }}">{{ $fullText }}</option>
                                 @endforeach
                             </select>
                             @if ($result)
@@ -529,8 +662,8 @@
                             <span class="cloze-gap-num">3</span>
                             <select wire:model.live="answers.C1-LV1-3" class="cloze-select" @disabled($result)>
                                 <option value="">—</option>
-                                @foreach (['a','b','c','d','e','f','g','h'] as $letter)
-                                    <option value="{{ $letter }}">{{ $letter }}</option>
+                                @foreach ($c1LueckeOptions as $letter => $fullText)
+                                    <option value="{{ $letter }}">{{ $fullText }}</option>
                                 @endforeach
                             </select>
                             @if ($result)
@@ -543,8 +676,8 @@
                             <span class="cloze-gap-num">4</span>
                             <select wire:model.live="answers.C1-LV1-4" class="cloze-select" @disabled($result)>
                                 <option value="">—</option>
-                                @foreach (['a','b','c','d','e','f','g','h'] as $letter)
-                                    <option value="{{ $letter }}">{{ $letter }}</option>
+                                @foreach ($c1LueckeOptions as $letter => $fullText)
+                                    <option value="{{ $letter }}">{{ $fullText }}</option>
                                 @endforeach
                             </select>
                             @if ($result)
@@ -559,8 +692,8 @@
                             <span class="cloze-gap-num">5</span>
                             <select wire:model.live="answers.C1-LV1-5" class="cloze-select" @disabled($result)>
                                 <option value="">—</option>
-                                @foreach (['a','b','c','d','e','f','g','h'] as $letter)
-                                    <option value="{{ $letter }}">{{ $letter }}</option>
+                                @foreach ($c1LueckeOptions as $letter => $fullText)
+                                    <option value="{{ $letter }}">{{ $fullText }}</option>
                                 @endforeach
                             </select>
                             @if ($result)
@@ -576,8 +709,8 @@
                             <span class="cloze-gap-num">6</span>
                             <select wire:model.live="answers.C1-LV1-6" class="cloze-select" @disabled($result)>
                                 <option value="">—</option>
-                                @foreach (['a','b','c','d','e','f','g','h'] as $letter)
-                                    <option value="{{ $letter }}">{{ $letter }}</option>
+                                @foreach ($c1LueckeOptions as $letter => $fullText)
+                                    <option value="{{ $letter }}">{{ $fullText }}</option>
                                 @endforeach
                             </select>
                             @if ($result)
@@ -1024,168 +1157,352 @@
                     @endif
                 </section>
 
-                <hr class="c1-divider">
-
-                {{-- ==================== MÜNDLICHE PRÜFUNG (SPEAKING) ==================== --}}
-                <section class="exam-section">
-                    <div class="section-label">Mündliche Prüfung</div>
-                    <h2 class="section-heading">Sprechen — Interaktiver Dialog</h2>
-                    <div class="c1-instructions">
-                        <strong>Anweisung:</strong> Führen Sie die mündliche Prüfung durch. Wählen Sie ein Thema, drücken Sie auf "Antwort sprechen" (oder tippen Sie Ihre Antwort ein) und schicken Sie sie ab. Der AI-Prüfer reagiert interaktiv. Nach 3 Redebeiträgen wird das Gespräch beendet und bewertet.
-                    </div>
-
-                    @foreach (collect($section['elements'] ?? [])->where('type', 'speaking') as $element)
-                        @php $speakElId = $element['id']; @endphp
-                        <div class="speaking-task" style="border: 1px solid #e5e5e5; padding: 2rem; border-radius: 6px; background-color: #ffffff; margin-bottom: 3rem;"
-                             x-data="{
-                                 isRecording: false,
-                                 recognition: null,
-                                 transcript: '',
-                                 initRecognition() {
-                                     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-                                     if (!SR) return;
-                                     this.recognition = new SR();
-                                     this.recognition.lang = 'de-DE';
-                                     this.recognition.continuous = true;
-                                     this.recognition.interimResults = true;
-                                     this.recognition.onresult = (e) => {
-                                         let t = '';
-                                         for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
-                                         this.transcript = t;
-                                     };
-                                     this.recognition.onerror = () => this.stopRecording();
-                                 },
-                                 startRecording() {
-                                     if (!this.recognition) this.initRecognition();
-                                     if (!this.recognition) return;
-                                     this.isRecording = true;
-                                     this.recognition.start();
-                                 },
-                                 stopRecording() {
-                                     this.isRecording = false;
-                                     if (this.recognition) this.recognition.stop();
-                                 },
-                                 toggleRecording() { this.isRecording ? this.stopRecording() : this.startRecording(); },
-                                 sendReply() {
-                                     $wire.call('analyzeSpeaking', '{{ $speakElId }}', this.transcript);
-                                     this.transcript = '';
-                                 }
-                             }">
-                             
-                            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #cbcbcb; padding-bottom: 0.5rem;">
-                                <span style="font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; color: #d8232a;">{{ $element['label'] }}</span>
-                                <span style="font-size: 0.85rem; color: #666666;">Maximal {{ $element['points'] }} Punkte</span>
+                        <section class="exam-section">
+                            <div class="section-label">Mündliche Prüfung</div>
+                            <h2 class="section-heading">Mündlicher Ausdruck — Interaktive Prüfungssimulation (48 Punkte)</h2>
+                            <div class="c1-instructions">
+                                <strong>Prüfungsstruktur:</strong><br>
+                                • <strong>Teil 1a: Präsentation</strong> (Ihr Vortrag, max. 6 Punkte)<br>
+                                • <strong>Teil 1b: Zusammenfassung & Anschlussfragen</strong> (KI trägt den Vortrag zum anderen Thema vor, Sie antworten darauf, max. 4 Punkte)<br>
+                                • <strong>Teil 2: Diskussion</strong> (Diskussion zu einem Zitat, max. 6 Punkte)<br>
+                                • <strong>Sprachliche Angemessenheit</strong> (Übergeordnete Bewertung nach Flüssigkeit, Repertoire, Grammatik, Aussprache, max. 32 Punkte)
                             </div>
 
-                            <div style="margin-bottom: 1.5rem; background-color: #fafafa; border-left: 3px solid #1a1a1a; padding: 1rem; font-size: 0.95rem; color: #4a4a4a; text-align: left;">
-                                <strong>Aufgabenstellung:</strong> {{ $element['content'] }}
-                            </div>
-
-                            <!-- Conversation bubble logs -->
-                            <div style="background-color: #f7f9fa; border: 1px solid #e5e5e5; border-radius: 4px; padding: 1.5rem; min-height: 150px; max-height: 350px; overflow-y: auto; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-                                @if (empty($speakingHistory[$speakElId] ?? []))
-                                    <div style="color: #666666; font-style: italic; font-size: 0.95rem; text-align: center; margin-top: 2.5rem;">
-                                        Keine Beiträge. Starten Sie das Gespräch, indem Sie Ihren ersten Beitrag sprechen oder eingeben.
-                                    </div>
-                                @else
-                                    @foreach ($speakingHistory[$speakElId] as $turn)
-                                        <div style="display: flex; flex-direction: column; align-items: {{ $turn['role'] === 'user' ? 'flex-end' : 'flex-start' }}">
-                                            <span style="font-size: 0.75rem; font-weight: 700; color: #666666; margin-bottom: 0.25rem;">
-                                                {{ $turn['role'] === 'user' ? 'Lernender' : 'Prüfer' }}
-                                            </span>
-                                            <div style="background-color: {{ $turn['role'] === 'user' ? '#1a1a1a' : '#ffffff' }}; color: {{ $turn['role'] === 'user' ? '#ffffff' : '#1a1a1a' }}; border: 1px solid #e5e5e5; padding: 0.75rem 1rem; border-radius: 6px; max-width: 80%; font-size: 0.95rem; line-height: 1.5; text-align: left;">
-                                                {!! nl2br(e($turn['text'])) !!}
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                @endif
-                            </div>
-
-                            <!-- Micro controls / Fallback input -->
-                            @if (!$result)
-                                @php
-                                    $turnsCount = collect($speakingHistory[$speakElId] ?? [])->where('role', 'user')->count();
-                                    $isSpeakingCompleted = $turnsCount >= 3;
-                                @endphp
-
-                                @if ($isSpeakingCompleted)
-                                    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 4px; font-size: 0.95rem; line-height: 1.5; color: #15803d; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; text-align: left;">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                        <span>Gespräch erfolgreich beendet. Der Prüfer bewertet Ihre Antworten bei der Abgabe.</span>
-                                    </div>
-                                @else
-                                    <div style="display: flex; gap: 1rem; align-items: center;">
-                                        <button type="button" @click="toggleRecording" class="speaking-record-btn" :style="isRecording ? 'background-color: #1a1a1a;' : 'background-color: #d8232a;'" style="color: #ffffff; border: none; padding: 0.85rem 1.5rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;">
-                                            <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Sprechen'"></span>
-                                        </button>
-                                        
-                                        <span style="color: #666666; font-size: 0.9rem;">oder</span>
-
-                                        <input type="text" x-model="transcript" placeholder="Antwort tippen..." style="flex-grow: 1; border: 1px solid #cbcbcb; padding: 0.85rem 1rem; border-radius: 4px; font-size: 0.95rem; outline: none;" @keydown.enter.prevent="sendReply">
-
-                                        <button type="button" @click="sendReply" class="telc-button primary" :disabled="$wire.speakingProcessing['{{ $speakElId }}'] || !transcript.trim()" style="padding: 0.85rem 1.5rem; white-space: nowrap;">
-                                            <span x-text="$wire.speakingProcessing['{{ $speakElId }}'] ? 'Senden...' : 'Abschicken'"></span>
-                                        </button>
-                                    </div>
-
-                                    <div x-show="transcript" style="margin-top: 1rem; background-color: #fff9e6; border: 1px solid #ffeeba; padding: 0.75rem; border-radius: 4px; font-size: 0.95rem; line-height: 1.4; text-align: left;">
-                                        <strong>Erkannter Text:</strong> <span x-text="transcript"></span>
-                                    </div>
-                                @endif
-                            @else
-                                <div style="background-color: #f7f9fa; border: 1px solid #e5e5e5; padding: 1rem; border-radius: 4px; font-size: 0.9rem; line-height: 1.5; color: #666666; text-align: left;">
-                                    Mündliche Prüfung abgeschlossen. Das AI-Prüfer-Feedback finden Sie unten.
+                            <div style="background-color: #f7f9fa; border: 1px solid #d9dde5; border-left: 4px solid #1a1a1a; padding: 1.25rem 1.5rem; margin-bottom: 2rem; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                                <div style="text-align: left;">
+                                    <strong style="color: #1a1a1a; font-size: 0.95rem; display: block;">Möchten Sie freies Sprechen im Labor üben?</strong>
+                                    <span style="font-size: 0.85rem; color: #666666;">Nutzen Sie das dedizierte Sprechübungs-Labor mit frei wählbaren Timern.</span>
                                 </div>
-                            @endif
+                                <a href="{{ route('voice.practice') }}" target="_blank" class="telc-button" style="padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 600; text-decoration: none; border: 1px solid #1a1a1a; color: #1a1a1a; background: none;">
+                                    Labor im neuen Fenster öffnen ↗
+                                </a>
+                            </div>
 
-                            @if ($result)
-                                @php
-                                    $speakDetail = collect($result['details'])->firstWhere('id', $speakElId);
-                                @endphp
-                                @if ($speakDetail)
-                                    <div style="margin-top: 1.5rem; background-color: #f7f9fa; border: 1px solid #e5e5e5; border-left: 4px solid #137333; padding: 1.5rem; border-radius: 4px; text-align: left;">
-                                        <h5 style="font-weight: 700; font-size: 0.95rem; text-transform: uppercase; color: #137333; margin-bottom: 0.5rem;">AI-Bewertung: Mündlicher Ausdruck ({{ $element['label'] }})</h5>
-                                        <strong style="font-size: 1.1rem; color: #1a1a1a; display: block; margin-bottom: 0.5rem;">Erreichte Punkte: {{ $speakDetail['points'] }} / {{ $element['points'] }}</strong>
-                                        <p style="font-size: 0.95rem; line-height: 1.5; color: #4a4a4a; white-space: pre-wrap;">{{ $speakDetail['explanation'] ?? 'Keine ausführliche Begründung verfügbar.' }}</p>
+                            @if (!$c1SelectedTopic)
+                                <div style="background: #ffffff; border: 1px solid #e5e5e5; padding: 2.5rem; border-radius: 6px; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                    <h4 style="font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #1a1a1a; margin-bottom: 1rem;">Wählen Sie ein Präsentationsthema für Teil 1a</h4>
+                                    <p style="color: #666666; font-size: 0.95rem; margin-bottom: 2rem;">Das andere Thema wird für die KI-Präsentation in Teil 1b verwendet.</p>
+                                    
+                                    <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto;">
+                                        <button type="button" wire:click="chooseC1Topic('Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?')" class="telc-button primary" style="background: #ffffff; color: #1a1a1a; border: 1px solid #cbcbcb; padding: 1.25rem; text-align: left; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                            Thema A: Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft? Berichten Sie!
+                                        </button>
+                                        <button type="button" wire:click="chooseC1Topic('Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus?')" class="telc-button primary" style="background: #ffffff; color: #1a1a1a; border: 1px solid #cbcbcb; padding: 1.25rem; text-align: left; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                            Thema B: Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus? Erzählen Sie!
+                                        </button>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Step 1: User Presentation -->
+                                <div class="speaking-task" style="border: 1px solid #e5e5e5; padding: 2rem; border-radius: 6px; background-color: #ffffff; margin-bottom: 2.5rem;"
+                                     x-data="{
+                                         isRecording: false,
+                                         recognition: null,
+                                         transcript: '',
+                                         initRecognition() {
+                                             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                                             if (!SR) return;
+                                             this.recognition = new SR();
+                                             this.recognition.lang = 'de-DE';
+                                             this.recognition.continuous = true;
+                                             this.recognition.interimResults = true;
+                                             this.recognition.onresult = (e) => {
+                                                 let t = '';
+                                                 for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+                                                 this.transcript = t;
+                                             };
+                                             this.recognition.onerror = () => this.stopRecording();
+                                         },
+                                         startRecording() {
+                                             if (!this.recognition) this.initRecognition();
+                                             if (!this.recognition) return;
+                                             this.isRecording = true;
+                                             this.recognition.start();
+                                         },
+                                         stopRecording() {
+                                             this.isRecording = false;
+                                             if (this.recognition) this.recognition.stop();
+                                         },
+                                         toggleRecording() { this.isRecording ? this.stopRecording() : this.startRecording(); },
+                                         sendReply() {
+                                             $wire.call('analyzeSpeaking', 'C1-SP-1a', this.transcript);
+                                             this.transcript = '';
+                                         }
+                                     }">
+                                    <div style="border-bottom: 1px solid #e5e5e5; padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; color: #d8232a;">Teil 1a: Präsentation (Max. 6 Punkte)</span>
+                                        <span style="background: #f7f7f7; padding: 0.25rem 0.5rem; font-size: 0.8rem; border-radius: 4px;">Status: Step 1 / 3</span>
+                                    </div>
+
+                                    <p style="font-size: 0.95rem; line-height: 1.6; color: #4a4a4a; background-color: #fafafa; padding: 1rem; border-left: 3px solid #d8232a; margin-bottom: 1.5rem; text-align: left;">
+                                        <strong>Ihr gewähltes Thema:</strong> {{ $c1SelectedTopic }}
+                                    </p>
+
+                                    @if (!empty($speakingHistory['C1-SP-1a'] ?? []))
+                                        <div style="background-color: #f7f9fa; border: 1px solid #e5e5e5; border-radius: 4px; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left;">
+                                            @foreach ($speakingHistory['C1-SP-1a'] as $turn)
+                                                <div style="margin-bottom: 0.75rem;">
+                                                    <strong style="font-size: 0.8rem; color: #666666;">{{ $turn['role'] === 'user' ? 'Ihr Vortrag' : 'Prüfer-Bewertung' }}:</strong>
+                                                    <p style="font-size: 0.95rem; line-height: 1.5; margin-top: 0.25rem; white-space: pre-wrap;">{{ $turn['text'] }}</p>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                    @if (empty($speakingHistory['C1-SP-1a'] ?? []))
+                                        <div style="display: flex; gap: 1rem; align-items: center;">
+                                            <button type="button" @click="toggleRecording" class="speaking-record-btn" :style="isRecording ? 'background-color: #1a1a1a;' : 'background-color: #d8232a;'" style="color: #ffffff; border: none; padding: 0.85rem 1.5rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;">
+                                                <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Vortrag sprechen'"></span>
+                                            </button>
+                                            <span style="color: #666666; font-size: 0.9rem;">oder</span>
+                                            <input type="text" x-model="transcript" placeholder="Transkription eingeben..." style="flex-grow: 1; border: 1px solid #cbcbcb; padding: 0.85rem 1rem; border-radius: 4px; font-size: 0.95rem; outline: none;" @keydown.enter.prevent="sendReply">
+                                            <button type="button" @click="sendReply" class="telc-button primary" :disabled="$wire.speakingProcessing['C1-SP-1a'] || !transcript.trim()" style="padding: 0.85rem 1.5rem; white-space: nowrap;">
+                                                Abschicken
+                                            </button>
+                                        </div>
+                                    @else
+                                        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.9rem; color: #15803d; font-weight: 600; text-align: left;">
+                                            ✓ Teil 1a abgeschlossen und bewertet.
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Step 2: AI Presentation on Unchosen Topic -->
+                                @if ($c1SpeakingStep >= 2)
+                                    <div class="speaking-task" style="border: 1px solid #e5e5e5; padding: 2rem; border-radius: 6px; background-color: #ffffff; margin-bottom: 2.5rem;"
+                                         x-data="{
+                                             isSynthesizing: false,
+                                             playAudio() {
+                                                 const utterance = new SpeechSynthesisUtterance(@js($c1AiResponseText));
+                                                 utterance.lang = 'de-DE';
+                                                 utterance.rate = 0.95;
+                                                 utterance.onstart = () => { this.isSynthesizing = true; };
+                                                 utterance.onend = () => { this.isSynthesizing = false; };
+                                                 window.speechSynthesis.speak(utterance);
+                                             },
+                                             stopAudio() {
+                                                 window.speechSynthesis.cancel();
+                                                 this.isSynthesizing = false;
+                                             }
+                                         }"
+                                         x-init="setTimeout(() => playAudio(), 500)">
+                                        <div style="border-bottom: 1px solid #e5e5e5; padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; color: #d8232a;">Teil 1b: KI-Vortrag & Ihre Reaktion (Max. 4 Punkte)</span>
+                                            <span style="background: #f7f7f7; padding: 0.25rem 0.5rem; font-size: 0.8rem; border-radius: 4px;">Status: Step 2 / 3</span>
+                                        </div>
+
+                                        <p style="font-size: 0.95rem; line-height: 1.5; color: #666666; margin-bottom: 1.5rem; text-align: left;">
+                                            Hören Sie sich den C1-Vortrag der KI zum alternativen Thema an und reagieren Sie anschließend stichhaltig darauf.
+                                        </p>
+
+                                        <div style="background-color: #fafafa; border: 1px solid #cbcbcb; border-radius: 4px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: left; position: relative;">
+                                            <div style="display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1rem;">
+                                                <button type="button" @click="isSynthesizing ? stopAudio() : playAudio()" style="background-color: #1a1a1a; color: #ffffff; border: none; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                                    <span x-show="!isSynthesizing">🔊 Vortrag anhören</span>
+                                                    <span x-show="isSynthesizing">⏹ Stoppen</span>
+                                                </button>
+                                                <span x-show="isSynthesizing" style="font-size: 0.85rem; color: #d8232a; font-weight: 600; animation: pulse 1.5s infinite;">Spielt Audio mit Gemini 2.5 Voice...</span>
+                                            </div>
+                                            <strong style="display: block; font-size: 0.85rem; color: #1a1a1a; margin-bottom: 0.5rem;">KI-Vortrag (Transkript):</strong>
+                                            <div style="font-size: 0.95rem; line-height: 1.6; color: #4a4a4a; white-space: pre-wrap;">{{ $c1AiResponseText }}</div>
+                                        </div>
+
+                                        <!-- User response dialogue step -->
+                                        <div x-data="{
+                                             isRecording: false,
+                                             recognition: null,
+                                             transcript: '',
+                                             initRecognition() {
+                                                 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                                                 if (!SR) return;
+                                                 this.recognition = new SR();
+                                                 this.recognition.lang = 'de-DE';
+                                                 this.recognition.continuous = true;
+                                                 this.recognition.interimResults = true;
+                                                 this.recognition.onresult = (e) => {
+                                                     let t = '';
+                                                     for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+                                                     this.transcript = t;
+                                                 };
+                                                 this.recognition.onerror = () => this.stopRecording();
+                                             },
+                                             startRecording() {
+                                                 if (!this.recognition) this.initRecognition();
+                                                 if (!this.recognition) return;
+                                                 this.isRecording = true;
+                                                 this.recognition.start();
+                                             },
+                                             stopRecording() {
+                                                 this.isRecording = false;
+                                                 if (this.recognition) this.recognition.stop();
+                                             },
+                                             toggleRecording() { this.isRecording ? this.stopRecording() : this.startRecording(); },
+                                             sendReply() {
+                                                 $wire.call('analyzeSpeaking', 'C1-SP-1b', this.transcript);
+                                                 this.transcript = '';
+                                             }
+                                         }">
+                                            @if ($c1SpeakingStep === 2)
+                                                <div style="border-top: 1px solid #e5e5e5; padding-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+                                                    <button type="button" @click="toggleRecording" class="speaking-record-btn" :style="isRecording ? 'background-color: #1a1a1a;' : 'background-color: #d8232a;'" style="color: #ffffff; border: none; padding: 0.85rem 1.5rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;">
+                                                        <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Auf Vortrag antworten'"></span>
+                                                    </button>
+                                                    <span style="color: #666666; font-size: 0.9rem;">oder</span>
+                                                    <input type="text" x-model="transcript" placeholder="Ihre Anschlussfragen / Zusammenfassung tippen..." style="flex-grow: 1; border: 1px solid #cbcbcb; padding: 0.85rem 1rem; border-radius: 4px; font-size: 0.95rem; outline: none;" @keydown.enter.prevent="sendReply">
+                                                    <button type="button" @click="sendReply" class="telc-button primary" :disabled="$wire.speakingProcessing['C1-SP-1b'] || !transcript.trim()" style="padding: 0.85rem 1.5rem; white-space: nowrap;">
+                                                        Abschicken
+                                                    </button>
+                                                </div>
+                                            @else
+                                                @if (isset($speakingHistory['C1-SP-1b'][1]))
+                                                    <div style="margin-top: 1.5rem; padding: 1rem; background-color: #f7f9fa; border: 1px solid #e5e5e5; border-radius: 4px; text-align: left;">
+                                                        <strong style="font-size: 0.85rem; color: #666666;">Ihre Reaktion:</strong>
+                                                        <p style="font-size: 0.95rem; margin-top: 0.25rem;">{{ $speakingHistory['C1-SP-1b'][1]['text'] }}</p>
+                                                        
+                                                        @if (isset($speakingHistory['C1-SP-1b'][2]))
+                                                            <div style="margin-top: 1rem; border-top: 1px dashed #e5e5e5; padding-top: 0.75rem;">
+                                                                <strong style="font-size: 0.85rem; color: #1a1a1a;">Bewertung der Reaktion:</strong>
+                                                                <p style="font-size: 0.95rem; margin-top: 0.25rem; white-space: pre-wrap;">{{ $speakingHistory['C1-SP-1b'][2]['text'] }}</p>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                @endif
+                                                
+                                                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.9rem; color: #15803d; font-weight: 600; text-align: left; margin-top: 1rem;">
+                                                    ✓ Teil 1b abgeschlossen und bewertet.
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Step 3: Discussion -->
+                                @if ($c1SpeakingStep >= 3)
+                                    <div class="speaking-task" style="border: 1px solid #e5e5e5; padding: 2rem; border-radius: 6px; background-color: #ffffff; margin-bottom: 2.5rem;"
+                                         x-data="{
+                                             isRecording: false,
+                                             recognition: null,
+                                             transcript: '',
+                                             initRecognition() {
+                                                 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                                                 if (!SR) return;
+                                                 this.recognition = new SR();
+                                                 this.recognition.lang = 'de-DE';
+                                                 this.recognition.continuous = true;
+                                                 this.recognition.interimResults = true;
+                                                 this.recognition.onresult = (e) => {
+                                                     let t = '';
+                                                     for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+                                                     this.transcript = t;
+                                                 };
+                                                 this.recognition.onerror = () => this.stopRecording();
+                                             },
+                                             startRecording() {
+                                                 if (!this.recognition) this.initRecognition();
+                                                 if (!this.recognition) return;
+                                                 this.isRecording = true;
+                                                 this.recognition.start();
+                                             },
+                                             stopRecording() {
+                                                 this.isRecording = false;
+                                                 if (this.recognition) this.recognition.stop();
+                                             },
+                                             toggleRecording() { this.isRecording ? this.stopRecording() : this.startRecording(); },
+                                             sendReply() {
+                                                 $wire.call('analyzeSpeaking', 'C1-SP-2', this.transcript);
+                                                 this.transcript = '';
+                                             }
+                                         }">
+                                        <div style="border-bottom: 1px solid #e5e5e5; padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; color: #d8232a;">Teil 2: Diskussion (6 Minuten, Max. 6 Punkte)</span>
+                                            <span style="background: #f7f7f7; padding: 0.25rem 0.5rem; font-size: 0.8rem; border-radius: 4px;">Status: Step 3 / 3</span>
+                                        </div>
+
+                                        <div style="background-color: #fafafa; border-left: 3px solid #1a1a1a; padding: 1rem; font-size: 0.95rem; color: #4a4a4a; text-align: left; margin-bottom: 1.5rem;">
+                                            <strong>Diskussionsthema:</strong> Beziehungen mit großem Altersunterschied sind immer problematisch.
+                                        </div>
+
+                                        <div style="background-color: #f7f9fa; border: 1px solid #e5e5e5; border-radius: 4px; padding: 1.5rem; min-height: 120px; max-height: 350px; overflow-y: auto; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                                            @if (empty($speakingHistory['C1-SP-2'] ?? []))
+                                                <div style="color: #666666; font-style: italic; font-size: 0.95rem; text-align: center; margin-top: 1.5rem;">
+                                                    Keine Beiträge. Starten Sie das Gespräch, indem Sie das Wort ergreifen.
+                                                </div>
+                                            @else
+                                                @foreach ($speakingHistory['C1-SP-2'] as $turn)
+                                                    <div style="display: flex; flex-direction: column; align-items: {{ $turn['role'] === 'user' ? 'flex-end' : 'flex-start' }}">
+                                                        <span style="font-size: 0.75rem; font-weight: 700; color: #666666; margin-bottom: 0.25rem;">
+                                                            {{ $turn['role'] === 'user' ? 'Lernender' : 'Prüfer' }}
+                                                        </span>
+                                                        <div style="background-color: {{ $turn['role'] === 'user' ? '#1a1a1a' : '#ffffff' }}; color: {{ $turn['role'] === 'user' ? '#ffffff' : '#1a1a1a' }}; border: 1px solid #e5e5e5; padding: 0.75rem 1rem; border-radius: 6px; max-width: 80%; font-size: 0.95rem; line-height: 1.5; text-align: left;">
+                                                            {!! nl2br(e($turn['text'])) !!}
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
+
+                                        @php
+                                            $discTurnsCount = collect($speakingHistory['C1-SP-2'] ?? [])->where('role', 'user')->count();
+                                            $isDiscCompleted = $discTurnsCount >= 3;
+                                        @endphp
+
+                                        @if (!$isDiscCompleted)
+                                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                                <button type="button" @click="toggleRecording" class="speaking-record-btn" :style="isRecording ? 'background-color: #1a1a1a;' : 'background-color: #d8232a;'" style="color: #ffffff; border: none; padding: 0.85rem 1.5rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;">
+                                                    <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Sprechen'"></span>
+                                                </button>
+                                                <span style="color: #666666; font-size: 0.9rem;">oder</span>
+                                                <input type="text" x-model="transcript" placeholder="Argument tippen..." style="flex-grow: 1; border: 1px solid #cbcbcb; padding: 0.85rem 1rem; border-radius: 4px; font-size: 0.95rem; outline: none;" @keydown.enter.prevent="sendReply">
+                                                <button type="button" @click="sendReply" class="telc-button primary" :disabled="$wire.speakingProcessing['C1-SP-2'] || !transcript.trim()" style="padding: 0.85rem 1.5rem; white-space: nowrap;">
+                                                    Abschicken
+                                                </button>
+                                            </div>
+                                        @else
+                                            <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.9rem; color: #15803d; font-weight: 600; text-align: left;">
+                                                ✓ Teil 2: Diskussion erfolgreich abgeschlossen.
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
                             @endif
-                        </div>
-                    @endforeach
-                </section>
+                        </section>
 
-                <!-- Doc Sticky Timer / Submit bar -->
-                <div class="doc-timer-bar">
-                    <div class="doc-timer-text">
-                        <svg style="color: #d8232a;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <span>Restzeit:</span>
-                        <strong style="color: #d8232a;">{{ sprintf('%02d:%02d', $minutes, $seconds) }} Min.</strong>
-                    </div>
+                 <!-- Doc Floating Right Timer / Submit widget -->
+                 <div class="doc-timer-bar">
+                     @if (isset($template['sections'][$activeSection]))
+                         <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666666; border-bottom: 1px solid #e5e5e5; padding-bottom: 0.25rem; width: 100%; text-align: center;">
+                             {{ $template['sections'][$activeSection]['title'] }}
+                         </div>
+                     @endif
 
-                    <div class="save-indicator" style="display: flex; align-items: center; gap: 1.5rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <span class="save-pulse"></span>
-                            <span>Auto-Safe aktiv</span>
-                        </div>
-                        <button type="button" wire:click="exitExam" style="background: none; border: none; color: #666666; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">Menü verlassen</button>
-                    </div>
+                     <div class="doc-timer-text">
+                         <svg style="color: #d8232a;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                             <circle cx="12" cy="12" r="10"></circle>
+                             <polyline points="12 6 12 12 16 14"></polyline>
+                         </svg>
+                         <span>Restzeit:</span>
+                         <strong style="color: #d8232a;">{{ sprintf('%02d:%02d', $minutes, $seconds) }} Min.</strong>
+                     </div>
 
-                    @if (!$result)
-                        <button type="button" wire:click="submit" class="submit-button">
-                            Prüfung abgeben
-                        </button>
-                    @else
-                        <button type="button" wire:click="loadTemplate({{ $selectedTemplateId }})" class="submit-button" style="background-color: #d8232a;">
-                            Simulation neustarten
-                        </button>
-                    @endif
-                </div>
-            </div>
+                     <div class="save-indicator" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #666666;">
+                         <div style="display: flex; align-items: center; gap: 0.25rem;">
+                             <span class="save-pulse"></span>
+                             <span>Auto-Safe aktiv</span>
+                         </div>
+                         <button type="button" wire:click="exitExam" style="background: none; border: none; color: #666666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">Menü verlassen</button>
+                     </div>
+
+                     @if (!$result)
+                         <button type="button" wire:click="submit" class="submit-button" style="width: 100%; white-space: nowrap;">
+                             Prüfung abgeben
+                         </button>
+                     @else
+                         <button type="button" wire:click="loadTemplate({{ $selectedTemplateId }})" class="submit-button" style="background-color: #d8232a; width: 100%; white-space: nowrap;">
+                             Neustarten
+                         </button>
+                     @endif
+                 </div>
+             </div>
         @else
             {{-- Standard Split View for non-C1 levels (B1, B2) --}}
             <div class="paper-exam-shell">

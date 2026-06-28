@@ -10,10 +10,12 @@ class TelcTemplateFactory
     public static function presets(): array
     {
         return [
-            'B1' => self::b1(),
-            'B2' => self::b2(),
-            'C1' => self::c1(),
-            'C2' => self::c2(),
+            'B1' => self::b1() + ['exam_provider' => 'telc'],
+            'B2' => self::b2() + ['exam_provider' => 'telc'],
+            'C1' => self::c1() + ['exam_provider' => 'telc'],
+            'C2' => self::c2() + ['exam_provider' => 'telc'],
+            'Goethe-B1' => self::b1() + ['title' => 'Goethe Zertifikat B1', 'level' => 'B1', 'exam_provider' => 'goethe'],
+            'Goethe-C1' => self::c1() + ['title' => 'Goethe Zertifikat C1', 'level' => 'C1', 'exam_provider' => 'goethe'],
         ];
     }
 
@@ -175,9 +177,11 @@ class TelcTemplateFactory
                 self::section('c1-writing', 'Schriftlicher Ausdruck', 70, [
                     self::input('C1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 48),
                 ], self::pages(20, 20)),
-                self::section('c1-speaking', 'Mündliche Prüfung', 36, [
-                    self::speakingElement('C1-SP-1', 'Vortrag', 'Stellen Sie Ihrem Gesprächspartner ein aktuelles gesellschaftliches Thema Ihrer Wahl vor. Gehen Sie dabei auf Ursachen, Auswirkungen und Lösungsmöglichkeiten ein.', 24),
-                    self::speakingElement('C1-SP-2', 'Diskussion', 'Diskutieren Sie mit Ihrem Gesprächspartner über die Vor- und Nachteile von Homeoffice. Vertreten Sie Ihre Meinung und gehen Sie auf Gegenargumente ein.', 24),
+                self::section('c1-speaking', 'Mündliche Prüfung', 16, [
+                    self::speakingElement('C1-SP-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie eines der Themen: 1. Was ist der Nationalsport in Ihrem Land und welche Bedeutung hat er für die Gesellschaft? oder 2. Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit?', 6),
+                    self::speakingElement('C1-SP-1b', '1b: Zusammenfassung und Anschlussfragen', 'Zusammenfassung/Anschlussfragen (ca. 2 Minuten). Hören Sie sich die KI-Präsentation zum anderen Thema an und antworten Sie darauf.', 4),
+                    self::speakingElement('C1-SP-2', '2: Diskussion', 'Diskussion (6 Minuten). Diskutieren Sie das folgende Thema: Beziehungen mit großem Altersunterschied sind immer problematisch.', 6),
+                    self::speakingElement('C1-SP-GLOBAL', 'Punkte für sprachliche Angemessenheit', 'Gesamtbewertung für sprachliche Angemessenheit (Flüssigkeit, Repertoire, Grammatische Richtigkeit, Aussprache/Intonation)', 32),
                 ], self::pages(21, 22)),
             ],
         ];

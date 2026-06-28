@@ -54,6 +54,12 @@ class AppServiceProvider extends ServiceProvider
     protected function recordSuccessfulLogins(): void
     {
         Event::listen(Login::class, function (Login $event): void {
+            // Delete other sessions for this user from sessions table to prevent account sharing
+            DB::table('sessions')
+                ->where('user_id', $event->user->id)
+                ->where('id', '!=', session()->getId())
+                ->delete();
+
             $event->user->forceFill([
                 'last_login_at' => now(),
                 'login_count' => ((int) $event->user->login_count) + 1,

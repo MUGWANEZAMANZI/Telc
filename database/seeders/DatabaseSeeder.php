@@ -22,27 +22,40 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Plan::updateOrCreate(
-            ['stripe_price_id' => 'price_premium_monthly'],
+            ['stripe_price_id' => 'price_single_exam'],
             [
-                'name' => 'Premium Monatlich',
-                'description' => 'Voller Zugang zu allen Prüfungen und Gemini-Sprachtraining.',
-                'price' => 19.99,
+                'name' => 'Einmalige Prüfung',
+                'description' => 'Zugang zu einer vollständigen Prüfung Ihrer Wahl.',
+                'price' => 5.00,
                 'currency' => 'eur',
-                'interval' => 'month',
-                'features' => ['Unbegrenzte Prüfungen (B1, B2, C1, C2)', 'Gemini-KI-Sprechübung', 'Schreibkorrekturen', 'Offizielle TELC-Zertifikatssimulation'],
+                'interval' => 'one-off',
+                'features' => ['1 vollständige Prüfung (B1, B2, oder C1)', 'Gemini-KI-Sprechübung', 'Schreibkorrekturen', 'Auto-Safe & detaillierte Auswertung'],
                 'is_active' => true,
             ]
         );
 
         \App\Models\Plan::updateOrCreate(
-            ['stripe_price_id' => 'price_premium_yearly'],
+            ['stripe_price_id' => 'price_premium_monthly'],
             [
-                'name' => 'Premium Jährlich',
-                'description' => 'Sparen Sie über 50% mit unserem Jahresabo.',
-                'price' => 99.99,
+                'name' => 'Monatliches Training (Standard)',
+                'description' => 'Perfekt für die kontinuierliche Prüfungsvorbereitung.',
+                'price' => 19.00,
                 'currency' => 'eur',
-                'interval' => 'year',
-                'features' => ['Unbegrenzte Prüfungen (B1, B2, C1, C2)', 'Gemini-KI-Sprechübung', 'Schreibkorrekturen', 'Offizielle TELC-Zertifikatssimulation', 'Vorrangiger Support'],
+                'interval' => 'month',
+                'features' => ['Bis zu 30 Prüfungen pro Monat', 'Voller Gemini-KI-Support', 'Auswertung & Fehleranalysen', 'Schreibübungen-Feedback'],
+                'is_active' => true,
+            ]
+        );
+
+        \App\Models\Plan::updateOrCreate(
+            ['stripe_price_id' => 'price_premium_unlimited'],
+            [
+                'name' => 'Monatliches Training (Intensiv)',
+                'description' => 'Maximale Vorbereitung für den schnellen Erfolg.',
+                'price' => 69.00,
+                'currency' => 'eur',
+                'interval' => 'month',
+                'features' => ['Bis zu 60 Prüfungen pro Monat', 'Gemini-KI-Sprechübung unbegrenzt', 'Priorisierter Support', 'Individuelle Lernmodule'],
                 'is_active' => true,
             ]
         );

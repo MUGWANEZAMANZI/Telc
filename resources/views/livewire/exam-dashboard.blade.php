@@ -6,14 +6,6 @@
         </div>
 
         <div class="telc-actions">
-            <select wire:change="loadTemplate($event.target.value)" class="telc-select">
-                @foreach ($templates as $record)
-                    <option value="{{ $record->id }}" @selected($selectedTemplateId === $record->id)>
-                        {{ $record->level }} - {{ $record->title }}
-                    </option>
-                @endforeach
-            </select>
-
             <div class="telc-segment">
                 <button type="button" wire:click="switchMode('builder')" @class(['active' => $mode === 'builder'])>Builder</button>
                 <button type="button" wire:click="switchMode('student')" @class(['active' => $mode === 'student'])>Student</button>
@@ -48,7 +40,25 @@
     @if ($mode === 'builder')
         <div class="telc-admin-grid">
             <aside class="telc-panel">
-                <h2>Exam Source</h2>
+                <div style="margin-bottom: 1.5rem;">
+                    <label>Exam Category Directory</label>
+                    <div class="telc-segment" style="margin-top: 0.5rem; width: 100%;">
+                        <button type="button" wire:click="changeProvider('telc')" @class(['active' => $providerFilter === 'telc']) style="flex: 1;">TELC Folder</button>
+                        <button type="button" wire:click="changeProvider('goethe')" @class(['active' => $providerFilter === 'goethe']) style="flex: 1;">Goethe Folder</button>
+                    </div>
+                </div>
+
+                <label>Active Category Exam</label>
+                <select wire:change="loadTemplate($event.target.value)" class="telc-select" style="margin-bottom: 1.5rem; width: 100%;">
+                    <option value="">— Select Exam —</option>
+                    @foreach ($templates as $record)
+                        <option value="{{ $record->id }}" @selected($selectedTemplateId === $record->id)>
+                            {{ $record->level }} - {{ $record->title }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <h2>Exam Source Settings</h2>
 
                 <label>Title</label>
                 <input type="text" wire:model.live="template.title" class="telc-input">
@@ -56,10 +66,28 @@
                 <label>Level</label>
                 <input type="text" wire:model.live="template.level" class="telc-input">
 
-                <label>Source PDF</label>
+                <label>Provider Folder</label>
+                <select wire:model.live="template.exam_provider" class="telc-select">
+                    <option value="telc">TELC</option>
+                    <option value="goethe">Goethe</option>
+                </select>
+
+                <label>Source PDF Reference</label>
                 <input type="text" wire:model.live="template.source_pdf" class="telc-input">
 
-                <div class="telc-row">
+                <label>Pricing Access</label>
+                <div x-data="{ isPaid: {{ isset($template['price']) && $template['price'] > 0 ? 'true' : 'false' }} }" style="margin-bottom: 1rem;">
+                    <select class="telc-select" x-on:change="isPaid = ($event.target.value === 'paid'); if (!isPaid) $wire.set('template.price', 0)">
+                        <option value="free" :selected="!isPaid">Free / Basic Tier</option>
+                        <option value="paid" :selected="isPaid">Paid / Premium Subscription Required</option>
+                    </select>
+                    <div x-show="isPaid" style="margin-top: 0.5rem;" x-cloak>
+                        <label>Exam Price (EUR)</label>
+                        <input type="number" step="0.01" wire:model.live="template.price" class="telc-input" placeholder="e.g. 9.99">
+                    </div>
+                </div>
+
+                <div class="telc-row" style="margin-top: 1rem;">
                     <button type="button" wire:click="togglePublished" class="telc-button">
                         {{ $template['is_published'] ?? false ? 'Unpublish' : 'Publish' }}
                     </button>
@@ -75,7 +103,7 @@
                     @endforeach
                 </div>
 
-                <h2>Theme From Booklet</h2>
+                <h2>Theme Colorway</h2>
                 <label>Accent</label>
                 <input type="color" wire:model.live="template.theme.accent" class="telc-color">
                 <label>Ink</label>
@@ -83,7 +111,7 @@
                 <label>Paper</label>
                 <input type="color" wire:model.live="template.theme.paper" class="telc-color">
 
-                <h2>Exact Timings</h2>
+                <h2>Timings Configurations</h2>
                 @foreach (($template['timings'] ?? []) as $index => $timing)
                     <div class="telc-timing-row">
                         <input type="text" wire:model.live="template.timings.{{ $index }}.label" class="telc-input">
@@ -168,16 +196,77 @@
                                             @endif
 
                                             @if ($element['type'] === 'inline_gap')
-                                                <label>Paragraph (use --0--, --1-- etc. for gaps)</label>
-                                                <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height:8rem" placeholder="Liebe Daniela, ... denn --0-- wollte ich dir ..."></textarea>
+                                                 <div style="grid-column: span 2; display: grid; grid-template-columns: 1fr 2.2fr; gap: 2rem; margin-top: 1rem; width: 100%;">
+                                                     <div>
+                                                         <label>Paragraph (use --0--, --1-- etc. for gaps)</label>
+                                                         <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height:16rem; width: 100%;" placeholder="Liebe Daniela, ... denn --0-- wollte ich dir ..."></textarea>
 
-                                                <label>Gap definitions (JSON)</label>
-                                                <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options" class="telc-textarea" style="min-height:6rem;font-family:monospace;font-size:.82rem" placeholder='[{"options":"a|außerdem,b|eigentlich,c|überhaupt","answer":"b"}]'></textarea>
-                                                <p style="color:#667085;font-size:.78rem;margin:0">JSON array. Each gap: <code>{"options":"a|label,b|label,c|label","answer":"a"}</code></p>
+                                                         <label style="margin-top: 1rem; display: block;">Points per gap</label>
+                                                         <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.points" class="telc-input small">
+                                                     </div>
 
-                                                <label>Points per gap</label>
-                                                <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.points" class="telc-input small">
-                                            @endif
+                                                     <div>
+                                                         @php
+                                                             $gapData = json_decode($element['options'] ?? '[]', true) ?: [];
+                                                             // Match gaps count in the text
+                                                             preg_match_all('/--(\d+)--/', $element['content'] ?? '', $matches);
+                                                             $gKeys = array_unique($matches[1]);
+                                                         @endphp
+
+                                                         <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem; max-height: 25rem; overflow-y: auto; width: 100%;">
+                                                             <strong style="display: block; margin-bottom: 0.75rem; font-size: 0.85rem; color: #374151;">Gaps Options Manager</strong>
+                                                             
+                                                             @foreach ($gKeys as $gKey)
+                                                                 @php
+                                                                     $gapIdx = (int) $gKey;
+                                                                     $cur = $gapData[$gapIdx] ?? ['options' => 'a|Option A,b|Option B,c|Option C', 'answer' => 'a'];
+                                                                     // Parse options list
+                                                                     $parts = explode(',', $cur['options']);
+                                                                     $optList = [];
+                                                                     foreach ($parts as $p) {
+                                                                         $pair = explode('|', $p, 2);
+                                                                         $optList[trim($pair[0])] = $pair[1] ?? '';
+                                                                     }
+                                                                 @endphp
+                                                                 <div style="margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #e5e7eb; font-size: 0.85rem;" wire:key="inline-gap-{{ $sectionIndex }}-{{ $elementIndex }}-{{ $gapIdx }}">
+                                                                     <strong style="color: #6366f1; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Gap #{{ $gapIdx }}</strong>
+                                                                     
+                                                                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+                                                                         @foreach (['a', 'b', 'c'] as $letter)
+                                                                             <div>
+                                                                                 <label style="font-size: 0.7rem; color: #4b5563; display: block; text-transform: uppercase; font-weight: 600; margin-bottom: 0.2rem;">Option {{ $letter }}</label>
+                                                                                 <input type="text" 
+                                                                                        value="{{ $optList[$letter] ?? '' }}" 
+                                                                                        x-on:input="
+                                                                                            let arr = JSON.parse($wire.get('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options') || '[]');
+                                                                                            if (!arr[{{ $gapIdx }}]) arr[{{ $gapIdx }}] = {options: 'a|,b|,c|', answer: 'a'};
+                                                                                            let opts = (arr[{{ $gapIdx }}].options || '').split(',').map(o => o.split('|'));
+                                                                                            let match = opts.find(o => o[0] === '{{ $letter }}');
+                                                                                            if (match) match[1] = $event.target.value;
+                                                                                            else opts.push(['{{ $letter }}', $event.target.value]);
+                                                                                            arr[{{ $gapIdx }}].options = opts.map(o => o.join('|')).join(',');
+                                                                                            $wire.set('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options', JSON.stringify(arr));
+                                                                                        "
+                                                                                        class="telc-input" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; width: 100%;">
+                                                                                 <button type="button" 
+                                                                                         x-on:click="
+                                                                                            let arr = JSON.parse($wire.get('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options') || '[]');
+                                                                                            if (!arr[{{ $gapIdx }}]) arr[{{ $gapIdx }}] = {options: 'a|,b|,c|', answer: 'a'};
+                                                                                            arr[{{ $gapIdx }}].answer = '{{ $letter }}';
+                                                                                            $wire.set('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options', JSON.stringify(arr));
+                                                                                         "
+                                                                                         style="margin-top: 0.35rem; font-size: 0.75rem; width: 100%; border: 1px solid #ccc; cursor: pointer; border-radius: 4px; padding: 4px 0; background: {{ ($cur['answer'] ?? '') === $letter ? '#4ade80' : '#f3f4f6' }}; font-weight: {{ ($cur['answer'] ?? '') === $letter ? 'bold' : 'normal' }};">
+                                                                                     {{ ($cur['answer'] ?? '') === $letter ? '✓ Correct' : 'Set Correct' }}
+                                                                                 </button>
+                                                                             </div>
+                                                                         @endforeach
+                                                                     </div>
+                                                                 </div>
+                                                             @endforeach
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             @endif
 
                                             @if ($element['type'] === 'interactive_text')
                                                 <label>Text with [[gap:1]] placeholders</label>
@@ -224,6 +313,54 @@
                         </section>
                     @endforeach
                 </div>
+
+                <!-- Participant Scores and Attempts Tracker -->
+                @if ($selectedTemplateId)
+                    <div class="telc-section-editor" style="margin-top: 3rem; background: #fff; padding: 2rem; border-radius: 8px; border: 1px solid #e5e7eb;">
+                        <div style="margin-bottom: 1.5rem;">
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: #111827;">Teilnehmer & Ergebnisse</h3>
+                            <p style="font-size: 0.85rem; color: #6b7280;">Übersicht aller Benutzer, die diese Prüfung absolviert haben.</p>
+                        </div>
+
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #e5e7eb; color: #4b5563; font-weight: 600;">
+                                        <th style="padding: 0.75rem 1rem;">Teilnehmer</th>
+                                        <th style="padding: 0.75rem 1rem;">Datum</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: center;">Score</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right;">Ergebnis</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($participants as $attempt)
+                                        <tr style="border-bottom: 1px solid #f3f4f6; color: #374151;">
+                                            <td style="padding: 0.75rem 1rem;">
+                                                <strong style="color: #111827; display: block;">{{ $attempt->user->name ?? 'Gast' }}</strong>
+                                                <span style="font-size: 0.8rem; color: #6b7280;">{{ $attempt->user->email ?? 'Gast-Zugang' }}</span>
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; color: #6b7280;">
+                                                {{ $attempt->submitted_at?->format('d.m.Y H:i') ?? $attempt->created_at->format('d.m.Y H:i') }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: center; font-weight: 600; color: #d8232a;">
+                                                {{ $attempt->result['earned'] ?? 0 }} / {{ $attempt->result['possible'] ?? 0 }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 700;">
+                                                <span style="color: {{ ($attempt->result['passed'] ?? false) ? '#137333' : '#c5221f' }}">
+                                                    {{ $attempt->result['percentage'] ?? 0 }}% ({{ $attempt->result['grade'] ?? 'Nicht bestanden' }})
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" style="padding: 2rem; text-align: center; color: #9ca3af;">Bislang keine Prüfungsversuche für diese Vorlage aufgezeichnet.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
             </main>
         </div>
     @elseif ($mode === 'pricing')
@@ -344,4 +481,68 @@
             </main>
         </div>
     @endif
+
+    {{-- Manual Payment Approvals List --}}
+    <div class="telc-panel" style="margin-top: 2rem; background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 1.5rem;">
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1.25rem; color: #1a1a1a;">Freizugebende PayPal-Zahlungen</h3>
+        
+        @if (session()->has('payment_message'))
+            <div style="background: #e6f4ea; color: #137333; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; margin-bottom: 1rem; font-size: 0.85rem;">
+                {{ session('payment_message') }}
+            </div>
+        @endif
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr style="text-align: left; background: #fafafa; border-bottom: 2px solid #edf0f4;">
+                        <th style="padding: 0.75rem;">Teilnehmer</th>
+                        <th style="padding: 0.75rem;">Prüfung</th>
+                        <th style="padding: 0.75rem;">Transaktions-ID</th>
+                        <th style="padding: 0.75rem;">Beleg</th>
+                        <th style="padding: 0.75rem; text-align: right;">Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($pendingPayments as $payment)
+                        <tr style="border-bottom: 1px solid #edf0f4;">
+                            <td style="padding: 0.75rem;">
+                                <strong>{{ $payment->user->name }}</strong><br>
+                                <small style="color: #666666;">{{ $payment->user->email }}</small>
+                            </td>
+                            <td style="padding: 0.75rem;">
+                                {{ $payment->examTemplate->title ?? 'TELC' }} ({{ $payment->examTemplate->level }})
+                            </td>
+                            <td style="padding: 0.75rem;">
+                                <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px;">{{ $payment->transaction_id }}</code>
+                            </td>
+                            <td style="padding: 0.75rem;">
+                                @if ($payment->receipt_path)
+                                    <a href="{{ Storage::url($payment->receipt_path) }}" target="_blank" style="color: #d8232a; font-weight: 700; text-decoration: underline;">
+                                        Beleg öffnen
+                                    </a>
+                                @else
+                                    <span style="color: #666666; font-style: italic;">Kein Bild</span>
+                                @endif
+                            </td>
+                            <td style="padding: 0.75rem; text-align: right;">
+                                <button type="button" wire:click="approvePayment({{ $payment->id }})" class="telc-button primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; margin-right: 0.25rem;">
+                                    Freigeben
+                                </button>
+                                <button type="button" wire:click="rejectPayment({{ $payment->id }})" class="telc-button" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; border-color: #d8232a; color: #d8232a;">
+                                    Ablehnen
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" style="padding: 1.5rem; text-align: center; color: #666666; font-style: italic;">
+                                Keine ausstehenden Freigabeanträge gefunden.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
