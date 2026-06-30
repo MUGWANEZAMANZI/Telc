@@ -15,13 +15,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('user-guide', 'user-guide')->name('user.guide');
     Route::get('billing', \App\Livewire\BillingPortal::class)->name('billing');
     Route::get('student-performance', \App\Livewire\StudentPerformance::class)->name('student.performance');
+    Route::get('admin/finance', \App\Livewire\AdminFinance::class)->name('admin.finance');
+    Route::get('owner/panel', \App\Livewire\OwnerDashboard::class)->name('owner.panel');
 });
-
-Route::post('stripe/webhook', [\App\Http\Controllers\CheckoutController::class, 'webhook'])->name('stripe.webhook');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('checkout', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout');
+    Route::get('exam-checkout/{examTemplate}', [\App\Http\Controllers\CheckoutController::class, 'examCheckout'])
+        ->name('exam.checkout');
+
+    Route::get('paypal/checkout/{plan}', [\App\Http\Controllers\PayPalCheckoutController::class, 'planCheckout'])
+        ->name('paypal.checkout');
+    Route::get('paypal/exam-checkout/{examTemplate}', [\App\Http\Controllers\PayPalCheckoutController::class, 'examCheckout'])
+        ->name('paypal.exam.checkout');
+    Route::get('paypal/success', [\App\Http\Controllers\PayPalCheckoutController::class, 'success'])
+        ->name('paypal.success');
+    Route::get('paypal/cancel', [\App\Http\Controllers\PayPalCheckoutController::class, 'cancel'])
+        ->name('paypal.cancel');
 });
+
+Route::post('paypal/webhook', [\App\Http\Controllers\PayPalCheckoutController::class, 'webhook']);
 
 Route::get('/telc-assets/{file}', function (string $file) {
     abort_unless(str_ends_with($file, '.mp3'), 404);
@@ -44,3 +57,5 @@ Route::get('/exam-audio/{path}', function (string $path) {
 })->where('path', '.*')->name('exam.audio')->middleware(['auth', 'verified']);
 
 require __DIR__.'/settings.php';
+
+

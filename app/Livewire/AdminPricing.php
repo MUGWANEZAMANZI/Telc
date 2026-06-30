@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Discount;
 use App\Models\Plan;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class AdminPricing extends Component
@@ -39,6 +40,7 @@ class AdminPricing extends Component
 
     public function mount(): void
     {
+        abort_unless(Auth::user()?->isOwner(), 403);
         $this->freeExamsPerSession = (string) Setting::value('free_exams_per_session', '2');
     }
 

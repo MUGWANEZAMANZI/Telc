@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'exam_template_id', 'status', 'payment_status', 'active_answers', 'remaining_seconds', 'active_section', 'enrolled_at', 'transaction_id', 'receipt_path'])]
+#[Fillable(['user_id', 'exam_template_id', 'status', 'payment_status', 'active_answers', 'remaining_seconds', 'active_section', 'enrolled_at', 'transaction_id', 'receipt_path', 'paypal_order_id'])]
 class ExamEnrollment extends Model
 {
     protected function casts(): array

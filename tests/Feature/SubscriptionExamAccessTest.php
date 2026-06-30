@@ -42,6 +42,8 @@ test('subscribed users can bypass enrollment payment modal and start exams direc
     Subscription::create([
         'user_id' => $student->id,
         'plan_id' => $plan->id,
+        'type' => 'default',
+        'stripe_id' => 'sub_123',
         'stripe_subscription_id' => 'sub_123',
         'stripe_status' => 'active',
     ]);

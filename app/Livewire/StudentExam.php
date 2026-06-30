@@ -52,76 +52,11 @@ class StudentExam extends Component
     public ?int $enrollTemplateId = null;
     public string $enrollModalError = '';
 
-    // Manual approval verification variables
-    public bool $showReceiptModal = false;
-    public ?int $receiptTemplateId = null;
-    public string $transactionIdInput = '';
-    public $receiptImageUpload;
-    public string $receiptModalError = '';
-
-    use \Livewire\WithFileUploads;
-
     public function startEnroll(int $id): void
     {
         $this->enrollTemplateId = $id;
         $this->showEnrollModal = true;
         $this->enrollModalError = '';
-    }
-
-    public function openReceiptModal(int $templateId): void
-    {
-        $this->receiptTemplateId = $templateId;
-        $this->showReceiptModal = true;
-        $this->transactionIdInput = '';
-        $this->receiptImageUpload = null;
-        $this->receiptModalError = '';
-    }
-
-    public function closeReceiptModal(): void
-    {
-        $this->showReceiptModal = false;
-        $this->receiptTemplateId = null;
-        $this->transactionIdInput = '';
-        $this->receiptImageUpload = null;
-        $this->receiptModalError = '';
-    }
-
-    public function submitReceipt(): void
-    {
-        $this->validate([
-            'transactionIdInput' => ['required', 'string', 'max:100'],
-            'receiptImageUpload' => ['nullable', 'image', 'max:5120'], // Max 5MB
-        ]);
-
-        $enrollment = ExamEnrollment::query()
-            ->where('user_id', Auth::id())
-            ->where('exam_template_id', $this->receiptTemplateId)
-            ->first();
-
-        if (!$enrollment) {
-            $enrollment = ExamEnrollment::create([
-                'user_id' => Auth::id(),
-                'exam_template_id' => $this->receiptTemplateId,
-                'status' => 'pending',
-                'payment_status' => 'pending',
-                'active_section' => 0,
-            ]);
-        }
-
-        $receiptPath = null;
-        if ($this->receiptImageUpload) {
-            $receiptPath = $this->receiptImageUpload->store('receipts', 'public');
-        }
-
-        $enrollment->update([
-            'transaction_id' => $this->transactionIdInput,
-            'receipt_path' => $receiptPath,
-            'status' => 'pending',
-            'payment_status' => 'pending',
-        ]);
-
-        $this->closeReceiptModal();
-        session()->flash('receipt_success', 'Zahlungsnachweis erfolgreich übermittelt. Ein Administrator wird Ihre Zahlung prüfen.');
     }
 
     public function cancelEnroll(): void
@@ -134,19 +69,13 @@ class StudentExam extends Component
     public function selectPayment(string $method): void
     {
         if ($method === 'stripe') {
-            $this->enrollModalError = 'Kreditkartenzahlungen (Stripe) sind in Kürze verfügbar. Bitte nutzen Sie PayPal.';
+            $this->redirect(route('exam.checkout', $this->enrollTemplateId));
             return;
         }
 
         if ($method === 'paypal') {
             if ($this->enrollTemplateId) {
-                // Pre-enroll user with manual_enrolled payment status
-                $this->enroll($this->enrollTemplateId);
-                $this->showEnrollModal = false;
-                $this->enrollTemplateId = null;
-
-                // Redirect to env PayPal Link
-                $this->redirect(config('services.paypal.me_url'));
+                $this->redirect(route('paypal.exam.checkout', $this->enrollTemplateId));
             }
         }
     }

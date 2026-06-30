@@ -16,47 +16,42 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="microphone" :href="route('voice.practice')" :current="request()->routeIs('voice.practice')" wire:navigate>
-                        {{ __('Sprechübung') }}
-                    </flux:sidebar.item>
-                     @if (auth()->user()?->isAdmin())
-                    <flux:sidebar.item icon="currency-euro" :href="route('pricing')" :current="request()->routeIs('pricing')" wire:navigate>
-                        {{ __('Pricing') }}
-                    </flux:sidebar.item>
-                    @endif
+                    @unless (auth()->user()?->isAdmin())
+                        <flux:sidebar.item icon="microphone" :href="route('voice.practice')" :current="request()->routeIs('voice.practice')" wire:navigate>
+                            {{ __('Sprechübung') }}
+                        </flux:sidebar.item>
+                    @endunless
                     <flux:sidebar.item icon="credit-card" :href="route('billing')" :current="request()->routeIs('billing')" wire:navigate>
                         {{ __('Billing') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="play-circle" :href="route('free.exam')" :current="request()->routeIs('free.exam')" wire:navigate>
-                        {{ __('Free') }}
+                    @unless (auth()->user()?->isAdmin())
+                        <flux:sidebar.item icon="play-circle" :href="route('free.exam')" :current="request()->routeIs('free.exam')" wire:navigate>
+                            {{ __('Free') }}
+                        </flux:sidebar.item>
+                    @endunless
+                    <flux:sidebar.item icon="book-open" :href="route('user.guide')" :current="request()->routeIs('user.guide')" wire:navigate>
+                        {{ __('User Guide') }}
                     </flux:sidebar.item>
                     @if (auth()->user()?->isAdmin())
                         <flux:sidebar.item icon="academic-cap" :href="route('admin.guide')" :current="request()->routeIs('admin.guide')" wire:navigate>
                             {{ __('Admin-Guide') }}
                         </flux:sidebar.item>
-                    @endif
-                    <flux:sidebar.item icon="book-open" :href="route('user.guide')" :current="request()->routeIs('user.guide')" wire:navigate>
-                        {{ __('User Guide') }}
-                    </flux:sidebar.item>
-                    @if (auth()->user()?->isAdmin())
                         <flux:sidebar.item icon="chart-bar" :href="route('student.performance')" :current="request()->routeIs('student.performance')" wire:navigate>
                             {{ __('Student Performance') }}
                         </flux:sidebar.item>
+                        @if (auth()->user()->isOwner())
+                            <flux:sidebar.item icon="currency-dollar" :href="route('admin.finance')" :current="request()->routeIs('admin.finance')" wire:navigate>
+                                {{ __('Finance') }}
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="users" :href="route('owner.panel')" :current="request()->routeIs('owner.panel')" wire:navigate>
+                                {{ __('Owner Panel') }}
+                            </flux:sidebar.item>
+                        @endif
                     @endif
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />
-
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
 
             @auth
                 <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()?->name" />

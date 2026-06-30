@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\VoiceTopic;
 use Livewire\Component;
 
 class VoiceInput extends Component
@@ -10,7 +11,12 @@ class VoiceInput extends Component
 
     public function render()
     {
-        return view('livewire.voice-input');
+        return view('livewire.voice-input', [
+            'topics' => VoiceTopic::query()
+                ->where('is_active', true)
+                ->orderBy('level')
+                ->orderBy('title')
+                ->get(),
+        ]);
     }
 }
-

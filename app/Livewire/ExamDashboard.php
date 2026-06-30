@@ -28,7 +28,7 @@ class ExamDashboard extends Component
     public array $template = [];
 
     /** @var array<string, mixed> */
-    public array $studentAnswers = [];
+    public array $answers = [];
 
     /** @var array<string, mixed>|null */
     public ?array $result = null;
@@ -111,7 +111,7 @@ class ExamDashboard extends Component
         $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published', 'exam_provider', 'price']);
         $this->providerFilter = $record->exam_provider ?? 'telc';
         $this->activeSection = 0;
-        $this->studentAnswers = [];
+        $this->answers = [];
         $this->result = null;
         $this->resetTimer();
     }
@@ -251,6 +251,9 @@ class ExamDashboard extends Component
     public function switchMode(string $mode): void
     {
         $this->mode = $mode;
+        if ($mode === 'student' && ! empty($this->template['sections'])) {
+            $this->startSection(0);
+        }
         $this->resetTimer();
     }
 
@@ -278,13 +281,13 @@ class ExamDashboard extends Component
     public function submit(): void
     {
         $this->started = false;
-        $this->result = app(ExamGrader::class)->grade($this->template['sections'], $this->studentAnswers);
+        $this->result = app(ExamGrader::class)->grade($this->template['sections'], $this->answers);
 
         if ($this->selectedTemplateId) {
             ExamAttempt::create([
                 'exam_template_id' => $this->selectedTemplateId,
                 'user_id' => Auth::id(),
-                'answers' => $this->studentAnswers,
+                'answers' => $this->answers,
                 'result' => $this->result,
                 'started_at' => now(),
                 'submitted_at' => now(),
@@ -316,6 +319,39 @@ class ExamDashboard extends Component
             'writing' => 'Schreibfeld',
             'speaking' => 'Sprechen (KI)',
         ];
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public function gapsFor(array $element): array
+    {
+        if (($element['type'] ?? '') !== 'inline_gap') {
+            return [];
+        }
+        $raw = json_decode((string) ($element['options'] ?? '[]'), true);
+        return is_array($raw) ? array_values($raw) : [];
+    }
+
+    /** @return list<string> */
+    public function optionsFor(array $element): array
+    {
+        $options = array_filter(array_map('trim', explode(',', (string) ($element['options'] ?? ''))));
+        if ($options !== []) {
+            return array_values($options);
+        }
+        return match ($element['type'] ?? '') {
+            'true_false' => ['+', '-'],
+            'multiple_choice' => ['a', 'b', 'c'],
+            'matching' => range('a', 'j'),
+            default => [],
+        };
+    }
+
+    public function setGapAnswer(string $elementId, int $gapIndex, string $value): void
+    {
+        if (! isset($this->answers[$elementId]) || ! is_array($this->answers[$elementId])) {
+            $this->answers[$elementId] = [];
+        }
+        $this->answers[$elementId][(string) $gapIndex] = $value;
     }
 
     private function ensurePresets(): void

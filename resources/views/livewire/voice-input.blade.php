@@ -7,14 +7,12 @@
          remainingSeconds: 60,
          timerInterval: null,
          showGradeNotice: false,
-         selectedTopic: 'Was ist der Nationalsport in Ihrem Land und welche Bedeutung hat er für die Gesellschaft?',
-         topics: [
-             'Was ist der Nationalsport in Ihrem Land und welche Bedeutung hat er für die Gesellschaft?',
-             'Vor- und Nachteile von Homeoffice: Diskutieren Sie die Vor- und Nachteile für Arbeitnehmer und Arbeitgeber.',
-             'Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus?',
-             'Sind Beziehungen mit großem Altersunterschied immer problematisch? Diskutieren Sie beide Seiten.',
-             'Konventionelle Produkte sind genauso gut wie Bioprodukte. Nehmen Sie hierzu kritisch Stellung.'
-         ],
+          selectedTopic: '{{ addslashes($topics->first()?->title ?? '') }}',
+          topics: [
+              @foreach ($topics as $topic)
+                  '{{ addslashes($topic->title) }}',
+              @endforeach
+          ],
          initRecognition() {
              const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
              if (!SpeechRecognition) {

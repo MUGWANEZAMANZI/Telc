@@ -169,20 +169,6 @@
             transform: translateY(-1px);
         }
 
-        .coming-soon-badge {
-            background: #f2f4f7;
-            color: #475467;
-            border: 1px solid #d0d5dd;
-            pointer-events: none;
-            opacity: 0.7;
-            text-align: center;
-            text-decoration: none;
-            padding: 0.9rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
         .pricing-footer {
             margin-top: 5rem;
             border-top: 1px solid #e5e5e5;
@@ -204,7 +190,6 @@
             @forelse ($plans as $plan)
                 @php
                     $isPremium = $plan->stripe_price_id === 'price_premium_monthly';
-                    $isStripe = $plan->stripe_price_id === 'price_premium_unlimited';
                 @endphp
                 <article class="pricing-card {{ $isPremium ? 'premium-tier' : '' }}">
                     <div>
@@ -232,15 +217,22 @@
                         @endif
                     </div>
 
-                    @if ($isStripe)
-                        <button type="button" class="coming-soon-badge">Stripe (In Kürze)</button>
-                    @else
-                        @auth
-                            <a href="{{ route('checkout', ['plan_id' => $plan->id]) }}" class="telc-button primary">Mit PayPal bezahlen</a>
+                    @auth
+                        @if ($plan->interval === 'month')
+                            <button type="button"
+                                    onclick="openPaymentModal({{ $plan->id }}, '{{ $plan->paypal_plan_id ? 'both' : 'stripe' }}')"
+                                    class="telc-button primary">
+                                Monatlich abonnieren
+                            </button>
                         @else
-                            <a href="{{ route('register') }}" class="telc-button primary">Konto erstellen</a>
-                        @endauth
-                    @endif
+                            <a href="{{ route('checkout', ['plan_id' => $plan->id]) }}"
+                               class="telc-button primary">
+                                Jetzt freischalten
+                            </a>
+                        @endif
+                    @else
+                        <a href="{{ route('register') }}" class="telc-button primary">Konto erstellen</a>
+                    @endauth
                 </article>
             @empty
                 <div style="background: #ffffff; border: 2px solid #e5e5e5; border-radius: 8px; padding: 3rem; grid-column: 1 / -1;">
@@ -250,8 +242,60 @@
         </div>
 
         <div class="pricing-footer">
-            <p>© {{ date('Y') }} Erfolg. Alle Preise inkl. gesetzlicher MwSt. PayPal-Zahlungen werden direkt über unsere sichere PayPal.Me-Integration abgewickelt.</p>
+            <p>© {{ date('Y') }} Erfolg. Alle Preise inkl. gesetzlicher MwSt. Zahlungen werden sicher über Stripe und PayPal abgewickelt.</p>
         </div>
     </div>
+
+    {{-- Payment Method Modal --}}
+    <div id="paymentModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: #ffffff; padding: 2.5rem; max-width: 480px; width: 90%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid #d8232a; font-family: 'Plus Jakarta Sans', sans-serif; text-align: left;">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 0.5rem; color: #1a1a1a;">Zahlungsmethode wählen</h3>
+            <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">Bitte wählen Sie eine Zahlungsmethode für Ihr Abonnement.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
+                <a id="stripeBtn" href="#" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; text-decoration: none; color: inherit; box-sizing: border-box;">
+                    <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit Kreditkarte (Stripe) zahlen</strong>
+                    <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Weiter</span>
+                </a>
+                <a id="paypalBtn" href="#" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; text-decoration: none; color: inherit; box-sizing: border-box;">
+                    <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit PayPal bezahlen</strong>
+                    <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Weiter</span>
+                </a>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button type="button" onclick="closePaymentModal()" style="border: none; background: none; padding: 0.5rem 1rem; cursor: pointer; color: #666666; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPlanId = null;
+
+        function openPaymentModal(planId, available) {
+            selectedPlanId = planId;
+            document.getElementById('stripeBtn').href = '{{ route('checkout') }}?plan_id=' + planId;
+
+            const paypalBtn = document.getElementById('paypalBtn');
+            if (available === 'both') {
+                paypalBtn.href = '{{ route('paypal.checkout', '__PLAN_ID__') }}'.replace('__PLAN_ID__', planId);
+                paypalBtn.style.display = 'flex';
+            } else {
+                paypalBtn.style.display = 'none';
+            }
+
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentModal();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -9,7 +9,10 @@
             <div class="telc-segment">
                 <button type="button" wire:click="switchMode('builder')" @class(['active' => $mode === 'builder'])>Builder</button>
                 <button type="button" wire:click="switchMode('student')" @class(['active' => $mode === 'student'])>Student</button>
-                <button type="button" wire:click="switchMode('pricing')" @class(['active' => $mode === 'pricing'])>Pricing</button>
+                <button type="button" wire:click="switchMode('topics')" @class(['active' => $mode === 'topics'])>Topics</button>
+                @if (auth()->user()?->isOwner())
+                    <button type="button" wire:click="switchMode('pricing')" @class(['active' => $mode === 'pricing'])>Pricing</button>
+                @endif
             </div>
 
             <button type="button" wire:click="save" class="telc-button primary">Save</button>
@@ -363,122 +366,20 @@
                 @endif
             </main>
         </div>
+    @elseif ($mode === 'topics')
+        <livewire:admin-topics />
     @elseif ($mode === 'pricing')
         <livewire:admin-pricing />
 
     @else
-        @php
-            $section = ($template['sections'] ?? [])[$activeSection] ?? null;
-            $theme = $template['theme'] ?? [];
-            $minutes = intdiv($remainingSeconds, 60);
-            $seconds = $remainingSeconds % 60;
-        @endphp
-
-        <div class="telc-student-grid">
-            <aside class="telc-panel">
-                <h2>Exam Parts</h2>
-                @foreach (($template['sections'] ?? []) as $index => $part)
-                    <button type="button" wire:click="startSection({{ $index }})" @class(['telc-part-button', 'active' => $activeSection === $index])>
-                        <span>{{ $part['title'] }}</span>
-                        <small>{{ $part['minutes'] }} min</small>
-                    </button>
-                @endforeach
-
-                <div class="telc-timer" wire:poll.1s="tick">
-                    {{ sprintf('%02d:%02d', $minutes, $seconds) }}
-                </div>
-
-                <button type="button" wire:click="submit" class="telc-button primary wide">Submit & Mark</button>
-
-                @if ($result)
-                    <div class="telc-result">
-                        <strong>{{ $result['earned'] }} / {{ $result['possible'] }}</strong>
-                        <span>{{ $result['percentage'] }}%</span>
-                    </div>
-                @endif
-            </aside>
-
-            <main class="telc-exam-frame">
-                @if ($section)
-                    <div class="telc-a4" style="--telc-accent: {{ $theme['accent'] ?? '#d8232a' }}; --telc-ink: {{ $theme['ink'] ?? '#111827' }}; --telc-paper: {{ $theme['paper'] ?? '#ffffff' }}; font-family: {{ $theme['font'] ?? 'Instrument Sans' }}, sans-serif;">
-                        <header class="telc-paper-header">
-                            <div>
-                                <p>Übungstest</p>
-                                <h2>{{ $template['title'] ?? 'TELC Exam' }}</h2>
-                            </div>
-                            <span>{{ $template['level'] ?? '' }}</span>
-                        </header>
-
-                        <div class="telc-paper-scroll">
-                            <h3>{{ $section['title'] }}</h3>
-
-                            @foreach (($section['elements'] ?? []) as $element)
-                                <div class="telc-paper-element">
-                                    @if ($element['type'] === 'text')
-                                        <h4>{{ $element['label'] }}</h4>
-                                        <p>{!! nl2br(e($element['content'])) !!}</p>
-                                    @elseif ($element['type'] === 'image')
-                                        <figure class="telc-image-placeholder">
-                                            @if (! empty($element['content']))
-                                                <img src="{{ $element['content'] }}" alt="{{ $element['label'] }}">
-                                            @else
-                                                <span>{{ $element['label'] }}</span>
-                                            @endif
-                                        </figure>
-                                    @elseif ($element['type'] === 'audio')
-                                        <label>{{ $element['label'] }}</label>
-                                        <audio controls src="{{ $element['content'] }}"></audio>
-                                    @elseif ($element['type'] === 'writing')
-                                        <label>{{ $element['label'] }}</label>
-                                        <textarea wire:model.live="studentAnswers.{{ $element['id'] }}" class="telc-answer-textarea"></textarea>
-                                    @elseif ($element['type'] === 'inline_gap')
-                                        <div class="admin-gap-preview">
-                                            <label>{{ $element['label'] }}</label>
-                                            <div style="line-height:2;font-size:.92rem">
-                                                @php
-                                                    $gaps = json_decode($element['options'] ?? '[]', true) ?: [];
-                                                    $parts = preg_split('/--(\d+)--/', $element['content'] ?? '', -1, PREG_SPLIT_DELIM_CAPTURE);
-                                                @endphp
-                                                @foreach ($parts as $i => $part)
-                                                    @if ($i % 2 === 0)
-                                                        <span>{{ $part }}</span>
-                                                    @else
-                                                        @php $gapIdx = (int) $part; @endphp
-                                                        <span style="display:inline-flex;align-items:center;border:1.7px solid #111827;border-radius:4px;padding:.1rem .35rem;font-weight:900;font-size:.82rem;background:#f7f8fa;margin:0 .1rem">--{{ $gapIdx }}--</span>
-                                                    @endif
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @else
-                                        @php $options = array_filter(array_map('trim', explode(',', $element['options'] ?? ''))); @endphp
-                                        <label>{{ $element['label'] }}</label>
-
-                                        @if (in_array($element['type'], ['multiple_choice', 'true_false', 'matching'], true) && $options)
-                                            <select wire:model.live="studentAnswers.{{ $element['id'] }}" class="telc-answer">
-                                                <option value="">Antwort wählen</option>
-                                                @foreach ($options as $option)
-                                                    <option value="{{ $option }}">{{ $option }}</option>
-                                                @endforeach
-                                            </select>
-                                        @else
-                                            <input type="text" wire:model.live="studentAnswers.{{ $element['id'] }}" class="telc-answer">
-                                        @endif
-
-                                        @if ($result)
-                                            @php $detail = collect($result['details'])->firstWhere('id', $element['id']); @endphp
-                                            @if ($detail)
-                                                <span @class(['telc-mark', 'ok' => $detail['correct']])>
-                                                    {{ $detail['correct'] ? 'Correct' : 'Expected: '.$detail['expected'] }}
-                                                </span>
-                                            @endif
-                                        @endif
-                                    @endif
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-            </main>
+        <div class="admin-student-preview" style="max-width: 100%;">
+            @if (empty($template))
+                <p style="padding: 2rem; text-align: center; color: #6b7280; font-style: italic;">
+                    Keine Vorlage geladen. Bitte wählen Sie zuerst eine Vorlage im Builder aus.
+                </p>
+            @else
+                @include('livewire.student-exam')
+            @endif
         </div>
     @endif
 

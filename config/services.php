@@ -36,7 +36,7 @@ return [
     ],
 
     'paypal' => [
-        'me_url' => env('PAYPAL_ME_URL', 'https://www.paypal.me/Durira373'),
+        'product_id' => env('PAYPAL_PRODUCT_ID'),
     ],
 
 ];

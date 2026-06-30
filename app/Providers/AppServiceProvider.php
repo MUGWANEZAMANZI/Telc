@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Listeners\StripeEventListener;
+use App\Models\Subscription;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Event;
@@ -9,6 +11,8 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Cashier\Cashier;
+use Laravel\Cashier\Events\WebhookReceived;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +29,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Cashier::useSubscriptionModel(Subscription::class);
+
+        Event::listen(WebhookReceived::class, StripeEventListener::class);
+
         $this->configureDefaults();
         $this->recordSuccessfulLogins();
     }

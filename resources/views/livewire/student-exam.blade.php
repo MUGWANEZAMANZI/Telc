@@ -394,12 +394,6 @@
 
     @if (empty($template))
         <section class="exam-store">
-            @if (session()->has('receipt_success'))
-                <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; padding: 1rem 1.5rem; border-radius: 8px; font-weight: 700; margin-bottom: 2rem; font-size: 0.95rem; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
-                    {{ session('receipt_success') }}
-                </div>
-            @endif
-
             <div class="exam-store-header">
                 <p>TELC Exam Store</p>
                 <h1>Erwerben Sie eine Prüfungssimulation vor dem Start</h1>
@@ -426,40 +420,24 @@
                             </dl>
                         @endif
 
-                        @if ($enrollment)
-                            @if ($enrollment->status === 'active')
-                                @if ($enrollment->active_answers !== null)
-                                    <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #137333; border-color: #137333;">
-                                        Sitzung fortsetzen
-                                    </button>
-                                @else
-                                    <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #1a1a1a; border-color: #1a1a1a;">
-                                        Prüfung starten
-                                    </button>
-                                @endif
-                            @elseif ($enrollment->status === 'pending')
-                                <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
-                                    <span style="background: #fef3c7; color: #d97706; text-align: center; padding: 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 700; border: 1px solid #fde68a;">
-                                        ⌛ Warten auf Freigabe
-                                    </span>
-                                    <button type="button" wire:click="openReceiptModal({{ $record->id }})" class="telc-button wide" style="font-size: 0.8rem; padding: 0.4rem 0.5rem;">
-                                        Beleg erneut senden
-                                    </button>
-                                </div>
+                        @if ($enrollment && $enrollment->status === 'active')
+                            @if ($enrollment->active_answers !== null)
+                                <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #137333; border-color: #137333;">
+                                    Sitzung fortsetzen
+                                </button>
+                            @else
+                                <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #1a1a1a; border-color: #1a1a1a;">
+                                    Prüfung starten
+                                </button>
                             @endif
                         @elseif ($isSubscribed)
                             <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #1a1a1a; border-color: #1a1a1a;">
                                 Prüfung starten
                             </button>
                         @else
-                            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
-                                <button type="button" wire:click="startEnroll({{ $record->id }})" class="telc-button primary wide">
-                                    Kostenpflichtige Prüfung freischalten
-                                </button>
-                                <button type="button" wire:click="openReceiptModal({{ $record->id }})" class="telc-button wide" style="font-size: 0.8rem; padding: 0.4rem 0.5rem;">
-                                    Bereits bezahlt? Beleg senden
-                                </button>
-                            </div>
+                            <button type="button" wire:click="startEnroll({{ $record->id }})" class="telc-button primary wide">
+                                Kostenpflichtige Prüfung freischalten
+                            </button>
                         @endif
                     </article>
                 @empty
@@ -488,9 +466,9 @@
                                 <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit PayPal bezahlen (Einmalig 5,00 €)</strong>
                                 <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Jetzt freischalten</span>
                             </button>
-                            <button type="button" wire:click="selectPayment('stripe')" style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e5e5; padding: 1rem; border-radius: 4px; background: none; cursor: pointer; transition: all 0.2s; text-align: left; opacity: 0.6; width: 100%;">
+                            <button type="button" wire:click="selectPayment('stripe')" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%;">
                                 <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit Kreditkarte (Stripe) zahlen</strong>
-                                <span style="font-size: 0.85rem; color: #666666;">In Kürze</span>
+                                <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Jetzt bezahlen</span>
                             </button>
                         </div>
 
@@ -498,35 +476,6 @@
                             <button type="button" wire:click="cancelEnroll" style="border: none; background: none; padding: 0.5rem 1rem; cursor: pointer; color: #666666; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Abbrechen</button>
                         </div>
                     </div>
-                </div>
-            @endif
-
-            {{-- Receipt Upload Modal --}}
-            @if ($showReceiptModal)
-                <div class="store-modal-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-                    <form wire:submit.prevent="submitReceipt" class="store-modal-body" style="background: #ffffff; padding: 2.5rem; max-width: 500px; width: 90%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid #d8232a; font-family: 'Plus Jakarta Sans', sans-serif;">
-                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.5rem; color: #1a1a1a;">Zahlung belegen</h3>
-                        <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">
-                            Tragen Sie bitte Ihre PayPal-Transaktions-ID ein und laden Sie optional einen Screenshot Ihres Belegs hoch.
-                        </p>
-
-                        <div style="margin-bottom: 1.25rem;">
-                            <label style="font-size: 0.85rem; font-weight: 700; color: #1a1a1a; display: block; margin-bottom: 0.4rem;">Transaktions-ID (Pflichtfeld)</label>
-                            <input type="text" wire:model="transactionIdInput" class="telc-input" placeholder="z.B. F-8972304987" required style="width: 100%; box-sizing: border-box;">
-                            @error('transactionIdInput') <span style="color: #d8232a; font-size: 0.75rem;">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div style="margin-bottom: 2rem;">
-                            <label style="font-size: 0.85rem; font-weight: 700; color: #1a1a1a; display: block; margin-bottom: 0.4rem;">Überweisungsbeleg hochladen (Optional)</label>
-                            <input type="file" wire:model="receiptImageUpload" accept="image/*" class="telc-input" style="width: 100%; box-sizing: border-box; padding: 0.35rem 0.5rem;">
-                            @error('receiptImageUpload') <span style="color: #d8232a; font-size: 0.75rem;">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div style="display: flex; justify-content: flex-end; gap: 1rem;">
-                            <button type="button" wire:click="closeReceiptModal" style="border: none; background: none; padding: 0.5rem 1rem; cursor: pointer; color: #666666; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Abbrechen</button>
-                            <button type="submit" class="telc-button primary" style="padding: 0.5rem 1.5rem;">Einreichen</button>
-                        </div>
-                    </form>
                 </div>
             @endif
 
