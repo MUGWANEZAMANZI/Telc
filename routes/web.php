@@ -8,6 +8,9 @@ Route::view('pricing', 'pricing')->name('pricing');
 Route::get('free-exam', \App\Livewire\GuestExam::class)->name('free.exam');
 Route::view('premium-exam', 'premium-exam')->name('premium.exam');
 
+Route::get('books', [\App\Http\Controllers\BookController::class, 'index'])->name('books.index');
+Route::get('books/{book}/read', \App\Livewire\BookReader::class)->name('books.read');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
     Route::view('voice-practice', 'voice-practice')->name('voice.practice');
@@ -17,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('student-performance', \App\Livewire\StudentPerformance::class)->name('student.performance');
     Route::get('admin/finance', \App\Livewire\AdminFinance::class)->name('admin.finance');
     Route::get('owner/panel', \App\Livewire\OwnerDashboard::class)->name('owner.panel');
+    Route::get('admin/books', \App\Livewire\AdminBooks::class)->name('admin.books');
 });
 
 Route::middleware(['auth'])->group(function () {

@@ -16,6 +16,9 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="book-open" :href="route('books.index')" :current="request()->routeIs('books.*')" wire:navigate>
+                        {{ __('Studien') }}
+                    </flux:sidebar.item>
                     @unless (auth()->user()?->isAdmin())
                         <flux:sidebar.item icon="microphone" :href="route('voice.practice')" :current="request()->routeIs('voice.practice')" wire:navigate>
                             {{ __('Sprechübung') }}
@@ -38,6 +41,9 @@
                         </flux:sidebar.item>
                         <flux:sidebar.item icon="chart-bar" :href="route('student.performance')" :current="request()->routeIs('student.performance')" wire:navigate>
                             {{ __('Student Performance') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="academic-cap" :href="route('admin.books')" :current="request()->routeIs('admin.books')" wire:navigate>
+                            {{ __('Bücher') }}
                         </flux:sidebar.item>
                         @if (auth()->user()->isOwner())
                             <flux:sidebar.item icon="currency-dollar" :href="route('admin.finance')" :current="request()->routeIs('admin.finance')" wire:navigate>

@@ -8,7 +8,6 @@
 
         <link rel="icon" href="/logo.jpeg" sizes="any">
         <script src="https://cdn.tailwindcss.com"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,6 +21,7 @@
                 font-family: 'Playfair Display', serif;
             }
         </style>
+        @livewireStyles
     </head>
     <body class="bg-stone-50 text-stone-900 min-h-screen flex flex-col justify-between overflow-x-hidden relative" x-data="{ showSticky: false }" @scroll.window="showSticky = window.pageYOffset > 500">
 
@@ -60,9 +60,12 @@
         </header>
 
         <!-- Main Content -->
-        <main class="flex-1 w-full max-w-7xl mx-auto px-6 flex flex-col justify-center space-y-24 py-12">
+        <main class="flex-1 w-full max-w-7xl mx-auto px-6 flex flex-col justify-center space-y-24 py-6">
             
-            <!-- 1. Hero Section -->
+            <!-- 1. Exam Catalog -->
+            <livewire:landing-exam-catalog />
+
+            <!-- 2. Hero Section -->
             <section class="text-center relative flex flex-col items-center justify-center min-h-[70vh]" 
                      x-data="{ show: false }" 
                      x-init="setTimeout(() => show = true, 50)">
@@ -105,7 +108,7 @@
                 </div>
             </section>
 
-            <!-- 2. Value Proposition Cards -->
+            <!-- 3. Value Proposition Cards -->
             <section id="vorteile" class="space-y-12 scroll-mt-24">
                 <div class="text-center space-y-4">
                     <span class="text-xs font-bold uppercase tracking-widest text-red-600">Das Konzept</span>
@@ -246,5 +249,24 @@
              @endauth
         </div>
 
+        <!-- Floating Bookshelf Button (bottom-right corner) -->
+        <div x-show="showSticky"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-75"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-75"
+             class="fixed bottom-6 right-6 z-50">
+            <a href="{{ route('books.index') }}"
+               class="flex items-center justify-center w-12 h-12 bg-white/80 backdrop-blur border border-stone-200 rounded-full shadow-lg hover:shadow-xl hover:bg-white hover:border-yellow-500 hover:text-yellow-600 transition-all duration-200 group"
+               title="Bücher & Lernmaterial">
+                <svg class="w-5 h-5 text-stone-500 group-hover:text-yellow-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                </svg>
+            </a>
+        </div>
+
+    @livewireScripts
     </body>
 </html>
