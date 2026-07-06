@@ -2,7 +2,6 @@
 
 use App\Models\ExamAttempt;
 use App\Models\ExamTemplate;
-use App\Models\User;
 use App\Livewire\GuestExam;
 use Livewire\Livewire;
 
@@ -12,7 +11,7 @@ test('guest users can access the free exam page without being logged in', functi
     $response->assertSeeLivewire(GuestExam::class);
 });
 
-test('guest users can view published exam templates', function () {
+test('guest users see the module with sections as chapters', function () {
     ExamTemplate::query()->delete();
     $template = ExamTemplate::create([
         'title' => 'Test Free Exam B1',
@@ -22,60 +21,68 @@ test('guest users can view published exam templates', function () {
         'timings' => [],
         'sections' => [
             [
-                'id' => 'sec1',
-                'title' => 'Reading Section',
+                'id' => 'sec-reading',
+                'title' => 'Leseverstehen',
                 'minutes' => 10,
                 'elements' => [
-                    [
-                        'id' => 'el1',
-                        'type' => 'multiple_choice',
-                        'label' => 'Q1',
-                        'options' => 'a,b,c',
-                        'answer' => 'a',
-                        'points' => 2,
-                    ]
-                ]
-            ]
-        ]
+                    ['id' => 'el1', 'type' => 'multiple_choice', 'label' => 'Q1', 'options' => 'a,b,c', 'answer' => 'a', 'points' => 2],
+                ],
+            ],
+            [
+                'id' => 'sec-writing',
+                'title' => 'Schriftlicher Ausdruck',
+                'minutes' => 15,
+                'elements' => [],
+            ],
+        ],
     ]);
 
     Livewire::test(GuestExam::class)
         ->assertSee('Test Free Exam B1')
-        ->assertSee('Start Free Exam');
+        ->assertSee('Leseverstehen')
+        ->assertSee('Schriftlicher Ausdruck')
+        ->assertSee('Start');
 });
 
-test('guest users can complete a free exam and it is recorded', function () {
+test('level query param selects the correct exam', function () {
+    ExamTemplate::query()->delete();
+    ExamTemplate::create([
+        'title' => 'B1 Exam', 'level' => 'B1', 'is_published' => true,
+        'theme' => [], 'timings' => [],
+        'sections' => [['id' => 's1', 'title' => 'Section 1', 'minutes' => 5, 'elements' => []]],
+    ]);
+    ExamTemplate::create([
+        'title' => 'B2 Exam', 'level' => 'B2', 'is_published' => true,
+        'theme' => [], 'timings' => [],
+        'sections' => [['id' => 's2', 'title' => 'Section B2', 'minutes' => 5, 'elements' => []]],
+    ]);
+
+    Livewire::withQueryParams(['level' => 'B2'])
+        ->test(GuestExam::class)
+        ->assertSee('B2 Exam')
+        ->assertDontSee('B1 Exam');
+});
+
+test('user can start a section and submit it', function () {
     ExamTemplate::query()->delete();
     $template = ExamTemplate::create([
-        'title' => 'Test Free Exam B2',
-        'level' => 'B2',
-        'is_published' => true,
+        'title' => 'Test B1', 'level' => 'B1', 'is_published' => true,
         'theme' => ['accent' => '#d8232a', 'ink' => '#202020'],
         'timings' => [],
         'sections' => [
-            [
-                'id' => 'sec1',
-                'title' => 'Reading Section',
-                'minutes' => 10,
-                'elements' => [
-                    [
-                        'id' => 'el1',
-                        'type' => 'multiple_choice',
-                        'label' => 'Q1',
-                        'options' => 'a,b,c',
-                        'answer' => 'b',
-                        'points' => 2,
-                    ]
-                ]
-            ]
-        ]
+            ['id' => 'sec1', 'title' => 'Reading', 'minutes' => 10, 'elements' => [
+                ['id' => 'q1', 'type' => 'multiple_choice', 'label' => 'Q1', 'options' => 'a,b,c', 'answer' => 'b', 'points' => 2],
+            ]],
+        ],
     ]);
 
     expect(ExamAttempt::count())->toBe(0);
 
     Livewire::test(GuestExam::class)
-        ->call('loadTemplate', $template->id)
-        ->set('answers', ['el1' => 'b'])
+        ->call('startSection', 0)
+        ->assertSet('activeSectionIndex', 0)
+        ->assertSet('started', true)
+        ->set('answers', ['q1' => 'b'])
         ->call('submit')
         ->assertSet('result.earned', 2)
         ->assertSet('result.possible', 2);
@@ -86,37 +93,121 @@ test('guest users can complete a free exam and it is recorded', function () {
     expect($attempt->exam_template_id)->toBe($template->id);
 });
 
-test('guest users are restricted to two free exams a day via cookies', function () {
+test('first-time section submission is tracked as completed', function () {
     ExamTemplate::query()->delete();
-    $template = ExamTemplate::create([
-        'title' => 'Daily Limit Exam',
-        'level' => 'C1',
-        'is_published' => true,
-        'theme' => [],
-        'timings' => [],
+    ExamTemplate::create([
+        'title' => 'Test B1', 'level' => 'B1', 'is_published' => true,
+        'theme' => [], 'timings' => [],
         'sections' => [
-            [
-                'id' => 'sec1',
-                'title' => 'Part 1',
-                'minutes' => 5,
-                'elements' => []
-            ]
-        ]
+            ['id' => 'sec-a', 'title' => 'Section A', 'minutes' => 5, 'elements' => [
+                ['id' => 'q1', 'type' => 'multiple_choice', 'label' => 'Q1', 'options' => 'a,b,c', 'answer' => 'a', 'points' => 1],
+            ]],
+            ['id' => 'sec-b', 'title' => 'Section B', 'minutes' => 5, 'elements' => [
+                ['id' => 'q2', 'type' => 'multiple_choice', 'label' => 'Q2', 'options' => 'a,b,c', 'answer' => 'a', 'points' => 1],
+            ]],
+        ],
     ]);
 
-    // 1st exam
-    $component = Livewire::test(GuestExam::class)
-        ->call('loadTemplate', $template->id)
-        ->call('submit')
-        ->assertSet('hasReachedLimit', false);
+    $component = Livewire::test(GuestExam::class);
 
-    // Simulate 2nd exam with a cookie containing "1" exam done today
-    $today = today()->toDateString();
-    
-    // Test with cookie simulation
-    Livewire::withCookie('free_exams_limit_tracker', "$today:2")
-        ->test(GuestExam::class)
-        ->assertSet('hasReachedLimit', true)
-        ->call('loadTemplate', $template->id)
-        ->assertSet('template', []); // template should not be loaded
+    expect($component->get('completedSectionIds'))->toBe([]);
+    expect($component->get('remainingSections'))->toBe(4);
+
+    // Complete first section
+    $component->call('startSection', 0)
+        ->set('answers', ['q1' => 'a'])
+        ->call('submit')
+        ->assertSet('result.earned', 1);
+
+    expect($component->get('completedSectionIds'))->toContain('sec-a');
+    expect(count($component->get('completedSectionIds')))->toBe(1);
+    expect($component->get('remainingSections'))->toBe(3);
+});
+
+test('retry does not consume another free slot', function () {
+    ExamTemplate::query()->delete();
+    ExamTemplate::create([
+        'title' => 'Test B1', 'level' => 'B1', 'is_published' => true,
+        'theme' => [], 'timings' => [],
+        'sections' => [
+            ['id' => 'sec-x', 'title' => 'Section X', 'minutes' => 5, 'elements' => [
+                ['id' => 'q1', 'type' => 'multiple_choice', 'label' => 'Q1', 'options' => 'a,b,c', 'answer' => 'a', 'points' => 1],
+            ]],
+        ],
+    ]);
+
+    $component = Livewire::test(GuestExam::class);
+
+    // First completion
+    $component->call('startSection', 0)
+        ->set('answers', ['q1' => 'a'])
+        ->call('submit');
+
+    expect(count($component->get('completedSectionIds')))->toBe(1);
+    expect($component->get('remainingSections'))->toBe(3);
+
+    // Retry - go back to chapters and start same section again
+    $component->call('backToChapters')
+        ->call('startSection', 0)
+        ->set('answers', ['q1' => 'a'])
+        ->call('submit');
+
+    // Should still only be 1 completed, remaining still 3
+    expect(count($component->get('completedSectionIds')))->toBe(1);
+    expect($component->get('remainingSections'))->toBe(3);
+});
+
+test('limit reached shows hasReachedLimit true', function () {
+    // Override freeSectionLimit to 1
+    \App\Models\Setting::query()->updateOrCreate(
+        ['key' => 'free_section_limit'],
+        ['value' => '1'],
+    );
+
+    ExamTemplate::query()->delete();
+    ExamTemplate::create([
+        'title' => 'Test B1', 'level' => 'B1', 'is_published' => true,
+        'theme' => [], 'timings' => [],
+        'sections' => [
+            ['id' => 'sec-1', 'title' => 'Section 1', 'minutes' => 5, 'elements' => [
+                ['id' => 'q1', 'type' => 'multiple_choice', 'label' => 'Q1', 'options' => 'a,b,c', 'answer' => 'a', 'points' => 1],
+            ]],
+            ['id' => 'sec-2', 'title' => 'Section 2', 'minutes' => 5, 'elements' => [
+                ['id' => 'q2', 'type' => 'multiple_choice', 'label' => 'Q2', 'options' => 'a,b,c', 'answer' => 'a', 'points' => 1],
+            ]],
+        ],
+    ]);
+
+    $component = Livewire::test(GuestExam::class);
+
+    // 1 free section limit, complete 1 section
+    $component->call('startSection', 0)
+        ->set('answers', ['q1' => 'a'])
+        ->call('submit');
+
+    expect($component->get('hasReachedLimit'))->toBeTrue();
+
+    // Try to start a new section - should NOT load because limit reached
+    $component->call('startSection', 1)
+        ->assertSet('activeSectionIndex', null);
+});
+
+test('guest users can switch levels', function () {
+    ExamTemplate::query()->delete();
+    ExamTemplate::create([
+        'title' => 'B1 Exam', 'level' => 'B1', 'is_published' => true,
+        'theme' => [], 'timings' => [],
+        'sections' => [['id' => 's1', 'title' => 'S1', 'minutes' => 5, 'elements' => []]],
+    ]);
+    ExamTemplate::create([
+        'title' => 'B2 Exam', 'level' => 'B2', 'is_published' => true,
+        'theme' => [], 'timings' => [],
+        'sections' => [['id' => 's2', 'title' => 'S2', 'minutes' => 5, 'elements' => []]],
+    ]);
+
+    Livewire::test(GuestExam::class)
+        ->assertSee('B1 Exam')
+        ->call('selectLevel', 'B2')
+        ->assertSee('B2 Exam')
+        ->assertDontSee('B1 Exam');
 });

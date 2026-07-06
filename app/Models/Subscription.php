@@ -2,30 +2,35 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Laravel\Cashier\Subscription as CashierSubscription;
 
-class Subscription extends CashierSubscription
+class Subscription extends Model
 {
     protected $fillable = [
         'user_id',
         'plan_id',
         'type',
-        'stripe_id',
-        'stripe_subscription_id',
-        'paypal_subscription_id',
-        'stripe_status',
-        'stripe_price',
-        'quantity',
-        'trial_ends_at',
+        'provider',
+        'provider_order_id',
+        'status',
+        'price_paid',
+        'duration_months',
+        'starts_at',
         'ends_at',
+    ];
+
+    protected $attributes = [
+        'type' => 'plan',
     ];
 
     protected function casts(): array
     {
         return [
-            'trial_ends_at' => 'datetime',
+            'starts_at' => 'datetime',
             'ends_at' => 'datetime',
+            'price_paid' => 'decimal:2',
+            'duration_months' => 'integer',
         ];
     }
 
@@ -41,7 +46,7 @@ class Subscription extends CashierSubscription
 
     public function isActive(): bool
     {
-        return $this->stripe_status === 'active'
+        return $this->status === 'active'
             && ($this->ends_at === null || $this->ends_at->isFuture());
     }
 }

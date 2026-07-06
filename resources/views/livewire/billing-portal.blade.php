@@ -59,14 +59,18 @@
                                     <strong>{{ $sub->user->name }}</strong><br>
                                     <small style="color: #666666;">{{ $sub->user->email }}</small>
                                 </td>
-                                <td style="padding: 0.75rem;">{{ $sub->plan->name }} ({{ number_format($sub->plan->price, 2) }} €)</td>
+                                <td style="padding: 0.75rem;">{{ $sub->plan->name }} ({{ number_format($sub->price_paid, 2) }} €)</td>
                                 <td style="padding: 0.75rem;">
-                                    <span style="display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; {{ $sub->stripe_status === 'active' ? 'background: #e6f4ea; color: #137333;' : 'background: #fce8e6; color: #c5221f;' }}">
-                                        {{ $sub->stripe_status }}
+                                    <span style="display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; {{ $sub->status === 'active' ? 'background: #e6f4ea; color: #137333;' : 'background: #fce8e6; color: #c5221f;' }}">
+                                        {{ $sub->status }}
                                     </span>
                                 </td>
                                 <td style="padding: 0.75rem;">
-                                    {{ $sub->ends_at ? $sub->ends_at->format('d.m.Y H:i') : 'Unbegrenzt' }}
+                                    @if ($sub->ends_at)
+                                        {{ $sub->ends_at->format('d.m.Y H:i') }} ({{ $sub->duration_months }} Monat(e))
+                                    @else
+                                        Unbegrenzt
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -85,17 +89,16 @@
                 <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 1.5rem; color: #111827;">Aktives Abonnement</h3>
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; background: #fafafa; padding: 1.5rem; border-radius: 8px; border: 1px solid #f0f0f0;">
                     <div>
-                        <strong style="font-size: 1.35rem; color: #111827; display: block; margin-bottom: 0.25rem;">{{ $subscription->plan->name }}</strong>
+                            <strong style="font-size: 1.35rem; color: #111827; display: block; margin-bottom: 0.25rem;">{{ $subscription->plan->name }}</strong>
                         <span style="font-size: 0.95rem; color: #666666;">
-                            {{ number_format($subscription->plan->price, 2) }} {{ strtoupper($subscription->plan->currency) }} / {{ $subscription->plan->interval === 'month' ? 'Monat' : $subscription->plan->interval }}
+                            {{ number_format($subscription->price_paid, 2) }} {{ strtoupper($subscription->plan->currency) }} für {{ $subscription->duration_months }} Monat(e)
                         </span>
                         @if ($subscription->ends_at)
                             <div style="margin-top: 0.75rem; font-size: 0.9rem; color: #d8232a; font-weight: 700;">
-                                📅 Abonnement endet am: {{ $subscription->ends_at->format('d.m.Y H:i') }} Uhr
+                                📅 Zugang endet am: {{ $subscription->ends_at->format('d.m.Y H:i') }} Uhr
                             </div>
-                        @else
-                            <div style="margin-top: 0.75rem; font-size: 0.9rem; color: #137333; font-weight: 700;">
-                                🔄 Automatische Verlängerung aktiv
+                            <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">
+                                Bezahlt via {{ $subscription->provider === 'revolut' ? 'Revolut' : 'PayPal' }} · {{ number_format($subscription->price_paid, 2) }} € für {{ $subscription->duration_months }} Monat(e)
                             </div>
                         @endif
                     </div>

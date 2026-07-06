@@ -21,7 +21,6 @@ test('subscribed users can bypass enrollment payment modal and start exams direc
 
     $plan = Plan::create([
         'name' => 'Monthly Plan',
-        'stripe_price_id' => 'price_test_123',
         'price' => 19.99,
         'currency' => 'eur',
         'interval' => 'month',
@@ -42,10 +41,12 @@ test('subscribed users can bypass enrollment payment modal and start exams direc
     Subscription::create([
         'user_id' => $student->id,
         'plan_id' => $plan->id,
-        'type' => 'default',
-        'stripe_id' => 'sub_123',
-        'stripe_subscription_id' => 'sub_123',
-        'stripe_status' => 'active',
+        'provider' => 'paypal',
+        'provider_order_id' => 'sub_123',
+        'status' => 'active',
+        'duration_months' => 1,
+        'starts_at' => now(),
+        'ends_at' => now()->addMonth(),
     ]);
 
     // Assert now subscribed and can start

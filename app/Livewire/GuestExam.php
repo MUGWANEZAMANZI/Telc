@@ -6,16 +6,31 @@ use App\Models\ExamAttempt;
 use App\Models\ExamTemplate;
 use App\Models\Setting;
 use App\Services\ExamGrader;
+use Illuminate\Support\Facades\Cookie;
 use Livewire\Component;
 
 class GuestExam extends Component
 {
-    public ?int $selectedTemplateId = null;
+    public string $selectedLevel = 'B1';
+
+    public int $freeSectionLimit = 4;
+
+    /** @var array<int, string> */
+    public array $completedSectionIds = [];
+
+    /** @var array<int, string> */
+    public array $noRetrySectionIds = [];
+
+    public int $remainingSections = 4;
 
     public bool $hasReachedLimit = false;
 
+    public ?int $selectedTemplateId = null;
+
     /** @var array<string, mixed> */
     public array $template = [];
+
+    public ?int $activeSectionIndex = null;
 
     /** @var array<string, mixed> */
     public array $answers = [];
@@ -31,64 +46,212 @@ class GuestExam extends Component
 
     public function mount(): void
     {
-        $this->checkLimit();
+        $this->freeSectionLimit = max(1, (int) Setting::value('free_section_limit', '4'));
+
+        $this->loadCompletedFromCookie();
+        $this->loadNoRetryFromCookie();
+
+        $level = request()->query('level', '');
+        if (in_array($level, ['B1', 'B2', 'C2'], true)) {
+            $this->selectedLevel = $level;
+        }
+
+        $this->loadTemplateForLevel();
+        $this->recalculateRemaining();
     }
 
-    public function checkLimit(): void
+    public function loadCompletedFromCookie(): void
     {
-        $today = today()->toDateString();
-        $tracker = request()->cookie('free_exams_limit_tracker');
-        if ($tracker) {
-            $parts = explode(':', $tracker);
-            if (count($parts) === 2) {
-                [$date, $count] = $parts;
-                if ($date === $today && (int) $count >= 2) {
-                    $this->hasReachedLimit = true;
-                }
-            }
+        $raw = request()->cookie('free_sections_completed');
+        if ($raw) {
+            $decoded = json_decode($raw, true);
+            $this->completedSectionIds = is_array($decoded) ? $decoded : [];
+        } else {
+            $this->completedSectionIds = [];
         }
     }
 
-    public function render()
+    public function saveCompletedToCookie(): void
     {
-        return view('livewire.guest-exam', [
-            'templates' => ExamTemplate::query()
-                ->where('is_published', true)
-                ->orderBy('level')
-                ->orderBy('title')
-                ->get(),
-        ]);
+        Cookie::queue('free_sections_completed', json_encode($this->completedSectionIds), 60 * 24 * 365);
     }
 
-    public function loadTemplate(int $id): void
+    public function loadNoRetryFromCookie(): void
     {
-        $this->checkLimit();
+        $raw = request()->cookie('free_no_retry_sections');
+        if ($raw) {
+            $decoded = json_decode($raw, true);
+            $this->noRetrySectionIds = is_array($decoded) ? $decoded : [];
+        } else {
+            $this->noRetrySectionIds = [];
+        }
+    }
 
-        if ($this->hasReachedLimit) {
+    public function saveNoRetryToCookie(): void
+    {
+        Cookie::queue('free_no_retry_sections', json_encode($this->noRetrySectionIds), 60 * 24 * 365);
+    }
+
+    public function recalculateRemaining(): void
+    {
+        $completed = count($this->completedSectionIds);
+        $this->remainingSections = max(0, $this->freeSectionLimit - $completed);
+        $this->hasReachedLimit = $this->remainingSections <= 0;
+    }
+
+    public function selectLevel(string $level): void
+    {
+        if (! in_array($level, ['B1', 'B2', 'C2'], true)) {
             return;
         }
 
+        $this->selectedLevel = $level;
+        $this->activeSectionIndex = null;
+        $this->answers = [];
+        $this->result = null;
+        $this->started = false;
+        $this->loadTemplateForLevel();
+    }
+
+    public function loadTemplateForLevel(): void
+    {
         $record = ExamTemplate::query()
             ->where('is_published', true)
-            ->findOrFail($id);
+            ->where('level', $this->selectedLevel)
+            ->first();
+
+        if (! $record) {
+            $this->template = [];
+            $this->selectedTemplateId = null;
+            return;
+        }
 
         $this->selectedTemplateId = $record->id;
         $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
-        $this->answers = [];
-        $this->result = null;
-        $this->activeSection = 0;
-        $this->resetTimer();
+
+        $this->recalculateRemaining();
+    }
+
+    public function getLevels(): array
+    {
+        return ExamTemplate::query()
+            ->where('is_published', true)
+            ->whereIn('level', ['B1', 'B2', 'C2'])
+            ->pluck('level')
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+    }
+
+    public function isSectionCompleted(int $sectionIndex): bool
+    {
+        $sections = $this->template['sections'] ?? [];
+        if (! isset($sections[$sectionIndex])) {
+            return false;
+        }
+        return in_array($sections[$sectionIndex]['id'], $this->completedSectionIds, true);
+    }
+
+    public function isNoRetrySection(int $sectionIndex): bool
+    {
+        $sections = $this->template['sections'] ?? [];
+        if (! isset($sections[$sectionIndex])) {
+            return false;
+        }
+        $id = $sections[$sectionIndex]['id'];
+        return in_array($id, $this->noRetrySectionIds, true);
+    }
+
+    public function canRetry(int $sectionIndex): bool
+    {
+        if (! $this->isSectionCompleted($sectionIndex)) {
+            return true;
+        }
+        return ! $this->isNoRetrySection($sectionIndex);
+    }
+
+    public function sectionHasAudio(int $sectionIndex): bool
+    {
+        $sections = $this->template['sections'] ?? [];
+        if (! isset($sections[$sectionIndex])) {
+            return false;
+        }
+        return collect($sections[$sectionIndex]['elements'] ?? [])
+            ->contains(fn ($el) => ($el['type'] ?? '') === 'audio');
+    }
+
+    public function sectionHasSpeaking(int $sectionIndex): bool
+    {
+        $sections = $this->template['sections'] ?? [];
+        if (! isset($sections[$sectionIndex])) {
+            return false;
+        }
+        return collect($sections[$sectionIndex]['elements'] ?? [])
+            ->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
+    }
+
+    public function sectionType(int $sectionIndex): string
+    {
+        if ($this->sectionHasSpeaking($sectionIndex)) {
+            return 'speaking';
+        }
+        if ($this->sectionHasAudio($sectionIndex)) {
+            return 'listening';
+        }
+        $sections = $this->template['sections'] ?? [];
+        if (! isset($sections[$sectionIndex])) {
+            return 'default';
+        }
+        $elements = $sections[$sectionIndex]['elements'] ?? [];
+        $types = collect($elements)->pluck('type')->unique()->values()->toArray();
+        if (in_array('writing', $types, true)) {
+            return 'writing';
+        }
+        if (in_array('inline_gap', $types, true) || in_array('interactive_text', $types, true)) {
+            return 'reading';
+        }
+        return 'reading';
+    }
+
+    public function sectionStatus(int $sectionIndex): string
+    {
+        if ($this->isSectionCompleted($sectionIndex) && $this->isNoRetrySection($sectionIndex)) {
+            return 'locked';
+        }
+        if ($this->isSectionCompleted($sectionIndex)) {
+            return 'completed';
+        }
+        if ($this->activeSectionIndex === $sectionIndex && $this->started) {
+            return 'in-progress';
+        }
+        return 'new';
     }
 
     public function startSection(int $index): void
     {
-        if (! isset($this->template['sections'][$index])) {
+        $sections = $this->template['sections'] ?? [];
+        if (! isset($sections[$index])) {
             return;
         }
 
+        $this->recalculateRemaining();
+        $isNew = ! $this->isSectionCompleted($index);
+
+        if ($isNew && $this->hasReachedLimit) {
+            return;
+        }
+
+        if ($this->isSectionCompleted($index) && $this->isNoRetrySection($index)) {
+            return;
+        }
+
+        $this->activeSectionIndex = $index;
         $this->activeSection = $index;
+        $this->answers = [];
+        $this->result = null;
         $this->started = true;
-        $this->remainingSeconds = max((int) ($this->template['sections'][$index]['minutes'] ?? 1), 1) * 60;
+        $this->remainingSeconds = max((int) ($sections[$index]['minutes'] ?? 1), 1) * 60;
     }
 
     public function tick(): void
@@ -106,12 +269,38 @@ class GuestExam extends Component
 
     public function submit(): void
     {
-        if (! $this->selectedTemplateId) {
+        if (! $this->selectedTemplateId || $this->activeSectionIndex === null) {
+            return;
+        }
+
+        $sections = $this->template['sections'] ?? [];
+        $currentSection = $sections[$this->activeSectionIndex] ?? null;
+
+        if (! $currentSection) {
             return;
         }
 
         $this->started = false;
-        $this->result = app(ExamGrader::class)->grade($this->template['sections'] ?? [], $this->answers);
+        $this->result = app(ExamGrader::class)->grade(
+            [$currentSection],
+            $this->answers
+        );
+
+        $sectionId = $currentSection['id'];
+        $isFirstCompletion = ! in_array($sectionId, $this->completedSectionIds, true);
+
+        if ($isFirstCompletion) {
+            $this->completedSectionIds[] = $sectionId;
+            $this->saveCompletedToCookie();
+            $this->recalculateRemaining();
+        }
+
+        if ($this->sectionHasSpeaking($this->activeSectionIndex) || $this->sectionHasAudio($this->activeSectionIndex)) {
+            if (! in_array($sectionId, $this->noRetrySectionIds, true)) {
+                $this->noRetrySectionIds[] = $sectionId;
+                $this->saveNoRetryToCookie();
+            }
+        }
 
         ExamAttempt::create([
             'exam_template_id' => $this->selectedTemplateId,
@@ -121,39 +310,27 @@ class GuestExam extends Component
             'started_at' => now(),
             'submitted_at' => now(),
         ]);
-
-        $today = today()->toDateString();
-        $tracker = request()->cookie('free_exams_limit_tracker');
-        $count = 0;
-        if ($tracker) {
-            $parts = explode(':', $tracker);
-            if (count($parts) === 2) {
-                [$date, $cookieCount] = $parts;
-                if ($date === $today) {
-                    $count = (int) $cookieCount;
-                }
-            }
-        }
-        $count++;
-
-        \Illuminate\Support\Facades\Cookie::queue('free_exams_limit_tracker', "$today:$count", 1440);
-
-        if ($count >= 2) {
-            $this->hasReachedLimit = true;
-        }
-
-        $sessionCount = (int) session('guest_exam_count', 0);
-        session(['guest_exam_count' => $sessionCount + 1]);
-
-        $ids = (array) session('guest_exam_ids', []);
-        $ids[] = $this->selectedTemplateId;
-        session(['guest_exam_ids' => $ids]);
     }
 
-    public function resetTimer(): void
+    public function backToChapters(): void
     {
+        $this->activeSectionIndex = null;
+        $this->answers = [];
+        $this->result = null;
         $this->started = false;
-        $this->remainingSeconds = max((int) ($this->template['sections'][$this->activeSection]['minutes'] ?? 1), 1) * 60;
+    }
+
+    public function render()
+    {
+        $sections = $this->template['sections'] ?? [];
+
+        return view('livewire.guest-exam', [
+            'levels' => $this->getLevels(),
+            'sections' => $sections,
+            'currentSection' => ($this->activeSectionIndex !== null && isset($sections[$this->activeSectionIndex]))
+                ? $sections[$this->activeSectionIndex]
+                : null,
+        ]);
     }
 
     /**

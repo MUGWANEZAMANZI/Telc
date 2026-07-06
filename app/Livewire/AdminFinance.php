@@ -26,15 +26,21 @@ class AdminFinance extends Component
             ->whereNotNull('exam_templates.price')
             ->sum(DB::raw('exam_templates.price'));
 
-        $activeSubscriptions = Subscription::query()->where('stripe_status', 'active')->count();
+        $activeSubscriptions = Subscription::query()
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
+            })
+            ->count();
 
-        $subscriptionMrr = (float) Subscription::query()
-            ->where('stripe_status', 'active')
-            ->join('plans', 'subscriptions.plan_id', '=', 'plans.id')
-            ->where('plans.interval', 'month')
-            ->sum(DB::raw('plans.price'));
+        $subscriptionRevenue = (float) Subscription::query()
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
+            })
+            ->sum(DB::raw('COALESCE(price_paid, 0)'));
 
-        $totalRevenue = $totalExamRevenue + $subscriptionMrr;
+        $totalRevenue = $totalExamRevenue + $subscriptionRevenue;
 
         $pendingPayments = ExamEnrollment::query()
             ->where('status', 'pending')
@@ -66,7 +72,7 @@ class AdminFinance extends Component
         return view('livewire.admin-finance', [
             'totalExamRevenue' => $totalExamRevenue,
             'activeSubscriptions' => $activeSubscriptions,
-            'subscriptionMrr' => $subscriptionMrr,
+            'subscriptionRevenue' => $subscriptionRevenue,
             'totalRevenue' => $totalRevenue,
             'pendingPayments' => $pendingPayments,
             'transactions' => $transactions,

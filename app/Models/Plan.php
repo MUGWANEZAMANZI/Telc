@@ -13,7 +13,6 @@ class Plan extends Model
         'price',
         'currency',
         'interval',
-        'stripe_price_id',
         'features',
         'is_active',
     ];
@@ -30,5 +29,10 @@ class Plan extends Model
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function getPriceForDuration(int $months): float
+    {
+        return (float) $this->price * $months;
     }
 }

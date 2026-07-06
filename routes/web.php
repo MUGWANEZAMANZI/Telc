@@ -24,21 +24,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('checkout', [\App\Http\Controllers\CheckoutController::class, 'checkout'])->name('checkout');
-    Route::get('exam-checkout/{examTemplate}', [\App\Http\Controllers\CheckoutController::class, 'examCheckout'])
-        ->name('exam.checkout');
+    // PayPal
+    Route::get('paypal/exam-checkout/{examTemplate}', [\App\Http\Controllers\PayPalCheckoutController::class, 'examCheckout'])->name('paypal.exam.checkout');
+    Route::get('paypal/plan-checkout', [\App\Http\Controllers\PayPalCheckoutController::class, 'planCheckout'])->name('paypal.plan.checkout');
+    Route::get('paypal/success', [\App\Http\Controllers\PayPalCheckoutController::class, 'success'])->name('paypal.success');
+    Route::get('paypal/cancel', [\App\Http\Controllers\PayPalCheckoutController::class, 'cancel'])->name('paypal.cancel');
 
-    Route::get('paypal/checkout/{plan}', [\App\Http\Controllers\PayPalCheckoutController::class, 'planCheckout'])
-        ->name('paypal.checkout');
-    Route::get('paypal/exam-checkout/{examTemplate}', [\App\Http\Controllers\PayPalCheckoutController::class, 'examCheckout'])
-        ->name('paypal.exam.checkout');
-    Route::get('paypal/success', [\App\Http\Controllers\PayPalCheckoutController::class, 'success'])
-        ->name('paypal.success');
-    Route::get('paypal/cancel', [\App\Http\Controllers\PayPalCheckoutController::class, 'cancel'])
-        ->name('paypal.cancel');
+    // Revolut
+    Route::post('revolut/create-order', [\App\Http\Controllers\RevolutCheckoutController::class, 'createOrder'])->name('revolut.create');
+    Route::get('revolut/success', [\App\Http\Controllers\RevolutCheckoutController::class, 'success'])->name('revolut.success');
+    Route::get('revolut/cancel', [\App\Http\Controllers\RevolutCheckoutController::class, 'cancel'])->name('revolut.cancel');
 });
 
 Route::post('paypal/webhook', [\App\Http\Controllers\PayPalCheckoutController::class, 'webhook']);
+Route::post('api/webhooks/revolut', [\App\Http\Controllers\RevolutCheckoutController::class, 'webhook'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
 Route::get('/telc-assets/{file}', function (string $file) {
     abort_unless(str_ends_with($file, '.mp3'), 404);
@@ -61,5 +60,3 @@ Route::get('/exam-audio/{path}', function (string $path) {
 })->where('path', '.*')->name('exam.audio')->middleware(['auth', 'verified']);
 
 require __DIR__.'/settings.php';
-
-

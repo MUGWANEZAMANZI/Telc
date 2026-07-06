@@ -145,7 +145,7 @@
                                 </div>
                                 <div class="mt-4">
                                     @if ($isAuth)
-                                        <a href="{{ route('exam.checkout', $exam->id) }}"
+                                        <a href="{{ route('paypal.exam.checkout', $exam->id) }}"
                                            class="block w-full text-center bg-stone-900 hover:bg-stone-800 text-white font-bold px-4 py-2.5 rounded-full text-xs uppercase tracking-wider transition-colors duration-200">
                                             Jetzt freischalten &ndash; &euro;{{ number_format($exam->price, 2) }}
                                         </a>

@@ -36,7 +36,9 @@ class LandingExamCatalog extends Component
 
     public function startFreeExam(int $templateId): void
     {
-        $this->redirect(route('free.exam'));
+        $exam = ExamTemplate::find($templateId);
+        $level = $exam?->level ?? 'B1';
+        $this->redirect(route('free.exam', ['level' => $level]));
     }
 
     public function promptRegister(): void

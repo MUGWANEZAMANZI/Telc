@@ -2,17 +2,13 @@
 
 namespace App\Providers;
 
-use App\Listeners\StripeEventListener;
-use App\Models\Subscription;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
-use Laravel\Cashier\Cashier;
-use Laravel\Cashier\Events\WebhookReceived;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,10 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Cashier::useSubscriptionModel(Subscription::class);
-
-        Event::listen(WebhookReceived::class, StripeEventListener::class);
-
         $this->configureDefaults();
         $this->recordSuccessfulLogins();
     }
@@ -62,7 +54,6 @@ class AppServiceProvider extends ServiceProvider
     protected function recordSuccessfulLogins(): void
     {
         Event::listen(Login::class, function (Login $event): void {
-            // Delete other sessions for this user from sessions table to prevent account sharing
             DB::table('sessions')
                 ->where('user_id', $event->user->id)
                 ->where('id', '!=', session()->getId())

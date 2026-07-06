@@ -39,4 +39,10 @@ return [
         'product_id' => env('PAYPAL_PRODUCT_ID'),
     ],
 
+    'revolut' => [
+        'secret' => env('REVOLUT_MERCHANT_SECRET_KEY'),
+        'public' => env('REVOLUT_MERCHANT_PUBLIC_KEY'),
+        'sandbox' => env('REVOLUT_SANDBOX', true),
+    ],
+
 ];

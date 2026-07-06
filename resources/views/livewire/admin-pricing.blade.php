@@ -38,9 +38,6 @@
                     <option value="year">Yearly</option>
                 </select>
 
-                <label>Stripe Price ID</label>
-                <input type="text" wire:model.live="planForm.stripe_price_id" class="telc-input">
-
                 <label>Features (one per line)</label>
                 <textarea wire:model.live="planForm.features" class="telc-textarea" style="min-height:6rem;font-family:monospace" placeholder="Unlimited exams&#10;AI feedback&#10;Priority support"></textarea>
 
@@ -139,9 +136,9 @@
         <div class="telc-panel" style="max-width:480px">
             <h2>Platform Settings</h2>
 
-            <label>Free exams per session</label>
-            <input type="number" wire:model.live="freeExamsPerSession" class="telc-input" min="0">
-            <p style="color:#667085;font-size:.78rem;margin:0 0 1rem">Number of free guest exams allowed per browser session. Set to 0 to disable free access.</p>
+            <label>Free section completions limit</label>
+            <input type="number" wire:model.live="freeSectionLimit" class="telc-input" min="0">
+            <p style="color:#667085;font-size:.78rem;margin:0 0 1rem">Number of free section completions a user gets before needing to subscribe. Set to 0 to disable free access.</p>
 
             <button type="button" wire:click="saveSettings" class="telc-button primary">Save Settings</button>
         </div>

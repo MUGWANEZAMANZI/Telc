@@ -169,12 +169,67 @@
             transform: translateY(-1px);
         }
 
+        .duration-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .duration-option {
+            flex: 1;
+            padding: 0.6rem 0.5rem;
+            border: 2px solid #e5e5e5;
+            border-radius: 6px;
+            background: #fafafa;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .duration-option.selected {
+            border-color: var(--telc-ink);
+            background: var(--telc-ink);
+            color: #fff;
+        }
+
+        .duration-option .price-tag {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 400;
+            margin-top: 0.15rem;
+            opacity: 0.7;
+        }
+
+        .duration-option.selected .price-tag {
+            opacity: 0.9;
+        }
+
         .pricing-footer {
             margin-top: 5rem;
             border-top: 1px solid #e5e5e5;
             padding-top: 3rem;
             color: #666666;
             font-size: 0.85rem;
+        }
+
+        #revolut-pay-button {
+            min-height: 48px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e5e5;
+            border-top-color: var(--telc-ink);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -189,21 +244,22 @@
             @php $plans = \App\Models\Plan::query()->where('is_active', true)->orderBy('price')->get(); @endphp
             @forelse ($plans as $plan)
                 @php
-                    $isPremium = $plan->stripe_price_id === 'price_premium_monthly';
+                    $isPremium = $plan->name === 'Monatliches Training (Standard)';
+                    $isOneOff = $plan->interval !== 'month';
                 @endphp
                 <article class="pricing-card {{ $isPremium ? 'premium-tier' : '' }}">
                     <div>
                         <h2>{{ $plan->name }}</h2>
                         <p class="pricing-desc">{{ $plan->description }}</p>
-                        
+
                         <div class="pricing-amount">
                             <span class="price">{{ number_format($plan->price, 0) }}</span>
                             <span class="currency">€</span>
                             <span class="interval">
-                                @if($plan->interval === 'month')
-                                    / Monat
-                                @else
+                                @if($isOneOff)
                                     / einmalig
+                                @else
+                                    / Monat
                                 @endif
                             </span>
                         </div>
@@ -218,17 +274,32 @@
                     </div>
 
                     @auth
-                        @if ($plan->interval === 'month')
+                        @if ($isOneOff)
                             <button type="button"
-                                    onclick="openPaymentModal({{ $plan->id }}, '{{ $plan->paypal_plan_id ? 'both' : 'stripe' }}')"
+                                    onclick="openPaymentModal({{ $plan->id }}, 'plan', null)"
                                     class="telc-button primary">
-                                Monatlich abonnieren
+                                Jetzt freischalten
                             </button>
                         @else
-                            <a href="{{ route('checkout', ['plan_id' => $plan->id]) }}"
-                               class="telc-button primary">
-                                Jetzt freischalten
-                            </a>
+                            <div class="duration-selector" data-plan-id="{{ $plan->id }}">
+                                <div class="duration-option selected" data-months="1" onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->price }})">
+                                    1 Monat
+                                    <span class="price-tag">{{ number_format($plan->price, 2) }} €</span>
+                                </div>
+                                <div class="duration-option" data-months="3" onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->price }})">
+                                    3 Monate
+                                    <span class="price-tag">{{ number_format($plan->price * 3, 2) }} €</span>
+                                </div>
+                                <div class="duration-option" data-months="12" onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->price }})">
+                                    12 Monate
+                                    <span class="price-tag">{{ number_format($plan->price * 12, 2) }} €</span>
+                                </div>
+                            </div>
+                            <button type="button"
+                                    onclick="openPaymentModal({{ $plan->id }}, 'plan', getSelectedDuration({{ $plan->id }}))"
+                                    class="telc-button primary">
+                                Jetzt kaufen
+                            </button>
                         @endif
                     @else
                         <a href="{{ route('register') }}" class="telc-button primary">Konto erstellen</a>
@@ -242,7 +313,7 @@
         </div>
 
         <div class="pricing-footer">
-            <p>© {{ date('Y') }} Erfolg. Alle Preise inkl. gesetzlicher MwSt. Zahlungen werden sicher über Stripe und PayPal abgewickelt.</p>
+            <p>&copy; {{ date('Y') }} Erfolg. Alle Preise inkl. gesetzlicher MwSt. Zahlungen werden sicher über Revolut und PayPal abgewickelt.</p>
         </div>
     </div>
 
@@ -250,17 +321,29 @@
     <div id="paymentModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
         <div style="background: #ffffff; padding: 2.5rem; max-width: 480px; width: 90%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid #d8232a; font-family: 'Plus Jakarta Sans', sans-serif; text-align: left;">
             <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 0.5rem; color: #1a1a1a;">Zahlungsmethode wählen</h3>
-            <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">Bitte wählen Sie eine Zahlungsmethode für Ihr Abonnement.</p>
+            <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">Bitte wählen Sie eine Zahlungsmethode.</p>
+
+            <div id="revolut-section" style="display: none; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
+                <div style="border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa;">
+                    <strong style="font-size: 0.95rem; color: #1a1a1a; display: block; margin-bottom: 1rem;">Mit Revolut bezahlen</strong>
+                    <div id="revolut-pay-button"></div>
+                    <div id="revolut-loading" style="text-align: center; padding: 1rem;">
+                        <div class="loading-spinner"></div>
+                        <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Zahlung wird vorbereitet...</p>
+                    </div>
+                    <div id="revolut-error" style="display: none; color: #d8232a; font-size: 0.85rem; margin-top: 0.5rem;"></div>
+                </div>
+            </div>
 
             <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
-                <a id="stripeBtn" href="#" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; text-decoration: none; color: inherit; box-sizing: border-box;">
-                    <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit Kreditkarte (Stripe) zahlen</strong>
-                    <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Weiter</span>
-                </a>
                 <a id="paypalBtn" href="#" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; text-decoration: none; color: inherit; box-sizing: border-box;">
                     <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit PayPal bezahlen</strong>
                     <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Weiter</span>
                 </a>
+                <button type="button" onclick="initRevolutPay()" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; text-decoration: none; color: inherit; box-sizing: border-box; font-family: inherit; font-size: inherit;">
+                    <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit Kreditkarte (Revolut) zahlen</strong>
+                    <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Jetzt bezahlen</span>
+                </button>
             </div>
 
             <div style="display: flex; justify-content: flex-end;">
@@ -271,24 +354,120 @@
 
     <script>
         let selectedPlanId = null;
+        let selectedDuration = 1;
+        let selectedItemType = 'plan';
 
-        function openPaymentModal(planId, available) {
+        function selectDuration(el, planId, monthlyPrice) {
+            el.parentElement.querySelectorAll('.duration-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function getSelectedDuration(planId) {
+            const selector = document.querySelector(`.duration-selector[data-plan-id="${planId}"]`);
+            if (! selector) return 1;
+            const selected = selector.querySelector('.duration-option.selected');
+            return selected ? parseInt(selected.dataset.months) : 1;
+        }
+
+        function openPaymentModal(planId, type, duration) {
             selectedPlanId = planId;
-            document.getElementById('stripeBtn').href = '{{ route('checkout') }}?plan_id=' + planId;
+            selectedItemType = type || 'plan';
+            selectedDuration = duration || getSelectedDuration(planId);
+
+            const paypalUrl = type === 'plan'
+                ? '{{ route('paypal.plan.checkout') }}?plan_id=' + planId + '&duration=' + selectedDuration
+                : null;
 
             const paypalBtn = document.getElementById('paypalBtn');
-            if (available === 'both') {
-                paypalBtn.href = '{{ route('paypal.checkout', '__PLAN_ID__') }}'.replace('__PLAN_ID__', planId);
+            if (paypalUrl) {
+                paypalBtn.href = paypalUrl;
                 paypalBtn.style.display = 'flex';
             } else {
                 paypalBtn.style.display = 'none';
             }
+
+            document.getElementById('revolut-section').style.display = 'none';
+            document.getElementById('revolut-pay-button').innerHTML = '';
+            document.getElementById('revolut-error').style.display = 'none';
 
             document.getElementById('paymentModal').style.display = 'flex';
         }
 
         function closePaymentModal() {
             document.getElementById('paymentModal').style.display = 'none';
+            document.getElementById('revolut-section').style.display = 'none';
+        }
+
+        async function initRevolutPay() {
+            const revolutSection = document.getElementById('revolut-section');
+            const revolutButton = document.getElementById('revolut-pay-button');
+            const revolutLoading = document.getElementById('revolut-loading');
+            const revolutError = document.getElementById('revolut-error');
+
+            revolutSection.style.display = 'flex';
+            revolutLoading.style.display = 'block';
+            revolutError.style.display = 'none';
+
+            try {
+                const response = await fetch('{{ route('revolut.create') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        type: selectedItemType,
+                        id: selectedPlanId,
+                        duration_months: selectedDuration,
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    revolutError.textContent = data.error;
+                    revolutError.style.display = 'block';
+                    revolutLoading.style.display = 'none';
+                    return;
+                }
+
+                revolutLoading.style.display = 'none';
+
+                // Load Revolut SDK and mount the button
+                if (typeof RevolutCheckout === 'undefined') {
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = 'https://merchant.revolut.com/embed.js';
+                        script.onload = resolve;
+                        script.onerror = () => {
+                            revolutError.textContent = 'Revolut SDK konnte nicht geladen werden.';
+                            revolutError.style.display = 'block';
+                            reject();
+                        };
+                        document.head.appendChild(script);
+                    });
+                }
+
+                const rc = await RevolutCheckout(data.public_id, data.mode);
+                const revolutPay = rc.revolutPay({
+                    target: revolutButton,
+                    onSuccess() {
+                        window.location.href = '{{ route('revolut.success') }}';
+                    },
+                    onError(error) {
+                        revolutError.textContent = 'Zahlung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler');
+                        revolutError.style.display = 'block';
+                    },
+                    onCancel() {
+                        revolutSection.style.display = 'none';
+                        revolutButton.innerHTML = '';
+                    }
+                });
+            } catch (e) {
+                revolutError.textContent = 'Zahlungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.';
+                revolutError.style.display = 'block';
+                revolutLoading.style.display = 'none';
+            }
         }
 
         document.getElementById('paymentModal').addEventListener('click', function(e) {

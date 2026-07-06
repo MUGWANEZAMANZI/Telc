@@ -19,7 +19,6 @@ class AdminPricing extends Component
         'price' => 0,
         'currency' => 'eur',
         'interval' => 'month',
-        'stripe_price_id' => '',
         'features' => '',
         'is_active' => true,
     ];
@@ -34,14 +33,14 @@ class AdminPricing extends Component
         'is_active' => true,
     ];
 
-    public string $freeExamsPerSession = '2';
+    public string $freeSectionLimit = '4';
     public ?int $editingPlanId = null;
     public ?int $editingDiscountId = null;
 
     public function mount(): void
     {
         abort_unless(Auth::user()?->isOwner(), 403);
-        $this->freeExamsPerSession = (string) Setting::value('free_exams_per_session', '2');
+        $this->freeSectionLimit = (string) Setting::value('free_section_limit', '4');
     }
 
     public function render()
@@ -131,8 +130,8 @@ class AdminPricing extends Component
     public function saveSettings(): void
     {
         Setting::query()->updateOrCreate(
-            ['key' => 'free_exams_per_session'],
-            ['value' => $this->freeExamsPerSession],
+            ['key' => 'free_section_limit'],
+            ['value' => $this->freeSectionLimit],
         );
 
         $this->dispatch('pricing-saved');
@@ -140,7 +139,7 @@ class AdminPricing extends Component
 
     private function resetForms(): void
     {
-        $this->planForm = ['name' => '', 'description' => '', 'price' => 0, 'currency' => 'eur', 'interval' => 'month', 'stripe_price_id' => '', 'features' => '', 'is_active' => true];
+        $this->planForm = ['name' => '', 'description' => '', 'price' => 0, 'currency' => 'eur', 'interval' => 'month', 'features' => '', 'is_active' => true];
         $this->discountForm = ['code' => '', 'type' => 'percentage', 'value' => 0, 'max_uses' => 0, 'expires_at' => '', 'is_active' => true];
         $this->editingPlanId = null;
         $this->editingDiscountId = null;

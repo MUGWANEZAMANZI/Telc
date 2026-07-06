@@ -20,8 +20,8 @@
             <div style="font-size: 2.2rem; font-weight: 800; color: #111827;">{{ number_format($totalExamRevenue, 2) }} €</div>
         </div>
         <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.75rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
-            <div style="font-size: 0.85rem; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Monatl. Abo-Umsatz (MRR)</div>
-            <div style="font-size: 2.2rem; font-weight: 800; color: #111827;">{{ number_format($subscriptionMrr, 2) }} €</div>
+            <div style="font-size: 0.85rem; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Abo-Umsatz</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: #111827;">{{ number_format($subscriptionRevenue, 2) }} €</div>
         </div>
         <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.75rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
             <div style="font-size: 0.85rem; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Aktive Abos</div>
@@ -105,8 +105,10 @@
                                 @if ($tx->payment_status === 'paid')
                                     @if ($tx->paypal_order_id)
                                         PayPal
+                                    @elseif ($tx->payment_status === 'paid')
+                                        Revolut
                                     @else
-                                        Stripe
+                                        {{ $tx->payment_status }}
                                     @endif
                                 @elseif ($tx->payment_status === 'manual_enrolled')
                                     PayPal (Legacy)

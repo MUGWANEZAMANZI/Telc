@@ -10,7 +10,6 @@ use App\Services\PayPalService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\View\View;
 
 class PayPalCheckoutController extends Controller
 {
@@ -45,45 +44,40 @@ class PayPalCheckoutController extends Controller
             ->with('error', 'PayPal-Zahlungslink konnte nicht gefunden werden.');
     }
 
-    public function planCheckout(Request $request, Plan $plan): RedirectResponse
+    public function planCheckout(Request $request): RedirectResponse
     {
-        if ($plan->interval !== 'month') {
-            return redirect()->route('pricing')
-                ->with('error', 'Dieser Plan kann nicht als Abonnement abgeschlossen werden.');
-        }
+        $request->validate([
+            'plan_id' => ['required', 'integer', 'exists:plans,id'],
+            'duration' => ['required', 'integer', 'in:1,3,12'],
+        ]);
 
-        if (! $plan->paypal_plan_id) {
-            return redirect()->route('pricing')
-                ->with('error', 'Für diesen Plan ist kein PayPal-Abo konfiguriert.');
-        }
+        $plan = Plan::query()->findOrFail($request->plan_id);
+        $duration = (int) $request->duration;
+        $amount = (float) $plan->price * $duration;
 
         $service = app(PayPalService::class);
 
-        $subscription = $service->createSubscription(
-            $plan->paypal_plan_id,
-            [
-                'name' => [
-                    'given_name' => $request->user()->name,
-                    'surname' => '',
-                ],
-                'email_address' => $request->user()->email,
-            ],
+        $order = $service->createOrder(
+            $amount,
+            $plan->name.' ('.$duration.' Monat(e))',
             route('paypal.success'),
             route('paypal.cancel'),
         );
 
-        if (! isset($subscription['id'])) {
+        if (! isset($order['id'])) {
             return redirect()->route('pricing')
-                ->with('error', 'PayPal-Abo konnte nicht erstellt werden.');
+                ->with('error', 'PayPal-Zahlung konnte nicht erstellt werden.');
         }
 
         session([
-            'paypal_intent' => 'subscription',
+            'paypal_intent' => 'plan',
             'plan_id' => $plan->id,
-            'paypal_subscription_id' => $subscription['id'],
+            'paypal_duration' => $duration,
+            'paypal_amount' => $amount,
+            'paypal_order_id' => $order['id'],
         ]);
 
-        $approvalUrl = $service->getApprovalLink($subscription);
+        $approvalUrl = $service->getApprovalLink($order);
 
         if ($approvalUrl) {
             return redirect()->away($approvalUrl);
@@ -101,8 +95,8 @@ class PayPalCheckoutController extends Controller
             return $this->handleExamSuccess($request);
         }
 
-        if ($intent === 'subscription') {
-            return $this->handleSubscriptionSuccess($request);
+        if ($intent === 'plan') {
+            return $this->handlePlanSuccess($request);
         }
 
         return redirect()->route('dashboard');
@@ -133,7 +127,7 @@ class PayPalCheckoutController extends Controller
                 ],
             );
 
-            session()->forget(['paypal_intent', 'exam_template_id']);
+            session()->forget(['paypal_intent', 'exam_template_id', 'plan_id', 'paypal_duration', 'paypal_amount', 'paypal_order_id']);
 
             return redirect()->route('dashboard')
                 ->with('success', 'Zahlung erfolgreich! Die Prüfung ist jetzt freigeschaltet.');
@@ -143,35 +137,53 @@ class PayPalCheckoutController extends Controller
             ->with('error', 'PayPal-Zahlung fehlgeschlagen. Bitte versuchen Sie es erneut.');
     }
 
-    protected function handleSubscriptionSuccess(Request $request): RedirectResponse
+    protected function handlePlanSuccess(Request $request): RedirectResponse
     {
         $planId = session('plan_id');
-        $paypalSubId = session('paypal_subscription_id');
+        $duration = session('paypal_duration', 1);
+        $amount = session('paypal_amount', 0);
+        $orderId = session('paypal_order_id');
 
-        if (! $planId || ! $paypalSubId) {
+        if (! $planId) {
             return redirect()->route('billing')
                 ->with('error', 'Ungültige PayPal-Rückgabe.');
         }
 
+        $token = $request->query('token');
+
+        if ($token) {
+            $service = app(PayPalService::class);
+            $capture = $service->captureOrder($token);
+
+            if (($capture['status'] ?? '') !== 'COMPLETED') {
+                return redirect()->route('billing')
+                    ->with('error', 'PayPal-Zahlung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+            }
+        }
+
+        $endsAt = now()->addMonths($duration);
+
         Subscription::create([
             'user_id' => $request->user()->id,
             'plan_id' => $planId,
-            'type' => 'default',
-            'stripe_id' => 'paypal_'.$paypalSubId,
-            'paypal_subscription_id' => $paypalSubId,
-            'stripe_status' => 'active',
-            'quantity' => 1,
+            'provider' => 'paypal',
+            'provider_order_id' => $orderId,
+            'status' => 'active',
+            'price_paid' => $amount,
+            'duration_months' => $duration,
+            'starts_at' => now(),
+            'ends_at' => $endsAt,
         ]);
 
-        session()->forget(['paypal_intent', 'plan_id', 'paypal_subscription_id']);
+        session()->forget(['paypal_intent', 'exam_template_id', 'plan_id', 'paypal_duration', 'paypal_amount', 'paypal_order_id']);
 
         return redirect()->route('billing')
-            ->with('success', 'Abonnement erfolgreich eingerichtet!');
+            ->with('success', 'Zahlung erfolgreich! Ihr Zugang ist bis zum '.$endsAt->format('d.m.Y').' aktiv.');
     }
 
     public function cancel(Request $request): RedirectResponse
     {
-        session()->forget(['paypal_intent', 'exam_template_id', 'plan_id', 'paypal_subscription_id']);
+        session()->forget(['paypal_intent', 'exam_template_id', 'plan_id', 'paypal_duration', 'paypal_amount', 'paypal_order_id']);
 
         return redirect()->route('dashboard')
             ->with('info', 'PayPal-Zahlung abgebrochen.');
@@ -182,56 +194,17 @@ class PayPalCheckoutController extends Controller
         $payload = $request->all();
         $eventType = $payload['event_type'] ?? '';
 
-        Log::info('PayPal webhook received', ['event_type' => $eventType, 'payload' => $payload]);
+        Log::info('PayPal webhook received', ['event_type' => $eventType]);
 
         try {
-            match ($eventType) {
-                'BILLING.SUBSCRIPTION.ACTIVATED' => $this->handleSubscriptionActivated($payload),
-                'BILLING.SUBSCRIPTION.CANCELLED' => $this->handleSubscriptionCancelled($payload),
-                'PAYMENT.CAPTURE.COMPLETED' => $this->handlePaymentCaptureCompleted($payload),
-                default => Log::info('PayPal webhook ignored', ['event_type' => $eventType]),
-            };
+            if ($eventType === 'PAYMENT.CAPTURE.COMPLETED') {
+                $this->handlePaymentCaptureCompleted($payload);
+            }
         } catch (\Exception $e) {
             Log::error('PayPal webhook error', ['error' => $e->getMessage()]);
         }
 
         return response('OK', 200);
-    }
-
-    protected function handleSubscriptionActivated(array $payload): void
-    {
-        $subId = $payload['resource']['id'] ?? '';
-
-        if (! $subId) {
-            return;
-        }
-
-        $subscription = Subscription::query()
-            ->where('paypal_subscription_id', $subId)
-            ->first();
-
-        if ($subscription && $subscription->stripe_status !== 'active') {
-            $subscription->update(['stripe_status' => 'active']);
-            Log::info('PayPal subscription activated', ['subscription_id' => $subId]);
-        }
-    }
-
-    protected function handleSubscriptionCancelled(array $payload): void
-    {
-        $subId = $payload['resource']['id'] ?? '';
-
-        if (! $subId) {
-            return;
-        }
-
-        $subscription = Subscription::query()
-            ->where('paypal_subscription_id', $subId)
-            ->first();
-
-        if ($subscription && $subscription->stripe_status !== 'cancelled') {
-            $subscription->update(['stripe_status' => 'cancelled']);
-            Log::info('PayPal subscription cancelled', ['subscription_id' => $subId]);
-        }
     }
 
     protected function handlePaymentCaptureCompleted(array $payload): void

@@ -22,9 +22,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Plan::updateOrCreate(
-            ['stripe_price_id' => 'price_single_exam'],
+            ['name' => 'Einmalige Prüfung'],
             [
-                'name' => 'Einmalige Prüfung',
                 'description' => 'Zugang zu einer vollständigen Prüfung Ihrer Wahl.',
                 'price' => 5.00,
                 'currency' => 'eur',
@@ -35,9 +34,8 @@ class DatabaseSeeder extends Seeder
         );
 
         \App\Models\Plan::updateOrCreate(
-            ['stripe_price_id' => 'price_premium_monthly'],
+            ['name' => 'Monatliches Training (Standard)'],
             [
-                'name' => 'Monatliches Training (Standard)',
                 'description' => 'Perfekt für die kontinuierliche Prüfungsvorbereitung.',
                 'price' => 19.00,
                 'currency' => 'eur',
@@ -48,9 +46,8 @@ class DatabaseSeeder extends Seeder
         );
 
         \App\Models\Plan::updateOrCreate(
-            ['stripe_price_id' => 'price_premium_unlimited'],
+            ['name' => 'Monatliches Training (Intensiv)'],
             [
-                'name' => 'Monatliches Training (Intensiv)',
                 'description' => 'Maximale Vorbereitung für den schnellen Erfolg.',
                 'price' => 69.00,
                 'currency' => 'eur',

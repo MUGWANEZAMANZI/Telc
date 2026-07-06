@@ -68,8 +68,8 @@ class StudentExam extends Component
 
     public function selectPayment(string $method): void
     {
-        if ($method === 'stripe') {
-            $this->redirect(route('exam.checkout', $this->enrollTemplateId));
+        if ($method === 'revolut') {
+            $this->dispatch('open-revolut-modal', templateId: $this->enrollTemplateId);
             return;
         }
 
@@ -92,7 +92,10 @@ class StudentExam extends Component
         }
         return \App\Models\Subscription::query()
             ->where('user_id', Auth::id())
-            ->where('stripe_status', 'active')
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
+            })
             ->exists();
     }
 

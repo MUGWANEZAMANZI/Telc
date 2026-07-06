@@ -23,7 +23,7 @@ class BillingPortal extends Component
                 ->get();
 
             $expiring = Subscription::query()
-                ->where('stripe_status', 'active')
+                ->where('status', 'active')
                 ->whereNotNull('ends_at')
                 ->where('ends_at', '>=', now())
                 ->where('ends_at', '<=', now()->addDays(7))
@@ -35,7 +35,10 @@ class BillingPortal extends Component
             'plans' => Plan::query()->where('is_active', true)->orderBy('price')->get(),
             'subscription' => Subscription::query()
                 ->where('user_id', $user->id)
-                ->where('stripe_status', 'active')
+                ->where('status', 'active')
+                ->where(function ($q) {
+                    $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
+                })
                 ->with('plan')
                 ->latest()
                 ->first(),
