@@ -12,6 +12,6 @@ class Setting extends Model
     {
         $setting = static::where('key', $key)->first();
 
-        return $setting?->value ?? $default;
+        return $setting->value ?? $default;
     }
 }

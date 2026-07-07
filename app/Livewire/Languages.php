@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class Languages extends Component
@@ -39,7 +40,7 @@ class Languages extends Component
         $this->dispatch('locale-changed', locale: $locale);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.languages');
     }

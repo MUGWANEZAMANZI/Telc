@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Request;
+use Psr\Http\Message\StreamInterface;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PayPalService
@@ -16,6 +18,7 @@ class PayPalService
         $this->provider->getAccessToken();
     }
 
+    /** @return array<string, mixed> */
     public function createOrder(float $amount, string $description, string $returnUrl, string $cancelUrl): array
     {
         $order = $this->provider->createOrder([
@@ -39,14 +42,23 @@ class PayPalService
             ],
         ]);
 
+        /** @var array<string, mixed> $order */
         return $order;
     }
 
+    /** @return array<string, mixed> */
     public function captureOrder(string $orderId): array
     {
-        return $this->provider->capturePaymentOrder($orderId);
+        $result = $this->provider->capturePaymentOrder($orderId);
+
+        /** @var array<string, mixed> $result */
+        return $result;
     }
 
+    /**
+     * @param array<string, mixed> $subscriber
+     * @return array<string, mixed>
+     */
     public function createSubscription(string $paypalPlanId, array $subscriber, string $returnUrl, string $cancelUrl): array
     {
         $subscription = $this->provider->createSubscription([
@@ -63,6 +75,7 @@ class PayPalService
             ],
         ]);
 
+        /** @var array<string, mixed> $subscription */
         return $subscription;
     }
 
@@ -77,14 +90,22 @@ class PayPalService
         }
     }
 
+    /** @return array<string, mixed> */
     public function showSubscriptionDetails(string $subscriptionId): array
     {
-        return $this->provider->showSubscriptionDetails($subscriptionId);
+        $result = $this->provider->showSubscriptionDetails($subscriptionId);
+
+        /** @var array<string, mixed> $result */
+        return $result;
     }
 
+    /** @return array<string, mixed> */
     public function showOrderDetails(string $orderId): array
     {
-        return $this->provider->showOrderDetails($orderId);
+        $result = $this->provider->showOrderDetails($orderId);
+
+        /** @var array<string, mixed> $result */
+        return $result;
     }
 
     public function getApprovalLink(array $response): ?string
@@ -98,15 +119,15 @@ class PayPalService
         return null;
     }
 
+    /** @param array<string, mixed> $headers */
     public function verifyWebhook(array $headers, string $body): bool
     {
         // PayPal webhook verification using the package's built-in IPN verification
         try {
-            $request = new \Illuminate\Http\Request([], [], [], [], [], [], $body);
+            $request = new Request([], [], [], [], [], [], $body);
             $request->setMethod('POST');
-            $verification = $this->provider->verifyIPN($request);
 
-            return $verification;
+            return (bool) $this->provider->verifyIPN($request);
         } catch (\Exception $e) {
             return false;
         }

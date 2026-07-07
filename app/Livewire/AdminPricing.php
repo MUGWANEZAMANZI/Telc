@@ -6,6 +6,7 @@ use App\Models\Discount;
 use App\Models\Plan;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class AdminPricing extends Component
@@ -45,7 +46,7 @@ class AdminPricing extends Component
         $this->freeSectionLimit = (string) Setting::value('free_section_limit', '4');
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.admin-pricing', [
             'plans' => Plan::query()->orderBy('price')->get(),

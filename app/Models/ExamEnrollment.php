@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -15,12 +16,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array|null $active_answers
  * @property int|null $remaining_seconds
  * @property int $active_section
- * @property \Illuminate\Support\Carbon|null $enrolled_at
+ * @property Carbon|null $enrolled_at
  * @property string|null $transaction_id
  * @property string|null $receipt_path
  * @property string|null $paypal_order_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read ExamTemplate $examTemplate
  * @property-read User $user
  */

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\ExamTemplate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class LandingExamCatalog extends Component
@@ -64,7 +65,7 @@ class LandingExamCatalog extends Component
             ->toArray();
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         $freeExams = ExamTemplate::where('is_published', true)
             ->where('exam_provider', $this->selectedProvider)

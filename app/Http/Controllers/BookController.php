@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use Illuminate\View\View;
 
 class BookController extends Controller
 {
-    public function index(): \Illuminate\View\View
+    public function index(): View
     {
         $books = Book::query()
             ->where('is_published', true)

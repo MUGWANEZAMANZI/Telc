@@ -7,6 +7,7 @@ use App\Models\ExamTemplate;
 use App\Models\Setting;
 use App\Services\ExamGrader;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class GuestExam extends Component
@@ -329,7 +330,7 @@ class GuestExam extends Component
         $this->started = false;
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         $sections = $this->template['sections'] ?? [];
 

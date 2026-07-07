@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\ExamAttempt;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -16,7 +17,7 @@ class StudentPerformance extends Component
         abort_unless(Auth::user()?->isAdmin(), 403);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         $today = now()->startOfDay();
 

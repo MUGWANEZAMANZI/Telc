@@ -3,13 +3,14 @@
 namespace App\Livewire;
 
 use App\Models\VoiceTopic;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class VoiceInput extends Component
 {
     public string $transcribedText = '';
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.voice-input', [
             'topics' => VoiceTopic::query()

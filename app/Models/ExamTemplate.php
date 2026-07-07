@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -17,10 +19,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property bool $is_published
  * @property string|null $exam_provider
  * @property float|null $price
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ExamAttempt> $attempts
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ExamEnrollment> $enrollments
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, ExamAttempt> $attempts
+ * @property-read Collection<int, ExamEnrollment> $enrollments
  */
 #[Fillable(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published', 'exam_provider', 'price'])]
 class ExamTemplate extends Model

@@ -5,11 +5,12 @@ namespace App\Livewire;
 use App\Models\Plan;
 use App\Models\Subscription;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class BillingPortal extends Component
 {
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         $user = Auth::user();
 

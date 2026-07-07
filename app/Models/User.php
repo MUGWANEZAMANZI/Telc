@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -28,8 +29,8 @@ use Illuminate\Support\Str;
  * @property int $login_count
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ExamAttempt> $attempts
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ExamEnrollment> $examEnrollments
+ * @property-read Collection<int, ExamAttempt> $attempts
+ * @property-read Collection<int, ExamEnrollment> $examEnrollments
  */
 #[Fillable(['name', 'email', 'password', 'role', 'last_login_at', 'login_count'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Book;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -35,7 +36,7 @@ class AdminBooks extends Component
         abort_unless(Auth::user()?->isAdmin(), 403);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.admin-books', [
             'books' => Book::query()->orderBy('sort_order')->orderBy('title')->get(),

@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Book;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class BookReader extends Component
@@ -15,7 +16,7 @@ class BookReader extends Component
         $this->book = $book;
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.book-reader', [
             'book' => $this->book,

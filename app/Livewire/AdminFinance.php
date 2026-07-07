@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class AdminFinance extends Component
@@ -18,7 +19,7 @@ class AdminFinance extends Component
         abort_unless(Auth::user()?->isOwner(), 403);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         $totalExamRevenue = (float) ExamEnrollment::query()
             ->whereIn('payment_status', ['paid', 'manual_enrolled'])

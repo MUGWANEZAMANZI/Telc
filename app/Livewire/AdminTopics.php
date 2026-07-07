@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\VoiceTopic;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class AdminTopics extends Component
@@ -23,7 +24,7 @@ class AdminTopics extends Component
         abort_unless(Auth::user()?->isAdmin(), 403);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.admin-topics', [
             'topics' => VoiceTopic::query()->orderBy('level')->orderBy('title')->get(),

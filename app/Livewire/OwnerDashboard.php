@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class OwnerDashboard extends Component
@@ -17,7 +18,7 @@ class OwnerDashboard extends Component
         abort_unless(Auth::user()?->isOwner(), 403);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         $query = User::query()->orderBy('name');
 

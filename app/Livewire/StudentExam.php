@@ -12,6 +12,7 @@ use App\Services\TelcTemplateFactory;
 use Gemini\Data\Content;
 use Gemini\Laravel\Facades\Gemini;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -107,7 +108,7 @@ class StudentExam extends Component
             ->exists();
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.student-exam', [
             'templates' => ExamTemplate::query()
