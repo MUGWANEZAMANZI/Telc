@@ -27,7 +27,7 @@ class ExamTemplateSeeder extends Seeder
         for ($i = 1; $i <= 20; $i++) {
             $lvl = $levels[$i % count($levels)];
             $preset = TelcTemplateFactory::forLevel($lvl);
-            
+
             ExamTemplate::updateOrCreate(
                 ['title' => "telc Deutsch $lvl - Modellsatz #$i"],
                 [

@@ -1,9 +1,9 @@
 <?php
 
+use App\Livewire\StudentPerformance;
 use App\Models\ExamAttempt;
 use App\Models\ExamTemplate;
 use App\Models\User;
-use App\Livewire\StudentPerformance;
 use Livewire\Livewire;
 
 test('guests and non-admins are blocked from student performance page', function () {
@@ -25,7 +25,7 @@ test('admins can view the student performance page and guest attempts', function
         'is_published' => true,
         'theme' => [],
         'timings' => [],
-        'sections' => []
+        'sections' => [],
     ]);
 
     // Create a student attempt

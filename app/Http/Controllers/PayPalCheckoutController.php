@@ -6,9 +6,11 @@ use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
 use App\Models\Plan;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Services\PayPalService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class PayPalCheckoutController extends Controller
@@ -189,7 +191,7 @@ class PayPalCheckoutController extends Controller
             ->with('info', 'PayPal-Zahlung abgebrochen.');
     }
 
-    public function webhook(Request $request): \Illuminate\Http\Response
+    public function webhook(Request $request): Response
     {
         $payload = $request->all();
         $eventType = $payload['event_type'] ?? '';
@@ -218,10 +220,11 @@ class PayPalCheckoutController extends Controller
         $examTemplateId = (int) str_replace('exam_', '', (string) $customId);
         $payerEmail = $payload['resource']['payer']['email_address'] ?? '';
 
-        $user = \App\Models\User::query()->where('email', $payerEmail)->first();
+        $user = User::query()->where('email', $payerEmail)->first();
 
         if (! $user) {
             Log::warning('PayPal webhook: user not found', ['email' => $payerEmail]);
+
             return;
         }
 

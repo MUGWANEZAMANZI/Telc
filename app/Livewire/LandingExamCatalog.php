@@ -49,6 +49,7 @@ class LandingExamCatalog extends Component
     public function getLevels(): array
     {
         $order = ['B1' => 0, 'B2' => 1, 'C1' => 2];
+
         return ExamTemplate::where('is_published', true)
             ->where('exam_provider', $this->selectedProvider)
             ->whereIn('level', ['B1', 'B2', 'C1'])

@@ -13,13 +13,21 @@ class AdminBooks extends Component
     use WithFileUploads;
 
     public string $title = '';
+
     public string $description = '';
+
     public string $author = '';
+
     public string $level = '';
+
     public $pdf = null;
+
     public $cover = null;
+
     public bool $isPublished = false;
+
     public int $sortOrder = 0;
+
     public ?int $editingBookId = null;
 
     public function mount(): void
@@ -118,7 +126,7 @@ class AdminBooks extends Component
     public function togglePublished(int $id): void
     {
         $book = Book::findOrFail($id);
-        $book->update(['is_published' => !$book->is_published]);
+        $book->update(['is_published' => ! $book->is_published]);
     }
 
     public function deleteBook(int $id): void

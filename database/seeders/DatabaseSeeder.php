@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Plan;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             LearningModuleSeeder::class,
         ]);
 
-        \App\Models\Plan::updateOrCreate(
+        Plan::updateOrCreate(
             ['name' => 'Einmalige Prüfung'],
             [
                 'description' => 'Zugang zu einer vollständigen Prüfung Ihrer Wahl.',
@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        \App\Models\Plan::updateOrCreate(
+        Plan::updateOrCreate(
             ['name' => 'Monatliches Training (Standard)'],
             [
                 'description' => 'Perfekt für die kontinuierliche Prüfungsvorbereitung.',
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        \App\Models\Plan::updateOrCreate(
+        Plan::updateOrCreate(
             ['name' => 'Monatliches Training (Intensiv)'],
             [
                 'description' => 'Maximale Vorbereitung für den schnellen Erfolg.',

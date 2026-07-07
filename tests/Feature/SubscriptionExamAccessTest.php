@@ -1,11 +1,11 @@
 <?php
 
+use App\Livewire\StudentExam;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
-use App\Models\Subscription;
 use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\User;
-use App\Livewire\StudentExam;
 use Livewire\Livewire;
 
 test('subscribed users can bypass enrollment payment modal and start exams directly', function () {
@@ -16,7 +16,7 @@ test('subscribed users can bypass enrollment payment modal and start exams direc
         'is_published' => true,
         'theme' => [],
         'timings' => [],
-        'sections' => []
+        'sections' => [],
     ]);
 
     $plan = Plan::create([

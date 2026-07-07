@@ -9,9 +9,13 @@ use Livewire\Component;
 class AdminTopics extends Component
 {
     public string $newTopicTitle = '';
+
     public string $newTopicLevel = 'C1';
+
     public ?int $editingTopicId = null;
+
     public string $editTopicTitle = '';
+
     public string $editTopicLevel = 'C1';
 
     public function mount(): void

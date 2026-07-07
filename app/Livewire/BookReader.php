@@ -19,7 +19,7 @@ class BookReader extends Component
     {
         return view('livewire.book-reader', [
             'book' => $this->book,
-            'pdfUrl' => asset('storage/' . $this->book->pdf_path),
+            'pdfUrl' => asset('storage/'.$this->book->pdf_path),
         ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\ExamAttempt;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
+use App\Models\Subscription;
 use App\Services\AnswerExplainer;
 use App\Services\ExamGrader;
 use App\Services\TelcTemplateFactory;
@@ -44,12 +45,17 @@ class StudentExam extends Component
     public array $speakingHistory = [];
 
     public string $c1SelectedTopic = '';
+
     public string $c1AiResponseText = '';
+
     public string $c1AiResponseAudio = '';
+
     public int $c1SpeakingStep = 1; // 1 = 1A presentation, 2 = 1B AI presentation, 3 = 1B user feedback response
 
     public bool $showEnrollModal = false;
+
     public ?int $enrollTemplateId = null;
+
     public string $enrollModalError = '';
 
     public function startEnroll(int $id): void
@@ -70,6 +76,7 @@ class StudentExam extends Component
     {
         if ($method === 'revolut') {
             $this->dispatch('open-revolut-modal', templateId: $this->enrollTemplateId);
+
             return;
         }
 
@@ -90,7 +97,8 @@ class StudentExam extends Component
         if (! Auth::check()) {
             return false;
         }
-        return \App\Models\Subscription::query()
+
+        return Subscription::query()
             ->where('user_id', Auth::id())
             ->where('status', 'active')
             ->where(function ($q) {
@@ -209,7 +217,7 @@ class StudentExam extends Component
                 $this->remainingSeconds = max((int) ($record->sections[0]['minutes'] ?? 1), 1) * 60;
             }
             $this->started = true;
-            
+
             $this->saveProgress();
         }
     }
@@ -256,7 +264,7 @@ class StudentExam extends Component
         $this->activeSection = $index;
         $this->started = true;
         $this->remainingSeconds = max((int) ($this->template['sections'][$index]['minutes'] ?? 1), 1) * 60;
-        
+
         $this->saveProgress();
     }
 
@@ -322,16 +330,16 @@ class StudentExam extends Component
         foreach ($writingElements as $element) {
             $hasWriting = true;
             $writingContent = $this->answers[$element['id']] ?? '';
-            if (!empty(trim($writingContent))) {
+            if (! empty(trim($writingContent))) {
                 try {
                     $writeModel = Gemini::generativeModel(model: 'gemini-2.0-flash')
                         ->withSystemInstruction(
                             'Du bist ein offizieller TELC-C1-Prüfer für die schriftliche Prüfung. '
-                            . 'Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis 48 Punkten zurück.'
+                            .'Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis 48 Punkten zurück.'
                         );
                     $resp = $writeModel->generateContent(
                         "Aufsatz:\n{$writingContent}\n\n"
-                        . "Bitte antworte genau im Format 'SCORE: X/48', gefolgt von einer kurzen Begründung."
+                        ."Bitte antworte genau im Format 'SCORE: X/48', gefolgt von einer kurzen Begründung."
                     );
                     $writingFeedback = $resp->text();
                     preg_match('/SCORE:\s*(\d+)/i', $writingFeedback, $matches);
@@ -339,8 +347,8 @@ class StudentExam extends Component
                         $writingScore = (int) $matches[1];
                     }
                 } catch (\Throwable $e) {
-                    $writingScore = 24; 
-                    $writingFeedback = 'Fehler bei der automatischen Bewertung: ' . $e->getMessage();
+                    $writingScore = 24;
+                    $writingFeedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
                 }
             }
         }
@@ -362,7 +370,7 @@ class StudentExam extends Component
             if (empty($history)) {
                 $speakingDetailsToAdd[] = [
                     'id' => $elId,
-                    'label' => 'Mündliche Prüfung — ' . $element['label'],
+                    'label' => 'Mündliche Prüfung — '.$element['label'],
                     'given' => [],
                     'expected' => 'Gemini AI Graded',
                     'points' => 0,
@@ -370,6 +378,7 @@ class StudentExam extends Component
                     'correct' => false,
                     'explanation' => 'Keine Beiträge aufgezeichnet.',
                 ];
+
                 continue;
             }
 
@@ -394,16 +403,16 @@ class StudentExam extends Component
                 }
             }
 
-            if (!$foundScore) {
+            if (! $foundScore) {
                 try {
                     $speakModel = Gemini::generativeModel(model: 'gemini-2.5-flash')
                         ->withSystemInstruction(
                             'Du bist ein offizieller TELC-C1-Prüfer für die mündliche Prüfung. '
-                            . 'Bewerte das vorliegende Gesprächsprotokoll. Gib eine exakte Punktzahl von 0 bis ' . $maxPoints . ' Punkten zurück.'
+                            .'Bewerte das vorliegende Gesprächsprotokoll. Gib eine exakte Punktzahl von 0 bis '.$maxPoints.' Punkten zurück.'
                         );
                     $resp = $speakModel->generateContent(
                         "Gesprächsprotokoll:\n{$speakingText}\n\n"
-                        . "Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                        ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
                     );
                     $elFeedback = $resp->text();
                     preg_match('/SCORE:\s*(\d+)/i', $elFeedback, $matches);
@@ -412,7 +421,7 @@ class StudentExam extends Component
                     }
                 } catch (\Throwable $e) {
                     $elScore = (int) ($maxPoints / 2);
-                    $elFeedback = 'Fehler bei der automatischen Bewertung: ' . $e->getMessage();
+                    $elFeedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
                 }
             }
 
@@ -420,7 +429,7 @@ class StudentExam extends Component
 
             $speakingDetailsToAdd[] = [
                 'id' => $elId,
-                'label' => 'Mündliche Prüfung — ' . $element['label'],
+                'label' => 'Mündliche Prüfung — '.$element['label'],
                 'given' => $history,
                 'expected' => 'Gemini AI Graded',
                 'points' => $elScore,
@@ -553,27 +562,27 @@ class StudentExam extends Component
     {
         try {
             $this->speakingProcessing['C1-SP-1b'] = true;
-            
+
             $prompt = "Schreibe einen gut strukturierten Vortrag (Einleitung, Hauptteil, Eigene Meinung/In my view, Schluss/Fazit) zum C1-Thema: \"{$unchosenTopic}\". Der Vortrag soll exakt auf C1-Niveau verfasst sein und eine klare Argumentationslinie haben.";
-            
+
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                 ->withSystemInstruction('Du bist ein TELC-Prüfungskandidat, der einen C1-Vortrag hält. Sprich den Lernenden direkt an und halte den Vortrag.')
                 ->generateContent($prompt);
 
             $this->c1AiResponseText = $result->text();
-            
+
             // For voice, since the browser needs sound, we will output text and leverage SpeechSynthesis in Javascript to play the audio back using a high-quality speech engine (or native browser audio synthesis).
             // We store the text and set step to 2 so the UI triggers SpeechSynthesis automatically.
             $this->speakingHistory['C1-SP-1b'][] = [
                 'role' => 'assistant',
-                'text' => $this->c1AiResponseText
+                'text' => $this->c1AiResponseText,
             ];
-            
+
             $this->answers['C1-SP-1b'] = $this->speakingHistory['C1-SP-1b'];
             $this->c1SpeakingStep = 2;
             $this->saveProgress();
         } catch (\Throwable $e) {
-            $this->c1AiResponseText = 'Fehler bei der Vortragserstellung: ' . $e->getMessage();
+            $this->c1AiResponseText = 'Fehler bei der Vortragserstellung: '.$e->getMessage();
         } finally {
             $this->speakingProcessing['C1-SP-1b'] = false;
         }
@@ -591,7 +600,7 @@ class StudentExam extends Component
         // Add user statement to history
         $this->speakingHistory[$elementId][] = [
             'role' => 'user',
-            'text' => $transcribedText
+            'text' => $transcribedText,
         ];
 
         $element = collect($this->template['sections'] ?? [])
@@ -608,36 +617,37 @@ class StudentExam extends Component
                 $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                     ->withSystemInstruction(
                         'Du bist ein offizieller TELC-C1-Prüfer. '
-                        . 'Bewerte den mündlichen Vortrag des Lernenden zu dem von ihm gewählten Thema. '
-                        . 'Achte besonders darauf, ob der Vortrag gut strukturiert ist, ob er das Thema klar darstellt und ob das Sprachniveau C1 entspricht. '
-                        . 'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/6" an (wobei X die Punktzahl von 0 bis 6 ist), gefolgt von einer kurzen Begründung.'
+                        .'Bewerte den mündlichen Vortrag des Lernenden zu dem von ihm gewählten Thema. '
+                        .'Achte besonders darauf, ob der Vortrag gut strukturiert ist, ob er das Thema klar darstellt und ob das Sprachniveau C1 entspricht. '
+                        .'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/6" an (wobei X die Punktzahl von 0 bis 6 ist), gefolgt von einer kurzen Begründung.'
                     )
                     ->generateContent(
                         "Gewähltes Thema: {$this->c1SelectedTopic}\n\n"
-                        . "Transkription des Vortrags:\n{$transcribedText}\n\n"
-                        . "Bitte bewerten Sie die Präsentation:"
+                        ."Transkription des Vortrags:\n{$transcribedText}\n\n"
+                        .'Bitte bewerten Sie die Präsentation:'
                     );
 
                 $assistantReply = $result->text();
                 $this->speakingHistory[$elementId][] = [
                     'role' => 'assistant',
-                    'text' => $assistantReply
+                    'text' => $assistantReply,
                 ];
 
                 $this->speakingFeedback[$elementId] = $assistantReply;
                 $this->answers[$elementId] = $this->speakingHistory[$elementId];
-                
+
                 // Switch to next step (AI presentation preparation)
                 $unchosenTopic = ($this->c1SelectedTopic === 'Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?')
                     ? 'Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus? Erzählen Sie!'
                     : 'Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft? Berichten Sie!';
-                
+
                 $this->generateAiPresentation($unchosenTopic);
             } catch (\Throwable $e) {
-                $this->speakingFeedback[$elementId] = 'Fehler: ' . $e->getMessage();
+                $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
             } finally {
                 $this->speakingProcessing[$elementId] = false;
             }
+
             return;
         }
 
@@ -647,20 +657,20 @@ class StudentExam extends Component
                 $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                     ->withSystemInstruction(
                         'Du bist ein offizieller TELC-C1-Prüfer. '
-                        . 'Der Lernende reagiert auf deine Zusammenfassung / deinen Vortrag. '
-                        . 'Bewerte seine Reaktion darauf. Achte auf logischen Bezug, Sprachgefühl und syntaktische Korrektheit auf C1 Niveau. '
-                        . 'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/4" an (wobei X die Punktzahl von 0 bis 4 ist), gefolgt von einer kurzen Begründung.'
+                        .'Der Lernende reagiert auf deine Zusammenfassung / deinen Vortrag. '
+                        .'Bewerte seine Reaktion darauf. Achte auf logischen Bezug, Sprachgefühl und syntaktische Korrektheit auf C1 Niveau. '
+                        .'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/4" an (wobei X die Punktzahl von 0 bis 4 ist), gefolgt von einer kurzen Begründung.'
                     )
                     ->generateContent(
                         "AI Vortrag:\n{$this->c1AiResponseText}\n\n"
-                        . "Antwort des Lernenden:\n{$transcribedText}\n\n"
-                        . "Bitte bewerten Sie die Reaktion:"
+                        ."Antwort des Lernenden:\n{$transcribedText}\n\n"
+                        .'Bitte bewerten Sie die Reaktion:'
                     );
 
                 $assistantReply = $result->text();
                 $this->speakingHistory[$elementId][] = [
                     'role' => 'assistant',
-                    'text' => $assistantReply
+                    'text' => $assistantReply,
                 ];
 
                 $this->speakingFeedback[$elementId] = $assistantReply;
@@ -668,10 +678,11 @@ class StudentExam extends Component
                 $this->c1SpeakingStep = 3; // Finished step 1b
                 $this->saveProgress();
             } catch (\Throwable $e) {
-                $this->speakingFeedback[$elementId] = 'Fehler: ' . $e->getMessage();
+                $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
             } finally {
                 $this->speakingProcessing[$elementId] = false;
             }
+
             return;
         }
 
@@ -687,32 +698,32 @@ class StudentExam extends Component
                 ->withSystemInstruction(
                     Content::parse(
                         'Du bist ein TELC-C1-Prüfer für die mündliche Prüfung. '
-                        . 'Unterhalte dich interaktiv mit dem Lernenden über das gewählte Thema. '
-                        . 'Lies den Gesprächsverlauf. Reagiere auf die letzte Antwort des Lernenden, '
-                        . 'stelle eine kurze, logische Anschlussfrage oder führe das Gespräch fort. '
-                        . 'WICHTIG: Wenn dies der 3. oder 4. Redebeitrag des Lernenden ist, '
-                        . 'beende das Gespräch höflich, bewerte die Leistung mit einer Punktzahl (0 bis ' . $maxPoints . ') '
-                        . 'und gib detailliertes, konstruktives Feedback zu Inhalt, Wortschatz und Grammatik auf Deutsch.'
+                        .'Unterhalte dich interaktiv mit dem Lernenden über das gewählte Thema. '
+                        .'Lies den Gesprächsverlauf. Reagiere auf die letzte Antwort des Lernenden, '
+                        .'stelle eine kurze, logische Anschlussfrage oder führe das Gespräch fort. '
+                        .'WICHTIG: Wenn dies der 3. oder 4. Redebeitrag des Lernenden ist, '
+                        .'beende das Gespräch höflich, bewerte die Leistung mit einer Punktzahl (0 bis '.$maxPoints.') '
+                        .'und gib detailliertes, konstruktives Feedback zu Inhalt, Wortschatz und Grammatik auf Deutsch.'
                     )
                 )
                 ->generateContent(
                     "Aufgabenstellung/Thema: {$prompt}\n\n"
-                    . "Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
-                    . "Generiere die nächste Antwort des Prüfers:"
+                    ."Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
+                    .'Generiere die nächste Antwort des Prüfers:'
                 );
 
             $assistantReply = $result->text();
-            
+
             $this->speakingHistory[$elementId][] = [
                 'role' => 'assistant',
-                'text' => $assistantReply
+                'text' => $assistantReply,
             ];
 
             $this->speakingFeedback[$elementId] = $assistantReply;
             $this->answers[$elementId] = $this->speakingHistory[$elementId];
             $this->saveProgress();
         } catch (\Throwable $e) {
-            $this->speakingFeedback[$elementId] = 'Fehler bei der Analyse: ' . $e->getMessage();
+            $this->speakingFeedback[$elementId] = 'Fehler bei der Analyse: '.$e->getMessage();
         } finally {
             $this->speakingProcessing[$elementId] = false;
         }
@@ -760,7 +771,7 @@ class StudentExam extends Component
         }
 
         $this->answers[$elementId][(string) $gapIndex] = $value;
-        
+
         $this->saveProgress();
     }
 

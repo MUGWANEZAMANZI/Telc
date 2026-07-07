@@ -23,8 +23,8 @@ class AnswerExplainer
                 ->withSystemInstruction(
                     Content::parse(
                         'Du bist ein TELC-Prüfungsvorbereitungs-Tutor für Deutsch. '
-                        . 'Erkläre Antworten auf verständliche Weise in 2-3 Sätzen. '
-                        . 'Antworte auf Deutsch.'
+                        .'Erkläre Antworten auf verständliche Weise in 2-3 Sätzen. '
+                        .'Antworte auf Deutsch.'
                     )
                 )
                 ->generateContent($prompt);
@@ -48,7 +48,7 @@ class AnswerExplainer
         $content = $element['content'] ?? '';
 
         if ($content !== '') {
-            $question .= "\n" . $content;
+            $question .= "\n".$content;
         }
 
         $correctAnswer = $element['answer'] ?? '';

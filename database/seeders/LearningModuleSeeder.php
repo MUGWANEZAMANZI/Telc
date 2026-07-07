@@ -19,7 +19,7 @@ class LearningModuleSeeder extends Seeder
                 'category' => 'Grammar',
                 'level' => 'B1',
                 'summary' => 'Lernen Sie die 9 Präpositionen kennen, die je nach Kontext Akkusativ oder Dativ verlangen.',
-                'content' => "# Wechselpräpositionen
+                'content' => '# Wechselpräpositionen
 
 Wechselpräpositionen können entweder mit dem **Dativ** (Wo?) oder dem **Akkusativ** (Wohin?) stehen. Es gibt genau neun Wechselpräpositionen:
 
@@ -37,7 +37,7 @@ Wenn wir nach einer Bewegung oder Richtungsänderung fragen, benutzen wir den **
 
 ### Typische Verben:
 * **Dativ:** liegen, sitzen, stehen, hängen
-* **Akkusativ:** legen, setzen, stellen, hängen (Aktion)",
+* **Akkusativ:** legen, setzen, stellen, hängen (Aktion)',
                 'is_published' => true,
             ],
             [
@@ -45,7 +45,7 @@ Wenn wir nach einer Bewegung oder Richtungsänderung fragen, benutzen wir den **
                 'category' => 'Vocabulary',
                 'level' => 'B1',
                 'summary' => 'Die wichtigsten Nomen, Verben und Phrasen für den Büroalltag auf Deutsch.',
-                'content' => "# B1 Berufswortschatz
+                'content' => '# B1 Berufswortschatz
 
 Für eine erfolgreiche Kommunikation am Arbeitsplatz benötigen Sie spezifische Ausdrücke. Hier sind die wichtigsten:
 
@@ -55,7 +55,7 @@ Für eine erfolgreiche Kommunikation am Arbeitsplatz benötigen Sie spezifische 
 | **der Arbeitsvertrag** | employment contract | *Er unterschreibt morgen den Arbeitsvertrag.* |
 | **die Überstunde** | overtime | *Letzte Woche musste ich fünf Überstunden machen.* |
 | **das Gehalt** | salary | *Ich bin mit meinem Gehalt zufrieden.* |
-| **die Besprechung** | meeting / conference | *Unsere wöchentliche Besprechung findet montags statt.* |",
+| **die Besprechung** | meeting / conference | *Unsere wöchentliche Besprechung findet montags statt.* |',
                 'is_published' => true,
             ],
 
@@ -65,7 +65,7 @@ Für eine erfolgreiche Kommunikation am Arbeitsplatz benötigen Sie spezifische 
                 'category' => 'Grammar',
                 'level' => 'B2',
                 'summary' => 'Erfahren Sie, wie Sie Sätze mit zweiteiligen Konnektoren wie \"sowohl ... als auch\" verbinden.',
-                'content' => "# Zweiteilige Konnektoren
+                'content' => '# Zweiteilige Konnektoren
 
 Zweiteilige Konnektoren verbinden Sätze oder Satzglieder miteinander. Sie drücken komplexe Beziehungen aus:
 
@@ -79,7 +79,7 @@ Zweiteilige Konnektoren verbinden Sätze oder Satzglieder miteinander. Sie drüc
 * *Wir können **entweder** ins Kino gehen **oder** zu Hause bleiben.* (Nur eine Option ist möglich)
 
 ## 4. weder ... noch (Negative Aufzählung)
-* *Ich habe **weder** Zeit **noch** Geld für einen Urlaub.* (Keines von beidem)",
+* *Ich habe **weder** Zeit **noch** Geld für einen Urlaub.* (Keines von beidem)',
                 'is_published' => true,
             ],
             [
@@ -87,7 +87,7 @@ Zweiteilige Konnektoren verbinden Sätze oder Satzglieder miteinander. Sie drüc
                 'category' => 'Vocabulary',
                 'level' => 'B2',
                 'summary' => 'Drücken Sie Ihre Meinung differenziert aus und reagieren Sie überzeugend auf Gegenargumente.',
-                'content' => "# Redemittel B2: Diskussionen
+                'content' => '# Redemittel B2: Diskussionen
 
 Um in Gesprächen oder der mündlichen Prüfung sachlich zu argumentieren, eignen sich folgende Formulierungen:
 
@@ -104,7 +104,7 @@ Um in Gesprächen oder der mündlichen Prüfung sachlich zu argumentieren, eigne
 ### Widerspruch formulieren
 * *Das stimmt zwar, aber...*
 * *Hier muss ich leider widersprechen.*
-* *Ich bezweifle, dass dieses Argument stichhaltig ist.*",
+* *Ich bezweifle, dass dieses Argument stichhaltig ist.*',
                 'is_published' => true,
             ],
 
@@ -114,7 +114,7 @@ Um in Gesprächen oder der mündlichen Prüfung sachlich zu argumentieren, eigne
                 'category' => 'Grammar',
                 'level' => 'C1',
                 'summary' => 'Funktionsverbgefüge richtig verstehen und anwenden – essenziell für ein hohes C1-Niveau.',
-                'content' => "# Nomen-Verb-Verbindungen (Funktionsverbgefüge)
+                'content' => '# Nomen-Verb-Verbindungen (Funktionsverbgefüge)
 
 Im C1-Bereich (insbesondere im schriftlichen Ausdruck) sind Nomen-Verb-Verbindungen sehr häufig. Sie klingen formeller und präziser.
 
@@ -129,7 +129,7 @@ Im C1-Bereich (insbesondere im schriftlichen Ausdruck) sind Nomen-Verb-Verbindun
   * *Wir müssen Rücksicht auf unsere Nachbarn nehmen.* (= rücksichtsvoll sein)
 
 * **in Frage kommen**
-  * *Diese Option kommt überhaupt nicht in Frage.* (= ist unmöglich/ausgeschlossen)",
+  * *Diese Option kommt überhaupt nicht in Frage.* (= ist unmöglich/ausgeschlossen)',
                 'is_published' => true,
             ],
             [
@@ -137,7 +137,7 @@ Im C1-Bereich (insbesondere im schriftlichen Ausdruck) sind Nomen-Verb-Verbindun
                 'category' => 'Vocabulary',
                 'level' => 'C1',
                 'summary' => 'Akademische Formulierungen und Fachwortschatz für anspruchsvolle Texte.',
-                'content' => "# Akademischer C1 Wortschatz
+                'content' => '# Akademischer C1 Wortschatz
 
 Diese Begriffe und Formulierungen helfen Ihnen dabei, wissenschaftliche bzw. akademische Texte zu verfassen:
 
@@ -148,7 +148,7 @@ Diese Begriffe und Formulierungen helfen Ihnen dabei, wissenschaftliche bzw. aka
 * **verifizieren / falsifizieren** (verify / falsify)
   * *Die Hypothese konnte durch Experimente verifiziert werden.*
 * **im Hinblick auf (+ Akkusativ)** (with regard to)
-  * *Im Hinblick auf die Globalisierung müssen wir neue Strategien entwickeln.*",
+  * *Im Hinblick auf die Globalisierung müssen wir neue Strategien entwickeln.*',
                 'is_published' => true,
             ],
 
@@ -181,7 +181,7 @@ Diese Konstruktionen können sehr lang werden:
                 'category' => 'Vocabulary',
                 'level' => 'C2',
                 'summary' => 'Verleihen Sie Ihrem Ausdruck mit sprichwörtlichen Redensarten den letzten Schliff.',
-                'content' => "# Idiomatische Ausdrücke (C2)
+                'content' => '# Idiomatische Ausdrücke (C2)
 
 Für ein echtes C2-Niveau ist das Beherrschen von Redewendungen unerlässlich. Sie zeigen ein tiefes Gespür für die deutsche Sprache:
 
@@ -199,7 +199,7 @@ Für ein echtes C2-Niveau ist das Beherrschen von Redewendungen unerlässlich. S
 
 * **ins Fettnäpfchen treten**
   * Bedeutung: unabsichtlich etwas Unangenehmes sagen / jemanden beleidigen
-  * Beispiel: *Bei der Begrüßung der Gäste bin ich direkt ins Fettnäpfchen getreten.*",
+  * Beispiel: *Bei der Begrüßung der Gäste bin ich direkt ins Fettnäpfchen getreten.*',
                 'is_published' => true,
             ],
         ];

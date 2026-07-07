@@ -34,7 +34,9 @@ class AdminPricing extends Component
     ];
 
     public string $freeSectionLimit = '4';
+
     public ?int $editingPlanId = null;
+
     public ?int $editingDiscountId = null;
 
     public function mount(): void

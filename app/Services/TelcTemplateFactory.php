@@ -76,7 +76,7 @@ class TelcTemplateFactory
             'sections' => [
                 self::section('c2-reading', 'Leseverstehen', 80, [
                     ...self::answerElements('C2-LV1-', 1, ['c', 'd', 'b', 'a', 'd', 'c'], 'multiple_choice', 2, 'a,b,c,d'),
-                    self::inlineGap('C2-SB-inline', 'Sprachbausteine (Wissenschaftssprache)', "In der heutigen Debatte um die Nachhaltigkeit --0-- es von entscheidender Bedeutung, alternative Energiequellen umfassend zu erforschen. Zwar existieren bereits zahlreiche Ansätze, doch --1-- viele davon an der mangelnden Skalierbarkeit. Um einen substanziellen Beitrag leisten zu --2--, bedarf es einer verstärkten Kooperation zwischen Wissenschaft und Wirtschaft.", [
+                    self::inlineGap('C2-SB-inline', 'Sprachbausteine (Wissenschaftssprache)', 'In der heutigen Debatte um die Nachhaltigkeit --0-- es von entscheidender Bedeutung, alternative Energiequellen umfassend zu erforschen. Zwar existieren bereits zahlreiche Ansätze, doch --1-- viele davon an der mangelnden Skalierbarkeit. Um einen substanziellen Beitrag leisten zu --2--, bedarf es einer verstärkten Kooperation zwischen Wissenschaft und Wirtschaft.', [
                         ['options' => 'a|ist,b|wäre,c|wird', 'answer' => 'a'],
                         ['options' => 'a|scheitern,b|gelingen,c|verzögern', 'answer' => 'a'],
                         ['options' => 'a|können,b|dürfen,c|sollen', 'answer' => 'a'],

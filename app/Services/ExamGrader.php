@@ -81,6 +81,7 @@ class ExamGrader
                             'points' => (float) ($element['points'] ?? 1),
                         ];
                     }
+
                     continue;
                 }
 
@@ -97,6 +98,7 @@ class ExamGrader
                             'points' => (float) ($element['points'] ?? 1),
                         ];
                     }
+
                     continue;
                 }
 

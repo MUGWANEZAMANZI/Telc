@@ -123,6 +123,7 @@ class GuestExam extends Component
         if (! $record) {
             $this->template = [];
             $this->selectedTemplateId = null;
+
             return;
         }
 
@@ -150,6 +151,7 @@ class GuestExam extends Component
         if (! isset($sections[$sectionIndex])) {
             return false;
         }
+
         return in_array($sections[$sectionIndex]['id'], $this->completedSectionIds, true);
     }
 
@@ -160,6 +162,7 @@ class GuestExam extends Component
             return false;
         }
         $id = $sections[$sectionIndex]['id'];
+
         return in_array($id, $this->noRetrySectionIds, true);
     }
 
@@ -168,6 +171,7 @@ class GuestExam extends Component
         if (! $this->isSectionCompleted($sectionIndex)) {
             return true;
         }
+
         return ! $this->isNoRetrySection($sectionIndex);
     }
 
@@ -177,6 +181,7 @@ class GuestExam extends Component
         if (! isset($sections[$sectionIndex])) {
             return false;
         }
+
         return collect($sections[$sectionIndex]['elements'] ?? [])
             ->contains(fn ($el) => ($el['type'] ?? '') === 'audio');
     }
@@ -187,6 +192,7 @@ class GuestExam extends Component
         if (! isset($sections[$sectionIndex])) {
             return false;
         }
+
         return collect($sections[$sectionIndex]['elements'] ?? [])
             ->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
     }
@@ -211,6 +217,7 @@ class GuestExam extends Component
         if (in_array('inline_gap', $types, true) || in_array('interactive_text', $types, true)) {
             return 'reading';
         }
+
         return 'reading';
     }
 
@@ -225,6 +232,7 @@ class GuestExam extends Component
         if ($this->activeSectionIndex === $sectionIndex && $this->started) {
             return 'in-progress';
         }
+
         return 'new';
     }
 

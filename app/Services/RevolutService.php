@@ -3,12 +3,16 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class RevolutService
 {
     protected string $secretKey;
+
     protected string $publicKey;
+
     protected string $baseUrl;
+
     protected string $mode;
 
     public function __construct()
@@ -53,7 +57,7 @@ class RevolutService
         ])->post("{$this->baseUrl}/1.0/orders", $payload);
 
         if ($response->failed()) {
-            \Illuminate\Support\Facades\Log::error('Revolut order creation failed', [
+            Log::error('Revolut order creation failed', [
                 'status' => $response->status(),
                 'body' => $response->body(),
             ]);
@@ -71,7 +75,7 @@ class RevolutService
         ])->post("{$this->baseUrl}/1.0/orders/{$orderId}/capture");
 
         if ($response->failed()) {
-            \Illuminate\Support\Facades\Log::error('Revolut order capture failed', [
+            Log::error('Revolut order capture failed', [
                 'status' => $response->status(),
                 'body' => $response->body(),
             ]);
@@ -89,7 +93,7 @@ class RevolutService
         ])->get("{$this->baseUrl}/1.0/orders/{$orderId}");
 
         if ($response->failed()) {
-            \Illuminate\Support\Facades\Log::error('Revolut get order failed', [
+            Log::error('Revolut get order failed', [
                 'status' => $response->status(),
                 'body' => $response->body(),
             ]);

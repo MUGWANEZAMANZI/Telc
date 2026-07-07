@@ -70,6 +70,7 @@ class PayPalService
     {
         try {
             $this->provider->cancelSubscription($subscriptionId, 'Vom Benutzer gekündigt.');
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -93,6 +94,7 @@ class PayPalService
                 return $link['href'];
             }
         }
+
         return null;
     }
 
@@ -101,6 +103,7 @@ class PayPalService
         // PayPal webhook verification using the package's built-in IPN verification
         try {
             $verification = $this->provider->verifyIPN($body);
+
             return $verification;
         } catch (\Exception $e) {
             return false;

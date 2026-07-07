@@ -1,8 +1,9 @@
 <?php
 
+use App\Livewire\GuestExam;
 use App\Models\ExamAttempt;
 use App\Models\ExamTemplate;
-use App\Livewire\GuestExam;
+use App\Models\Setting;
 use Livewire\Livewire;
 
 test('guest users can access the free exam page without being logged in', function () {
@@ -159,7 +160,7 @@ test('retry does not consume another free slot', function () {
 
 test('limit reached shows hasReachedLimit true', function () {
     // Override freeSectionLimit to 1
-    \App\Models\Setting::query()->updateOrCreate(
+    Setting::query()->updateOrCreate(
         ['key' => 'free_section_limit'],
         ['value' => '1'],
     );

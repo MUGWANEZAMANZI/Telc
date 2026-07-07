@@ -6,12 +6,13 @@ use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
 use App\Models\Plan;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Services\RevolutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Illuminate\View\View;
 
 class RevolutCheckoutController extends Controller
 {
@@ -67,6 +68,7 @@ class RevolutCheckoutController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Revolut create order error', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Zahlungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.'], 500);
         }
     }
@@ -133,6 +135,7 @@ class RevolutCheckoutController extends Controller
             }
         } catch (\Exception $e) {
             Log::error('Revolut success handling error', ['error' => $e->getMessage()]);
+
             return redirect()->route('dashboard')->with('error', 'Fehler bei der Verarbeitung der Zahlung.');
         }
 
@@ -146,7 +149,7 @@ class RevolutCheckoutController extends Controller
         return redirect()->route('dashboard')->with('info', 'Revolut-Zahlung abgebrochen.');
     }
 
-    public function webhook(Request $request): \Illuminate\Http\Response
+    public function webhook(Request $request): Response
     {
         $payload = $request->all();
         $event = $payload['event'] ?? '';
@@ -167,7 +170,7 @@ class RevolutCheckoutController extends Controller
                     $payerEmail = $order['payer']['email'] ?? '';
 
                     if ($payerEmail) {
-                        $user = \App\Models\User::query()->where('email', $payerEmail)->first();
+                        $user = User::query()->where('email', $payerEmail)->first();
                         if ($user) {
                             ExamEnrollment::updateOrCreate(
                                 ['user_id' => $user->id, 'exam_template_id' => $examTemplateId],
@@ -196,7 +199,7 @@ class RevolutCheckoutController extends Controller
                     $payerEmail = $order['payer']['email'] ?? '';
 
                     if ($payerEmail && $planId) {
-                        $user = \App\Models\User::query()->where('email', $payerEmail)->first();
+                        $user = User::query()->where('email', $payerEmail)->first();
                         if ($user) {
                             $endsAt = now()->addMonths($duration);
                             Subscription::create([

@@ -9,6 +9,7 @@ use Livewire\Component;
 class OwnerDashboard extends Component
 {
     public string $userFilter = '';
+
     public string $roleFilter = '';
 
     public function mount(): void
@@ -27,7 +28,7 @@ class OwnerDashboard extends Component
         if ($this->userFilter) {
             $query->where(function ($q) {
                 $q->where('name', 'like', "%{$this->userFilter}%")
-                  ->orWhere('email', 'like', "%{$this->userFilter}%");
+                    ->orWhere('email', 'like', "%{$this->userFilter}%");
             });
         }
 

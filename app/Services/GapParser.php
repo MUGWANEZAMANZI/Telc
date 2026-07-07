@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Str;
-
 class GapParser
 {
     /**
@@ -99,6 +97,7 @@ class GapParser
                     $list[] = ['value' => (string) $value, 'label' => (string) $label];
                 }
             }
+
             return $list;
         }
 
@@ -108,6 +107,7 @@ class GapParser
                     $parts = explode(':', $part, 2);
                     $value = trim($parts[0]);
                     $label = trim($parts[1] ?? $value);
+
                     return ['value' => $value, 'label' => $label];
                 })
                 ->values()

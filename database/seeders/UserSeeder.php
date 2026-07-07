@@ -40,8 +40,8 @@ class UserSeeder extends Seeder
         // Dummy students
         User::factory()->count(10)->create([
             'role' => 'student',
-            'login_count' => fn() => rand(1, 20),
-            'last_login_at' => fn() => now()->subDays(rand(0, 14))->subHours(rand(0, 23)),
+            'login_count' => fn () => rand(1, 20),
+            'last_login_at' => fn () => now()->subDays(rand(0, 14))->subHours(rand(0, 23)),
         ]);
     }
 }

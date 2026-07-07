@@ -3,10 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\ExamAttempt;
+use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
 use App\Models\User;
 use App\Services\ExamGrader;
 use App\Services\TelcTemplateFactory;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -20,6 +22,7 @@ class ExamDashboard extends Component
     use WithFileUploads;
 
     public mixed $audioUpload = null;
+
     public ?int $selectedTemplateId = null;
 
     public string $mode = 'builder';
@@ -62,13 +65,13 @@ class ExamDashboard extends Component
             'metrics' => $this->metrics(),
             'performanceRows' => $this->performanceRows(),
             'participants' => $this->selectedTemplateId ? ExamAttempt::query()->where('exam_template_id', $this->selectedTemplateId)->with('user')->latest()->get() : collect(),
-            'pendingPayments' => \App\Models\ExamEnrollment::query()->where('status', 'pending')->with(['user', 'examTemplate'])->latest()->get(),
+            'pendingPayments' => ExamEnrollment::query()->where('status', 'pending')->with(['user', 'examTemplate'])->latest()->get(),
         ]);
     }
 
     public function approvePayment(int $enrollmentId): void
     {
-        $enrollment = \App\Models\ExamEnrollment::findOrFail($enrollmentId);
+        $enrollment = ExamEnrollment::findOrFail($enrollmentId);
         $enrollment->update([
             'status' => 'active',
             'payment_status' => 'manual_enrolled',
@@ -80,7 +83,7 @@ class ExamDashboard extends Component
 
     public function rejectPayment(int $enrollmentId): void
     {
-        $enrollment = \App\Models\ExamEnrollment::findOrFail($enrollmentId);
+        $enrollment = ExamEnrollment::findOrFail($enrollmentId);
         // Delete receipt file if exists
         if ($enrollment->receipt_path) {
             Storage::disk('public')->delete($enrollment->receipt_path);
@@ -328,6 +331,7 @@ class ExamDashboard extends Component
             return [];
         }
         $raw = json_decode((string) ($element['options'] ?? '[]'), true);
+
         return is_array($raw) ? array_values($raw) : [];
     }
 
@@ -338,6 +342,7 @@ class ExamDashboard extends Component
         if ($options !== []) {
             return array_values($options);
         }
+
         return match ($element['type'] ?? '') {
             'true_false' => ['+', '-'],
             'multiple_choice' => ['a', 'b', 'c'],
@@ -380,7 +385,7 @@ class ExamDashboard extends Component
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, array<string, mixed>>
+     * @return Collection<int, array<string, mixed>>
      */
     private function performanceRows()
     {
