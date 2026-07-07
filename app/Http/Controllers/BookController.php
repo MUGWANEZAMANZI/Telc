@@ -6,7 +6,7 @@ use App\Models\Book;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(): \Illuminate\View\View
     {
         $books = Book::query()
             ->where('is_published', true)

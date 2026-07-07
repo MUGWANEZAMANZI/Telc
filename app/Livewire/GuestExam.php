@@ -133,6 +133,7 @@ class GuestExam extends Component
         $this->recalculateRemaining();
     }
 
+    /** @return list<string> */
     public function getLevels(): array
     {
         return ExamTemplate::query()
@@ -328,7 +329,7 @@ class GuestExam extends Component
         $this->started = false;
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         $sections = $this->template['sections'] ?? [];
 

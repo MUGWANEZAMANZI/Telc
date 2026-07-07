@@ -17,7 +17,7 @@ class OwnerDashboard extends Component
         abort_unless(Auth::user()?->isOwner(), 403);
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         $query = User::query()->orderBy('name');
 

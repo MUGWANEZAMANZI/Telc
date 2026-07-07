@@ -20,9 +20,9 @@ class AdminBooks extends Component
 
     public string $level = '';
 
-    public $pdf = null;
+    public mixed $pdf = null;
 
-    public $cover = null;
+    public mixed $cover = null;
 
     public bool $isPublished = false;
 
@@ -35,7 +35,7 @@ class AdminBooks extends Component
         abort_unless(Auth::user()?->isAdmin(), 403);
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.admin-books', [
             'books' => Book::query()->orderBy('sort_order')->orderBy('title')->get(),

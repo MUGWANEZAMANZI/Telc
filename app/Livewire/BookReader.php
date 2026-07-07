@@ -15,7 +15,7 @@ class BookReader extends Component
         $this->book = $book;
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.book-reader', [
             'book' => $this->book,

@@ -45,7 +45,7 @@ class AdminPricing extends Component
         $this->freeSectionLimit = (string) Setting::value('free_section_limit', '4');
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.admin-pricing', [
             'plans' => Plan::query()->orderBy('price')->get(),

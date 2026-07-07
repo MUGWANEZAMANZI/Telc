@@ -28,6 +28,8 @@ use Illuminate\Support\Str;
  * @property int $login_count
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ExamAttempt> $attempts
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ExamEnrollment> $examEnrollments
  */
 #[Fillable(['name', 'email', 'password', 'role', 'last_login_at', 'login_count'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -61,11 +63,13 @@ class User extends Authenticatable
         return $this->role === 'owner';
     }
 
+    /** @return HasMany<ExamAttempt, $this> */
     public function attempts(): HasMany
     {
         return $this->hasMany(ExamAttempt::class);
     }
 
+    /** @return HasMany<ExamEnrollment, $this> */
     public function examEnrollments(): HasMany
     {
         return $this->hasMany(ExamEnrollment::class);

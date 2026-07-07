@@ -7,6 +7,7 @@ use Livewire\Component;
 
 class Languages extends Component
 {
+    /** @var list<array{locale: string, name: string, flag: string}> */
     public array $languages = [
         ['locale' => 'en', 'name' => 'English', 'flag' => 'gb'],
         ['locale' => 'fr', 'name' => 'Français', 'flag' => 'fr'],
@@ -38,7 +39,7 @@ class Languages extends Component
         $this->dispatch('locale-changed', locale: $locale);
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.languages');
     }

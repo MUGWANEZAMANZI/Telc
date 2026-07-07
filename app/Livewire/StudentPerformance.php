@@ -16,7 +16,7 @@ class StudentPerformance extends Component
         abort_unless(Auth::user()?->isAdmin(), 403);
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         $today = now()->startOfDay();
 

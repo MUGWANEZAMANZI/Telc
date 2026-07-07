@@ -102,7 +102,9 @@ class PayPalService
     {
         // PayPal webhook verification using the package's built-in IPN verification
         try {
-            $verification = $this->provider->verifyIPN($body);
+            $request = new \Illuminate\Http\Request([], [], [], [], [], [], $body);
+            $request->setMethod('POST');
+            $verification = $this->provider->verifyIPN($request);
 
             return $verification;
         } catch (\Exception $e) {

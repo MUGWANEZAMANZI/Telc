@@ -37,6 +37,8 @@ class LandingExamCatalog extends Component
     public function startFreeExam(int $templateId): void
     {
         $exam = ExamTemplate::find($templateId);
+
+        /** @var string $level */
         $level = $exam?->level ?? 'B1';
         $this->redirect(route('free.exam', ['level' => $level]));
     }
@@ -46,6 +48,7 @@ class LandingExamCatalog extends Component
         $this->redirect(route('register'));
     }
 
+    /** @return list<string> */
     public function getLevels(): array
     {
         $order = ['B1' => 0, 'B2' => 1, 'C1' => 2];
@@ -61,7 +64,7 @@ class LandingExamCatalog extends Component
             ->toArray();
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         $freeExams = ExamTemplate::where('is_published', true)
             ->where('exam_provider', $this->selectedProvider)

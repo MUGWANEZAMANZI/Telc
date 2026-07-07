@@ -9,7 +9,7 @@ use Livewire\Component;
 
 class BillingPortal extends Component
 {
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         $user = Auth::user();
 

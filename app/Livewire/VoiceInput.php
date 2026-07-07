@@ -9,7 +9,7 @@ class VoiceInput extends Component
 {
     public string $transcribedText = '';
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.voice-input', [
             'topics' => VoiceTopic::query()

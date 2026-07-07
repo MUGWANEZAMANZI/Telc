@@ -23,7 +23,7 @@ class AdminTopics extends Component
         abort_unless(Auth::user()?->isAdmin(), 403);
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.admin-topics', [
             'topics' => VoiceTopic::query()->orderBy('level')->orderBy('title')->get(),

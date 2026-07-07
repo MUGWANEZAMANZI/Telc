@@ -18,7 +18,7 @@ class AdminFinance extends Component
         abort_unless(Auth::user()?->isOwner(), 403);
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         $totalExamRevenue = (float) ExamEnrollment::query()
             ->whereIn('payment_status', ['paid', 'manual_enrolled'])

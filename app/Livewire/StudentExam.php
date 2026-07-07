@@ -107,7 +107,7 @@ class StudentExam extends Component
             ->exists();
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.student-exam', [
             'templates' => ExamTemplate::query()
@@ -200,8 +200,10 @@ class StudentExam extends Component
             $this->speakingHistory = [];
             foreach ($record->sections ?? [] as $sec) {
                 foreach ($sec['elements'] ?? [] as $el) {
-                    if (($el['type'] ?? '') === 'speaking' && isset($this->answers[$el['id']])) {
-                        $this->speakingHistory[$el['id']] = $this->answers[$el['id']];
+                    if (($el['type'] ?? '') === 'speaking' && array_key_exists($el['id'], $this->answers)) {
+                        /** @var array<int, array<string, string>> $history */
+                        $history = $this->answers[$el['id']];
+                        $this->speakingHistory[$el['id']] = $history;
                     }
                 }
             }
@@ -329,13 +331,15 @@ class StudentExam extends Component
 
         foreach ($writingElements as $element) {
             $hasWriting = true;
-            $writingContent = $this->answers[$element['id']] ?? '';
+            $writingContent = (string) ($this->answers[$element['id']] ?? '');
             if (! empty(trim($writingContent))) {
                 try {
                     $writeModel = Gemini::generativeModel(model: 'gemini-2.0-flash')
                         ->withSystemInstruction(
-                            'Du bist ein offizieller TELC-C1-Prüfer für die schriftliche Prüfung. '
-                            .'Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis 48 Punkten zurück.'
+                            Content::parse(
+                                'Du bist ein offizieller TELC-C1-Prüfer für die schriftliche Prüfung. '
+                                .'Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis 48 Punkten zurück.'
+                            )
                         );
                     $resp = $writeModel->generateContent(
                         "Aufsatz:\n{$writingContent}\n\n"
@@ -407,8 +411,10 @@ class StudentExam extends Component
                 try {
                     $speakModel = Gemini::generativeModel(model: 'gemini-2.5-flash')
                         ->withSystemInstruction(
-                            'Du bist ein offizieller TELC-C1-Prüfer für die mündliche Prüfung. '
-                            .'Bewerte das vorliegende Gesprächsprotokoll. Gib eine exakte Punktzahl von 0 bis '.$maxPoints.' Punkten zurück.'
+                            Content::parse(
+                                'Du bist ein offizieller TELC-C1-Prüfer für die mündliche Prüfung. '
+                                .'Bewerte das vorliegende Gesprächsprotokoll. Gib eine exakte Punktzahl von 0 bis '.$maxPoints.' Punkten zurück.'
+                            )
                         );
                     $resp = $speakModel->generateContent(
                         "Gesprächsprotokoll:\n{$speakingText}\n\n"
@@ -566,7 +572,7 @@ class StudentExam extends Component
             $prompt = "Schreibe einen gut strukturierten Vortrag (Einleitung, Hauptteil, Eigene Meinung/In my view, Schluss/Fazit) zum C1-Thema: \"{$unchosenTopic}\". Der Vortrag soll exakt auf C1-Niveau verfasst sein und eine klare Argumentationslinie haben.";
 
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
-                ->withSystemInstruction('Du bist ein TELC-Prüfungskandidat, der einen C1-Vortrag hält. Sprich den Lernenden direkt an und halte den Vortrag.')
+                ->withSystemInstruction(Content::parse('Du bist ein TELC-Prüfungskandidat, der einen C1-Vortrag hält. Sprich den Lernenden direkt an und halte den Vortrag.'))
                 ->generateContent($prompt);
 
             $this->c1AiResponseText = $result->text();
@@ -616,10 +622,12 @@ class StudentExam extends Component
             try {
                 $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                     ->withSystemInstruction(
-                        'Du bist ein offizieller TELC-C1-Prüfer. '
-                        .'Bewerte den mündlichen Vortrag des Lernenden zu dem von ihm gewählten Thema. '
-                        .'Achte besonders darauf, ob der Vortrag gut strukturiert ist, ob er das Thema klar darstellt und ob das Sprachniveau C1 entspricht. '
-                        .'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/6" an (wobei X die Punktzahl von 0 bis 6 ist), gefolgt von einer kurzen Begründung.'
+                        Content::parse(
+                            'Du bist ein offizieller TELC-C1-Prüfer. '
+                            .'Bewerte den mündlichen Vortrag des Lernenden zu dem von ihm gewählten Thema. '
+                            .'Achte besonders darauf, ob der Vortrag gut strukturiert ist, ob er das Thema klar darstellt und ob das Sprachniveau C1 entspricht. '
+                            .'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/6" an (wobei X die Punktzahl von 0 bis 6 ist), gefolgt von einer kurzen Begründung.'
+                        )
                     )
                     ->generateContent(
                         "Gewähltes Thema: {$this->c1SelectedTopic}\n\n"
@@ -656,10 +664,12 @@ class StudentExam extends Component
             try {
                 $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                     ->withSystemInstruction(
-                        'Du bist ein offizieller TELC-C1-Prüfer. '
-                        .'Der Lernende reagiert auf deine Zusammenfassung / deinen Vortrag. '
-                        .'Bewerte seine Reaktion darauf. Achte auf logischen Bezug, Sprachgefühl und syntaktische Korrektheit auf C1 Niveau. '
-                        .'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/4" an (wobei X die Punktzahl von 0 bis 4 ist), gefolgt von einer kurzen Begründung.'
+                        Content::parse(
+                            'Du bist ein offizieller TELC-C1-Prüfer. '
+                            .'Der Lernende reagiert auf deine Zusammenfassung / deinen Vortrag. '
+                            .'Bewerte seine Reaktion darauf. Achte auf logischen Bezug, Sprachgefühl und syntaktische Korrektheit auf C1 Niveau. '
+                            .'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/4" an (wobei X die Punktzahl von 0 bis 4 ist), gefolgt von einer kurzen Begründung.'
+                        )
                     )
                     ->generateContent(
                         "AI Vortrag:\n{$this->c1AiResponseText}\n\n"

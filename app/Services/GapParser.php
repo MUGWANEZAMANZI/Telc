@@ -9,10 +9,17 @@ class GapParser
      *
      * @return array<int, array{type: string, content?: string, gapId?: string, gapDef?: array<string, mixed>}>
      */
+    /**
+     * @param array<string, array<string, mixed>> $gaps
+     * @return array<int, array{type: string, content?: string, gapId?: string, gapDef?: array<string, mixed>}>
+     */
     public function parse(string $content, array $gaps): array
     {
         $pattern = '/\[\[gap:(\d+)\]\]/';
         $parts = preg_split($pattern, $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+        if ($parts === false) {
+            return [];
+        }
         $segments = [];
 
         foreach ($parts as $i => $part) {

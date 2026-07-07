@@ -56,7 +56,7 @@ class ExamDashboard extends Component
         }
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.exam-dashboard', [
             'templates' => ExamTemplate::query()->where('exam_provider', $this->providerFilter)->orderBy('level')->get(),
@@ -385,9 +385,9 @@ class ExamDashboard extends Component
     }
 
     /**
-     * @return Collection<int, array<string, mixed>>
+     * @return Collection<int, array{student: User, attempts: int, average: float, latest_score: mixed, latest_exam: mixed}>
      */
-    private function performanceRows()
+    private function performanceRows(): Collection
     {
         return User::query()
             ->where('role', 'student')
