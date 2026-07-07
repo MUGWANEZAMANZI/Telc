@@ -325,7 +325,7 @@ class StudentExam extends Component
         $hasWriting = false;
 
         // Find writing elements
-        $writingElements = collect($this->template['sections'] ?? [])
+        $writingElements = collect((array) ($this->template['sections'] ?? []))
             ->pluck('elements')
             ->flatten(1)
             ->where('type', 'writing');
@@ -360,7 +360,7 @@ class StudentExam extends Component
 
         // Grade Speaking (C1-SP-1 / C1-SP-2 / speaking elements)
         $speakingScore = 0;
-        $speakingElements = collect($this->template['sections'] ?? [])
+        $speakingElements = collect((array) ($this->template['sections'] ?? []))
             ->pluck('elements')
             ->flatten(1)
             ->where('type', 'speaking');
@@ -535,7 +535,7 @@ class StudentExam extends Component
                 continue;
             }
 
-            $element = collect($this->template['sections'] ?? [])
+            $element = collect((array) ($this->template['sections'] ?? []))
                 ->pluck('elements')
                 ->flatten(1)
                 ->firstWhere('id', $detail['id']);
@@ -610,7 +610,7 @@ class StudentExam extends Component
             'text' => $transcribedText,
         ];
 
-        $element = collect($this->template['sections'] ?? [])
+        $element = collect((array) ($this->template['sections'] ?? []))
             ->pluck('elements')
             ->flatten(1)
             ->firstWhere('id', $elementId);

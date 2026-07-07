@@ -49,6 +49,7 @@ return new class extends Migration
             });
     }
 
+    /** @return array<int, array<string, mixed>> */
     private function b1Sections(): array
     {
         return [
@@ -99,6 +100,7 @@ return new class extends Migration
         ];
     }
 
+    /** @return array<int, array<string, mixed>> */
     private function b2Sections(): array
     {
         return [
@@ -155,6 +157,7 @@ return new class extends Migration
         ];
     }
 
+    /** @return array<int, array<string, mixed>> */
     private function c2Sections(): array
     {
         return [

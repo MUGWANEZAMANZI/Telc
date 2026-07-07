@@ -11,7 +11,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $exam_template_id
  * @property int|null $user_id
- * @property array $answers
+ * @property array<string, mixed> $answers
  * @property array{earned: float, possible: float, percentage: float}|null $result
  * @property Carbon|null $started_at
  * @property Carbon|null $submitted_at

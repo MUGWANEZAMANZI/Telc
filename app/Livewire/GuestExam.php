@@ -64,7 +64,7 @@ class GuestExam extends Component
     public function loadCompletedFromCookie(): void
     {
         $raw = request()->cookie('free_sections_completed');
-        if ($raw) {
+        if (is_string($raw) && $raw !== '') {
             $decoded = json_decode($raw, true);
             $this->completedSectionIds = is_array($decoded) ? $decoded : [];
         } else {
@@ -80,7 +80,7 @@ class GuestExam extends Component
     public function loadNoRetryFromCookie(): void
     {
         $raw = request()->cookie('free_no_retry_sections');
-        if ($raw) {
+        if (is_string($raw) && $raw !== '') {
             $decoded = json_decode($raw, true);
             $this->noRetrySectionIds = is_array($decoded) ? $decoded : [];
         } else {
@@ -137,14 +137,13 @@ class GuestExam extends Component
     /** @return list<string> */
     public function getLevels(): array
     {
-        return ExamTemplate::query()
+        return array_values(ExamTemplate::query()
             ->where('is_published', true)
             ->whereIn('level', ['B1', 'B2', 'C2'])
             ->pluck('level')
             ->unique()
             ->sort()
-            ->values()
-            ->toArray();
+            ->toArray());
     }
 
     public function isSectionCompleted(int $sectionIndex): bool
@@ -184,7 +183,7 @@ class GuestExam extends Component
             return false;
         }
 
-        return collect($sections[$sectionIndex]['elements'] ?? [])
+        return collect((array) ($sections[$sectionIndex]['elements'] ?? []))
             ->contains(fn ($el) => ($el['type'] ?? '') === 'audio');
     }
 
@@ -195,7 +194,7 @@ class GuestExam extends Component
             return false;
         }
 
-        return collect($sections[$sectionIndex]['elements'] ?? [])
+        return collect((array) ($sections[$sectionIndex]['elements'] ?? []))
             ->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
     }
 
@@ -212,7 +211,7 @@ class GuestExam extends Component
             return 'default';
         }
         $elements = $sections[$sectionIndex]['elements'] ?? [];
-        $types = collect($elements)->pluck('type')->unique()->values()->toArray();
+        $types = collect((array) $elements)->pluck('type')->unique()->values()->toArray();
         if (in_array('writing', $types, true)) {
             return 'writing';
         }

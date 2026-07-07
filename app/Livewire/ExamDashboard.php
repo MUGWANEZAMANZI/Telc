@@ -325,7 +325,10 @@ class ExamDashboard extends Component
         ];
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /**
+     * @param  array<string, mixed>  $element
+     * @return array<int, array<string, mixed>>
+     */
     public function gapsFor(array $element): array
     {
         if (($element['type'] ?? '') !== 'inline_gap') {
@@ -336,7 +339,10 @@ class ExamDashboard extends Component
         return is_array($raw) ? array_values($raw) : [];
     }
 
-    /** @return list<string> */
+    /**
+     * @param  array<string, mixed>  $element
+     * @return list<string>
+     */
     public function optionsFor(array $element): array
     {
         $options = array_filter(array_map('trim', explode(',', (string) ($element['options'] ?? ''))));
@@ -386,10 +392,11 @@ class ExamDashboard extends Component
     }
 
     /**
-     * @return Collection<int, array{student: User, attempts: int, average: float, latest_score: mixed, latest_exam: mixed}>
+     * @return Collection<int, array{student: User, attempts: int<0, max>, average: float, latest_score: float|null, latest_exam: string|null}>
      */
     private function performanceRows(): Collection
     {
+        /** @phpstan-ignore return.type (covariant template issue) */
         return User::query()
             ->where('role', 'student')
             ->with(['attempts' => fn ($query) => $query->latest()->limit(20), 'attempts.examTemplate'])
@@ -411,8 +418,8 @@ class ExamDashboard extends Component
     }
 
     /**
-     * @param  array<int, mixed>  $items
-     * @return array<int, mixed>
+     * @param  list<mixed>  $items
+     * @return list<mixed>
      */
     private function move(array $items, int $from, int $to): array
     {
@@ -424,6 +431,6 @@ class ExamDashboard extends Component
         array_splice($items, $from, 1);
         array_splice($items, $to, 0, [$item]);
 
-        return array_values($items);
+        return $items;
     }
 }

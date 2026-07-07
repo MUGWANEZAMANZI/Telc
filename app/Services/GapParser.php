@@ -50,7 +50,7 @@ class GapParser
      * Get all gaps from all interactive_text elements across sections.
      *
      * @param  array<int, array<string, mixed>>  $sections
-     * @return array<int, array{elementId: string, gapId: string, label: string, type: string, options: array, answer: string}>
+     * @return array<int, array{elementId: string, gapId: string, label: string, type: string, options: array<int, array{value: string, label: string}>, answer: string}>
      */
     public function allGaps(array $sections): array
     {
@@ -80,15 +80,20 @@ class GapParser
         return $items;
     }
 
+    /**
+     * @param  array<string, mixed>  $gapDef
+     * @param  array<string, mixed>  $element
+     */
     public function labelFor(array $gapDef, string|int $gapId, array $element): string
     {
-        $num = preg_replace('/[^0-9]/', '', $element['label'] ?? '');
+        $num = preg_replace('/[^0-9]/', '', (string) ($element['label'] ?? ''));
         $num = $num ?: (string) $gapId;
 
         return $num;
     }
 
     /**
+     * @param  array<string, mixed>  $gapDef
      * @return array<int, array{value: string, label: string}>
      */
     public function optionList(array $gapDef): array
@@ -124,6 +129,7 @@ class GapParser
         return [];
     }
 
+    /** @param  array<string, mixed>  $gapDef */
     public static function optionsCsv(array $gapDef): string
     {
         $options = $gapDef['options'] ?? [];
@@ -144,6 +150,7 @@ class GapParser
     /**
      * Parse a CSV string like "a:Tag,b:Baum,c:Hund" into an associative array.
      */
+    /** @return array<string, string> */
     public static function parseOptionsCsv(string $csv): array
     {
         $result = [];

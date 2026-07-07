@@ -53,6 +53,7 @@ class PayPalCheckoutController extends Controller
             'duration' => ['required', 'integer', 'in:1,3,12'],
         ]);
 
+        /** @var Plan $plan */
         $plan = Plan::query()->findOrFail($request->plan_id);
         $duration = (int) $request->duration;
         $amount = (float) $plan->price * $duration;
@@ -209,6 +210,7 @@ class PayPalCheckoutController extends Controller
         return response('OK', 200);
     }
 
+    /** @param array<string, mixed> $payload */
     protected function handlePaymentCaptureCompleted(array $payload): void
     {
         $customId = $payload['resource']['custom_id'] ?? '';

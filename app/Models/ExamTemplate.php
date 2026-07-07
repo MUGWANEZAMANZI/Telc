@@ -13,9 +13,9 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string $level
  * @property string|null $source_pdf
- * @property array $theme
- * @property array $timings
- * @property array $sections
+ * @property array<string, mixed> $theme
+ * @property array<string, mixed> $timings
+ * @property array<int, array<string, mixed>> $sections
  * @property bool $is_published
  * @property string|null $exam_provider
  * @property float|null $price

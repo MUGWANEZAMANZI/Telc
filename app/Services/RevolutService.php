@@ -35,6 +35,7 @@ class RevolutService
         return $this->mode;
     }
 
+    /** @return array<string, mixed> */
     public function createOrder(float $amount, string $currency = 'EUR', ?string $description = null, ?string $customData = null): array
     {
         $payload = [
@@ -67,6 +68,7 @@ class RevolutService
         return $response->json();
     }
 
+    /** @return array<string, mixed> */
     public function captureOrder(string $orderId): array
     {
         $response = Http::withHeaders([
@@ -85,6 +87,7 @@ class RevolutService
         return $response->json();
     }
 
+    /** @return array<string, mixed> */
     public function getOrder(string $orderId): array
     {
         $response = Http::withHeaders([
@@ -103,6 +106,7 @@ class RevolutService
         return $response->json();
     }
 
+    /** @param array<string, mixed> $headers */
     public function verifyWebhookSignature(array $headers, string $body): bool
     {
         $signature = $headers['revolut-signature'] ?? $headers['Revolut-Signature'] ?? '';

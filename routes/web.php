@@ -3,7 +3,6 @@
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\PayPalCheckoutController;
 use App\Http\Controllers\RevolutCheckoutController;
-use App\Http\Middleware\VerifyCsrfToken;
 use App\Livewire\AdminBooks;
 use App\Livewire\AdminFinance;
 use App\Livewire\BillingPortal;
@@ -49,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::post('paypal/webhook', [PayPalCheckoutController::class, 'webhook']);
-Route::post('api/webhooks/revolut', [RevolutCheckoutController::class, 'webhook'])->withoutMiddleware([VerifyCsrfToken::class]);
+Route::post('api/webhooks/revolut', [RevolutCheckoutController::class, 'webhook']);
 
 Route::get('/telc-assets/{file}', function (string $file) {
     abort_unless(str_ends_with($file, '.mp3'), 404);
@@ -66,7 +65,7 @@ Route::get('/exam-audio/{path}', function (string $path) {
 
     abort_unless($disk->exists($path), 404);
 
-    $mime = $disk->mimeType($path) ?? 'audio/mpeg';
+    $mime = $disk->mimeType($path) ?: 'audio/mpeg';
 
     return response()->file($disk->path($path), ['Content-Type' => $mime]);
 })->where('path', '.*')->name('exam.audio')->middleware(['auth', 'verified']);

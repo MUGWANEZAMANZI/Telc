@@ -29,6 +29,7 @@ class RevolutCheckoutController extends Controller
         $customData = '';
 
         if ($request->type === 'exam') {
+            /** @var ExamTemplate $exam */
             $exam = ExamTemplate::query()->findOrFail($request->id);
             if (! $exam->price || $exam->price <= 0) {
                 return response()->json(['error' => 'Dieser Prüfungstermin ist kostenlos.'], 400);
@@ -37,6 +38,7 @@ class RevolutCheckoutController extends Controller
             $description = $exam->title;
             $customData = 'exam_'.$exam->id;
         } else {
+            /** @var Plan $plan */
             $plan = Plan::query()->findOrFail($request->id);
             $duration = $request->integer('duration_months', 1);
             $amount = (float) $plan->price * $duration;
@@ -87,6 +89,7 @@ class RevolutCheckoutController extends Controller
 
         try {
             if ($intent === 'exam') {
+                /** @var ExamTemplate|null $exam */
                 $exam = ExamTemplate::query()->find($itemId);
                 if (! $exam) {
                     return redirect()->route('dashboard')->with('error', 'Prüfung nicht gefunden.');
@@ -109,6 +112,7 @@ class RevolutCheckoutController extends Controller
             }
 
             if ($intent === 'plan') {
+                /** @var Plan|null $plan */
                 $plan = Plan::query()->find($itemId);
                 if (! $plan) {
                     return redirect()->route('billing')->with('error', 'Tarif nicht gefunden.');

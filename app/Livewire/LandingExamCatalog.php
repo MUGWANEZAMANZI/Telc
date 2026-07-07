@@ -39,8 +39,7 @@ class LandingExamCatalog extends Component
     {
         $exam = ExamTemplate::find($templateId);
 
-        /** @var string $level */
-        $level = $exam?->level ?? 'B1';
+        $level = $exam->level ?? 'B1';
         $this->redirect(route('free.exam', ['level' => $level]));
     }
 
@@ -54,15 +53,13 @@ class LandingExamCatalog extends Component
     {
         $order = ['B1' => 0, 'B2' => 1, 'C1' => 2];
 
-        return ExamTemplate::where('is_published', true)
+        return array_values(ExamTemplate::where('is_published', true)
             ->where('exam_provider', $this->selectedProvider)
             ->whereIn('level', ['B1', 'B2', 'C1'])
             ->pluck('level')
             ->unique()
-            ->values()
             ->sortBy(fn ($l) => $order[$l] ?? 99)
-            ->values()
-            ->toArray();
+            ->toArray());
     }
 
     public function render(): View

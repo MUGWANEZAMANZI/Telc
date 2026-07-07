@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
@@ -54,14 +55,17 @@ class AppServiceProvider extends ServiceProvider
     protected function recordSuccessfulLogins(): void
     {
         Event::listen(Login::class, function (Login $event): void {
+            /** @var User $user */
+            $user = $event->user;
+
             DB::table('sessions')
-                ->where('user_id', $event->user->id)
+                ->where('user_id', $user->id)
                 ->where('id', '!=', session()->getId())
                 ->delete();
 
-            $event->user->forceFill([
+            $user->forceFill([
                 'last_login_at' => now(),
-                'login_count' => ((int) $event->user->login_count) + 1,
+                'login_count' => ((int) $user->login_count) + 1,
             ])->save();
         });
     }

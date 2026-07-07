@@ -14,7 +14,7 @@ use Illuminate\Support\Carbon;
  * @property float $price
  * @property string $currency
  * @property string $interval
- * @property array $features
+ * @property array<int, string> $features
  * @property bool $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at

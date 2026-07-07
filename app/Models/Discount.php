@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -11,10 +12,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $value
  * @property int $max_uses
  * @property int $used_count
- * @property \Illuminate\Support\Carbon|null $expires_at
+ * @property Carbon|null $expires_at
  * @property bool $is_active
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class Discount extends Model
 {

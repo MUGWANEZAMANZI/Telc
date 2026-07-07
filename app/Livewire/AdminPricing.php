@@ -64,7 +64,7 @@ class AdminPricing extends Component
     {
         $plan = Plan::findOrFail($id);
         $this->editingPlanId = $plan->id;
-        $this->planForm = $plan->toArray() + ['features' => is_array($plan->features) ? implode("\n", $plan->features) : ''];
+        $this->planForm = $plan->toArray() + ['features' => implode("\n", $plan->features ?? [])];
     }
 
     public function savePlan(): void

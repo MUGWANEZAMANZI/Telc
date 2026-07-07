@@ -13,7 +13,7 @@ use Illuminate\Support\Carbon;
  * @property int $exam_template_id
  * @property string $status
  * @property string $payment_status
- * @property array|null $active_answers
+ * @property array<string, mixed>|null $active_answers
  * @property int|null $remaining_seconds
  * @property int $active_section
  * @property Carbon|null $enrolled_at

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
-use Psr\Http\Message\StreamInterface;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PayPalService
@@ -56,7 +55,7 @@ class PayPalService
     }
 
     /**
-     * @param array<string, mixed> $subscriber
+     * @param  array<string, mixed>  $subscriber
      * @return array<string, mixed>
      */
     public function createSubscription(string $paypalPlanId, array $subscriber, string $returnUrl, string $cancelUrl): array
@@ -108,6 +107,7 @@ class PayPalService
         return $result;
     }
 
+    /** @param array<string, mixed> $response */
     public function getApprovalLink(array $response): ?string
     {
         foreach ($response['links'] ?? [] as $link) {
