@@ -78,8 +78,8 @@ jobs:
             set -e
             cd /var/www/telc
             
-            # Pull the latest code
-            git pull origin main
+            # Force Git to use your specific SSH key and bypass prompts
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" git pull origin main
             
             # Authenticate Composer for Flux UI on the VPS
             composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
