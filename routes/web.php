@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 Route::view('/', 'welcome')->name('home');
 
 Route::view('pricing', 'pricing')->name('pricing');
-Route::get('free-exam/{template?}', GuestExam::class)->name('free.exam');
+Route::get('free-exam/{templateId?}', GuestExam::class)->name('free.exam');
 Route::view('premium-exam', 'premium-exam')->name('premium.exam');
 
 Route::get('books', [BookController::class, 'index'])->name('books.index');

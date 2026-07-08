@@ -47,17 +47,17 @@ class GuestExam extends Component
 
     public bool $started = false;
 
-    public function mount(?int $template = null): void
+    public function mount(?int $templateId = null): void
     {
         $this->freeSectionLimit = max(1, (int) Setting::value('free_section_limit', '3'));
 
         $this->loadCompletedFromCookie();
         $this->loadNoRetryFromCookie();
 
-        if ($template) {
+        if ($templateId) {
             $record = ExamTemplate::query()
                 ->where('is_published', true)
-                ->find($template);
+                ->find($templateId);
 
             if ($record) {
                 $this->selectedLevel = $record->level;
