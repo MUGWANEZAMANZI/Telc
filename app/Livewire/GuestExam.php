@@ -291,14 +291,15 @@ class GuestExam extends Component
 
         $this->started = false;
 
-        // For sections with inline_gap, only grade inline_gap elements
-        // (standard answer elements are not visible in the inline_gap view)
         $sectionToGrade = $currentSection;
-        $hasInlineGap = collect($currentSection['elements'] ?? [])
+
+        /** @var array<int, array<string, mixed>> $elements */
+        $elements = $currentSection['elements'] ?? [];
+        $hasInlineGap = collect($elements)
             ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
 
         if ($hasInlineGap) {
-            $sectionToGrade['elements'] = collect($currentSection['elements'] ?? [])
+            $sectionToGrade['elements'] = collect($elements)
                 ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
                 ->values()
                 ->all();

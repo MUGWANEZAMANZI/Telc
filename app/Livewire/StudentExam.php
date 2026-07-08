@@ -320,11 +320,13 @@ class StudentExam extends Component
         // (standard answer elements are not visible in the inline_gap view)
         $sections = $this->template['sections'] ?? [];
         $sectionsToGrade = array_map(function ($section) {
-            $hasInlineGap = collect($section['elements'] ?? [])
+            /** @var array<int, array<string, mixed>> $elements */
+            $elements = $section['elements'] ?? [];
+            $hasInlineGap = collect($elements)
                 ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
 
             if ($hasInlineGap) {
-                $section['elements'] = collect($section['elements'] ?? [])
+                $section['elements'] = collect($elements)
                     ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
                     ->values()
                     ->all();
