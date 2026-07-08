@@ -4,8 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Book;
 use Illuminate\View\View;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.reader')]
 class BookReader extends Component
