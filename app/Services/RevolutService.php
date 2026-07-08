@@ -35,6 +35,17 @@ class RevolutService
         return $this->mode;
     }
 
+    /** @return array<string, string> */
+    protected function authHeaders(string $contentType = 'application/json'): array
+    {
+        return [
+            'Authorization' => 'Bearer '.$this->secretKey,
+            'Accept' => 'application/json',
+            'Revolut-Api-Version' => '2024-09-01',
+            'Content-Type' => $contentType,
+        ];
+    }
+
     /** @return array<string, mixed> */
     public function createOrder(float $amount, string $currency = 'EUR', ?string $description = null, ?string $customData = null): array
     {
@@ -51,11 +62,8 @@ class RevolutService
             $payload['merchant_order_ext_ref'] = $customData;
         }
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->secretKey,
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-        ])->post("{$this->baseUrl}/1.0/orders", $payload);
+        $response = Http::withHeaders($this->authHeaders())
+            ->post("{$this->baseUrl}/1.0/orders", $payload);
 
         if ($response->failed()) {
             Log::error('Revolut order creation failed', [
@@ -71,10 +79,8 @@ class RevolutService
     /** @return array<string, mixed> */
     public function captureOrder(string $orderId): array
     {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->secretKey,
-            'Accept' => 'application/json',
-        ])->post("{$this->baseUrl}/1.0/orders/{$orderId}/capture");
+        $response = Http::withHeaders($this->authHeaders())
+            ->post("{$this->baseUrl}/1.0/orders/{$orderId}/capture");
 
         if ($response->failed()) {
             Log::error('Revolut order capture failed', [
@@ -90,10 +96,8 @@ class RevolutService
     /** @return array<string, mixed> */
     public function getOrder(string $orderId): array
     {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->secretKey,
-            'Accept' => 'application/json',
-        ])->get("{$this->baseUrl}/1.0/orders/{$orderId}");
+        $response = Http::withHeaders($this->authHeaders())
+            ->get("{$this->baseUrl}/1.0/orders/{$orderId}");
 
         if ($response->failed()) {
             Log::error('Revolut get order failed', [
@@ -101,6 +105,32 @@ class RevolutService
                 'body' => $response->body(),
             ]);
             throw new \RuntimeException('Revolut get order failed: '.$response->body());
+        }
+
+        return $response->json();
+    }
+
+    /** @return array<string, mixed> */
+    public function refundOrder(string $orderId, int $amount, string $currency = 'EUR', ?string $description = null): array
+    {
+        $payload = [
+            'amount' => $amount,
+            'currency' => $currency,
+        ];
+
+        if ($description) {
+            $payload['description'] = $description;
+        }
+
+        $response = Http::withHeaders($this->authHeaders())
+            ->post("{$this->baseUrl}/1.0/orders/{$orderId}/refund", $payload);
+
+        if ($response->failed()) {
+            Log::error('Revolut refund failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            throw new \RuntimeException('Revolut refund failed: '.$response->body());
         }
 
         return $response->json();

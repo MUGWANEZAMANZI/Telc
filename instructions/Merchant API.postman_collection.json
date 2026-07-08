@@ -1,0 +1,3255 @@
+{
+  "info": {
+    "_postman_id": "abdcb155-8c8d-4712-a16c-9ab023f59f7a",
+    "name": "Merchant API",
+    "description": "# Introduction\n\nAs a Revolut Business customer, you can use the Merchant API to accept online payments (Card Not Present) by debit or credit cards, and also to manage the orders and customers.\n\nThis Postman collection lets you try Revolut's Merchant API.\n\nTo see the full documentation of the Merchant API, visit: [Revolut Docs - Merchant API](https://developer.revolut.com/docs/merchant/merchant-api).\n\n## Authorization\n\nEach Merchant API request must contain an authorization header in the following format to make a call:\n\n``` json\n\"Authorization: Bearer <yourSecretApiKey>\"\n\n ```\n\nUse the predefined environment variables (`secret_api_key`) in Postman to authorize your API calls. Make sure to use your Sandbox and Production Secret API keys with the corresponding environments!\n\nSelect the environment you want to use in the top-right corner.\n\nTo learn more about authorization, see: [Merchant API - Authorization](https://developer.revolut.com/docs/merchant/merchant-api#authorization).\n\n### API versions\n\nWe highly recommend using versioning in your API calls. If you don't provide a version header on the operations where it's required, you will receive an error response.\n\nThe Merchant API uses request header versioning. Where it is required you need to use the `Revolut-Api-Version` header parameter to specify an API version. Each request, where it is indicated in the API specification, must contain a version header in the following format:\n\n```\n 'Revolut-Api-Version: 2023-09-01'\n\n ```\n\nFor more information, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33806934",
+    "_collection_link": "https://go.postman.co/collection/23791871-abdcb155-8c8d-4712-a16c-9ab023f59f7a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create an order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \n\nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"currency\": \"GBP\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "description": "Create an `Order` object.\n\nFull documentation: [Merchant API - Create an order](https://developer.revolut.com/docs/merchant/create-order)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve an order list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/orders?limit=100",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "The maximum number of orders returned per page. Used for **pagination**."
+                },
+                {
+                  "key": "from",
+                  "value": "1991-03-12T03:51:25.311Z",
+                  "description": "Retrieve all orders with a `created_date` ≥ `from_created_date`. Used for **filtering**.\n\nUse the [ISO date format](https://en.wikipedia.org/wiki/ISO_8601) : `yyyy-MM-ddTHH:mm:ss[.SSSSSS]Z`. For example, `2021-02-10T16:59:50.886826Z`.",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "1991-03-12T03:51:25.311Z",
+                  "description": "Retrieve all orders with a `created_date` ≤ `to_created_date`. Used for **filtering**.\n\nUse the [ISO date format](https://en.wikipedia.org/wiki/ISO_8601) : `yyyy-MM-ddTHH:mm:ss[.SSSSSS]Z`. For example, `2021-02-10T16:59:50.886826Z`.",
+                  "disabled": true
+                },
+                {
+                  "key": "customer_id",
+                  "value": "",
+                  "description": "Retrieve all orders that have this `customer_id` associated to them. Used for **filtering**.",
+                  "disabled": true
+                },
+                {
+                  "key": "merchant_order_data_reference",
+                  "value": "",
+                  "description": "Merchant order ID for external reference. Use this field to filter and retrieve all the orders that have this ID. Used for **filtering**. \n\nThis parameter is case sensitive.",
+                  "disabled": true
+                },
+                {
+                  "key": "location_id",
+                  "value": null,
+                  "description": "Retrieve all orders for a specific location.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "state",
+                  "value": "completed",
+                  "description": "Retrieve all orders with specific states. You can pass several states. Used for filtering.\n\nIf multiple states are selected, for example `authorised` and `completed`, orders with either of the selected values are returned. \n\nThe parameter is case sensitive.",
+                  "disabled": true
+                },
+                {
+                  "key": "state",
+                  "value": "cancelled",
+                  "description": "Retrieve all orders with specific states. You can pass several states. Used for filtering.\n\nIf multiple states are selected, for example `authorised` and `completed`, orders with either of the selected values are returned. \n\nThe parameter is case sensitive.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve all the orders that you’ve created. You can also use the query parameters for:\n\n- Filtering\n    \n- Pagination\n    \n\nThe response contains an array of simplified `Order` objects.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Retrieve an order list](https://developer.revolut.com/docs/merchant/retrieve-order-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve an order",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \n\nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/orders/:order_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                ":order_id"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": "",
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Retrieve the details of an order that has been created. Provide the unique order ID, and the corresponding order information is returned.\n\nFull documentation: [Merchant API - Retrieve an order](https://developer.revolut.com/docs/merchant/retrieve-order)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update an order",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \n\nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"amount\": 100,\n    \"currency\": \"EUR\",\n    \"merchant_order_data\": {\n        \"reference\": \"test order\"\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/:order_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                ":order_id"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": "",
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Update the details of an order.\n\nSpecific limitations apply based on the state of the order, see full documentation: [Merchant API - Update an order](https://developer.revolut.com/docs/merchant/update-order)."
+          },
+          "response": []
+        },
+        {
+          "name": "Increment authorisation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \n\nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/:order_id/increment-authorisation",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                ":order_id",
+                "increment-authorisation"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": "",
+                  "description": "The ID of the `Order` object."
+                }
+              ]
+            },
+            "description": "Increment authorised amount of an order.\n\nFull documentation: [Merchant API - Increment authorisation](https://developer.revolut.com/docs/merchant/increment-authorisation)"
+          },
+          "response": [
+            {
+              "name": "Example increment with minimal required parameters",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Revolut-Api-Version",
+                    "value": "{{api_version}}",
+                    "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \n\nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 600\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/orders/:order_id/increment-authorisation",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    ":order_id",
+                    "increment-authorisation"
+                  ],
+                  "variable": [
+                    {
+                      "key": "order_id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            },
+            {
+              "name": "Example increment with additional parameters",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Revolut-Api-Version",
+                    "value": "{{api_version}}",
+                    "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \n\nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 6000,\n  \"reference\": \"CHG-67890\",\n  \"line_items\": [\n    {\n      \"name\": \"Minibar\",\n      \"type\": \"physical\",\n      \"quantity\": {\n        \"value\": 1\n      },\n      \"unit_price_amount\": 2500,\n      \"total_amount\": 2500\n    },\n    {\n      \"name\": \"Room service\",\n      \"type\": \"physical\",\n      \"quantity\": {\n        \"value\": 1\n      },\n      \"unit_price_amount\": 3500,\n      \"total_amount\": 3500\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/orders/:order_id/increment-authorisation",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    ":order_id",
+                    "increment-authorisation"
+                  ],
+                  "variable": [
+                    {
+                      "key": "order_id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Capture an order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"amount\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/:order_id/capture",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                ":order_id",
+                "capture"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": null,
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Capture the funds of an existing, uncaptured order. When the payment for an order is authorized, the order is captured and sent to the processing stage.\n\nFull documentation: [Merchant API - Capture an order](https://developer.revolut.com/docs/merchant/capture-order)"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel an order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/orders/:order_id/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                ":order_id",
+                "cancel"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": null,
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Cancel an existing uncaptured order.\n\nSpecific limitations apply based on the state of the order, see full documentation: [Merchant API - Cancel an order](https://developer.revolut.com/docs/merchant/cancel-order)"
+          },
+          "response": []
+        },
+        {
+          "name": "Refund an order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"amount\": 40,\n    \"currency\": \"GBP\",\n    \"merchant_order_ext_ref\": \"00122\",\n    \"description\": \"Refund for damaged goods\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/1.0/orders/:order_id/refund",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "1.0",
+                "orders",
+                ":order_id",
+                "refund"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": null,
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Issue a refund for a completed order. A refund can be either full or partial.\n\nYou can initiate a refund for an order only when it is in the `COMPLETED` state.\n\nFull documentation: [Merchant API - Refund an order](https://developer.revolut.com/docs/merchant/refund-order)"
+          },
+          "response": []
+        },
+        {
+          "name": "Pay for an order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"saved_payment_method\": {\n    \"type\": \"card\",\n    \"id\": \"{payment_method_id}\",\n    \"initiator\": \"merchant\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/:order_id/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                ":order_id",
+                "payments"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": null,
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Initiate a payment to pay full amount for an order using a customer's saved payment method.\n\nFull documentation: [Merchant API - Pay for an order](https://developer.revolut.com/docs/merchant/pay-order)"
+          },
+          "response": [
+            {
+              "name": "Saved card - Merchant initiated payment",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"saved_payment_method\": {\n    \"type\": \"card\",\n    \"id\": \"2b83c23a-650e-40c3-8989-00ee24478738\",\n    \"initiator\": \"merchant\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://sandbox-merchant.revolut.com/api/1.0/orders/:order_id/payments",
+                  "protocol": "https",
+                  "host": [
+                    "sandbox-merchant",
+                    "revolut",
+                    "com"
+                  ],
+                  "path": [
+                    "api",
+                    "1.0",
+                    "orders",
+                    ":order_id",
+                    "payments"
+                  ],
+                  "variable": [
+                    {
+                      "key": "order_id",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Saved card - Customer initiated payment",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"saved_payment_method\": {\n    \"type\": \"card\",\n    \"id\": \"2b83c23a-650e-40c3-8989-00ee24478738\",\n    \"initiator\": \"customer\",\n    \"environment\": {\n      \"type\": \"browser\",\n      \"time_zone_utc_offset\": 180,\n      \"color_depth\": 48,\n      \"screen_width\": 1920,\n      \"screen_height\": 1080,\n      \"java_enabled\": true,\n      \"challenge_window_width\": 640,\n      \"browser_url\": \"https://business.revolut.com\"\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://sandbox-merchant.revolut.com/api/1.0/orders/:order_id/payments",
+                  "protocol": "https",
+                  "host": [
+                    "sandbox-merchant",
+                    "revolut",
+                    "com"
+                  ],
+                  "path": [
+                    "api",
+                    "1.0",
+                    "orders",
+                    ":order_id",
+                    "payments"
+                  ],
+                  "variable": [
+                    {
+                      "key": "order_id",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        }
+      ],
+      "description": "To process the order from a credit or debit card, you create an `Order` object. You can then retrieve, capture, cancel, refund, or pay an order using its unique `id`. Alternatively, you can use its unique `public_id` to process a card payment with the Revolut Checkout Widget.\n\nSee full documentation: [Merchant API - Orders](https://developer.revolut.com/docs/merchant/orders)"
+    },
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "Create a customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Example Customer\",\n  \"email\": \"customer@example.com\",\n  \"phone\": \"+447123456789\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/customers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers"
+              ]
+            },
+            "description": "Create a customer that has the information in the body of the request.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Create a customer](https://developer.revolut.com/docs/merchant/create-customer)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a customer list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/customers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Maximum number of records to return. Used for pagination.",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": null,
+                  "description": "Token for retrieving the next page of results. Used for pagination.",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "1991-03-12T03:51:25.311Z",
+                  "description": "Filter records created from this date/time. Used for filtering.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2026-01-01T00:00:00.000Z",
+                  "description": "Filter records created until this date/time. Used for filtering.",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get a list of all your customers.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Retrieve a customer list](https://developer.revolut.com/docs/merchant/retrieve-customer-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a customer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/customers/:customer_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                ":customer_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": null,
+                  "description": "The ID of the customer."
+                }
+              ]
+            },
+            "description": "Get the information about a specific customer, based on its ID.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\n  \nFull documentation: [Merchant API - Retrieve a customer](https://developer.revolut.com/docs/merchant/retrieve-customer)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update a customer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Example Customer\",\n  \"email\": \"customer@example.com\",\n  \"phone\": \"+447123456789\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/customers/:customer_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                ":customer_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": null,
+                  "description": "The ID of the customer."
+                }
+              ]
+            },
+            "description": "Update the attributes of a specific customer.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Update a customer](https://developer.revolut.com/docs/merchant/update-customer)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a customer",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/customers/:customer_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                ":customer_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": null,
+                  "description": "The ID of the customer."
+                }
+              ]
+            },
+            "description": "Delete the profile of a specific customer.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Delete a customer](https://developer.revolut.com/docs/merchant/delete-customer)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve all payment methods of a customer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/customers/:customer_id/payment-methods",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                ":customer_id",
+                "payment-methods"
+              ],
+              "query": [
+                {
+                  "key": "only_merchant",
+                  "value": "true",
+                  "description": "Boolean. If `only_merchant` is set to `true`, you retrieve the payment methods that were saved for the merchant (saved_for: \"MERCHANT\").",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": null,
+                  "description": "The ID of the customer"
+                }
+              ]
+            },
+            "description": "Retrieve all the payment methods for a specific customer.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Retrieve payment method list of a customer](https://developer.revolut.com/docs/merchant/retrieve-payment-method-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a customer's payment method",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/customers/:customer_id/payment-methods/:payment_method_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                ":customer_id",
+                "payment-methods",
+                ":payment_method_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": null,
+                  "description": "The ID of the customer."
+                },
+                {
+                  "key": "payment_method_id",
+                  "value": null,
+                  "description": "The ID of the payment method."
+                }
+              ]
+            },
+            "description": "Retrieve the information of a specific payment method that is saved.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Retrieve a customer's payment method](https://developer.revolut.com/docs/merchant/retrieve-payment-method)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update a customer's payment method",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"saved_for\": \"customer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/customers/:customer_id/payment-methods/:payment_method_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                ":customer_id",
+                "payment-methods",
+                ":payment_method_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": null,
+                  "description": "The ID of the customer."
+                },
+                {
+                  "key": "payment_method_id",
+                  "value": null,
+                  "description": "The ID of the payment method."
+                }
+              ]
+            },
+            "description": "When you use this request to update a customer's payment method, the payment method can't be used by the merchant to initiate transactions any more. This payment method can be used only when the customer is on the checkout page.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Update a customer's payment method](https://developer.revolut.com/docs/merchant/update-payment-method)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a customer's payment method",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/customers/:customer_id/payment-methods/:payment_method_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                ":customer_id",
+                "payment-methods",
+                ":payment_method_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": null,
+                  "description": "The ID of the customer."
+                },
+                {
+                  "key": "payment_method_id",
+                  "value": null,
+                  "description": "The ID of the payment method."
+                }
+              ]
+            },
+            "description": "Delete a specific payment method.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Delete a customer's payment method](https://developer.revolut.com/docs/merchant/delete-payment-method)"
+          },
+          "response": []
+        }
+      ],
+      "description": "`Customer` objects enable you to track multiple transactions associated with the same customer.\n\nFull documentation: [Merchant API - Customers](https://developer.revolut.com/docs/merchant/customers)"
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Pay for an order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"saved_payment_method\": {\n    \"type\": \"card\",\n    \"id\": \"{payment_method_id}\",\n    \"initiator\": \"merchant\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/:order_id/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                ":order_id",
+                "payments"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": null,
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Initiate a payment to pay full amount for an order using a customer's saved payment method.\n\nFull documentation: [Merchant API - Pay for an order](https://developer.revolut.com/docs/merchant/pay-order)"
+          },
+          "response": [
+            {
+              "name": "Saved card - Merchant initiated payment",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"saved_payment_method\": {\n    \"type\": \"card\",\n    \"id\": \"2b83c23a-650e-40c3-8989-00ee24478738\",\n    \"initiator\": \"merchant\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://sandbox-merchant.revolut.com/api/1.0/orders/:order_id/payments",
+                  "protocol": "https",
+                  "host": [
+                    "sandbox-merchant",
+                    "revolut",
+                    "com"
+                  ],
+                  "path": [
+                    "api",
+                    "1.0",
+                    "orders",
+                    ":order_id",
+                    "payments"
+                  ],
+                  "variable": [
+                    {
+                      "key": "order_id",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Saved card - Customer initiated payment",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"saved_payment_method\": {\n    \"type\": \"card\",\n    \"id\": \"2b83c23a-650e-40c3-8989-00ee24478738\",\n    \"initiator\": \"customer\",\n    \"environment\": {\n      \"type\": \"browser\",\n      \"time_zone_utc_offset\": 180,\n      \"color_depth\": 48,\n      \"screen_width\": 1920,\n      \"screen_height\": 1080,\n      \"java_enabled\": true,\n      \"challenge_window_width\": 640,\n      \"browser_url\": \"https://business.revolut.com\"\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/1.0/orders/:order_id/payments",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "1.0",
+                    "orders",
+                    ":order_id",
+                    "payments"
+                  ],
+                  "variable": [
+                    {
+                      "key": "order_id",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Retrieve payment details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/:payment_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                ":payment_id"
+              ],
+              "variable": [
+                {
+                  "key": "payment_id",
+                  "value": null,
+                  "description": "The ID of the Payment object."
+                }
+              ]
+            },
+            "description": "Retrieve information about a specific payment, based on the payment's ID.\n\nFull documentation: [Merchant API - Retrieve payment details](https://developer.revolut.com/docs/merchant/retrieve-payment-details)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Payment operations enable you to initiate payments, or track payment status transitions. You can use the ID of the payment to retrieve information about a specific payment.\n\nFull documentation: [Merchant API - Payments](https://developer.revolut.com/docs/merchant/payments)"
+    },
+    {
+      "name": "Subscriptions",
+      "item": [
+        {
+          "name": "Create a subscription plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Enterprise Pro Plan\",\n  \"variations\": [\n    {\n      \"phases\": [\n        {\n          \"ordinal\": 1,\n          \"cycle_duration\": \"P1Y\",\n          \"amount\": 99900,\n          \"currency\": \"GBP\"\n        }\n      ]\n    },\n    {\n      \"phases\": [\n        {\n          \"ordinal\": 1,\n          \"cycle_duration\": \"P1M\",\n          \"amount\": 9900,\n          \"currency\": \"GBP\"\n        }\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscription-plans",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscription-plans"
+              ]
+            },
+            "description": "Create a new subscription plan with one or more pricing variations.\n\nFull documentation: [Merchant API - Create a subscription plan](https://developer.revolut.com/docs/merchant/create-subscription-plan)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a subscription plan list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/subscription-plans",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscription-plans"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Maximum number of records to return. Used for pagination.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01T00:00:00.000Z",
+                  "description": "Filter records created from this date/time. Used for filtering.",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31T23:59:59.999Z",
+                  "description": "Filter records created until this date/time. Used for filtering.",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": null,
+                  "description": "Token for retrieving the next page of results. Used for pagination.",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve all subscription plans configured for your merchant account.\n\nFull documentation: [Merchant API - Retrieve a subscription plan list](https://developer.revolut.com/docs/merchant/retrieve-subscription-plan-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a subscription plan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/subscription-plans/:subscription_plan_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscription-plans",
+                ":subscription_plan_id"
+              ],
+              "variable": [
+                {
+                  "key": "subscription_plan_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Retrieve a specific subscription plan by its unique identifier.\n\nFull documentation: [Merchant API - Retrieve a subscription plan](https://developer.revolut.com/docs/merchant/retrieve-subscription-plan)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create a subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_variation_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"customer_id\": \"650e8400-e29b-41d4-a716-446655440001\",\n  \"setup_order_redirect_url\": \"https://example.com/subscription/setup/complete\",\n  \"external_reference\": \"ext-ref-12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscriptions"
+              ]
+            },
+            "description": "Create a new subscription for a customer using a subscription plan variation.\n\nFull documentation: [Merchant API - Create a subscription](https://developer.revolut.com/docs/merchant/create-subscription)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a subscription list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscriptions"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Maximum number of records to return. Used for pagination.",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01T00:00:00.000Z",
+                  "description": "Filter records created from this date/time. Used for filtering.",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31T23:59:59.999Z",
+                  "description": "Filter records created until this date/time. Used for filtering.",
+                  "disabled": true
+                },
+                {
+                  "key": "external_reference",
+                  "value": null,
+                  "description": "Return subscriptions with a specific external_reference. Used for filtering.",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": null,
+                  "description": "Token for retrieving the next page of results. Used for pagination.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve all subscriptions for the merchant account.\n\nFull documentation: [Merchant API - Retrieve a subscription list](https://developer.revolut.com/docs/merchant/retrieve-subscription-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a subscription",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/:subscription_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscriptions",
+                ":subscription_id"
+              ],
+              "variable": [
+                {
+                  "key": "subscription_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Retrieve a subscription by its unique identifier.\n\nFull documentation: [Merchant API - Retrieve a subscription](https://developer.revolut.com/docs/merchant/retrieve-subscription)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update a subscription",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"external_reference\": \"ext-ref-12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/:subscription_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscriptions",
+                ":subscription_id"
+              ],
+              "variable": [
+                {
+                  "key": "subscription_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Update a subscription's details.\n\nFull documentation: [Merchant API - Update a subscription](https://developer.revolut.com/docs/merchant/update-subscription)"
+          },
+          "response": []
+        },
+        {
+          "name": "Change a subscription plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_variation_id\": \"850e8400-e29b-41d4-a716-446655440003\",\n  \"scheduled\": \"at_cycle_end\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/:subscription_id/change-plan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscriptions",
+                ":subscription_id",
+                "change-plan"
+              ],
+              "variable": [
+                {
+                  "key": "subscription_id",
+                  "value": "",
+                  "description": "The ID of the subscription."
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update a subscription renewal date",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"renewal_date\": \"2026-12-31T23:59:59Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/:subscription_id/update-renewal-date",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscriptions",
+                ":subscription_id",
+                "update-renewal-date"
+              ],
+              "variable": [
+                {
+                  "key": "subscription_id",
+                  "value": "",
+                  "description": "The ID of the subscription."
+                }
+              ]
+            },
+            "description": "Reschedule the upcoming payment date for an active subscription cycle.\n\nFull documentation: [Merchant API - Update a subscription renewal date](https://developer.revolut.com/docs/merchant/update-subscription-renewal-date)"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel a subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/:subscription_id/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscriptions",
+                ":subscription_id",
+                "cancel"
+              ],
+              "variable": [
+                {
+                  "key": "subscription_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Cancel a subscription.\n\nFull documentation: [Merchant API - Cancel a subscription](https://developer.revolut.com/docs/merchant/cancel-subscription)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a subscription cycle list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/:subscription_id/cycles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscriptions",
+                ":subscription_id",
+                "cycles"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Maximum number of records to return. Used for pagination.",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01T00:00:00.000Z",
+                  "description": "Filter records created from this date/time. Used for filtering.",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31T23:59:59.999Z",
+                  "description": "Filter records created until this date/time. Used for filtering.",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": "",
+                  "description": "Token for retrieving the next page of results. Used for pagination.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "subscription_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Retrieve all billing cycles for a specific subscription.\n\nFull documentation: [Merchant API - Retrieve a subscription cycle list](https://developer.revolut.com/docs/merchant/retrieve-subscription-cycle-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a subscription cycle",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/:subscription_id/cycles/:cycle_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscriptions",
+                ":subscription_id",
+                "cycles",
+                ":cycle_id"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Maximum number of records to return. Used for pagination.",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01T00:00:00.000Z",
+                  "description": "Filter records created from this date/time. Used for filtering.",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31T23:59:59.999Z",
+                  "description": "Filter records created until this date/time. Used for filtering.",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": "",
+                  "description": "Token for retrieving the next page of results. Used for pagination.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "subscription_id",
+                  "value": ""
+                },
+                {
+                  "key": "cycle_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Retrieve a specific billing cycle for a subscription by its unique identifier.\n\nFull documentation: [Merchant API - Retrieve a subscription cycle](https://developer.revolut.com/docs/merchant/retrieve-subscription-cycle)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create a subscription usage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subscription_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"subscription_item_code\": \"active_seats\",\n  \"usage_date\": \"2026-03-15T09:30:00Z\",\n  \"quantity\": 12,\n  \"metadata\": {\n    \"department\": \"engineering\",\n    \"update_type\": \"onboarding\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscription-usages",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscription-usages"
+              ]
+            },
+            "description": "Report a unit of consumption against a usage-based subscription item. Revolut accumulates reported records throughout the billing cycle and processes the charge after the cycle's `usage_cutoff_date`.\n\nFull documentation: [Merchant API - Create a subscription usage](https://developer.revolut.com/docs/merchant/create-subscription-usage)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a subscription usage list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/subscription-usages",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscription-usages"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Maximum number of records to return. Used for pagination.",
+                  "disabled": true
+                },
+                {
+                  "key": "from_usage_date",
+                  "value": "2025-01-01T00:00:00.000Z",
+                  "description": "Filter usage records with a `usage_date` on or after this date and time.",
+                  "disabled": true
+                },
+                {
+                  "key": "to_usage_date",
+                  "value": "2025-12-31T23:59:59.999Z",
+                  "description": "Filter usage records with a `usage_date` before this date and time.",
+                  "disabled": true
+                },
+                {
+                  "key": "subscription_id",
+                  "value": null,
+                  "description": "Filter usages by the ID of the subscription.",
+                  "disabled": true
+                },
+                {
+                  "key": "subscription_cycle_id",
+                  "value": null,
+                  "description": "Filter usages by the ID of the subscription cycle.\n\n",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": null,
+                  "description": "Token for retrieving the next page of results. Used for pagination.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve all usage records for the merchant account. Results are ordered by `usage_date`, unlike other list endpoints which order by `created_at`. \n\nFull documentation: [Merchant API - Retrieve a subscription usage list](https://developer.revolut.com/docs/merchant/retrieve-subscription-usage-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a subscription usage",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/subscription-usages/:usage_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscription-usages",
+                ":usage_id"
+              ],
+              "variable": [
+                {
+                  "key": "usage_id",
+                  "value": "",
+                  "description": "The ID of the usage record."
+                }
+              ]
+            },
+            "description": "Retrieve a usage record by its unique identifier.\n\nFull documentation: [Merchant API - Retrieve a subscription usage](https://developer.revolut.com/docs/merchant/retrieve-subscription-usage)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update a subscription usage",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 200,\n  \"metadata\": {\n    \"user_id\": \"54321\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscription-usages/:usage_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscription-usages",
+                ":usage_id"
+              ],
+              "variable": [
+                {
+                  "key": "usage_id",
+                  "value": "",
+                  "description": "The ID of the usage record."
+                }
+              ]
+            },
+            "description": "Update the quantity or metadata of a subscription usage record.\n\nFull documentation: [Merchant API - Update a subscription usage](https://developer.revolut.com/docs/merchant/update-subscription-usage)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a subscription usage",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 200,\n  \"metadata\": {\n    \"user_id\": \"54321\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscription-usages/:usage_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "subscription-usages",
+                ":usage_id"
+              ],
+              "variable": [
+                {
+                  "key": "usage_id",
+                  "value": "",
+                  "description": "The ID of the usage record."
+                }
+              ]
+            },
+            "description": "Delete a subscription usage record. This operation is only permitted while the billing cycle is still open.\n\nFull documentation: [Merchant API - Delete a subscription usage](https://developer.revolut.com/docs/merchant/delete-subscription-usage)"
+          },
+          "response": []
+        }
+      ],
+      "description": "The Subscriptions API provides a complete solution for creating and managing recurring billing for your customers.\n\nFull documentation: [Merchant API - Subscriptions](https://developer.revolut.com/docs/merchant/subscriptions)"
+    },
+    {
+      "name": "Payouts",
+      "item": [
+        {
+          "name": "Retrieve a payout list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payouts?limit=100",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payouts"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "The maximum number of payouts returned per page. Used for pagination."
+                },
+                {
+                  "key": "from_created_date",
+                  "value": null,
+                  "description": "Retrieve all payouts with a `created_date` ≥ `from_created_date`. Used for filtering.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "to_created_date",
+                  "value": null,
+                  "description": "Retrieve all payouts with a `created_date` ≤ `to_created_date`. Used for filtering.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "currency",
+                  "value": null,
+                  "description": "ISO 4217 currency code in upper case.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "state",
+                  "value": null,
+                  "description": "Retrieve all payouts with specific states. You can pass several states. Used for filtering.",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve all the payouts you made from your Merchant account. You can also use the query parameters for:\n\n- Filtering\n    \n- Pagination\n    \n\nFull documentation: [Merchant API - Retrieve a payout list](https://developer.revolut.com/docs/merchant/retrieve-payout-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a payout",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payouts/:payout_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payouts",
+                ":payout_id"
+              ],
+              "variable": [
+                {
+                  "key": "payout_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Retrieve the details of a payout. Provide the unique payout ID, and the corresponding payout information is returned.\n\nFull documentation: [Merchant API - Retrieve a payout](https://developer.revolut.com/docs/merchant/retrieve-payout)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Payout operations enable you to list payouts, or track payout status transitions. You can use the ID of the payout to retrieve information about a specific payout.  \n  \nFull documentation: [Merchant API: Payouts](https://developer.revolut.com/docs/merchant/payouts)"
+    },
+    {
+      "name": "Disputes",
+      "item": [
+        {
+          "name": "Retrieve a dispute list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/disputes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "disputes"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": null,
+                  "description": "The maximum number of disputes returned per request.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "from_created_date",
+                  "value": null,
+                  "description": "Retrieve all diputes with a `created_at` value ≥ `from_created_date`.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "to_created_date",
+                  "value": null,
+                  "description": "Retrieve all diputes with a `created_at` value ≤ `to_created_date`.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "state",
+                  "value": null,
+                  "description": "Retrieve all disputes with specific states. You can pass multiple values.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "payment_id",
+                  "value": null,
+                  "description": "Retrieve disputes related to one or more payments based on their IDs.",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve all the disputes linked to your Merchant account. You can also use the query parameters for:\n\n- Filtering\n    \n- Pagination\n    \n\nFull documentation: [Merchant API - Retrieve a dispute list](https://developer.revolut.com/docs/merchant/retrieve-dispute-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a dispute",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/disputes/:dispute_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "disputes",
+                ":dispute_id"
+              ],
+              "variable": [
+                {
+                  "key": "dispute_id",
+                  "value": "",
+                  "description": "The ID of the `Dispute` object."
+                }
+              ]
+            },
+            "description": "Retrieve the details of a dispute. Provide the unique dispute ID, and the corresponding dispute information is returned.\n\nFull documentation: [Merchant API - Retrieve a dispute](https://developer.revolut.com/docs/merchant/retrieve-dispute)"
+          },
+          "response": []
+        },
+        {
+          "name": "Accept a dispute",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/disputes/:dispute_id/accept",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "disputes",
+                ":dispute_id",
+                "accept"
+              ],
+              "variable": [
+                {
+                  "key": "dispute_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Marks a specific dispute as accepted. After accepting a dispute, you cannot challenge it.\n\nFull documentation: [Merchant API - Accept a dispute](https://developer.revolut.com/docs/merchant/accept-dispute)"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload evidence for a dispute",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "",
+                  "type": "file",
+                  "uuid": "0438a418-0dad-4e80-af19-0b8d6d46612f",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/disputes/:dispute_id/evidences",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "disputes",
+                ":dispute_id",
+                "evidences"
+              ],
+              "variable": [
+                {
+                  "key": "dispute_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Allows uploading a single evidence file for a specific dispute. Use these evidences to provide proof for claims when challenging a dispute.\n\nFull documentation: [Merchant API - Upload evidence for a dispute](https://developer.revolut.com/docs/merchant/upload-dispute-evidence)"
+          },
+          "response": []
+        },
+        {
+          "name": "Challenge a dispute",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"refund_already_issued\",\n  \"comment\": \"Refund PDF attached as evidence.\",\n  \"evidences\": [\n    \n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/disputes/:dispute_id/challenge",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "disputes",
+                ":dispute_id",
+                "challenge"
+              ],
+              "variable": [
+                {
+                  "key": "dispute_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Allows challenging a dispute with a reason, comment and associated evidences. Use the uploaded evidences to provide proof for the challenge.\n\nA dispute previously accepted, cannot be challenged.\n\nFull documentation: [Merchant API - Challenge a dispute](https://developer.revolut.com/docs/merchant/challenge-dispute)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Dispute operations enable you to list disputes, or track dispute status transitions. You can use the ID of the dispute to retrieve information about a specific dispute.  \n  \nFull documentation: [Merchant API: Disputes](https://developer.revolut.com/docs/merchant/disputes)"
+    },
+    {
+      "name": "Report runs",
+      "item": [
+        {
+          "name": "Create a new report run",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filter\": {\n    \"from\": \"2020-01-01T00:00:00Z\",\n    \"to\": \"2020-01-02T00:00:00Z\",\n    \"entity_types\": [\n      \"payment\"\n    ],\n    \"entity_states\": [\n      \"failed\"\n    ]\n  },\n  \"format\": \"csv\",\n  \"type\": \"settlement_report\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/report-runs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "report-runs"
+              ]
+            },
+            "description": "Start generating a new report of the relevant transactions.\n\nFull documentation: [Merchant API - Create a new report run](https://developer.revolut.com/docs/merchant/create-report-run)"
+          },
+          "response": [
+            {
+              "name": "Custom report",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"filter\": {\n    \"from\": \"2020-01-01T00:00:00Z\",\n    \"to\": \"2021-01-01T00:00:00Z\",\n    \"entity_types\": [\n      \"payment\"\n    ],\n    \"entity_states\": [\n      \"completed\",\n      \"processing\"\n    ]\n  },\n  \"format\": \"csv\",\n  \"type\": \"custom_report\",\n  \"options\": {\n    \"timezone\": \"Europe/London\",\n    \"columns\": [\n      \"transaction_id\",\n      \"amount\",\n      \"metadata.custom_attribute\"\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/report-runs",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "report-runs"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Settlement report",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"filter\": {\n    \"from\": \"2020-01-01T00:00:00Z\",\n    \"to\": \"2020-01-02T00:00:00Z\",\n    \"entity_types\": [\n      \"payment\"\n    ],\n    \"entity_states\": [\n      \"failed\"\n    ]\n  },\n  \"format\": \"csv\",\n  \"type\": \"settlement_report\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/report-runs",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "report-runs"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Retrieve report run details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/report-runs/:report_run_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "report-runs",
+                ":report_run_id"
+              ],
+              "variable": [
+                {
+                  "key": "report_run_id",
+                  "value": null,
+                  "description": "The ID of the report run."
+                }
+              ]
+            },
+            "description": "Retrieve details of a report run, based on the `report_run_id`.\n\nFull documentation: [Merchant API - Retrieve report run details](https://developer.revolut.com/docs/merchant/retrieve-report-run-details)"
+          },
+          "response": []
+        },
+        {
+          "name": "Download report file",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/report-runs/:report_run_id/file",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "report-runs",
+                ":report_run_id",
+                "file"
+              ],
+              "variable": [
+                {
+                  "key": "report_run_id",
+                  "value": null,
+                  "description": "The ID of the report run."
+                }
+              ]
+            },
+            "description": "Use this endpoint to download the generated report file.\n\nFull documentation: [Merchant API - Download report file](https://developer.revolut.com/docs/merchant/download-report-file)"
+          },
+          "response": []
+        }
+      ],
+      "description": "In addition to the CSV statements you can export via the [Revolut Business Dashboard](https://business.revolut.com/merchant/statement), you can generate custom CSV reports using the **Report runs** operations. Unlike the default statements, creating custom reports offers you more flexibility in determining what data you wish to incorporate. This allows you to have more control over your analytics.\n\nFull documentation: [Merchant API: Report runs](https://developer.revolut.com/docs/merchant/report-runs)"
+    },
+    {
+      "name": "Webhooks",
+      "item": [
+        {
+          "name": "Create a webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com\",\n  \"events\": [\n        \"ORDER_COMPLETED\",\n        \"ORDER_AUTHORISED\",\n        \"ORDER_CANCELLED\",\n        \"ORDER_FAILED\",\n        \"ORDER_PAYMENT_AUTHENTICATION_CHALLENGED\",\n        \"ORDER_PAYMENT_AUTHENTICATED\",\n        \"ORDER_PAYMENT_DECLINED\",\n        \"ORDER_PAYMENT_FAILED\",\n        \"PAYOUT_INITIATED\",\n        \"PAYOUT_COMPLETED\",\n        \"PAYOUT_FAILED\",\n        \"DISPUTE_ACTION_REQUIRED\",\n        \"DISPUTE_UNDER_REVIEW\",\n        \"DISPUTE_WON\",\n        \"DISPUTE_LOST\",\n        \"ORDER_INCREMENTAL_AUTHORISATION_AUTHORISED\",\n        \"ORDER_INCREMENTAL_AUTHORISATION_DECLINED\",\n        \"ORDER_INCREMENTAL_AUTHORISATION_FAILED\",\n        \"SUBSCRIPTION_INITIATED\", \n        \"SUBSCRIPTION_FINISHED\", \n        \"SUBSCRIPTION_CANCELLED\", \n        \"SUBSCRIPTION_OVERDUE\"\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/webhooks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "webhooks"
+              ]
+            },
+            "description": "Set up a webhook URL so that the Merchant API can push event notifications to the specified URL.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Create a webhook](https://developer.revolut.com/docs/merchant/set-webhook)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a webhook list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/webhooks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "webhooks"
+              ]
+            },
+            "description": "Get a list of webhooks that you are currently subscribed to.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Retrieve a webhook list](https://developer.revolut.com/docs/merchant/retrieve-webhook-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a webhook",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/webhooks/:webhook_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "webhooks",
+                ":webhook_id"
+              ],
+              "variable": [
+                {
+                  "key": "webhook_id",
+                  "value": null,
+                  "description": "The ID of the webhook."
+                }
+              ]
+            },
+            "description": "Get the details of a specific webhook.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Retrieve a webhook](https://developer.revolut.com/docs/merchant/retrieve-webhook)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update a webhook",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"http://example.com\",\n  \"events\": [\n    \"ORDER_COMPLETED\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/webhooks/:webhook_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "webhooks",
+                ":webhook_id"
+              ],
+              "variable": [
+                {
+                  "key": "webhook_id",
+                  "value": null,
+                  "description": "The ID of the webhook."
+                }
+              ]
+            },
+            "description": "Update the details of a specific webhook.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Update a webhook](https://developer.revolut.com/docs/merchant/update-webhook)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a webhook",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/webhooks/:webhook_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "webhooks",
+                ":webhook_id"
+              ],
+              "variable": [
+                {
+                  "key": "webhook_id",
+                  "value": null,
+                  "description": "The ID of the webhook."
+                }
+              ]
+            },
+            "description": "Delete a webhook so that events are not sent to the specified URL any more.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API - Delete a webhook](https://developer.revolut.com/docs/merchant/delete-webhook)"
+          },
+          "response": []
+        },
+        {
+          "name": "Rotate a webhook signing secret",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in `YYYY-MM-DD` format. If not specified, you will receive an error.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expiration_period\": \"PT5H30M\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/webhooks/:webhook_id/rotate-signing-secret",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "webhooks",
+                ":webhook_id",
+                "rotate-signing-secret"
+              ],
+              "variable": [
+                {
+                  "key": "webhook_id",
+                  "value": "",
+                  "description": "The ID of the webhook."
+                }
+              ]
+            },
+            "description": "Rotate the `signing_secret` for a specific webhook.\n\n> This endpoint is only supported from version `2024-09-01` \n  \n\nFull documentation: [Merchant API: Rotate a webhook signing secret](https://developer.revolut.com/docs/merchant/rotate-webhook-signing-secret)"
+          },
+          "response": []
+        }
+      ],
+      "description": "A `webhook` (also called a web callback) allows your system to receive an event from a different app immediately after it happens.\n\nFull documentation: [Merchant API - Webhooks](https://developer.revolut.com/docs/merchant/webhooks)"
+    },
+    {
+      "name": "Locations",
+      "item": [
+        {
+          "name": "Create a location",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Grocery website\",\n  \"type\": \"online\",\n  \"details\": {\n    \"domain\": \"example.com\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/locations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "locations"
+              ]
+            },
+            "description": "Create a `Location` object.\n\nFull codumentation: [Merchant API: Create a location](https://developer.revolut.com/docs/merchant/create-location)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve location list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/locations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "locations"
+              ]
+            },
+            "description": "Retrieve a list of locations registered for the merchant.\n\nFull documentation: [Merchant API: Retrieve location list](https://developer.revolut.com/docs/merchant/retrieve-location-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a location",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/locations/:location_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "locations",
+                ":location_id"
+              ],
+              "variable": [
+                {
+                  "key": "location_id",
+                  "value": "",
+                  "description": "The ID of the location."
+                }
+              ]
+            },
+            "description": "Retrieve details of a specific location, based on its ID.\n\nFull documentation: [Merchant API: Retrieve a location](https://developer.revolut.com/docs/merchant/retrieve-location)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update a location",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cars website - Name update\",\n  \"details\": {\n    \"domain\": \"cars.example.com\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/locations/:location_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "locations",
+                ":location_id"
+              ],
+              "variable": [
+                {
+                  "key": "location_id",
+                  "value": "",
+                  "description": "The ID of the location."
+                }
+              ]
+            },
+            "description": "Update details of a specific location, based on its ID.\n\n> **NOTE:** The value of the location's `type` cannot be updated. \n  \n\nFull documentation: [Merchant API: Update a location](https://developer.revolut.com/docs/merchant/update-location)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a location",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/locations/:location_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "locations",
+                ":location_id"
+              ],
+              "variable": [
+                {
+                  "key": "location_id",
+                  "value": "",
+                  "description": "The ID of the location."
+                }
+              ]
+            },
+            "description": "Delete a specific location, based on its ID.\n\nFull documentation: [Merchant API: Delete a location](https://developer.revolut.com/docs/merchant/delete-location)"
+          },
+          "response": []
+        }
+      ],
+      "description": "The Locations API is designed to allow merchants to manage multiple online storefronts. Registering locations lets you differentiate and group your orders from different stores. You can also introduce custom processes for your orders on each location.\n\nFull documentation: [Merchant API -](https://developer.revolut.com/docs/merchant/locations) [ Locations](https://developer.revolut.com/docs/merchant/locations)"
+    },
+    {
+      "name": "Terminals",
+      "item": [
+        {
+          "name": "Retrieve terminal list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/terminals?operation_mode=pos&location_id=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "terminals"
+              ],
+              "query": [
+                {
+                  "key": "operation_mode",
+                  "value": "pos",
+                  "description": "Filter terminals by operation mode."
+                },
+                {
+                  "key": "location_id",
+                  "value": "",
+                  "description": "The ID of the location to filter by."
+                }
+              ]
+            },
+            "description": "Retrieve a list of Revolut Terminal devices available to the merchant.\n\nFull documentation: [Merchant API - Retrieve terminal list](https://developer.revolut.com/docs/merchant/retrieve-terminal-list)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Operations for managing Revolut Terminal devices and push payment integrations with Point of Sale (POS) systems.\n\nThe Terminals API enables POS software providers to integrate with Revolut Terminal devices for accepting in-person payments through a **push payments** model.\n\nFull documentation: [Merchant API -](https://developer.revolut.com/docs/merchant/terminals) [ Terminals](https://developer.revolut.com/docs/merchant/terminals)"
+    },
+    {
+      "name": "Payment intents",
+      "item": [
+        {
+          "name": "Create a payment intent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \n\nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"terminal_id\": \"11111111-0000-0000-0000-000000000000\" // update this to the actual terminal ID in prod\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/:order_id/payment-intents",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                ":order_id",
+                "payment-intents"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": "",
+                  "description": "The ID of the `Order` object."
+                }
+              ]
+            },
+            "description": "Create a payment intent to push a payment request to a specific Revolut Terminal device.\n\nFull documentation: [Merchant API - Create a payment intent](https://developer.revolut.com/docs/merchant/create-payment-intent)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a payment intent",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \n\nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payment-intents/:payment_intent_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payment-intents",
+                ":payment_intent_id"
+              ],
+              "variable": [
+                {
+                  "key": "payment_intent_id",
+                  "value": "",
+                  "description": "The unique identifier of the payment intent."
+                }
+              ]
+            },
+            "description": "Retrieve the current state and details of a payment intent.\n\nFull documentation: [Merchant API - Retrieve a payment intent](https://developer.revolut.com/docs/merchant/retrieve-payment-intent)"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel a payment intent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Revolut-Api-Version",
+                "value": "{{api_version}}",
+                "description": "The version of the Merchant API, specified in YYYY-MM-DD format. If not specified, you will receive an error. \nFor more information about API versioning, see: [API versions](https://developer.revolut.com/docs/merchant/api-versions)",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/:payment_id/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                ":payment_id",
+                "cancel"
+              ],
+              "variable": [
+                {
+                  "key": "payment_id",
+                  "value": null,
+                  "description": "The ID of the Payment object."
+                }
+              ]
+            },
+            "description": "Cancel a payment intent while it's still in `pending` state, before the customer has completed the payment.\n\nFull documentation: [Merchant API - Cancel a payment intent](https://developer.revolut.com/docs/merchant/cancel-payment-intent)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Operations for managing payment intents in the push payments to Revolut Terminal flow.\n\nFull documentation: [Merchant API - Payment intents](https://developer.revolut.com/docs/merchant/payment-intents)"
+    },
+    {
+      "name": "Apple Pay merchant registration",
+      "item": [
+        {
+          "name": "Register domain for Apple Pay",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domain\": \"example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/apple-pay/domains/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "apple-pay",
+                "domains",
+                "register"
+              ]
+            },
+            "description": "Register your website's domain to accept payments via Apple Pay.\n\nFull documentation: [Merchant API - Register domain for Apple Pay](https://developer.revolut.com/docs/merchant/register-domain-apple-pay)"
+          },
+          "response": []
+        },
+        {
+          "name": "Unregister domain for Apple Pay",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domain\": \"example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/apple-pay/domains/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "apple-pay",
+                "domains",
+                "register"
+              ]
+            },
+            "description": "Unregister your website's domain to accept payments via Apple Pay.\n\nFull documentation: [Merchant API - Unregister domain for Apple Pay](https://developer.revolut.com/docs/merchant/unregister-domain-apple-pay)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Operations for managing a merchant's domain registration and configuration with Apple for integration of Apple Pay via Revolut.\n\nFull documentation: [Merchant API - Apple Pay merchant registration](https://developer.revolut.com/docs/merchant/apple-pay-merchant-registration)"
+    },
+    {
+      "name": "Other",
+      "item": [
+        {
+          "name": "Register address validation endpoint for Fast checkout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_type\": \"fast_checkout.validate_address\",\n  \"url\": \"https://backend.example.com/webhooks/validate-address\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/synchronous-webhooks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "synchronous-webhooks"
+              ]
+            },
+            "description": "Use this endpoint to register a URL where Revolut can send shipping address(es) from a Revolut Pay customer for validation during the [Fast checkout process](https://developer.revolut.com/docs/guides/accept-payments/payment-methods/accept-payments-via-revolut-pay2/fast-checkout).\n\nFull documentation: [Merchant API - Register address validation endpoint for Fast checkout](https://developer.revolut.com/docs/merchant/register-address-validation-endpoint)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve synchronous webhook list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/synchronous-webhooks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "synchronous-webhooks"
+              ]
+            },
+            "description": "Retrieve a list of synchronous webhook objects.\n\nYou can use this endpoint to see your different address validation endpoints registered to different locations.\n\nFull documentation: [Merchant API - Retrieve synchronous webhook list](https://developer.revolut.com/docs/merchant/retrieve-synchronous-webhook-list)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a synchronous webhook",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/synchronous-webhooks/:synchronous_webhook_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "synchronous-webhooks",
+                ":synchronous_webhook_id"
+              ],
+              "variable": [
+                {
+                  "key": "synchronous_webhook_id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Delete a specific synchronous webhook registration, based on its ID.\n\nFull documentation: [Merchant API - Delete a synchronous webhook](https://developer.revolut.com/docs/merchant/delete-synchronous-webhook)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Other operations that can be done with the Merchant API.\n\nFull documentation: [Merchant API - Other](https://developer.revolut.com/docs/merchant/other)"
+    },
+    {
+      "name": "Deprecated",
+      "item": [
+        {
+          "name": "Create an order (Deprecated)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"amount\": 5,\n    \"merchant_order_ext_ref\": \"Order test\",\n    \"email\": \"test.customer@example.com\",\n    \"currency\": \"GBP\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/1.0/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "1.0",
+                "orders"
+              ]
+            },
+            "description": "Create an `Order` object.\n\nFull documentation: [Merchant API - Create an order (Deprecated)](https://developer.revolut.com/docs/merchant/legacy/create-order-deprecated)"
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve an order (Deprecated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/1.0/orders/:order_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "1.0",
+                "orders",
+                ":order_id"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": null,
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Retrieve the details of an order that has been created. Provide the unique order ID, and the corresponding order information is returned.\n\nFull documentation: [Merchant API - Retrieve an order (Deprecated)](https://developer.revolut.com/docs/merchant/legacy/retrieve-order-deprecated)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update an order (Deprecated)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"amount\": 100,\n    \"currency\": \"EUR\",\n    \"merchant_order_ext_ref\": \"test order\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/1.0/orders/:order_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "1.0",
+                "orders",
+                ":order_id"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": null,
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Update the details of an order.\n\nSpecific limitations apply based on the state of the order, see full documentation: [Merchant API - Update an order (Deprecated)](https://developer.revolut.com/docs/merchant/legacy/update-order-deprecated)"
+          },
+          "response": []
+        },
+        {
+          "name": "Capture an order (Deprecated)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"amount\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/1.0/orders/:order_id/capture",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "1.0",
+                "orders",
+                ":order_id",
+                "capture"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": null,
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Capture the funds of an existing, uncaptured order. When the payment for an order is authorized, the order is captured and sent to the processing stage.\n\nFull documentation: [Merchant API - Capture an order (Deprecated)](https://developer.revolut.com/docs/merchant/legacy/capture-order-deprecated)"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel an order (Deprecated)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/1.0/orders/:order_id/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "1.0",
+                "orders",
+                ":order_id",
+                "cancel"
+              ],
+              "variable": [
+                {
+                  "key": "order_id",
+                  "value": null,
+                  "description": "The ID of the order."
+                }
+              ]
+            },
+            "description": "Cancel an existing uncaptured order.\n\nSpecific limitations apply based on the state of the order, see full documentation: [Merchant API - Cancel an order](https://developer.revolut.com/docs/merchant/legacy/cancel-order-deprecated)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Deprecated operations.\n\nIf you are using any of the operations listed here, we recommend to upgrade to the new versions."
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{secret_api_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "value": "",
+      "disabled": true
+    }
+  ]
+}

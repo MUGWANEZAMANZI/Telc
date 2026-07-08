@@ -160,6 +160,12 @@ class RevolutCheckoutController extends Controller
 
         Log::info('Revolut webhook received', ['event' => $event]);
 
+        $service = app(RevolutService::class);
+
+        if (! $service->verifyWebhookSignature($request->headers->all(), $request->getContent())) {
+            Log::warning('Revolut webhook signature verification failed');
+        }
+
         try {
             if ($event === 'ORDER_COMPLETED') {
                 $orderId = $payload['order_id'] ?? $payload['id'] ?? '';
