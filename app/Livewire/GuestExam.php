@@ -47,12 +47,25 @@ class GuestExam extends Component
 
     public bool $started = false;
 
-    public function mount(): void
+    public function mount(?int $template = null): void
     {
         $this->freeSectionLimit = max(1, (int) Setting::value('free_section_limit', '3'));
 
         $this->loadCompletedFromCookie();
         $this->loadNoRetryFromCookie();
+
+        if ($template) {
+            $record = ExamTemplate::query()
+                ->where('is_published', true)
+                ->find($template);
+
+            if ($record) {
+                $this->selectedLevel = $record->level;
+                $this->loadTemplate($record);
+
+                return;
+            }
+        }
 
         $level = request()->query('level', '');
         if (in_array($level, ['B1', 'B2', 'C2'], true)) {
@@ -60,6 +73,13 @@ class GuestExam extends Component
         }
 
         $this->loadTemplateForLevel();
+        $this->recalculateRemaining();
+    }
+
+    public function loadTemplate(ExamTemplate $record): void
+    {
+        $this->selectedTemplateId = $record->id;
+        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
         $this->recalculateRemaining();
     }
 
@@ -130,10 +150,7 @@ class GuestExam extends Component
             return;
         }
 
-        $this->selectedTemplateId = $record->id;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
-
-        $this->recalculateRemaining();
+        $this->loadTemplate($record);
     }
 
     /** @return list<string> */

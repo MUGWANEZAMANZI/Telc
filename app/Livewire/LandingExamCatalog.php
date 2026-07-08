@@ -13,7 +13,7 @@ class LandingExamCatalog extends Component
 
     public ?string $selectedLevel = null;
 
-    public int $visibleFreeCount = 3;
+    public int $visibleFreeCount = 1;
 
     public function mount(): void
     {
@@ -37,10 +37,7 @@ class LandingExamCatalog extends Component
 
     public function startFreeExam(int $templateId): void
     {
-        $exam = ExamTemplate::find($templateId);
-
-        $level = $exam->level ?? 'B1';
-        $this->redirect(route('free.exam', ['level' => $level]));
+        $this->redirect(route('free.exam', ['template' => $templateId]));
     }
 
     public function promptRegister(): void
