@@ -45,6 +45,29 @@ class ExamDashboard extends Component
 
     public string $providerFilter = 'telc';
 
+    public string $c1SelectedTopic = '';
+
+    public string $c1AiResponseText = '';
+
+    public string $c1AiResponseAudio = '';
+
+    public int $c1SpeakingStep = 1;
+
+    /** @var array<string, mixed> */
+    public array $speakingFeedback = [];
+
+    /** @var array<string, mixed> */
+    public array $speakingProcessing = [];
+
+    /** @var array<int, array<string, mixed>> */
+    public array $speakingHistory = [];
+
+    public bool $showEnrollModal = false;
+
+    public ?int $enrollTemplateId = null;
+
+    public string $enrollModalError = '';
+
     public function mount(): void
     {
         abort_unless(Auth::user()?->isAdmin(), 403);
