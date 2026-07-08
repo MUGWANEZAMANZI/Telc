@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Livewire\Component;
+use Illuminate\Support\Facades\Config;
 
 class AdminFinance extends Component
 {
@@ -55,17 +56,22 @@ class AdminFinance extends Component
             ->latest()
             ->get();
 
+        $driver = Config::get('database.default');
+        $dateFn = $driver === 'mysql'
+            ? "DATE_FORMAT(enrolled_at, '%Y-%m')"
+            : "strftime('%Y-%m', enrolled_at)";
+
         $monthlyBreakdown = ExamEnrollment::query()
             ->whereIn('payment_status', ['paid', 'manual_enrolled'])
             ->join('exam_templates', 'exam_enrollments.exam_template_id', '=', 'exam_templates.id')
             ->whereNotNull('exam_templates.price')
             ->select(
-                DB::raw("strftime('%Y-%m', enrolled_at) as month"),
+                DB::raw("{$dateFn} as month"),
                 DB::raw('SUM(exam_templates.price) as revenue'),
                 DB::raw('COUNT(*) as count')
             )
             ->whereNotNull('enrolled_at')
-            ->groupBy(DB::raw("strftime('%Y-%m', enrolled_at)"))
+            ->groupBy(DB::raw("{$dateFn}"))
             ->orderBy('month', 'desc')
             ->limit(12)
             ->get();

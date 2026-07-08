@@ -527,11 +527,13 @@
                                                             @endphp
                                                              @php
                                                                  $gapCorrect = null;
+                                                                 $gapExpected = $gapDef['answer'] ?? '';
                                                                  if ($result) {
-                                                                     $gapDet = collect($result['details'])->firstWhere('id', $element['id']);
-                                                                     $gapDetail = $gapDet['gaps'][$gapIdx] ?? ($gapDet['correct'] ?? null);
-                                                                     $gapCorrect = is_bool($gapDetail) ? $gapDetail : (isset($gapDet['gaps'][$gapIdx]['correct']) ? $gapDet['gaps'][$gapIdx]['correct'] : null);
-                                                                     $gapExpected = $gapDet['gaps'][$gapIdx]['expected'] ?? $gapDef['answer'] ?? '';
+                                                                     $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$gapIdx);
+                                                                     if ($gapDetail) {
+                                                                         $gapCorrect = $gapDetail['correct'] ?? null;
+                                                                         $gapExpected = $gapDetail['expected'] ?? $gapExpected;
+                                                                     }
                                                                  }
                                                                  $gapCls = '';
                                                                  if ($result && $current !== '') {
@@ -557,6 +559,16 @@
                                         @endif
                                     @endforeach
                                 </div>
+                                @if ($result)
+                                    <div style="background:#fff;border:2px solid #1a1a1a;border-radius:8px;padding:2rem;max-width:500px;margin:2rem auto 0;text-align:center;">
+                                        <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#666;display:block;margin-bottom:0.5rem;">Ergebnis</span>
+                                        <div style="display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;">
+                                            <div><span style="font-size:0.8rem;color:#666;">Erreicht</span><br><strong style="font-size:2rem;">{{ $result['earned'] }}</strong></div>
+                                            <div><span style="font-size:0.8rem;color:#666;">Mögliche</span><br><strong style="font-size:2rem;">{{ $result['possible'] }}</strong></div>
+                                        </div>
+                                        <div style="font-size:1.2rem;font-weight:700;">{{ $result['percentage'] }}%</div>
+                                    </div>
+                                @endif
                             </div>
 
                         {{-- === SPEAKING VIEW (like paid) --}}

@@ -90,7 +90,7 @@ class ExamGrader
                     foreach ($gaps as $gapId => $gapDef) {
                         $items[] = [
                             'id' => $element['id'].'.gap.'.$gapId,
-                            'type' => $gapDef['type'] ?? 'dropdown',
+                            'type' => 'inline_gap',
                             'label' => $element['label'].' — Lücke '.$gapId,
                             'element_id' => $element['id'],
                             'gap_index' => (string) $gapId,

@@ -5,7 +5,9 @@ namespace App\Livewire;
 use App\Models\Book;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.reader')]
 class BookReader extends Component
 {
     public Book $book;

@@ -14,7 +14,7 @@ class GuestExam extends Component
 {
     public string $selectedLevel = 'B1';
 
-    public int $freeSectionLimit = 4;
+    public int $freeSectionLimit = 3;
 
     /** @var array<int, string> */
     public array $completedSectionIds = [];
@@ -47,7 +47,7 @@ class GuestExam extends Component
 
     public function mount(): void
     {
-        $this->freeSectionLimit = max(1, (int) Setting::value('free_section_limit', '4'));
+        $this->freeSectionLimit = max(1, (int) Setting::value('free_section_limit', '3'));
 
         $this->loadCompletedFromCookie();
         $this->loadNoRetryFromCookie();
@@ -290,8 +290,22 @@ class GuestExam extends Component
         }
 
         $this->started = false;
+
+        // For sections with inline_gap, only grade inline_gap elements
+        // (standard answer elements are not visible in the inline_gap view)
+        $sectionToGrade = $currentSection;
+        $hasInlineGap = collect($currentSection['elements'] ?? [])
+            ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
+
+        if ($hasInlineGap) {
+            $sectionToGrade['elements'] = collect($currentSection['elements'] ?? [])
+                ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
+                ->values()
+                ->all();
+        }
+
         $this->result = app(ExamGrader::class)->grade(
-            [$currentSection],
+            [$sectionToGrade],
             $this->answers
         );
 

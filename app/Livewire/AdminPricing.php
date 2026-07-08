@@ -34,7 +34,7 @@ class AdminPricing extends Component
         'is_active' => true,
     ];
 
-    public string $freeSectionLimit = '4';
+    public string $freeSectionLimit = '3';
 
     public ?int $editingPlanId = null;
 
@@ -43,7 +43,7 @@ class AdminPricing extends Component
     public function mount(): void
     {
         abort_unless(Auth::user()?->isOwner(), 403);
-        $this->freeSectionLimit = (string) Setting::value('free_section_limit', '4');
+        $this->freeSectionLimit = (string) Setting::value('free_section_limit', '3');
     }
 
     public function render(): View

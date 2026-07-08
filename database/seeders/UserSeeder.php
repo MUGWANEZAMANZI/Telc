@@ -45,13 +45,10 @@ class UserSeeder extends Seeder
         ]);
 
         User::updateOrCreate(
-            ['email' => 'mmaudace@gmail.com'],
-            [
+            ['email' => 'mmaudace@gmail.com',
                 'name' => 'Mmaudace',
                 'password' => Hash::make('password'),
                 'role' => 'owner',
-                'login_count' => 10,
-                'last_login_at' => now(),
             ]
         );
     }

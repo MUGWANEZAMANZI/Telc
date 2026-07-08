@@ -315,7 +315,25 @@ class StudentExam extends Component
         }
 
         $this->started = false;
-        $this->result = app(ExamGrader::class)->grade($this->template['sections'] ?? [], $this->answers);
+
+        // Filter sections: for inline_gap sections, only grade inline_gap elements
+        // (standard answer elements are not visible in the inline_gap view)
+        $sections = $this->template['sections'] ?? [];
+        $sectionsToGrade = array_map(function ($section) {
+            $hasInlineGap = collect($section['elements'] ?? [])
+                ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
+
+            if ($hasInlineGap) {
+                $section['elements'] = collect($section['elements'] ?? [])
+                    ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
+                    ->values()
+                    ->all();
+            }
+
+            return $section;
+        }, $sections);
+
+        $this->result = app(ExamGrader::class)->grade($sectionsToGrade, $this->answers);
 
         $this->enrichExplanations();
 
