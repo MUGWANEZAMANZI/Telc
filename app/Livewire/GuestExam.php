@@ -294,22 +294,8 @@ class GuestExam extends Component
 
         $this->started = false;
 
-        $sectionToGrade = $currentSection;
-
-        /** @var array<int, array<string, mixed>> $elements */
-        $elements = $currentSection['elements'] ?? [];
-        $hasInlineGap = collect($elements)
-            ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
-
-        if ($hasInlineGap) {
-            $sectionToGrade['elements'] = collect($elements)
-                ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
-                ->values()
-                ->all();
-        }
-
         $this->result = app(ExamGrader::class)->grade(
-            [$sectionToGrade],
+            [$currentSection],
             $this->answers
         );
 

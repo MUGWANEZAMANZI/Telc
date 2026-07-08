@@ -498,79 +498,164 @@
                                 </aside>
                             </div>
 
-                        {{-- === INLINE GAP VIEW (like paid) --}}
+                        {{-- === INLINE GAP VIEW with 2-column layout (paper + answer sheet) --}}
                         @elseif ($hasInlineGap)
-                            <div class="telc-paper booklet-paper premium-document">
-                                <div class="telc-paper-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-                                    <div>
-                                        <p style="font-size:0.75rem;color:#666;margin:0;">{{ $template['title'] ?? '' }}</p>
-                                        <h2 style="font-size:1.3rem;font-weight:700;margin:0.25rem 0 0;">{{ $currentSection['title'] }}</h2>
-                                    </div>
-                                    <span style="font-weight:700;color:#888;">{{ $template['level'] ?? '' }}</span>
-                                </div>
-                                <div class="telc-paper-body">
-                                    @foreach ($currentSection['elements'] as $element)
-                                        @if (($element['type'] ?? '') === 'inline_gap')
-                                            @php
-                                                $gaps = $this->gapsFor($element);
-                                                $parts = preg_split('/--(\d+)--/', $element['content'] ?? '', -1, PREG_SPLIT_DELIM_CAPTURE);
-                                            @endphp
-                                            <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;">{{ $element['label'] }}</h3>
-                                            <div class="inline-gap-text">
-                                                @foreach ($parts as $i => $part)
-                                                    @if ($i % 2 === 0)
-                                                        <span>{!! nl2br(e($part)) !!}</span>
-                                                    @else
-                                                        @php $gapIdx = (int) $part; $gapDef = $gaps[$gapIdx] ?? null; @endphp
-                                                        @if ($gapDef)
-                                                            @php
-                                                                $optList = array_filter(array_map('trim', explode(',', $gapDef['options'] ?? '')));
-                                                                $current = $answers[$element['id']][$gapIdx] ?? '';
-                                                            @endphp
-                                                             @php
-                                                                 $gapCorrect = null;
-                                                                 $gapExpected = $gapDef['answer'] ?? '';
-                                                                 if ($result) {
-                                                                     $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$gapIdx);
-                                                                     if ($gapDetail) {
-                                                                         $gapCorrect = $gapDetail['correct'] ?? null;
-                                                                         $gapExpected = $gapDetail['expected'] ?? $gapExpected;
-                                                                     }
-                                                                 }
-                                                                 $gapCls = '';
-                                                                 if ($result && $current !== '') {
-                                                                     $gapCls = $gapCorrect ? 'correct' : 'wrong';
-                                                                 }
-                                                             @endphp
-                                                             <span class="inline-gap-pill @if($current) filled @endif">
-                                                                 <select wire:model.live="answers.{{ $element['id'] }}.{{ $gapIdx }}" @disabled($result) @class(['cloze-select', 'correct' => $gapCls === 'correct', 'wrong' => $gapCls === 'wrong'])>
-                                                                     <option value="">--{{ $gapIdx }}--</option>
-                                                                     @foreach ($optList as $opt)
-                                                                         @php $optParts = explode('|', $opt, 2); $optKey = trim($optParts[0]); $optLabel = trim($optParts[1] ?? $optKey); @endphp
-                                                                         <option value="{{ $optKey }}">{{ $optLabel }}</option>
-                                                                     @endforeach
-                                                                 </select>
-                                                                 @if ($result && $current !== '')
-                                                                     <span class="feedback-badge {{ $gapCorrect ? 'ok' : 'fail' }}">{{ $gapCorrect ? '✓' : '✗ ' . $gapExpected }}</span>
-                                                                 @endif
-                                                             </span>
+                            <div class="exam-layout">
+                                <div class="exam-paper-column">
+                                    <div class="premium-document">
+                                        <div class="c1-badge">{{ $template['level'] ?? '' }}</div>
+                                        <h1 class="c1-title">{{ $currentSection['title'] }}</h1>
+                                        <p class="c1-subtitle">{{ $template['title'] ?? '' }}</p>
+
+                                        @foreach ($currentSection['elements'] as $element)
+                                            @if (($element['type'] ?? '') === 'text')
+                                                <h4 style="font-weight:700;margin-bottom:0.5rem;">{{ $element['label'] }}</h4>
+                                                <p style="margin-bottom:1rem;">{!! nl2br(e($element['content'])) !!}</p>
+                                            @elseif (($element['type'] ?? '') === 'image')
+                                                <figure style="margin:1rem 0;"><img src="{{ $element['content'] }}" alt="{{ $element['label'] }}" style="max-width:100%;"></figure>
+                                            @elseif (($element['type'] ?? '') === 'inline_gap')
+                                                @php
+                                                    $gaps = $this->gapsFor($element);
+                                                    $parts = preg_split('/--(\d+)--/', $element['content'] ?? '', -1, PREG_SPLIT_DELIM_CAPTURE);
+                                                @endphp
+                                                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;">{{ $element['label'] }}</h3>
+                                                <div class="inline-gap-text">
+                                                    @foreach ($parts as $i => $part)
+                                                        @if ($i % 2 === 0)
+                                                            <span>{!! nl2br(e($part)) !!}</span>
+                                                        @else
+                                                            @php $gapIdx = (int) $part; $gapDef = $gaps[$gapIdx] ?? null; @endphp
+                                                            @if ($gapDef)
+                                                                @php
+                                                                    $optList = array_filter(array_map('trim', explode(',', $gapDef['options'] ?? '')));
+                                                                    $current = $answers[$element['id']][$gapIdx] ?? '';
+                                                                    $gapCorrect = null;
+                                                                    $gapExpected = $gapDef['answer'] ?? '';
+                                                                    if ($result) {
+                                                                        $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$gapIdx);
+                                                                        if ($gapDetail) {
+                                                                            $gapCorrect = $gapDetail['correct'] ?? null;
+                                                                            $gapExpected = $gapDetail['expected'] ?? $gapExpected;
+                                                                        }
+                                                                    }
+                                                                    $gapCls = '';
+                                                                    if ($result && $current !== '') {
+                                                                        $gapCls = $gapCorrect ? 'correct' : 'wrong';
+                                                                    }
+                                                                @endphp
+                                                                <span class="inline-gap-pill @if($current) filled @endif">
+                                                                    <select wire:model.live="answers.{{ $element['id'] }}.{{ $gapIdx }}" @disabled($result) @class(['cloze-select', 'correct' => $gapCls === 'correct', 'wrong' => $gapCls === 'wrong'])>
+                                                                        <option value="">--{{ $gapIdx }}--</option>
+                                                                        @foreach ($optList as $opt)
+                                                                            @php $optParts = explode('|', $opt, 2); $optKey = trim($optParts[0]); $optLabel = trim($optParts[1] ?? $optKey); @endphp
+                                                                            <option value="{{ $optKey }}">{{ $optLabel }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    @if ($result && $current !== '')
+                                                                        <span class="feedback-badge {{ $gapCorrect ? 'ok' : 'fail' }}">{{ $gapCorrect ? '✓' : '✗ ' . $gapExpected }}</span>
+                                                                    @endif
+                                                                </span>
+                                                            @endif
                                                         @endif
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <aside class="exam-answer-column">
+                                    <div class="answer-sheet">
+                                        <div class="answer-sheet-header">
+                                            <div>
+                                                <span class="answer-sheet-title">Antwortbogen</span>
+                                                <span class="answer-sheet-section">{{ $currentSection['title'] }}</span>
+                                            </div>
+                                            @if ($hasAudio)
+                                                @foreach ($currentSection['elements'] as $el)
+                                                    @if (($el['type'] ?? '') === 'audio')
+                                                        <div class="audio-player"><audio controls src="{{ $el['content'] }}"></audio></div>
                                                     @endif
+                                                @endforeach
+                                            @endif
+                                        </div>
+
+                                        @php
+                                            $answerElements = collect($currentSection['elements'] ?? [])
+                                                ->filter(fn ($el) => in_array($el['type'] ?? '', ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true))
+                                                ->values();
+                                        @endphp
+
+                                        @if ($answerElements->isNotEmpty())
+                                            <div class="answer-sheet-grid">
+                                                @foreach ($answerElements as $element)
+                                                    @php
+                                                        $options = $this->optionsFor($element);
+                                                        $qNum = preg_replace('/[^0-9]/', '', $element['label']) ?: $loop->iteration;
+                                                        $isMatching = ($element['type'] ?? '') === 'matching';
+                                                        $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
+                                                        $selectedVal = $answers[$element['id']] ?? '';
+                                                    @endphp
+                                                    <div class="answer-sheet-row" wire:key="answer-{{ $element['id'] }}">
+                                                        <span class="question-num">{{ $qNum }}</span>
+                                                        @if (($element['type'] ?? '') === 'fill_blank' && $options === [])
+                                                            @php $fbCorrect = $detail ? $detail['correct'] : null; @endphp
+                                                            <input type="text" wire:model.live="answers.{{ $element['id'] }}" class="fill-blank-input {{ $result && $selectedVal !== '' ? ($fbCorrect ? 'correct' : 'wrong') : '' }}" placeholder="Antwort" @disabled($result)>
+                                                            @if ($result && $selectedVal !== '')
+                                                                <span class="feedback-badge {{ $fbCorrect ? 'ok' : 'fail' }}">{{ $fbCorrect ? '✓' : '✗ ' . $detail['expected'] }}</span>
+                                                            @endif
+                                                        @elseif ($isMatching && count($options) > 5)
+                                                            @php $matCorrect = $detail ? $detail['correct'] : null; @endphp
+                                                            <select wire:model.live="answers.{{ $element['id'] }}" class="matching-select {{ $result && $selectedVal !== '' ? ($matCorrect ? 'correct' : 'wrong') : '' }}" @disabled($result)>
+                                                                <option value="">—</option>
+                                                                @foreach ($options as $opt)
+                                                                    <option value="{{ $opt }}">{{ $opt }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            @if ($result && $selectedVal !== '')
+                                                                <span class="feedback-badge {{ $matCorrect ? 'ok' : 'fail' }}">{{ $matCorrect ? '✓' : '✗ ' . $detail['expected'] }}</span>
+                                                            @endif
+                                                        @else
+                                                            <div class="bubble-group">
+                                                                @foreach ($options as $option)
+                                                                    @php
+                                                                        $isSelected = $selectedVal === $option;
+                                                                        $bubbleCls = 'bubble';
+                                                                        if ($result) {
+                                                                            if ($isSelected) {
+                                                                                $bubbleCls .= $detail && $detail['correct'] ? ' selected correct' : ' selected wrong';
+                                                                            } elseif ($detail && $option === $detail['expected']) {
+                                                                                $bubbleCls .= ' correct-key';
+                                                                            }
+                                                                        } elseif ($isSelected) {
+                                                                            $bubbleCls .= ' selected';
+                                                                        }
+                                                                    @endphp
+                                                                    <label @class([$bubbleCls])>
+                                                                        <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}" @disabled($result)>
+                                                                        <span>{{ $option }}</span>
+                                                                    </label>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+                                                    </div>
                                                 @endforeach
                                             </div>
                                         @endif
-                                    @endforeach
-                                </div>
-                                @if ($result)
-                                    <div style="background:#fff;border:2px solid #1a1a1a;border-radius:8px;padding:2rem;max-width:500px;margin:2rem auto 0;text-align:center;">
-                                        <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#666;display:block;margin-bottom:0.5rem;">Ergebnis</span>
-                                        <div style="display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;">
-                                            <div><span style="font-size:0.8rem;color:#666;">Erreicht</span><br><strong style="font-size:2rem;">{{ $result['earned'] }}</strong></div>
-                                            <div><span style="font-size:0.8rem;color:#666;">Mögliche</span><br><strong style="font-size:2rem;">{{ $result['possible'] }}</strong></div>
-                                        </div>
-                                        <div style="font-size:1.2rem;font-weight:700;">{{ $result['percentage'] }}%</div>
+
+                                        @foreach ($currentSection['elements'] as $element)
+                                            @if (($element['type'] ?? '') === 'writing')
+                                                @php $writeDetail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null; @endphp
+                                                <div class="writing-section @if($result) marked @endif">
+                                                    <label class="writing-label">{{ $element['label'] }}</label>
+                                                    <textarea wire:model.live="answers.{{ $element['id'] }}" class="writing-textarea" placeholder="Schreibe deinen Text hier..." @disabled($result)></textarea>
+                                                    @if ($writeDetail)
+                                                        <span class="writing-score">{{ $writeDetail['points'] }} / {{ $writeDetail['max_points'] }} Punkte</span>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        @endforeach
                                     </div>
-                                @endif
+                                </aside>
                             </div>
 
                         {{-- === SPEAKING VIEW (like paid) --}}
