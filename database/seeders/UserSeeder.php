@@ -43,5 +43,16 @@ class UserSeeder extends Seeder
             'login_count' => fn () => rand(1, 20),
             'last_login_at' => fn () => now()->subDays(rand(0, 14))->subHours(rand(0, 23)),
         ]);
+
+        User::updateOrCreate(
+            ['email' => 'mmaudace@gmail.com'],
+            [
+                'name' => 'Mmaudace',
+                'password' => Hash::make('password'),
+                'role' => 'owner',
+                'login_count' => 10,
+                'last_login_at' => now(),
+            ]
+        );
     }
 }
