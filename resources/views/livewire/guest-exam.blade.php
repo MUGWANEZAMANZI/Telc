@@ -166,6 +166,8 @@
         .free-back-btn { display: inline-flex; align-items: center; gap: 0.35rem; color: #888; font-size: 0.8rem; cursor: pointer; background: none; border: none; font-family: inherit; padding: 0.5rem 0; transition: color 0.15s; }
         .free-back-btn:hover { color: #eab308; }
         .free-back-btn svg { width: 14px; height: 14px; }
+
+        @keyframes slideUp { from { opacity:0;transform:translateY(1rem); } to { opacity:1;transform:translateY(0); } }
     </style>
 
     {{-- Free sections notification (always visible during exam) --}}
@@ -823,5 +825,20 @@
                 </div>
             </div>
         </div>
+
+        {{-- Next-section popup (bottom-left) --}}
+        @if ($result && $nextSectionIndex !== null)
+            @php $nextSec = $sections[$nextSectionIndex] ?? null; @endphp
+            @if ($nextSec)
+                <div style="position:fixed;bottom:1rem;left:1rem;z-index:1002;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:0.6rem 1rem;box-shadow:0 4px 20px rgba(0,0,0,0.4);display:flex;align-items:center;gap:0.75rem;animation:slideUp 0.3s ease;">
+                    <span style="font-size:0.78rem;color:#aaa;">
+                        Nächstes: <strong style="color:#eab308;">{{ $nextSec['title'] }}</strong>
+                    </span>
+                    <button type="button" wire:click="startSection({{ $nextSectionIndex }})" style="background:#eab308;color:#1a1a1a;border:none;padding:0.35rem 0.75rem;border-radius:4px;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                        Starten →
+                    </button>
+                </div>
+            @endif
+        @endif
     @endif
 </div>

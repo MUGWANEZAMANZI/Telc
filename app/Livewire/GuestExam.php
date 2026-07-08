@@ -39,6 +39,8 @@ class GuestExam extends Component
     /** @var array<string, mixed>|null */
     public ?array $result = null;
 
+    public ?int $nextSectionIndex = null;
+
     public int $activeSection = 0;
 
     public int $remainingSeconds = 0;
@@ -259,6 +261,7 @@ class GuestExam extends Component
         $this->activeSection = $index;
         $this->answers = [];
         $this->result = null;
+        $this->nextSectionIndex = null;
         $this->started = true;
         $this->remainingSeconds = max((int) ($sections[$index]['minutes'] ?? 1), 1) * 60;
     }
@@ -334,6 +337,37 @@ class GuestExam extends Component
             'started_at' => now(),
             'submitted_at' => now(),
         ]);
+
+        $this->nextSectionIndex = $this->findNextSectionToJump();
+    }
+
+    public function findNextSectionToJump(): ?int
+    {
+        $sections = $this->template['sections'] ?? [];
+        $currentId = $sections[$this->activeSectionIndex]['id'] ?? null;
+
+        foreach ($sections as $i => $section) {
+            $id = $section['id'] ?? '';
+
+            if ($id === $currentId) {
+                continue;
+            }
+
+            $isCompleted = in_array($id, $this->completedSectionIds, true);
+            $isLocked = $isCompleted && in_array($id, $this->noRetrySectionIds, true);
+
+            if ($isLocked) {
+                continue;
+            }
+
+            if (! $isCompleted && $this->hasReachedLimit) {
+                continue;
+            }
+
+            return $i;
+        }
+
+        return null;
     }
 
     public function backToChapters(): void
@@ -341,6 +375,7 @@ class GuestExam extends Component
         $this->activeSectionIndex = null;
         $this->answers = [];
         $this->result = null;
+        $this->nextSectionIndex = null;
         $this->started = false;
     }
 
