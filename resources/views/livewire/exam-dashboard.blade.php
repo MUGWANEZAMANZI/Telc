@@ -21,6 +21,21 @@
 
     <div class="telc-status" x-show="saved" x-cloak>Template saved.</div>
 
+    {{-- Rich System Guide Banner for Admins & Owners --}}
+    <div class="telc-banner no-print" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; color: #f8fafc; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: 'Plus Jakarta Sans', sans-serif; text-align: left;">
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <div style="background: rgba(216, 35, 42, 0.15); border: 1.5px solid #d8232a; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #d8232a; flex-shrink: 0;">🛠️</div>
+            <div>
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #f8fafc;">System-Benutzerhandbuch</h3>
+                <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Erhalten Sie detaillierte Anleitungen zur Erstellung von Prüfungen, Upload-Limits (bis zu 100MB Audio), PayPal/Revolut Abrechnungsprozessen und Lückentext-Syntaktik.</p>
+            </div>
+        </div>
+        <a href="{{ route('admin.guide') }}" class="telc-button" style="background: #d8232a; border-color: #d8232a; color: #ffffff; text-decoration: none; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 700; border-radius: 6px; flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 4px 10px rgba(216, 35, 42, 0.25);">
+            <span>Handbuch öffnen</span>
+            <span>→</span>
+        </a>
+    </div>
+
     <section class="admin-metrics">
         <article>
             <span>Registered Students</span>

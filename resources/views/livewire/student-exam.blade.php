@@ -400,6 +400,38 @@
                 <span>Wählen Sie unten eine Prüfung aus, um zu beginnen.</span>
             </div>
 
+            {{-- Rich Helper Banner for Students --}}
+            <div class="student-helper-banner" style="background: linear-gradient(135deg, #18181b, #09090b); border: 1px solid #27272a; border-radius: 12px; padding: 1.75rem; margin-bottom: 2.5rem; color: #f4f4f5; display: flex; flex-direction: column; gap: 1.25rem; box-shadow: 0 10px 25px rgba(0,0,0,0.25); text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span style="font-size: 1.75rem;">🎓</span>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.2rem; font-weight: 700; color: #ffffff;">Willkommen im Lernportal!</h3>
+                        <p style="margin: 0.25rem 0 0; font-size: 0.88rem; color: #a1a1aa; line-height: 1.5;">Hier können Sie originalgetreue Prüfungssimulationen durchführen und interaktiv per Mikrofon üben.</p>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; border-top: 1px solid #27272a; padding-top: 1.25rem;">
+                    <div style="font-size: 0.82rem; color: #a1a1aa; line-height: 1.5;">
+                        <strong style="color: #ffffff; display: block; margin-bottom: 0.25rem;">🎤 KI-Sprechübungen</strong>
+                        Nutzen Sie Ihr Mikrofon im Sprechprüfungs-Labor. Die KI transkribiert Ihre Sätze und antwortet Ihnen interaktiv in 3 Runden.
+                    </div>
+                    <div style="font-size: 0.82rem; color: #a1a1aa; line-height: 1.5;">
+                        <strong style="color: #ffffff; display: block; margin-bottom: 0.25rem;">📝 Liniertes Papier-Design</strong>
+                        Unsere Oberfläche ahmt echte Prüfungsformulare auf liniertem Papier nach, um Ihnen die authentischste Vorbereitung zu bieten.
+                    </div>
+                    <div style="font-size: 0.82rem; color: #a1a1aa; line-height: 1.5;">
+                        <strong style="color: #ffffff; display: block; margin-bottom: 0.25rem;">💳 Freischaltung</strong>
+                        Bezahlen Sie sicher via PayPal oder Revolut und laden Sie Ihren Zahlungsbeleg hoch. Die Freischaltung erfolgt zügig.
+                    </div>
+                </div>
+                <div style="text-align: right; border-top: 1px solid #27272a; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="font-size: 0.8rem; color: #71717a;">Fragen? Unser Handbuch hilft Ihnen bei Mikrofon- oder PDF-Problemen.</span>
+                    <a href="{{ route('user.guide') }}" style="display: inline-flex; align-items: center; gap: 0.35rem; color: #eab308; font-size: 0.85rem; font-weight: 700; text-decoration: none; border: 1.5px solid #eab308; padding: 0.5rem 1rem; border-radius: 6px; transition: all 0.2s;">
+                        <span>Vollständiges Handbuch anzeigen (PDF-Export)</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+
             <div class="exam-card-grid">
                 @forelse ($templates as $record)
                     @php

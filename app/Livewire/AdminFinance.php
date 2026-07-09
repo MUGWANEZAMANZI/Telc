@@ -7,7 +7,6 @@ use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -56,8 +55,8 @@ class AdminFinance extends Component
             ->latest()
             ->get();
 
-        $driver = Config::get('database.default');
-        $dateFn = $driver === 'mysql'
+        $driver = DB::connection()->getDriverName();
+        $dateFn = in_array($driver, ['mysql', 'mariadb'], true)
             ? "DATE_FORMAT(enrolled_at, '%Y-%m')"
             : "strftime('%Y-%m', enrolled_at)";
 

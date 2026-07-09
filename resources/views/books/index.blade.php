@@ -50,7 +50,7 @@
                         <a href="{{ route('books.read', $book) }}" class="group block bg-white rounded-xl border border-stone-200 overflow-hidden hover:border-yellow-500 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
                             <div class="aspect-[4/3] bg-stone-100 flex items-center justify-center overflow-hidden">
                                 @if ($book->cover_image)
-                                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    <img src="{{ route('books.cover', $book) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
                                     <svg class="w-16 h-16 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />

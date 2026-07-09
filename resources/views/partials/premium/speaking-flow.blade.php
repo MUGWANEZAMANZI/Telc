@@ -123,7 +123,7 @@
         </div>
 
         {{-- STEP 1b: AI Presentation on Unchosen Topic --}}
-        @if ($speakingStep >= 2 && $sp1bEl)
+        @if ($speakingStep >= 2)
             @if (empty($aiPresentationText))
                 {{-- Auto-trigger loadAiPresentation via Alpine x-init when this div first mounts --}}
                 <div style="background:#fff;border:1px solid #e5e5e5;padding:2rem;border-radius:6px;text-align:center;margin-bottom:2rem;"
@@ -222,7 +222,7 @@
         @endif
 
         {{-- STEP 2: Discussion (SP-2) --}}
-        @if ($speakingStep >= 3 && $sp2El)
+        @if ($speakingStep >= 3)
             <div class="speaking-task" style="border:1px solid #e5e5e5;padding:2rem;border-radius:6px;background:#fff;margin-bottom:2rem;"
                  x-data="{
                      isRecording: false, recognition: null, transcript: '',

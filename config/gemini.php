@@ -9,12 +9,28 @@ return [
     | Gemini API Key
     |--------------------------------------------------------------------------
     |
-    | Here you may specify your Gemini API Key and organization. This will be
-    | used to authenticate with the Gemini API - you can find your API key
-    | on Google AI Studio, at https://aistudio.google.com/app/apikey.
+    | Specifying your Gemini API Key directly from .env file.
     */
 
-    'api_key' => env('GEMINI_API_KEY'),
+    'api_key' => (function () {
+        $envPath = base_path('.env');
+        if (file_exists($envPath)) {
+            $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (str_starts_with(trim($line), '#')) {
+                    continue;
+                }
+                $parts = explode('=', $line, 2);
+                if (count($parts) === 2 && trim($parts[0]) === 'GEMINI_API_KEY') {
+                    $val = trim($parts[1]);
+
+                    return trim($val, '"\'');
+                }
+            }
+        }
+
+        return env('GEMINI_API_KEY');
+    })(),
 
     /*
     |--------------------------------------------------------------------------

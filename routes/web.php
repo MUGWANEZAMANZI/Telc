@@ -10,6 +10,7 @@ use App\Livewire\BookReader;
 use App\Livewire\GuestExam;
 use App\Livewire\OwnerDashboard;
 use App\Livewire\StudentPerformance;
+use App\Models\Book;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -69,5 +70,36 @@ Route::get('/exam-audio/{path}', function (string $path) {
 
     return response()->file($disk->path($path), ['Content-Type' => $mime]);
 })->where('path', '.*')->name('exam.audio')->middleware(['auth', 'verified']);
+
+Route::get('/books-pdf/{book}', function (Book $book) {
+    abort_unless($book->is_published || (auth()->check() && auth()->user()->isAdmin()), 404);
+
+    $path = storage_path('app/public/'.$book->pdf_path);
+    if (! file_exists($path)) {
+        $path = storage_path('app/'.$book->pdf_path);
+    }
+
+    abort_unless(file_exists($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="'.basename($book->pdf_path).'"',
+    ]);
+})->name('books.pdf');
+
+Route::get('/books-cover/{book}', function (Book $book) {
+    abort_unless($book->cover_image, 404);
+
+    $path = storage_path('app/public/'.$book->cover_image);
+    if (! file_exists($path)) {
+        $path = storage_path('app/'.$book->cover_image);
+    }
+
+    abort_unless(file_exists($path), 404);
+
+    $mime = mime_content_type($path) ?: 'image/jpeg';
+
+    return response()->file($path, ['Content-Type' => $mime]);
+})->name('books.cover');
 
 require __DIR__.'/settings.php';

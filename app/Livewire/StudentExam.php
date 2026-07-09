@@ -513,14 +513,36 @@ class StudentExam extends Component
         $maxPoints = (int) ($element['points'] ?? 24);
         $level = $this->template['level'] ?? 'C1';
 
-        $criteriaPrompt = 'Bewerte die Leistung des Lernenden anhand der folgenden vier offiziellen TELC-Prüfungskriterien:
-1. **Repertoire & Wortschatz** — Breite und Angemessenheit des verwendeten Vokabulars (0-6 Punkte)
-2. **Grammatische Korrektheit** — Korrektheit der Satzstrukturen und Flexionen (0-6 Punkte)
-3. **Aussprache/Intonation** — Deutlichkeit und Sprachmelodie (0-6 Punkte)
-4. **Flüssigkeit** — Natürlicher Redefluss, Vermeidung störender Stockungen (0-6 Punkte)
+        if (str_ends_with($elementId, '-SP-1a')) {
+            $criteriaPrompt = "Bewerte den Vortrag des Lernenden zu dem von ihm gewählten Thema.
+Kriterien:
+- Inhaltliche Angemessenheit & Relevanz (0-2 Punkte)
+- Struktur und logischer Aufbau (0-2 Punkte)
+- Ausdrucksweise und Kohärenz (0-2 Punkte)
 
-Gib für jedes Kriterium eine Einzelpunktzahl und eine kurze Begründung.
-Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$maxPoints.'" an.';
+Bitte gib eine kurze Begründung für jedes Kriterium an.
+Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
+        } elseif (str_ends_with($elementId, '-SP-1b')) {
+            $criteriaPrompt = "Bewerte die Reaktion des Lernenden auf den Vortrag.
+Kriterien:
+- Verständnis des gehörten Vortrags (0-2 Punkte)
+- Relevanz und Qualität der Anschlussfragen/Kommentare (0-2 Punkte)
+
+Bitte gib eine kurze Begründung für jedes Kriterium an.
+Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
+        } elseif (str_ends_with($elementId, '-SP-2')) {
+            $criteriaPrompt = "Bewerte die Diskussionsleistung des Lernenden.
+Kriterien:
+- Argumentation und Eingehen auf den Gesprächspartner (0-2 Punkte)
+- Interaktionsfähigkeit (0-2 Punkte)
+- Syntaktische und inhaltliche Angemessenheit (0-2 Punkte)
+
+Bitte gib eine kurze Begründung für jedes Kriterium an.
+Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
+        } else {
+            $criteriaPrompt = "Bewerte die mündliche Leistung des Lernenden.
+Bitte gib eine Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
+        }
 
         // SP-1a: student's initial presentation on chosen topic
         if (str_ends_with($elementId, '-SP-1a')) {
@@ -886,7 +908,7 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$maxPoints.'" an.';
             $autoScored[$elId] = $score;
         }
 
-        // Auto-calculate SP-GLOBAL as sum of SP-1a + SP-1b + SP-2
+        // Auto-calculate SP-GLOBAL via Gemini based on all speaking parts
         $globalElement = $elements->first(fn ($el) => str_ends_with((string) ($el['id'] ?? ''), '-SP-GLOBAL'));
         if ($globalElement) {
             $globalId = $globalElement['id'];
@@ -894,17 +916,74 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$maxPoints.'" an.';
             $sp1a = $autoScored[collect($autoScored)->keys()->first(fn ($k) => str_ends_with($k, '-SP-1a'))] ?? 0;
             $sp1b = $autoScored[collect($autoScored)->keys()->first(fn ($k) => str_ends_with($k, '-SP-1b'))] ?? 0;
             $sp2 = $autoScored[collect($autoScored)->keys()->first(fn ($k) => str_ends_with($k, '-SP-2'))] ?? 0;
-            $globalScore = min($sp1a + $sp1b + $sp2, $globalMax);
+
+            $combinedTranscript = '';
+            foreach ($elements as $el) {
+                $id = $el['id'];
+                if (str_ends_with($id, '-SP-GLOBAL') || str_ends_with($id, '-SP-global')) {
+                    continue;
+                }
+                $history = $this->speakingHistory[$id] ?? [];
+                if (! empty($history)) {
+                    $combinedTranscript .= "\n--- Teil: ".$el['label']." ---\n";
+                    if (is_array($history)) {
+                        foreach ($history as $turn) {
+                            $roleLabel = $turn['role'] === 'user' ? 'Lernender' : 'KI-Prüfer';
+                            $combinedTranscript .= "{$roleLabel}: {$turn['text']}\n";
+                        }
+                    } else {
+                        $combinedTranscript .= 'Lernender: '.$history."\n";
+                    }
+                }
+            }
+
+            $globalScore = 0;
+            $feedback = '';
+
+            if (! empty(trim($combinedTranscript))) {
+                try {
+                    $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                        ->withSystemInstruction(
+                            Content::parse(
+                                'Du bist ein offizieller TELC-Prüfer für die mündliche Prüfung. '
+                                .'Bewerte die gesamte mündliche Leistung des Lernenden über alle Prüfungsteile hinweg anhand der sprachlichen Angemessenheit.'
+                            )
+                        );
+
+                    $resp = $model->generateContent(
+                        "Gesamtes Gesprächsprotokoll:\n{$combinedTranscript}\n\n"
+                        ."Bitte bewerten Sie die Leistung nach folgenden vier Kriterien:\n"
+                        ."1. Repertoire & Wortschatz (0-8 Punkte)\n"
+                        ."2. Grammatische Korrektheit (0-8 Punkte)\n"
+                        ."3. Aussprache und Intonation (0-8 Punkte)\n"
+                        ."4. Flüssigkeit (0-8 Punkte)\n\n"
+                        ."Antworte genau im Format 'SCORE: X/{$globalMax}', gefolgt von einer Begründung für die Kriterien."
+                    );
+
+                    $feedback = $resp->text();
+                    preg_match('/SCORE:\s*(\d+)/i', $feedback, $matches);
+                    if (isset($matches[1])) {
+                        $globalScore = min((int) $matches[1], $globalMax);
+                    } else {
+                        $globalScore = min($sp1a + $sp1b + $sp2, $globalMax);
+                    }
+                } catch (\Throwable $e) {
+                    $globalScore = min($sp1a + $sp1b + $sp2, $globalMax);
+                    $feedback = 'Fehler bei der automatischen Bewertung der sprachlichen Angemessenheit: '.$e->getMessage();
+                }
+            } else {
+                $feedback = 'Keine Beiträge für die mündliche Prüfung aufgezeichnet.';
+            }
 
             $details[] = [
                 'id' => $globalId,
                 'label' => 'Mündliche Prüfung — '.$globalElement['label'],
                 'given' => $autoScored,
-                'expected' => 'Automatisch berechnet',
+                'expected' => 'Gemini AI Graded',
                 'points' => $globalScore,
                 'max_points' => $globalMax,
                 'correct' => $globalScore >= (int) ($globalMax * 0.6),
-                'explanation' => 'Die Gesamtpunktzahl wird aus den Teilbewertungen (SP-1a + SP-1b + SP-2) automatisch berechnet.',
+                'explanation' => $feedback,
             ];
         }
 

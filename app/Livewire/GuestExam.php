@@ -6,6 +6,8 @@ use App\Models\ExamAttempt;
 use App\Models\ExamTemplate;
 use App\Models\Setting;
 use App\Services\ExamGrader;
+use Gemini\Data\Content;
+use Gemini\Laravel\Facades\Gemini;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -46,6 +48,31 @@ class GuestExam extends Component
     public int $remainingSeconds = 0;
 
     public bool $started = false;
+
+    public string $selectedTopic = '';
+
+    public string $aiPresentationText = '';
+
+    public string $unchosenTopic = '';
+
+    public int $speakingStep = 1;
+
+    public string $c1SelectedTopic = '';
+
+    public string $c1AiResponseText = '';
+
+    public string $c1AiResponseAudio = '';
+
+    public int $c1SpeakingStep = 1;
+
+    /** @var array<string, mixed> */
+    public array $speakingFeedback = [];
+
+    /** @var array<string, mixed> */
+    public array $speakingProcessing = [];
+
+    /** @var array<string, array<int, array<string, string>>> */
+    public array $speakingHistory = [];
 
     public function mount(?int $templateId = null): void
     {
@@ -428,5 +455,264 @@ class GuestExam extends Component
         $raw = json_decode((string) ($element['options'] ?? '[]'), true);
 
         return is_array($raw) ? array_values($raw) : [];
+    }
+
+    public function chooseTopic(string $topic, string $elementId = ''): void
+    {
+        $this->selectedTopic = $topic;
+        $this->speakingStep = 1;
+        $speakingIds = collect((array) ($this->template['sections'] ?? []))
+            ->pluck('elements')
+            ->flatten(1)
+            ->where('type', 'speaking')
+            ->pluck('id');
+
+        if ($elementId === '') {
+            $elementId = $speakingIds->first(fn ($id) => str_ends_with((string) $id, '-SP-1a')) ?? 'SP-1a';
+        }
+
+        foreach ($speakingIds as $sid) {
+            $this->speakingHistory[(string) $sid] = [];
+        }
+
+        $this->speakingHistory[$elementId] = [];
+        $this->answers[$elementId] = '';
+    }
+
+    public function loadAiPresentation(): void
+    {
+        $this->generateAiPresentation($this->unchosenTopic);
+    }
+
+    public function generateAiPresentation(string $unchosenTopic, string $sp1bId = ''): void
+    {
+        if ($sp1bId === '') {
+            $elements = collect((array) ($this->template['sections'] ?? []))
+                ->pluck('elements')
+                ->flatten(1);
+            $sp1bEl = $elements->firstWhere('id', 'C1-SP-1b')
+                ?? $elements->first(fn ($el) => str_ends_with((string) ($el['id'] ?? ''), '-SP-1b'));
+            $sp1bId = $sp1bEl['id'] ?? 'SP-1b';
+        }
+
+        try {
+            $this->speakingProcessing[$sp1bId] = true;
+
+            $prompt = "Schreibe einen gut strukturierten Vortrag (Einleitung, Hauptteil, Eigene Meinung, Schluss/Fazit) zum Thema: \"{$unchosenTopic}\". Der Vortrag soll klar und verständlich sein, mit einer deutlichen Argumentationslinie.";
+
+            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                ->withSystemInstruction(Content::parse('Du bist ein TELC-Prüfungskandidat, der einen Vortrag hält. Sprich den Lernenden direkt an.'))
+                ->generateContent($prompt);
+
+            $this->aiPresentationText = $result->text();
+
+            $this->speakingHistory[$sp1bId][] = [
+                'role' => 'assistant',
+                'text' => $this->aiPresentationText,
+            ];
+
+            $this->answers[$sp1bId] = $this->speakingHistory[$sp1bId];
+            $this->speakingStep = 2;
+            $this->saveProgress();
+        } catch (\Throwable $e) {
+            $this->aiPresentationText = 'Fehler bei der Vortragserstellung: '.$e->getMessage();
+        } finally {
+            $this->speakingProcessing[$sp1bId] = false;
+        }
+    }
+
+    public function analyzeSpeaking(string $elementId, string $transcribedText): void
+    {
+        $this->speakingProcessing[$elementId] = true;
+        $this->speakingFeedback[$elementId] = '';
+
+        if (! isset($this->speakingHistory[$elementId])) {
+            $this->speakingHistory[$elementId] = [];
+        }
+
+        $this->speakingHistory[$elementId][] = [
+            'role' => 'user',
+            'text' => $transcribedText,
+        ];
+
+        $element = collect((array) ($this->template['sections'] ?? []))
+            ->pluck('elements')
+            ->flatten(1)
+            ->firstWhere('id', $elementId);
+
+        $prompt = $element['content'] ?? '';
+        $maxPoints = (int) ($element['points'] ?? 24);
+        $level = $this->template['level'] ?? 'C1';
+
+        if (str_ends_with($elementId, '-SP-1a')) {
+            $criteriaPrompt = "Bewerte den Vortrag des Lernenden zu dem von ihm gewählten Thema.\nKriterien:\n- Inhaltliche Angemessenheit & Relevanz (0-2 Punkte)\n- Struktur und logischer Aufbau (0-2 Punkte)\n- Ausdrucksweise und Kohärenz (0-2 Punkte)\n\nBitte gib eine kurze Begründung für jedes Kriterium an.\nGib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
+        } elseif (str_ends_with($elementId, '-SP-1b')) {
+            $criteriaPrompt = "Bewerte die Reaktion des Lernenden auf den Vortrag.\nKriterien:\n- Verständnis des gehörten Vortrags (0-2 Punkte)\n- Relevanz und Qualität der Anschlussfragen/Kommentare (0-2 Punkte)\n\nBitte gib eine kurze Begründung für jedes Kriterium an.\nGib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
+        } elseif (str_ends_with($elementId, '-SP-2')) {
+            $criteriaPrompt = "Bewerte die Diskussionsleistung des Lernenden.\nKriterien:\n- Argumentation und Eingehen auf den Gesprächspartner (0-2 Punkte)\n- Interaktionsfähigkeit (0-2 Punkte)\n- Syntaktische und inhaltliche Angemessenheit (0-2 Punkte)\n\nBitte gib eine kurze Begründung für jedes Kriterium an.\nGib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
+        } else {
+            $criteriaPrompt = "Bewerte die mündliche Leistung des Lernenden.\nBitte gib eine Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
+        }
+
+        // SP-1a: student's initial presentation on chosen topic
+        if (str_ends_with($elementId, '-SP-1a')) {
+            try {
+                $levelLabel = "TELC-{$level}";
+                $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                    ->withSystemInstruction(
+                        Content::parse(
+                            "Du bist ein offizieller {$levelLabel}-Prüfer. "
+                            .'Bewerte den mündlichen Vortrag des Lernenden zu dem von ihm gewählten Thema. '
+                            .$criteriaPrompt
+                        )
+                    )
+                    ->generateContent(
+                        "Gewähltes Thema: {$this->selectedTopic}\n\n"
+                        ."Transkription des Vortrags:\n{$transcribedText}\n\n"
+                        .'Bitte bewerten Sie die Präsentation anhand der vier Kriterien:'
+                    );
+
+                $assistantReply = $result->text();
+                $this->speakingHistory[$elementId][] = [
+                    'role' => 'assistant',
+                    'text' => $assistantReply,
+                ];
+
+                $this->speakingFeedback[$elementId] = $assistantReply;
+                $this->answers[$elementId] = $transcribedText;
+
+                // Extract the unchosen topic from the element content
+                $content = $element['content'] ?? '';
+                $topics = self::parseTopicsFromContent($content);
+                $this->unchosenTopic = '';
+                if (count($topics) === 2) {
+                    $this->unchosenTopic = $topics[0] === $this->selectedTopic ? $topics[1] : $topics[0];
+                }
+                if ($this->unchosenTopic === '') {
+                    $this->unchosenTopic = 'Das alternative Thema';
+                }
+
+                $this->speakingStep = 2;
+                $this->saveProgress();
+            } catch (\Throwable $e) {
+                $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
+            } finally {
+                $this->speakingProcessing[$elementId] = false;
+            }
+
+            return;
+        }
+
+        // SP-1b: student's reaction/summary of the AI presentation
+        if (str_ends_with($elementId, '-SP-1b')) {
+            try {
+                $levelLabel = "TELC-{$level}";
+                $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                    ->withSystemInstruction(
+                        Content::parse(
+                            "Du bist ein offizieller {$levelLabel}-Prüfer. "
+                            .'Der Lernende reagiert auf deine Zusammenfassung / deinen Vortrag. '
+                            .'Bewerte seine Reaktion darauf. Achte auf logischen Bezug, Sprachgefühl und syntaktische Korrektheit. '
+                            .$criteriaPrompt
+                        )
+                    )
+                    ->generateContent(
+                        "AI Vortrag:\n{$this->aiPresentationText}\n\n"
+                        ."Antwort des Lernenden:\n{$transcribedText}\n\n"
+                        .'Bitte bewerten Sie die Reaktion anhand der vier Kriterien:'
+                    );
+
+                $assistantReply = $result->text();
+                $this->speakingHistory[$elementId][] = [
+                    'role' => 'assistant',
+                    'text' => $assistantReply,
+                ];
+
+                $this->speakingFeedback[$elementId] = $assistantReply;
+                $this->answers[$elementId] = $transcribedText;
+                $this->speakingStep = 3;
+                $this->saveProgress();
+            } catch (\Throwable $e) {
+                $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
+            } finally {
+                $this->speakingProcessing[$elementId] = false;
+            }
+
+            return;
+        }
+
+        // SP-2: interactive discussion handler
+        $historyContext = '';
+        foreach ($this->speakingHistory[$elementId] as $turn) {
+            $roleLabel = $turn['role'] === 'user' ? 'Lernender' : 'Prüfer';
+            $historyContext .= "{$roleLabel}: {$turn['text']}\n";
+        }
+
+        try {
+            $levelLabel = "TELC-{$level}";
+            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                ->withSystemInstruction(
+                    Content::parse(
+                        "Du bist ein {$levelLabel}-Prüfer für die mündliche Prüfung. "
+                        .'Unterhalte dich interaktiv mit dem Lernenden über das gewählte Thema. '
+                        .'Lies den Gesprächsverlauf. Reagiere auf die letzte Antwort des Lernenden, '
+                        .'stelle eine kurze, logische Anschlussfrage oder führe das Gespräch fort. '
+                        .'WICHTIG: Wenn dies der 3. oder 4. Redebeitrag des Lernenden ist, '
+                        .'beende das Gespräch höflich und bewerte die Leistung. '
+                        .$criteriaPrompt
+                    )
+                )
+                ->generateContent(
+                    "Aufgabenstellung/Thema: {$prompt}\n\n"
+                    ."Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
+                    .'Generiere die nächste Antwort des Prüfers:'
+                );
+
+            $assistantReply = $result->text();
+
+            $this->speakingHistory[$elementId][] = [
+                'role' => 'assistant',
+                'text' => $assistantReply,
+            ];
+
+            $this->speakingFeedback[$elementId] = $assistantReply;
+            $this->answers[$elementId] = $transcribedText;
+            $this->saveProgress();
+        } catch (\Throwable $e) {
+            $this->speakingFeedback[$elementId] = 'Fehler bei der Analyse: '.$e->getMessage();
+        } finally {
+            $this->speakingProcessing[$elementId] = false;
+        }
+    }
+
+    private static function parseTopicsFromContent(string $content): array
+    {
+        $topics = [];
+        if (preg_match_all('/(\d+)\.\s*(.+?)\s*(?=\s*(?:\/|oder)\s*\d+\.|\s*$)/u', $content, $matches)) {
+            foreach ($matches[2] as $m) {
+                $trimmed = trim($m);
+                if ($trimmed !== '') {
+                    $topics[] = $trimmed;
+                }
+            }
+        }
+        if (count($topics) < 2) {
+            $topics = [];
+            if (preg_match_all('/Thema\s*\d+\s*[:.]?\s*(.+?)\s*(?=\s*\/\s*Thema|\s*$)/ui', $content, $matches)) {
+                foreach ($matches[1] as $m) {
+                    $trimmed = trim($m);
+                    if ($trimmed !== '') {
+                        $topics[] = $trimmed;
+                    }
+                }
+            }
+        }
+
+        return $topics;
+    }
+
+    public function saveProgress(): void
+    {
+        // No-op for guest exam
     }
 }
