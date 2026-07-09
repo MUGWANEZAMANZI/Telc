@@ -14,7 +14,7 @@
     // Parse topics from SP-1a content (format: "1. Thema A / 2. Thema B")
     $spContent = $sp1aEl['content'] ?? '';
     $parsedTopics = [];
-    if (preg_match_all('/(\d+)\.\s*([^\/]+?)(?=\s*\/\s*\d+\.|\s*$)/u', $spContent, $topicMatches)) {
+    if (preg_match_all('/(\d+)\.\s*(.+?)(?=\s*(?:\/|oder)\s*\d+\.|\s*$)/u', $spContent, $topicMatches)) {
         foreach ($topicMatches[2] as $t) {
             $parsedTopics[] = trim($t);
         }

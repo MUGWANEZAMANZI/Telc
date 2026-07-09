@@ -3,8 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\VoiceTopic;
-use Gemini\Laravel\Facades\Gemini;
 use Gemini\Data\Content;
+use Gemini\Laravel\Facades\Gemini;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -45,20 +45,20 @@ class VoiceInput extends Component
 4. **Flüssigkeit** — Natürlicher Redefluss, Vermeidung störender Stockungen (0-6 Punkte)
 
 Gib für jedes Kriterium eine Einzelpunktzahl und eine kurze Begründung.
-Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/' . $this->maxPoints . '" an.';
+Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$this->maxPoints.'" an.';
 
         try {
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                 ->withSystemInstruction(
                     Content::parse(
                         'Du bist ein offizieller TELC-C1-Prüfer für die mündliche Prüfung. '
-                        . 'Bewerte den mündlichen Vortrag des Lernenden.'
+                        .'Bewerte den mündlichen Vortrag des Lernenden.'
                     )
                 )
                 ->generateContent(
                     "Thema: {$topic}\n\n"
-                    . "Transkription des Vortrags:\n{$text}\n\n"
-                    . $criteriaPrompt
+                    ."Transkription des Vortrags:\n{$text}\n\n"
+                    .$criteriaPrompt
                 );
 
             $this->aiFeedback = $result->text();
@@ -68,7 +68,7 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/' . $this->maxPoints . '" an
             }
             $this->evaluated = true;
         } catch (\Throwable $e) {
-            $this->aiFeedback = 'Fehler bei der Bewertung: ' . $e->getMessage();
+            $this->aiFeedback = 'Fehler bei der Bewertung: '.$e->getMessage();
             $this->score = 0;
             $this->evaluated = true;
         } finally {

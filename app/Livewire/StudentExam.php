@@ -520,7 +520,7 @@ class StudentExam extends Component
 4. **Flüssigkeit** — Natürlicher Redefluss, Vermeidung störender Stockungen (0-6 Punkte)
 
 Gib für jedes Kriterium eine Einzelpunktzahl und eine kurze Begründung.
-Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/' . $maxPoints . '" an.';
+Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$maxPoints.'" an.';
 
         // SP-1a: student's initial presentation on chosen topic
         if (str_ends_with($elementId, '-SP-1a')) {
@@ -655,16 +655,27 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/' . $maxPoints . '" an.';
 
     private static function parseTopicsFromContent(string $content): array
     {
-        // Parse "Thema 1: ... / Thema 2: ..." or "1. ... / 2. ..."
         $topics = [];
-        if (preg_match_all('/(?:\d+\.?|\w+)\s*[:.]?\s*([^\/]+?)\s*(?=\/\s*(?:\d+\.?|\w+)\s*[:.]?\s*|$)/u', $content, $matches)) {
-            foreach ($matches[1] as $m) {
+        if (preg_match_all('/(\d+)\.\s*(.+?)\s*(?=\s*(?:\/|oder)\s*\d+\.|\s*$)/u', $content, $matches)) {
+            foreach ($matches[2] as $m) {
                 $trimmed = trim($m);
                 if ($trimmed !== '') {
                     $topics[] = $trimmed;
                 }
             }
         }
+        if (count($topics) < 2) {
+            $topics = [];
+            if (preg_match_all('/Thema\s*\d+\s*[:.]?\s*(.+?)\s*(?=\s*\/\s*Thema|\s*$)/ui', $content, $matches)) {
+                foreach ($matches[1] as $m) {
+                    $trimmed = trim($m);
+                    if ($trimmed !== '') {
+                        $topics[] = $trimmed;
+                    }
+                }
+            }
+        }
+
         return $topics;
     }
 
