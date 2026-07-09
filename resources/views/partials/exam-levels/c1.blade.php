@@ -8,6 +8,7 @@
                         'f' => 'f (Der Nasa-Experte Chris McKay sieht die Aussichten jedoch nüchterner:)',
                         'g' => 'g (Doch selbst dafür fehlt es an Geld.)',
                         'h' => 'h (Es gibt daher keine Gewässer mit flüssigem Wasser auf der Marsoberfläche.)',
+                    ];
                 @endphp
 
 <style>
