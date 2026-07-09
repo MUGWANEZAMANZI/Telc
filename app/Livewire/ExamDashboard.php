@@ -135,7 +135,7 @@ class ExamDashboard extends Component
         $record = ExamTemplate::findOrFail($id);
 
         $this->selectedTemplateId = $record->id;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published', 'exam_provider', 'price']);
+        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published', 'exam_provider', 'price', 'is_free']);
         $this->providerFilter = $record->exam_provider ?? 'telc';
         $this->activeSection = 0;
         $this->answers = [];

@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property array<string, mixed> $timings
  * @property array<int, array<string, mixed>> $sections
  * @property bool $is_published
+ * @property bool $is_free
  * @property string|null $exam_provider
  * @property float|null $price
  * @property Carbon|null $created_at
@@ -24,7 +25,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, ExamAttempt> $attempts
  * @property-read Collection<int, ExamEnrollment> $enrollments
  */
-#[Fillable(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published', 'exam_provider', 'price'])]
+#[Fillable(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published', 'exam_provider', 'price', 'is_free'])]
 class ExamTemplate extends Model
 {
     protected function casts(): array
@@ -34,6 +35,7 @@ class ExamTemplate extends Model
             'timings' => 'array',
             'sections' => 'array',
             'is_published' => 'boolean',
+            'is_free' => 'boolean',
         ];
     }
 

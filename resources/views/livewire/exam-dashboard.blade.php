@@ -79,13 +79,13 @@
                 <input type="text" wire:model.live="template.source_pdf" class="telc-input">
 
                 <label>Pricing Access</label>
-                <div x-data="{ isPaid: {{ isset($template['price']) && $template['price'] > 0 ? 'true' : 'false' }} }" style="margin-bottom: 1rem;">
-                    <select class="telc-select" x-on:change="isPaid = ($event.target.value === 'paid'); if (!isPaid) $wire.set('template.price', 0)">
-                        <option value="free" :selected="!isPaid">Free / Basic Tier</option>
-                        <option value="paid" :selected="isPaid">Paid / Premium Subscription Required</option>
-                    </select>
-                    <div x-show="isPaid" style="margin-top: 0.5rem;" x-cloak>
-                        <label>Exam Price (EUR)</label>
+                <div style="margin-bottom: 1rem;">
+                    <label class="telc-checkbox-label" style="margin-bottom: 0.5rem;">
+                        <input type="checkbox" wire:model.live="template.is_free">
+                        Free exam (3-section limit, no payment required)
+                    </label>
+                    <div style="margin-top: 0.5rem;">
+                        <label>Exam Price (EUR) — leave 0 for free / subscription only</label>
                         <input type="number" step="0.01" wire:model.live="template.price" class="telc-input" placeholder="e.g. 9.99">
                     </div>
                 </div>

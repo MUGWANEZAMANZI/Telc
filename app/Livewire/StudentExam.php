@@ -45,13 +45,13 @@ class StudentExam extends Component
     /** @var array<string, array<int, array<string, string>>> */
     public array $speakingHistory = [];
 
-    public string $c1SelectedTopic = '';
+    public string $selectedTopic = '';
 
-    public string $c1AiResponseText = '';
+    public string $aiPresentationText = '';
 
-    public string $c1AiResponseAudio = '';
+    public int $speakingStep = 1;
 
-    public int $c1SpeakingStep = 1; // 1 = 1A presentation, 2 = 1B AI presentation, 3 = 1B user feedback response
+    public string $unchosenTopic = '';
 
     public bool $showEnrollModal = false;
 
@@ -138,12 +138,16 @@ class StudentExam extends Component
         abort_unless($this->isEnrolled($record->id), 403);
 
         $this->selectedTemplateId = $record->id;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
+        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
         $this->answers = [];
         $this->result = null;
         $this->speakingFeedback = [];
         $this->speakingProcessing = [];
         $this->speakingHistory = [];
+        $this->selectedTopic = '';
+        $this->aiPresentationText = '';
+        $this->speakingStep = 1;
+        $this->unchosenTopic = '';
         $this->activeSection = 0;
         $this->resetTimer();
     }
@@ -188,12 +192,17 @@ class StudentExam extends Component
 
         $this->selectedTemplateId = $templateId;
         $record = $enrollment->examTemplate;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
+        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
 
         if ($enrollment->active_answers !== null) {
             // Resume previous session
-            $this->answers = $enrollment->active_answers;
-            $this->activeSection = $enrollment->active_section;
+            $stored = $enrollment->active_answers;
+            $this->answers = array_filter((array) $stored, fn ($key) => ! str_starts_with((string) $key, '_'), ARRAY_FILTER_USE_KEY);
+            $this->selectedTopic = $stored['_selectedTopic'] ?? '';
+            $this->aiPresentationText = $stored['_aiPresentationText'] ?? '';
+            $this->speakingStep = (int) ($stored['_speakingStep'] ?? 1);
+            $this->unchosenTopic = $stored['_unchosenTopic'] ?? '';
+            $this->activeSection = min($enrollment->active_section, ! empty($this->template['is_free']) ? 2 : 999);
             $this->remainingSeconds = $enrollment->remaining_seconds ?? 0;
             $this->started = $this->remainingSeconds > 0;
 
@@ -202,15 +211,18 @@ class StudentExam extends Component
             foreach ($record->sections ?? [] as $sec) {
                 foreach ($sec['elements'] ?? [] as $el) {
                     if (($el['type'] ?? '') === 'speaking' && array_key_exists($el['id'], $this->answers)) {
-                        /** @var array<int, array<string, string>> $history */
                         $history = $this->answers[$el['id']];
-                        $this->speakingHistory[$el['id']] = $history;
+                        $this->speakingHistory[$el['id']] = is_string($history) ? [['role' => 'user', 'text' => $history]] : $history;
                     }
                 }
             }
         } else {
             // Start fresh
             $this->answers = [];
+            $this->selectedTopic = '';
+            $this->aiPresentationText = '';
+            $this->speakingStep = 1;
+            $this->unchosenTopic = '';
             $this->activeSection = 0;
             if (($record->level ?? '') === 'C1') {
                 // C1 is a unified single page, timer is sum of all section minutes
@@ -233,8 +245,13 @@ class StudentExam extends Component
 
         $this->selectedTemplateId = $attempt->exam_template_id;
         $record = $attempt->examTemplate;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
-        $this->answers = $attempt->answers;
+        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
+        $stored = $attempt->answers;
+        $this->answers = array_filter((array) $stored, fn ($key) => ! str_starts_with((string) $key, '_'), ARRAY_FILTER_USE_KEY);
+        $this->selectedTopic = $stored['_selectedTopic'] ?? '';
+        $this->aiPresentationText = $stored['_aiPresentationText'] ?? '';
+        $this->speakingStep = (int) ($stored['_speakingStep'] ?? 3);
+        $this->unchosenTopic = $stored['_unchosenTopic'] ?? '';
         $this->result = $attempt->result;
         $this->started = false;
 
@@ -243,7 +260,8 @@ class StudentExam extends Component
         foreach ($record->sections ?? [] as $sec) {
             foreach ($sec['elements'] ?? [] as $el) {
                 if (($el['type'] ?? '') === 'speaking' && isset($this->answers[$el['id']])) {
-                    $this->speakingHistory[$el['id']] = $this->answers[$el['id']];
+                    $history = $this->answers[$el['id']];
+                    $this->speakingHistory[$el['id']] = is_string($history) ? [['role' => 'user', 'text' => $history]] : $history;
                 }
             }
         }
@@ -261,6 +279,11 @@ class StudentExam extends Component
     public function startSection(int $index): void
     {
         if (! isset($this->template['sections'][$index])) {
+            return;
+        }
+
+        // Free exams are limited to 3 sections (indices 0, 1, 2)
+        if (! empty($this->template['is_free']) && $index > 2) {
             return;
         }
 
@@ -292,11 +315,17 @@ class StudentExam extends Component
     public function saveProgress(): void
     {
         if ($this->selectedTemplateId) {
+            $storage = $this->answers;
+            $storage['_selectedTopic'] = $this->selectedTopic;
+            $storage['_aiPresentationText'] = $this->aiPresentationText;
+            $storage['_speakingStep'] = $this->speakingStep;
+            $storage['_unchosenTopic'] = $this->unchosenTopic;
+
             ExamEnrollment::query()
                 ->where('user_id', Auth::id())
                 ->where('exam_template_id', $this->selectedTemplateId)
                 ->update([
-                    'active_answers' => $this->answers,
+                    'active_answers' => $storage,
                     'remaining_seconds' => $this->remainingSeconds,
                     'active_section' => $this->activeSection,
                 ]);
@@ -339,192 +368,12 @@ class StudentExam extends Component
 
         $this->enrichExplanations();
 
-        // Gemini AI Grading for Writing and Speaking
-        $writingScore = 0;
-        $writingFeedback = 'Keine Abgabe für den schriftlichen Ausdruck.';
-        $hasWriting = false;
+        $writingDetails = $this->gradeWriting();
+        $speakingDetails = $this->gradeSpeaking();
 
-        // Find writing elements
-        $writingElements = collect((array) ($this->template['sections'] ?? []))
-            ->pluck('elements')
-            ->flatten(1)
-            ->where('type', 'writing');
+        $this->result['details'] = array_merge($this->result['details'], $writingDetails, $speakingDetails);
 
-        foreach ($writingElements as $element) {
-            $hasWriting = true;
-            $writingContent = (string) ($this->answers[$element['id']] ?? '');
-            if (! empty(trim($writingContent))) {
-                try {
-                    $writeModel = Gemini::generativeModel(model: 'gemini-2.0-flash')
-                        ->withSystemInstruction(
-                            Content::parse(
-                                'Du bist ein offizieller TELC-C1-Prüfer für die schriftliche Prüfung. '
-                                .'Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis 48 Punkten zurück.'
-                            )
-                        );
-                    $resp = $writeModel->generateContent(
-                        "Aufsatz:\n{$writingContent}\n\n"
-                        ."Bitte antworte genau im Format 'SCORE: X/48', gefolgt von einer kurzen Begründung."
-                    );
-                    $writingFeedback = $resp->text();
-                    preg_match('/SCORE:\s*(\d+)/i', $writingFeedback, $matches);
-                    if (isset($matches[1])) {
-                        $writingScore = (int) $matches[1];
-                    }
-                } catch (\Throwable $e) {
-                    $writingScore = 24;
-                    $writingFeedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
-                }
-            }
-        }
-
-        // Grade Speaking (C1-SP-1 / C1-SP-2 / speaking elements)
-        $speakingScore = 0;
-        $speakingElements = collect((array) ($this->template['sections'] ?? []))
-            ->pluck('elements')
-            ->flatten(1)
-            ->where('type', 'speaking');
-
-        $speakingDetailsToAdd = [];
-
-        foreach ($speakingElements as $element) {
-            $elId = $element['id'];
-            $maxPoints = (int) ($element['points'] ?? 24);
-            $history = $this->speakingHistory[$elId] ?? [];
-
-            if (empty($history)) {
-                $speakingDetailsToAdd[] = [
-                    'id' => $elId,
-                    'label' => 'Mündliche Prüfung — '.$element['label'],
-                    'given' => [],
-                    'expected' => 'Gemini AI Graded',
-                    'points' => 0,
-                    'max_points' => $maxPoints,
-                    'correct' => false,
-                    'explanation' => 'Keine Beiträge aufgezeichnet.',
-                ];
-
-                continue;
-            }
-
-            $speakingText = '';
-            foreach ($history as $turn) {
-                $speakingText .= "{$turn['role']}: {$turn['text']}\n";
-            }
-
-            $elScore = 0;
-            $elFeedback = 'Keine Bewertung verfügbar.';
-
-            // If we already parsed the score from interactive helper feedback, retrieve it
-            $foundScore = false;
-            foreach ($history as $turn) {
-                if ($turn['role'] === 'assistant') {
-                    preg_match('/SCORE:\s*(\d+)/i', $turn['text'], $matches);
-                    if (isset($matches[1])) {
-                        $elScore = (int) $matches[1];
-                        $elFeedback = $turn['text'];
-                        $foundScore = true;
-                    }
-                }
-            }
-
-            if (! $foundScore) {
-                try {
-                    $speakModel = Gemini::generativeModel(model: 'gemini-2.5-flash')
-                        ->withSystemInstruction(
-                            Content::parse(
-                                'Du bist ein offizieller TELC-C1-Prüfer für die mündliche Prüfung. '
-                                .'Bewerte das vorliegende Gesprächsprotokoll. Gib eine exakte Punktzahl von 0 bis '.$maxPoints.' Punkten zurück.'
-                            )
-                        );
-                    $resp = $speakModel->generateContent(
-                        "Gesprächsprotokoll:\n{$speakingText}\n\n"
-                        ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
-                    );
-                    $elFeedback = $resp->text();
-                    preg_match('/SCORE:\s*(\d+)/i', $elFeedback, $matches);
-                    if (isset($matches[1])) {
-                        $elScore = (int) $matches[1];
-                    }
-                } catch (\Throwable $e) {
-                    $elScore = (int) ($maxPoints / 2);
-                    $elFeedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
-                }
-            }
-
-            $speakingScore += $elScore;
-
-            $speakingDetailsToAdd[] = [
-                'id' => $elId,
-                'label' => 'Mündliche Prüfung — '.$element['label'],
-                'given' => $history,
-                'expected' => 'Gemini AI Graded',
-                'points' => $elScore,
-                'max_points' => $maxPoints,
-                'correct' => $elScore >= (int) ($maxPoints * 0.6),
-                'explanation' => $elFeedback,
-            ];
-        }
-
-        // Add Writing Details to result details
-        if ($hasWriting) {
-            $this->result['details'][] = [
-                'id' => 'C1-WRITE-1',
-                'label' => 'Schriftlicher Ausdruck',
-                'given' => $this->answers['C1-WRITE-1'] ?? '',
-                'expected' => 'Gemini AI Graded',
-                'points' => $writingScore,
-                'max_points' => 48,
-                'correct' => $writingScore >= 29,
-                'explanation' => $writingFeedback,
-            ];
-        }
-
-        // Add Speaking Details to result details
-        foreach ($speakingDetailsToAdd as $spDetail) {
-            $this->result['details'][] = $spDetail;
-        }
-
-        // Re-calculate total earned and possible score
-        $writtenEarned = 0;
-        $oralEarned = 0;
-        $possible = 0;
-
-        foreach ($this->result['details'] as $detail) {
-            $possible += $detail['max_points'];
-            if (str_starts_with($detail['id'], 'C1-SP-')) {
-                $oralEarned += $detail['points'];
-            } else {
-                $writtenEarned += $detail['points'];
-            }
-        }
-
-        $earned = $writtenEarned + $oralEarned;
-
-        $passedWritten = $writtenEarned >= 99;
-        $passedOral = $oralEarned >= 29;
-        $passed = $earned >= 128 && $passedWritten && $passedOral;
-
-        $grade = 'Nicht bestanden';
-        if ($passed) {
-            if ($earned >= 193) {
-                $grade = 'Sehr gut';
-            } elseif ($earned >= 172) {
-                $grade = 'Gut';
-            } elseif ($earned >= 151) {
-                $grade = 'Befriedigend';
-            } else {
-                $grade = 'Ausreichend';
-            }
-        }
-
-        $this->result['earned'] = $earned;
-        $this->result['possible'] = $possible;
-        $this->result['percentage'] = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0;
-        $this->result['written_earned'] = $writtenEarned;
-        $this->result['oral_earned'] = $oralEarned;
-        $this->result['passed'] = $passed;
-        $this->result['grade'] = $grade;
+        $this->result = $this->calculateFinalResult($this->result);
 
         ExamAttempt::create([
             'exam_template_id' => $this->selectedTemplateId,
@@ -577,41 +426,67 @@ class StudentExam extends Component
         $this->remainingSeconds = max((int) ($this->template['sections'][$this->activeSection]['minutes'] ?? 1), 1) * 60;
     }
 
-    public function chooseC1Topic(string $topic): void
+    public function chooseTopic(string $topic, string $elementId = ''): void
     {
-        $this->c1SelectedTopic = $topic;
-        $this->c1SpeakingStep = 1;
-        $this->speakingHistory['C1-SP-1a'] = [];
-        $this->speakingHistory['C1-SP-1b'] = [];
+        $this->selectedTopic = $topic;
+        $this->speakingStep = 1;
+        $speakingIds = collect((array) ($this->template['sections'] ?? []))
+            ->pluck('elements')
+            ->flatten(1)
+            ->where('type', 'speaking')
+            ->pluck('id');
+
+        if ($elementId === '') {
+            $elementId = $speakingIds->first(fn ($id) => str_ends_with((string) $id, '-SP-1a')) ?? 'SP-1a';
+        }
+
+        foreach ($speakingIds as $sid) {
+            $this->speakingHistory[(string) $sid] = [];
+        }
+
+        $this->speakingHistory[$elementId] = [];
+        $this->answers[$elementId] = '';
     }
 
-    public function generateAiPresentation(string $unchosenTopic): void
+    public function loadAiPresentation(): void
     {
-        try {
-            $this->speakingProcessing['C1-SP-1b'] = true;
+        $this->generateAiPresentation($this->unchosenTopic);
+    }
 
-            $prompt = "Schreibe einen gut strukturierten Vortrag (Einleitung, Hauptteil, Eigene Meinung/In my view, Schluss/Fazit) zum C1-Thema: \"{$unchosenTopic}\". Der Vortrag soll exakt auf C1-Niveau verfasst sein und eine klare Argumentationslinie haben.";
+    public function generateAiPresentation(string $unchosenTopic, string $sp1bId = ''): void
+    {
+        if ($sp1bId === '') {
+            $elements = collect((array) ($this->template['sections'] ?? []))
+                ->pluck('elements')
+                ->flatten(1);
+            $sp1bEl = $elements->firstWhere('id', 'C1-SP-1b')
+                ?? $elements->first(fn ($el) => str_ends_with((string) ($el['id'] ?? ''), '-SP-1b'));
+            $sp1bId = $sp1bEl['id'] ?? 'SP-1b';
+        }
+
+        try {
+            $this->speakingProcessing[$sp1bId] = true;
+
+            $prompt = "Schreibe einen gut strukturierten Vortrag (Einleitung, Hauptteil, Eigene Meinung, Schluss/Fazit) zum Thema: \"{$unchosenTopic}\". Der Vortrag soll klar und verständlich sein, mit einer deutlichen Argumentationslinie.";
 
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
-                ->withSystemInstruction(Content::parse('Du bist ein TELC-Prüfungskandidat, der einen C1-Vortrag hält. Sprich den Lernenden direkt an und halte den Vortrag.'))
+                ->withSystemInstruction(Content::parse('Du bist ein TELC-Prüfungskandidat, der einen Vortrag hält. Sprich den Lernenden direkt an.'))
                 ->generateContent($prompt);
 
-            $this->c1AiResponseText = $result->text();
+            $this->aiPresentationText = $result->text();
 
-            // For voice, since the browser needs sound, we will output text and leverage SpeechSynthesis in Javascript to play the audio back using a high-quality speech engine (or native browser audio synthesis).
-            // We store the text and set step to 2 so the UI triggers SpeechSynthesis automatically.
-            $this->speakingHistory['C1-SP-1b'][] = [
+            $this->speakingHistory[$sp1bId][] = [
                 'role' => 'assistant',
-                'text' => $this->c1AiResponseText,
+                'text' => $this->aiPresentationText,
             ];
 
-            $this->answers['C1-SP-1b'] = $this->speakingHistory['C1-SP-1b'];
-            $this->c1SpeakingStep = 2;
+            $this->answers[$sp1bId] = $this->speakingHistory[$sp1bId];
+            $this->speakingStep = 2;
             $this->saveProgress();
         } catch (\Throwable $e) {
-            $this->c1AiResponseText = 'Fehler bei der Vortragserstellung: '.$e->getMessage();
+            $this->aiPresentationText = 'Fehler bei der Vortragserstellung: '.$e->getMessage();
         } finally {
-            $this->speakingProcessing['C1-SP-1b'] = false;
+            $this->speakingProcessing[$sp1bId] = false;
         }
     }
 
@@ -624,7 +499,6 @@ class StudentExam extends Component
             $this->speakingHistory[$elementId] = [];
         }
 
-        // Add user statement to history
         $this->speakingHistory[$elementId][] = [
             'role' => 'user',
             'text' => $transcribedText,
@@ -637,23 +511,33 @@ class StudentExam extends Component
 
         $prompt = $element['content'] ?? '';
         $maxPoints = (int) ($element['points'] ?? 24);
+        $level = $this->template['level'] ?? 'C1';
 
-        // If it is C1-SP-1a (Präsentation), we want to grade the user's presentation directly on 6 points criteria.
-        if ($elementId === 'C1-SP-1a') {
+        $criteriaPrompt = 'Bewerte die Leistung des Lernenden anhand der folgenden vier offiziellen TELC-Prüfungskriterien:
+1. **Repertoire & Wortschatz** — Breite und Angemessenheit des verwendeten Vokabulars (0-6 Punkte)
+2. **Grammatische Korrektheit** — Korrektheit der Satzstrukturen und Flexionen (0-6 Punkte)
+3. **Aussprache/Intonation** — Deutlichkeit und Sprachmelodie (0-6 Punkte)
+4. **Flüssigkeit** — Natürlicher Redefluss, Vermeidung störender Stockungen (0-6 Punkte)
+
+Gib für jedes Kriterium eine Einzelpunktzahl und eine kurze Begründung.
+Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/' . $maxPoints . '" an.';
+
+        // SP-1a: student's initial presentation on chosen topic
+        if (str_ends_with($elementId, '-SP-1a')) {
             try {
+                $levelLabel = "TELC-{$level}";
                 $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                     ->withSystemInstruction(
                         Content::parse(
-                            'Du bist ein offizieller TELC-C1-Prüfer. '
+                            "Du bist ein offizieller {$levelLabel}-Prüfer. "
                             .'Bewerte den mündlichen Vortrag des Lernenden zu dem von ihm gewählten Thema. '
-                            .'Achte besonders darauf, ob der Vortrag gut strukturiert ist, ob er das Thema klar darstellt und ob das Sprachniveau C1 entspricht. '
-                            .'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/6" an (wobei X die Punktzahl von 0 bis 6 ist), gefolgt von einer kurzen Begründung.'
+                            .$criteriaPrompt
                         )
                     )
                     ->generateContent(
-                        "Gewähltes Thema: {$this->c1SelectedTopic}\n\n"
+                        "Gewähltes Thema: {$this->selectedTopic}\n\n"
                         ."Transkription des Vortrags:\n{$transcribedText}\n\n"
-                        .'Bitte bewerten Sie die Präsentation:'
+                        .'Bitte bewerten Sie die Präsentation anhand der vier Kriterien:'
                     );
 
                 $assistantReply = $result->text();
@@ -663,50 +547,20 @@ class StudentExam extends Component
                 ];
 
                 $this->speakingFeedback[$elementId] = $assistantReply;
-                $this->answers[$elementId] = $this->speakingHistory[$elementId];
+                $this->answers[$elementId] = $transcribedText;
 
-                // Switch to next step (AI presentation preparation)
-                $unchosenTopic = ($this->c1SelectedTopic === 'Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?')
-                    ? 'Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus? Erzählen Sie!'
-                    : 'Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft? Berichten Sie!';
+                // Extract the unchosen topic from the element content (lazy — generateAiPresentation will be called separately)
+                $content = $element['content'] ?? '';
+                $topics = self::parseTopicsFromContent($content);
+                $this->unchosenTopic = '';
+                if (count($topics) === 2) {
+                    $this->unchosenTopic = $topics[0] === $this->selectedTopic ? $topics[1] : $topics[0];
+                }
+                if ($this->unchosenTopic === '') {
+                    $this->unchosenTopic = 'Das alternative Thema';
+                }
 
-                $this->generateAiPresentation($unchosenTopic);
-            } catch (\Throwable $e) {
-                $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
-            } finally {
-                $this->speakingProcessing[$elementId] = false;
-            }
-
-            return;
-        }
-
-        // If it is C1-SP-1b (User response to AI summary / presentation), grade it on 4 points criteria.
-        if ($elementId === 'C1-SP-1b') {
-            try {
-                $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
-                    ->withSystemInstruction(
-                        Content::parse(
-                            'Du bist ein offizieller TELC-C1-Prüfer. '
-                            .'Der Lernende reagiert auf deine Zusammenfassung / deinen Vortrag. '
-                            .'Bewerte seine Reaktion darauf. Achte auf logischen Bezug, Sprachgefühl und syntaktische Korrektheit auf C1 Niveau. '
-                            .'WICHTIG: Gib am Ende deiner Antwort exakt das Format: "SCORE: X/4" an (wobei X die Punktzahl von 0 bis 4 ist), gefolgt von einer kurzen Begründung.'
-                        )
-                    )
-                    ->generateContent(
-                        "AI Vortrag:\n{$this->c1AiResponseText}\n\n"
-                        ."Antwort des Lernenden:\n{$transcribedText}\n\n"
-                        .'Bitte bewerten Sie die Reaktion:'
-                    );
-
-                $assistantReply = $result->text();
-                $this->speakingHistory[$elementId][] = [
-                    'role' => 'assistant',
-                    'text' => $assistantReply,
-                ];
-
-                $this->speakingFeedback[$elementId] = $assistantReply;
-                $this->answers[$elementId] = $this->speakingHistory[$elementId];
-                $this->c1SpeakingStep = 3; // Finished step 1b
+                $this->speakingStep = 2;
                 $this->saveProgress();
             } catch (\Throwable $e) {
                 $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
@@ -717,7 +571,45 @@ class StudentExam extends Component
             return;
         }
 
-        // Default inter-active conversational handler (e.g. for discussion C1-SP-2)
+        // SP-1b: student's reaction/summary of the AI presentation
+        if (str_ends_with($elementId, '-SP-1b')) {
+            try {
+                $levelLabel = "TELC-{$level}";
+                $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                    ->withSystemInstruction(
+                        Content::parse(
+                            "Du bist ein offizieller {$levelLabel}-Prüfer. "
+                            .'Der Lernende reagiert auf deine Zusammenfassung / deinen Vortrag. '
+                            .'Bewerte seine Reaktion darauf. Achte auf logischen Bezug, Sprachgefühl und syntaktische Korrektheit. '
+                            .$criteriaPrompt
+                        )
+                    )
+                    ->generateContent(
+                        "AI Vortrag:\n{$this->aiPresentationText}\n\n"
+                        ."Antwort des Lernenden:\n{$transcribedText}\n\n"
+                        .'Bitte bewerten Sie die Reaktion anhand der vier Kriterien:'
+                    );
+
+                $assistantReply = $result->text();
+                $this->speakingHistory[$elementId][] = [
+                    'role' => 'assistant',
+                    'text' => $assistantReply,
+                ];
+
+                $this->speakingFeedback[$elementId] = $assistantReply;
+                $this->answers[$elementId] = $transcribedText;
+                $this->speakingStep = 3;
+                $this->saveProgress();
+            } catch (\Throwable $e) {
+                $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
+            } finally {
+                $this->speakingProcessing[$elementId] = false;
+            }
+
+            return;
+        }
+
+        // SP-2: interactive discussion handler
         $historyContext = '';
         foreach ($this->speakingHistory[$elementId] as $turn) {
             $roleLabel = $turn['role'] === 'user' ? 'Lernender' : 'Prüfer';
@@ -725,16 +617,17 @@ class StudentExam extends Component
         }
 
         try {
+            $levelLabel = "TELC-{$level}";
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                 ->withSystemInstruction(
                     Content::parse(
-                        'Du bist ein TELC-C1-Prüfer für die mündliche Prüfung. '
+                        "Du bist ein {$levelLabel}-Prüfer für die mündliche Prüfung. "
                         .'Unterhalte dich interaktiv mit dem Lernenden über das gewählte Thema. '
                         .'Lies den Gesprächsverlauf. Reagiere auf die letzte Antwort des Lernenden, '
                         .'stelle eine kurze, logische Anschlussfrage oder führe das Gespräch fort. '
                         .'WICHTIG: Wenn dies der 3. oder 4. Redebeitrag des Lernenden ist, '
-                        .'beende das Gespräch höflich, bewerte die Leistung mit einer Punktzahl (0 bis '.$maxPoints.') '
-                        .'und gib detailliertes, konstruktives Feedback zu Inhalt, Wortschatz und Grammatik auf Deutsch.'
+                        .'beende das Gespräch höflich und bewerte die Leistung. '
+                        .$criteriaPrompt
                     )
                 )
                 ->generateContent(
@@ -751,13 +644,28 @@ class StudentExam extends Component
             ];
 
             $this->speakingFeedback[$elementId] = $assistantReply;
-            $this->answers[$elementId] = $this->speakingHistory[$elementId];
+            $this->answers[$elementId] = $transcribedText;
             $this->saveProgress();
         } catch (\Throwable $e) {
             $this->speakingFeedback[$elementId] = 'Fehler bei der Analyse: '.$e->getMessage();
         } finally {
             $this->speakingProcessing[$elementId] = false;
         }
+    }
+
+    private static function parseTopicsFromContent(string $content): array
+    {
+        // Parse "Thema 1: ... / Thema 2: ..." or "1. ... / 2. ..."
+        $topics = [];
+        if (preg_match_all('/(?:\d+\.?|\w+)\s*[:.]?\s*([^\/]+?)\s*(?=\/\s*(?:\d+\.?|\w+)\s*[:.]?\s*|$)/u', $content, $matches)) {
+            foreach ($matches[1] as $m) {
+                $trimmed = trim($m);
+                if ($trimmed !== '') {
+                    $topics[] = $trimmed;
+                }
+            }
+        }
+        return $topics;
     }
 
     /**
@@ -804,6 +712,248 @@ class StudentExam extends Component
         $this->answers[$elementId][(string) $gapIndex] = $value;
 
         $this->saveProgress();
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function gradeWriting(): array
+    {
+        $details = [];
+        $elements = collect((array) ($this->template['sections'] ?? []))
+            ->pluck('elements')
+            ->flatten(1)
+            ->where('type', 'writing');
+
+        foreach ($elements as $element) {
+            $elId = $element['id'];
+            $maxPoints = (int) ($element['points'] ?? 48);
+            $passMark = (int) ceil($maxPoints * 0.6);
+            $content = (string) ($this->answers[$elId] ?? '');
+            $feedback = 'Keine Abgabe für den schriftlichen Ausdruck.';
+            $score = 0;
+
+            if (! empty(trim($content))) {
+                try {
+                    $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                        ->withSystemInstruction(
+                            Content::parse(
+                                'Du bist ein offizieller TELC-C1-Prüfer für die schriftliche Prüfung. '
+                                .'Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis '.$maxPoints.' Punkten zurück.'
+                            )
+                        );
+                    $resp = $model->generateContent(
+                        "Aufsatz:\n{$content}\n\n"
+                        ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                    );
+                    $feedback = $resp->text();
+                    preg_match('/SCORE:\s*(\d+)/i', $feedback, $matches);
+                    if (isset($matches[1])) {
+                        $score = (int) $matches[1];
+                    }
+                } catch (\Throwable $e) {
+                    $score = (int) ($maxPoints / 2);
+                    $feedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
+                }
+            }
+
+            $details[] = [
+                'id' => $elId,
+                'label' => 'Schriftlicher Ausdruck',
+                'given' => $content,
+                'expected' => 'Gemini AI Graded',
+                'points' => $score,
+                'max_points' => $maxPoints,
+                'correct' => $score >= $passMark,
+                'explanation' => $feedback,
+            ];
+        }
+
+        return $details;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function gradeSpeaking(): array
+    {
+        $details = [];
+        $elements = collect((array) ($this->template['sections'] ?? []))
+            ->pluck('elements')
+            ->flatten(1)
+            ->where('type', 'speaking');
+
+        // Track auto-calculated scores for SP-GLOBAL
+        $autoScored = [];
+
+        foreach ($elements as $element) {
+            $elId = $element['id'];
+            $maxPoints = (int) ($element['points'] ?? 24);
+
+            // SP-GLOBAL: auto-sum from SP-1a, SP-1b, SP-2
+            if (str_ends_with($elId, '-SP-GLOBAL') || str_ends_with($elId, '-SP-global')) {
+                continue; // handled after the loop
+            }
+
+            $history = $this->speakingHistory[$elId] ?? [];
+
+            if (empty($history)) {
+                $details[] = [
+                    'id' => $elId,
+                    'label' => 'Mündliche Prüfung — '.$element['label'],
+                    'given' => [],
+                    'expected' => 'Gemini AI Graded',
+                    'points' => 0,
+                    'max_points' => $maxPoints,
+                    'correct' => false,
+                    'explanation' => 'Keine Beiträge aufgezeichnet.',
+                ];
+                $autoScored[$elId] = 0;
+
+                continue;
+            }
+
+            $speakingText = '';
+            foreach ($history as $turn) {
+                $speakingText .= "{$turn['role']}: {$turn['text']}\n";
+            }
+
+            $score = 0;
+            $feedback = 'Keine Bewertung verfügbar.';
+
+            $foundScore = false;
+            foreach ($history as $turn) {
+                if ($turn['role'] === 'assistant') {
+                    // Try SCORE: format first (from gradeSpeaking fallback), then GESAMT: (from analyzeSpeaking)
+                    if (preg_match('/SCORE:\s*(\d+)/i', $turn['text'], $matches)) {
+                        $score = (int) $matches[1];
+                        $feedback = $turn['text'];
+                        $foundScore = true;
+                    } elseif (preg_match('/GESAMT:\s*(\d+)/i', $turn['text'], $matches)) {
+                        $score = (int) $matches[1];
+                        $feedback = $turn['text'];
+                        $foundScore = true;
+                    }
+                }
+            }
+
+            if (! $foundScore) {
+                try {
+                    $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                        ->withSystemInstruction(
+                            Content::parse(
+                                'Du bist ein offizieller TELC-Prüfer für die mündliche Prüfung. '
+                                .'Bewerte das vorliegende Gesprächsprotokoll. Gib eine exakte Punktzahl von 0 bis '.$maxPoints.' Punkten zurück.'
+                            )
+                        );
+                    $resp = $model->generateContent(
+                        "Gesprächsprotokoll:\n{$speakingText}\n\n"
+                        ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                    );
+                    $feedback = $resp->text();
+                    preg_match('/SCORE:\s*(\d+)/i', $feedback, $matches);
+                    if (isset($matches[1])) {
+                        $score = (int) $matches[1];
+                    }
+                } catch (\Throwable $e) {
+                    $score = (int) ($maxPoints / 2);
+                    $feedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
+                }
+            }
+
+            $details[] = [
+                'id' => $elId,
+                'label' => 'Mündliche Prüfung — '.$element['label'],
+                'given' => $history,
+                'expected' => 'Gemini AI Graded',
+                'points' => $score,
+                'max_points' => $maxPoints,
+                'correct' => $score >= (int) ($maxPoints * 0.6),
+                'explanation' => $feedback,
+            ];
+            $autoScored[$elId] = $score;
+        }
+
+        // Auto-calculate SP-GLOBAL as sum of SP-1a + SP-1b + SP-2
+        $globalElement = $elements->first(fn ($el) => str_ends_with((string) ($el['id'] ?? ''), '-SP-GLOBAL'));
+        if ($globalElement) {
+            $globalId = $globalElement['id'];
+            $globalMax = (int) ($globalElement['points'] ?? 32);
+            $sp1a = $autoScored[collect($autoScored)->keys()->first(fn ($k) => str_ends_with($k, '-SP-1a'))] ?? 0;
+            $sp1b = $autoScored[collect($autoScored)->keys()->first(fn ($k) => str_ends_with($k, '-SP-1b'))] ?? 0;
+            $sp2 = $autoScored[collect($autoScored)->keys()->first(fn ($k) => str_ends_with($k, '-SP-2'))] ?? 0;
+            $globalScore = min($sp1a + $sp1b + $sp2, $globalMax);
+
+            $details[] = [
+                'id' => $globalId,
+                'label' => 'Mündliche Prüfung — '.$globalElement['label'],
+                'given' => $autoScored,
+                'expected' => 'Automatisch berechnet',
+                'points' => $globalScore,
+                'max_points' => $globalMax,
+                'correct' => $globalScore >= (int) ($globalMax * 0.6),
+                'explanation' => 'Die Gesamtpunktzahl wird aus den Teilbewertungen (SP-1a + SP-1b + SP-2) automatisch berechnet.',
+            ];
+        }
+
+        return $details;
+    }
+
+    /**
+     * @param  array<string, mixed>  $result
+     * @return array<string, mixed>
+     */
+    private function calculateFinalResult(array $result): array
+    {
+        $writtenEarned = 0;
+        $oralEarned = 0;
+        $possible = 0;
+
+        foreach ($result['details'] as $detail) {
+            $possible += $detail['max_points'];
+            if (str_contains($detail['id'], '-SP-')) {
+                $oralEarned += $detail['points'];
+            } else {
+                $writtenEarned += $detail['points'];
+            }
+        }
+
+        $earned = $writtenEarned + $oralEarned;
+
+        $oralMax = collect($result['details'])->filter(fn ($d) => str_contains($d['id'] ?? '', '-SP-'))->sum('max_points');
+        $writtenMax = $possible - $oralMax;
+
+        $passedWritten = $writtenMax > 0 ? ($writtenEarned / $writtenMax) >= 0.6 : true;
+        $passedOral = $oralMax > 0 ? ($oralEarned / $oralMax) >= 0.6 : true;
+        $passed = $possible > 0
+            ? ($earned / $possible) >= 0.6 && $passedWritten && $passedOral
+            : false;
+
+        $grade = 'Nicht bestanden';
+        if ($passed) {
+            $pct = $earned / $possible;
+            if ($pct >= 0.9) {
+                $grade = 'Sehr gut';
+            } elseif ($pct >= 0.8) {
+                $grade = 'Gut';
+            } elseif ($pct >= 0.7) {
+                $grade = 'Befriedigend';
+            } else {
+                $grade = 'Ausreichend';
+            }
+        }
+
+        $result['earned'] = $earned;
+        $result['possible'] = $possible;
+        $result['percentage'] = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0;
+        $result['written_earned'] = $writtenEarned;
+        $result['written_max'] = $writtenMax;
+        $result['oral_earned'] = $oralEarned;
+        $result['oral_max'] = $oralMax;
+        $result['passed'] = $passed;
+        $result['grade'] = $grade;
+
+        return $result;
     }
 
     private function isEnrolled(int $templateId): bool

@@ -19,7 +19,7 @@ class AnswerExplainer
         }
 
         try {
-            $result = Gemini::generativeModel(model: 'gemini-2.0-flash')
+            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                 ->withSystemInstruction(
                     Content::parse(
                         'Du bist ein TELC-Prüfungsvorbereitungs-Tutor für Deutsch. '
