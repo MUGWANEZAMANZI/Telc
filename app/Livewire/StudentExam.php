@@ -653,6 +653,7 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$maxPoints.'" an.';
         }
     }
 
+    /** @return array<int, string> */
     private static function parseTopicsFromContent(string $content): array
     {
         $topics = [];
@@ -931,7 +932,9 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$maxPoints.'" an.';
 
         $earned = $writtenEarned + $oralEarned;
 
-        $oralMax = collect($result['details'])->filter(fn ($d) => str_contains($d['id'] ?? '', '-SP-'))->sum('max_points');
+        /** @var array<int, array<string, mixed>> $details */
+        $details = $result['details'];
+        $oralMax = collect($details)->filter(fn ($d) => str_contains((string) ($d['id'] ?? ''), '-SP-'))->sum('max_points');
         $writtenMax = $possible - $oralMax;
 
         $passedWritten = $writtenMax > 0 ? ($writtenEarned / $writtenMax) >= 0.6 : true;
