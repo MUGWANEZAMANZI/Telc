@@ -88,7 +88,7 @@ Route::get('/books-pdf/{book}', function (Book $book) {
 })->name('books.pdf');
 
 Route::get('/books-cover/{book}', function (Book $book) {
-    abort_unless($book->cover_image, 404);
+    abort_unless((bool) $book->cover_image, 404);
 
     $path = storage_path('app/public/'.$book->cover_image);
     if (! file_exists($path)) {

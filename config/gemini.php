@@ -16,15 +16,17 @@ return [
         $envPath = base_path('.env');
         if (file_exists($envPath)) {
             $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            foreach ($lines as $line) {
-                if (str_starts_with(trim($line), '#')) {
-                    continue;
-                }
-                $parts = explode('=', $line, 2);
-                if (count($parts) === 2 && trim($parts[0]) === 'GEMINI_API_KEY') {
-                    $val = trim($parts[1]);
+            if (is_array($lines)) {
+                foreach ($lines as $line) {
+                    if (str_starts_with(trim($line), '#')) {
+                        continue;
+                    }
+                    $parts = explode('=', $line, 2);
+                    if (count($parts) === 2 && trim($parts[0]) === 'GEMINI_API_KEY') {
+                        $val = trim($parts[1]);
 
-                    return trim($val, '"\'');
+                        return trim($val, '"\'');
+                    }
                 }
             }
         }

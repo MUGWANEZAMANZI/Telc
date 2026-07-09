@@ -685,6 +685,9 @@ class GuestExam extends Component
         }
     }
 
+    /**
+     * @return array<int, string>
+     */
     private static function parseTopicsFromContent(string $content): array
     {
         $topics = [];

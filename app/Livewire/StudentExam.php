@@ -926,13 +926,9 @@ Bitte gib eine Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
                 $history = $this->speakingHistory[$id] ?? [];
                 if (! empty($history)) {
                     $combinedTranscript .= "\n--- Teil: ".$el['label']." ---\n";
-                    if (is_array($history)) {
-                        foreach ($history as $turn) {
-                            $roleLabel = $turn['role'] === 'user' ? 'Lernender' : 'KI-Prüfer';
-                            $combinedTranscript .= "{$roleLabel}: {$turn['text']}\n";
-                        }
-                    } else {
-                        $combinedTranscript .= 'Lernender: '.$history."\n";
+                    foreach ($history as $turn) {
+                        $roleLabel = $turn['role'] === 'user' ? 'Lernender' : 'KI-Prüfer';
+                        $combinedTranscript .= "{$roleLabel}: {$turn['text']}\n";
                     }
                 }
             }

@@ -69,7 +69,7 @@ class ExamDashboard extends Component
     /** @var array<string, mixed> */
     public array $speakingProcessing = [];
 
-    /** @var array<int, array<string, mixed>> */
+    /** @var array<string, array<int, array<string, string>>> */
     public array $speakingHistory = [];
 
     public bool $showEnrollModal = false;
@@ -627,6 +627,9 @@ class ExamDashboard extends Component
         }
     }
 
+    /**
+     * @return array<int, string>
+     */
     private static function parseTopicsFromContent(string $content): array
     {
         $topics = [];
