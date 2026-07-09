@@ -104,4 +104,4 @@ composer test
 
 ## License
 
-This software is licensed under the MIT License. See the [LICENSE](file:///C:/Users/USER%201/Desktop/Proposals/Telc/Telc/LICENSE) file for the full license text.
+This software is proprietary and confidential. Unauthorized copying, modification, distribution, sublicensing, or use is strictly prohibited. See the [LICENSE](file:///C:/Users/USER%201/Desktop/Proposals/Telc/Telc/LICENSE) file for details.
