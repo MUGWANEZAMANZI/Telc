@@ -25,6 +25,43 @@
     $discussionTopic = $sp2El['content'] ?? 'Diskussionsthema';
 @endphp
 
+<style>
+    .markdown-content h1, .markdown-content h2, .markdown-content h3, .markdown-content h4 {
+        color: #1a1a1a;
+        font-weight: 700;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    .markdown-content h3 {
+        font-size: 1.05rem;
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 0.25rem;
+        margin-top: 1.25rem;
+    }
+    .markdown-content p {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+    .markdown-content ul, .markdown-content ol {
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        padding-left: 1.25rem;
+    }
+    .markdown-content li {
+        margin-bottom: 0.25rem;
+    }
+    .markdown-content strong {
+        color: #111;
+        font-weight: 600;
+    }
+    .markdown-content hr {
+        border: 0;
+        border-top: 1px solid #e5e5e5;
+        margin: 1.25rem 0;
+    }
+</style>
+
 <div class="speaking-flow-container" style="margin-bottom:2rem;">
 
     {{-- TOPIC SELECTION (only if no topic chosen yet) --}}
@@ -93,7 +130,13 @@
                     @foreach ($speakingHistory[$sp1aId] as $turn)
                         <div style="margin-bottom:0.5rem;">
                             <strong style="font-size:0.8rem;color:#666;">{{ $turn['role'] === 'user' ? 'Ihr Vortrag' : 'Bewertung' }}:</strong>
-                            <p style="font-size:0.9rem;white-space:pre-wrap;margin-top:0.25rem;">{{ $turn['text'] }}</p>
+                            @if ($turn['role'] === 'user')
+                                <p style="font-size:0.9rem;white-space:pre-wrap;margin-top:0.25rem;">{{ $turn['text'] }}</p>
+                            @else
+                                <div class="markdown-content" style="font-size:0.9rem;line-height:1.6;margin-top:0.25rem;">
+                                    {!! \Illuminate\Support\Str::markdown($turn['text']) !!}
+                                </div>
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -165,7 +208,9 @@
                             <span x-show="isSynthesizing" style="font-size:0.85rem;color:#d8232a;font-weight:600;">Spielt Audio...</span>
                         </div>
                         <strong style="display:block;font-size:0.85rem;margin-bottom:0.5rem;">KI-Vortrag:</strong>
-                        <div style="font-size:0.9rem;white-space:pre-wrap;">{{ $aiPresentationText }}</div>
+                        <div class="markdown-content" style="font-size:0.9rem;line-height:1.6;">
+                            {!! \Illuminate\Support\Str::markdown($aiPresentationText) !!}
+                        </div>
                     </div>
 
                     {{-- User reply to AI presentation --}}
@@ -214,7 +259,9 @@
                     @if (!empty($speakingFeedback[$sp1bId] ?? ''))
                         <div style="margin-top:1rem;padding:1rem;background:#f7f9fa;border:1px solid #e5e5e5;border-radius:4px;text-align:left;">
                             <strong style="font-size:0.85rem;color:#666;">Bewertung:</strong>
-                            <p style="font-size:0.9rem;white-space:pre-wrap;margin-top:0.25rem;">{{ $speakingFeedback[$sp1bId] }}</p>
+                            <div class="markdown-content" style="font-size:0.9rem;line-height:1.6;margin-top:0.25rem;">
+                                {!! \Illuminate\Support\Str::markdown($speakingFeedback[$sp1bId]) !!}
+                            </div>
                         </div>
                     @endif
                 </div>
@@ -256,7 +303,13 @@
                         @foreach ($speakingHistory[$sp2Id] as $turn)
                             <div style="margin-bottom:0.5rem;">
                                 <strong style="font-size:0.8rem;color:#666;">{{ $turn['role'] === 'user' ? 'Sie' : 'KI-Prüfer' }}:</strong>
-                                <p style="font-size:0.9rem;white-space:pre-wrap;margin-top:0.1rem;">{{ $turn['text'] }}</p>
+                                @if ($turn['role'] === 'user')
+                                    <p style="font-size:0.9rem;white-space:pre-wrap;margin-top:0.1rem;">{{ $turn['text'] }}</p>
+                                @else
+                                    <div class="markdown-content" style="font-size:0.9rem;line-height:1.6;margin-top:0.1rem;">
+                                        {!! \Illuminate\Support\Str::markdown($turn['text']) !!}
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -281,7 +334,9 @@
                 @if (!empty($speakingFeedback[$sp2Id] ?? ''))
                     <div style="margin-top:1rem;padding:1rem;background:#f7f9fa;border:1px solid #e5e5e5;border-radius:4px;text-align:left;">
                         <strong style="font-size:0.85rem;color:#666;">KI-Feedback:</strong>
-                        <p style="font-size:0.9rem;white-space:pre-wrap;margin-top:0.25rem;">{{ $speakingFeedback[$sp2Id] }}</p>
+                        <div class="markdown-content" style="font-size:0.9rem;line-height:1.6;margin-top:0.25rem;">
+                            {!! \Illuminate\Support\Str::markdown($speakingFeedback[$sp2Id]) !!}
+                        </div>
                     </div>
                 @endif
             </div>

@@ -8,8 +8,44 @@
                         'f' => 'f (Der Nasa-Experte Chris McKay sieht die Aussichten jedoch nüchterner:)',
                         'g' => 'g (Doch selbst dafür fehlt es an Geld.)',
                         'h' => 'h (Es gibt daher keine Gewässer mit flüssigem Wasser auf der Marsoberfläche.)',
-                    ];
                 @endphp
+
+<style>
+    .markdown-content h1, .markdown-content h2, .markdown-content h3, .markdown-content h4 {
+        color: #1a1a1a;
+        font-weight: 700;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    .markdown-content h3 {
+        font-size: 1.05rem;
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 0.25rem;
+        margin-top: 1.25rem;
+    }
+    .markdown-content p {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+    .markdown-content ul, .markdown-content ol {
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        padding-left: 1.25rem;
+    }
+    .markdown-content li {
+        margin-bottom: 0.25rem;
+    }
+    .markdown-content strong {
+        color: #111;
+        font-weight: 600;
+    }
+    .markdown-content hr {
+        border: 0;
+        border-top: 1px solid #e5e5e5;
+        margin: 1.25rem 0;
+    }
+</style>
 
                 {{-- ==================== LESEVERSTEHEN TEIL 1 ==================== --}}
                 <section class="exam-section">
@@ -643,7 +679,13 @@
                                     @foreach ($speakingHistory['C1-SP-1a'] as $turn)
                                         <div style="margin-bottom: 0.75rem;">
                                             <strong style="font-size: 0.8rem; color: #666666;">{{ $turn['role'] === 'user' ? 'Ihr Vortrag' : 'Prüfer-Bewertung' }}:</strong>
-                                            <p style="font-size: 0.95rem; line-height: 1.5; margin-top: 0.25rem; white-space: pre-wrap;">{{ $turn['text'] }}</p>
+                                            @if ($turn['role'] === 'user')
+                                                <p style="font-size: 0.95rem; line-height: 1.5; margin-top: 0.25rem; white-space: pre-wrap;">{{ $turn['text'] }}</p>
+                                            @else
+                                                <div class="markdown-content" style="font-size: 0.95rem; line-height: 1.6; margin-top: 0.25rem;">
+                                                    {!! \Illuminate\Support\Str::markdown($turn['text']) !!}
+                                                </div>
+                                            @endif
                                         </div>
                                     @endforeach
                                 </div>
@@ -715,7 +757,9 @@
                                         <span x-show="isSynthesizing" style="font-size: 0.85rem; color: #d8232a; font-weight: 600; animation: pulse 1.5s infinite;">Spielt Audio mit Gemini 2.5 Voice...</span>
                                     </div>
                                     <strong style="display: block; font-size: 0.85rem; color: #1a1a1a; margin-bottom: 0.5rem;">KI-Vortrag (Transkript):</strong>
-                                    <div style="font-size: 0.95rem; line-height: 1.6; color: #4a4a4a; white-space: pre-wrap;">{{ $aiPresentationText }}</div>
+                                    <div class="markdown-content" style="font-size: 0.95rem; line-height: 1.6; color: #4a4a4a;">
+                                        {!! \Illuminate\Support\Str::markdown($aiPresentationText) !!}
+                                    </div>
                                 </div>
 
                                 <!-- User response dialogue step -->
@@ -773,7 +817,9 @@
                                                 @if (isset($speakingHistory['C1-SP-1b'][2]))
                                                     <div style="margin-top: 1rem; border-top: 1px dashed #e5e5e5; padding-top: 0.75rem;">
                                                         <strong style="font-size: 0.85rem; color: #1a1a1a;">Bewertung der Reaktion:</strong>
-                                                        <p style="font-size: 0.95rem; margin-top: 0.25rem; white-space: pre-wrap;">{{ $speakingHistory['C1-SP-1b'][2]['text'] }}</p>
+                                                        <div class="markdown-content" style="font-size: 0.95rem; line-height: 1.6; margin-top: 0.25rem;">
+                                                            {!! \Illuminate\Support\Str::markdown($speakingHistory['C1-SP-1b'][2]['text']) !!}
+                                                        </div>
                                                     </div>
                                                 @endif
                                             </div>
@@ -846,7 +892,13 @@
                                                     {{ $turn['role'] === 'user' ? 'Lernender' : 'Prüfer' }}
                                                 </span>
                                                 <div style="background-color: {{ $turn['role'] === 'user' ? '#1a1a1a' : '#ffffff' }}; color: {{ $turn['role'] === 'user' ? '#ffffff' : '#1a1a1a' }}; border: 1px solid #e5e5e5; padding: 0.75rem 1rem; border-radius: 6px; max-width: 80%; font-size: 0.95rem; line-height: 1.5; text-align: left;">
-                                                    {!! nl2br(e($turn['text'])) !!}
+                                                    @if ($turn['role'] === 'user')
+                                                        {!! nl2br(e($turn['text'])) !!}
+                                                    @else
+                                                        <div class="markdown-content">
+                                                            {!! \Illuminate\Support\Str::markdown($turn['text']) !!}
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         @endforeach
