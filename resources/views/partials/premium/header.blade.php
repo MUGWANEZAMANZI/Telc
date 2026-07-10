@@ -32,8 +32,17 @@
                                 <strong style="font-size: 2.2rem; color: #1a1a1a; display: block; font-family: 'Playfair Display', serif; margin-top: 0.25rem;">{{ $result['earned'] }} / {{ $result['possible'] }}</strong>
                             </div>
 
-                            <div style="background-color: {{ ($result['passed'] ?? false) ? '#e6f4ea' : '#fce8e6' }}; padding: 0.75rem; border-radius: 4px; font-weight: 700; font-size: 1.1rem; color: {{ ($result['passed'] ?? false) ? '#137333' : '#c5221f' }};">
+                            <div style="background-color: {{ ($result['passed'] ?? false) ? '#e6f4ea' : '#fce8e6' }}; padding: 0.75rem; border-radius: 4px; font-weight: 700; font-size: 1.1rem; color: {{ ($result['passed'] ?? false) ? '#137333' : '#c5221f' }}; margin-bottom: 1.5rem;">
                                 Status: {{ $result['grade'] ?? 'Nicht bestanden' }}
+                            </div>
+
+                            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                                <button type="button" wire:click="repeat" style="background-color: #137333; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    Prüfung wiederholen
+                                </button>
+                                <button type="button" wire:click="exitExam" style="background-color: #1a1a1a; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    Zurück zur Übersicht
+                                </button>
                             </div>
                         </div>
                     @endif

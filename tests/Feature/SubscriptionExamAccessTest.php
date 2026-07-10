@@ -33,6 +33,7 @@ test('subscribed users can bypass enrollment payment modal and start exams direc
 
     // Assert initially not enrolled and not subscribed
     Livewire::test(StudentExam::class)
+        ->set('selectedLevel', 'C1')
         ->assertViewHas('isSubscribed', false)
         ->assertDontSee('Prüfung starten')
         ->assertSee('Kostenpflichtige Prüfung freischalten');
@@ -51,6 +52,7 @@ test('subscribed users can bypass enrollment payment modal and start exams direc
 
     // Assert now subscribed and can start
     Livewire::test(StudentExam::class)
+        ->set('selectedLevel', 'C1')
         ->assertViewHas('isSubscribed', true)
         ->assertSee('Prüfung starten')
         ->assertDontSee('Kostenpflichtige Prüfung freischalten')

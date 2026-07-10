@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\ExamAttempt;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
+use App\Models\Setting;
 use App\Models\Subscription;
 use App\Services\AnswerExplainer;
 use App\Services\ExamGrader;
@@ -59,6 +60,20 @@ class StudentExam extends Component
 
     public string $enrollModalError = '';
 
+    public string $selectedLevel = 'B1';
+
+    public string $sortBy = 'title_asc';
+
+    public function selectLevel(string $level): void
+    {
+        $this->selectedLevel = $level;
+    }
+
+    public function selectSort(string $sort): void
+    {
+        $this->sortBy = $sort;
+    }
+
     public function startEnroll(int $id): void
     {
         $this->enrollTemplateId = $id;
@@ -91,6 +106,17 @@ class StudentExam extends Component
     public function mount(): void
     {
         $this->ensurePresets();
+
+        if (request()->query('start_exam')) {
+            $this->startOrResumeExam((int) request()->query('start_exam'));
+        }
+
+        if (session()->has('trigger-enroll')) {
+            $this->startEnroll(session('trigger-enroll'));
+        } elseif (session()->has('intended_enroll_exam')) {
+            $examId = session()->pull('intended_enroll_exam');
+            $this->startEnroll($examId);
+        }
     }
 
     public function hasActiveSubscription(): bool
@@ -110,12 +136,27 @@ class StudentExam extends Component
 
     public function render(): View
     {
+        $query = ExamTemplate::query()
+            ->where('is_published', true);
+
+        if ($this->selectedLevel !== '') {
+            $query->where('level', $this->selectedLevel);
+        }
+
+        if ($this->sortBy === 'title_asc') {
+            $query->orderBy('title', 'asc');
+        } elseif ($this->sortBy === 'title_desc') {
+            $query->orderBy('title', 'desc');
+        } elseif ($this->sortBy === 'price_asc') {
+            $query->orderBy('price', 'asc');
+        } elseif ($this->sortBy === 'price_desc') {
+            $query->orderBy('price', 'desc');
+        } else {
+            $query->orderBy('level')->orderBy('title');
+        }
+
         return view('livewire.student-exam', [
-            'templates' => ExamTemplate::query()
-                ->where('is_published', true)
-                ->orderBy('level')
-                ->orderBy('title')
-                ->get(),
+            'templates' => $query->get(),
             'enrollments' => ExamEnrollment::query()
                 ->where('user_id', Auth::id())
                 ->get()
@@ -127,6 +168,91 @@ class StudentExam extends Component
                 ->get(),
             'isSubscribed' => $this->hasActiveSubscription(),
         ]);
+    }
+
+    /**
+     * @return array{is_free: bool, free_sections: int}
+     */
+    public function getTemplateFreeStatus(ExamTemplate $record): array
+    {
+        if (str_contains(strtolower($record->title), 'premium')) {
+            return ['is_free' => false, 'free_sections' => 0];
+        }
+
+        if (str_contains(strtolower($record->title), 'test')) {
+            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
+
+            return ['is_free' => true, 'free_sections' => $settingLimit];
+        }
+
+        $all = ExamTemplate::query()
+            ->where('is_published', true)
+            ->where('exam_provider', $record->exam_provider)
+            ->where('level', $record->level)
+            ->orderBy('id')
+            ->pluck('id')
+            ->toArray();
+
+        $index = array_search($record->id, $all);
+        if ($index === 0) {
+            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
+
+            return ['is_free' => true, 'free_sections' => max($settingLimit, count($record->sections ?? []))];
+        } elseif ($index === 1) {
+            return ['is_free' => true, 'free_sections' => 2];
+        }
+
+        return ['is_free' => false, 'free_sections' => 0];
+    }
+
+    public function isFullyEnrolled(int $templateId): bool
+    {
+        if ($this->hasActiveSubscription()) {
+            return true;
+        }
+
+        return ExamEnrollment::query()
+            ->where('user_id', Auth::id())
+            ->where('exam_template_id', $templateId)
+            ->where('status', 'active')
+            ->exists();
+    }
+
+    public function repeat(): void
+    {
+        if ($this->selectedTemplateId) {
+            ExamEnrollment::query()
+                ->where('user_id', Auth::id())
+                ->where('exam_template_id', $this->selectedTemplateId)
+                ->update([
+                    'active_answers' => null,
+                    'remaining_seconds' => null,
+                    'active_section' => 0,
+                ]);
+
+            $record = ExamTemplate::findOrFail($this->selectedTemplateId);
+            $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
+            $this->answers = [];
+            $this->result = null;
+            $this->speakingFeedback = [];
+            $this->speakingProcessing = [];
+            $this->speakingHistory = [];
+            $this->selectedTopic = '';
+            $this->aiPresentationText = '';
+            $this->speakingStep = 1;
+            $this->unchosenTopic = '';
+            $this->activeSection = 0;
+
+            if (($record->level ?? '') === 'C1') {
+                $totalMinutes = collect($record->sections)->sum('minutes');
+                $this->remainingSeconds = $totalMinutes * 60;
+            } else {
+                $this->remainingSeconds = max((int) ($record->sections[0]['minutes'] ?? 1), 1) * 60;
+            }
+            $this->started = true;
+
+            $this->saveProgress();
+        }
     }
 
     public function loadTemplate(int $id): void
@@ -274,6 +400,8 @@ class StudentExam extends Component
         $this->answers = [];
         $this->result = null;
         $this->started = false;
+        $this->activeSection = 0;
+        $this->remainingSeconds = 0;
     }
 
     public function startSection(int $index): void
@@ -282,9 +410,14 @@ class StudentExam extends Component
             return;
         }
 
-        // Free exams are limited to 3 sections (indices 0, 1, 2)
-        if (! empty($this->template['is_free']) && $index > 2) {
-            return;
+        $record = ExamTemplate::find($this->selectedTemplateId);
+        if ($record) {
+            $status = $this->getTemplateFreeStatus($record);
+            if (! $this->isFullyEnrolled($record->id) && $index >= $status['free_sections']) {
+                $this->startEnroll($record->id);
+
+                return;
+            }
         }
 
         $this->activeSection = $index;
@@ -400,10 +533,6 @@ class StudentExam extends Component
         $explainer = app(AnswerExplainer::class);
 
         foreach ($this->result['details'] ?? [] as &$detail) {
-            if ($detail['correct']) {
-                continue;
-            }
-
             $element = collect((array) ($this->template['sections'] ?? []))
                 ->pluck('elements')
                 ->flatten(1)
@@ -1047,15 +1176,25 @@ Bitte gib eine Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
 
     private function isEnrolled(int $templateId): bool
     {
-        return ExamEnrollment::query()
-            ->where('user_id', Auth::id())
-            ->where('exam_template_id', $templateId)
-            ->where('status', 'active')
-            ->exists();
+        $record = ExamTemplate::find($templateId);
+        if (! $record) {
+            return false;
+        }
+
+        $status = $this->getTemplateFreeStatus($record);
+        if ($status['is_free']) {
+            return true;
+        }
+
+        return $this->isFullyEnrolled($templateId);
     }
 
     private function ensurePresets(): void
     {
+        if (app()->runningUnitTests()) {
+            return;
+        }
+
         foreach (TelcTemplateFactory::presets() as $preset) {
             ExamTemplate::updateOrCreate(
                 ['title' => $preset['title']],

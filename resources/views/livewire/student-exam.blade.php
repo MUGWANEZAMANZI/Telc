@@ -432,10 +432,32 @@
                 </div>
             </div>
 
+             {{-- Level Filters and Sorting Controls --}}
+            <div style="display: flex; flex-direction: column; gap: 1rem; background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 1.25rem; margin-bottom: 2rem; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;">
+                    <strong style="font-size: 0.8rem; text-transform: uppercase; color: #666666; letter-spacing: 0.05em; margin-right: 0.5rem;">Prüfungsniveau filtern:</strong>
+                    <button type="button" wire:click="selectLevel('')" style="border: none; padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background-color: {{ $selectedLevel === '' ? '#1a1a1a' : '#f3f4f6' }}; color: {{ $selectedLevel === '' ? '#ffffff' : '#4b5563' }};">Alle</button>
+                    @foreach (['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as $lvl)
+                        <button type="button" wire:click="selectLevel('{{ $lvl }}')" style="border: none; padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background-color: {{ $selectedLevel === $lvl ? '#eab308' : '#f3f4f6' }}; color: {{ $selectedLevel === $lvl ? '#09090b' : '#4b5563' }};">{{ $lvl }}</button>
+                    @endforeach
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <strong style="font-size: 0.8rem; text-transform: uppercase; color: #666666; letter-spacing: 0.05em; margin-right: 0.5rem;">Sortieren nach:</strong>
+                    <select wire:change="selectSort($event.target.value)" style="border: 1px solid #d9dde5; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; background: #ffffff; color: #374151; outline: none; cursor: pointer;">
+                        <option value="title_asc" @selected($sortBy === 'title_asc')>Titel (A-Z)</option>
+                        <option value="title_desc" @selected($sortBy === 'title_desc')>Titel (Z-A)</option>
+                        <option value="price_asc" @selected($sortBy === 'price_asc')>Preis (günstig zuerst)</option>
+                        <option value="price_desc" @selected($sortBy === 'price_desc')>Preis (teuer zuerst)</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="exam-card-grid">
                 @forelse ($templates as $record)
                     @php
                         $enrollment = $enrollments->get($record->id);
+                        $status = $this->getTemplateFreeStatus($record);
+                        $isActuallyFree = $status['is_free'];
                     @endphp
                     <article class="exam-buy-card" style="position: relative;">
                         <div>
@@ -459,12 +481,12 @@
                                 </button>
                             @else
                                 <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #1a1a1a; border-color: #1a1a1a;">
-                                    Prüfung starten
+                                    Prüfung starten {{ $isActuallyFree ? '(Kostenlos)' : '' }}
                                 </button>
                             @endif
-                        @elseif ($isSubscribed)
+                        @elseif ($isSubscribed || $isActuallyFree)
                             <button type="button" wire:click="startOrResumeExam({{ $record->id }})" class="telc-button primary wide" style="background-color: #1a1a1a; border-color: #1a1a1a;">
-                                Prüfung starten
+                                Prüfung starten {{ $isActuallyFree ? '(Kostenlos)' : '' }}
                             </button>
                         @else
                             <button type="button" wire:click="startEnroll({{ $record->id }})" class="telc-button primary wide">
@@ -1035,6 +1057,91 @@
     function closeRevolutModal() {
         document.getElementById('revolutModal').style.display = 'none';
         document.getElementById('revolut-exam-button').innerHTML = '';
+    }
+
+    // Interactive Explanations Display Logic
+    window.examResultDetails = @json($result ? $result['details'] : null);
+
+    function applyExplanations() {
+        if (!window.examResultDetails) return;
+
+        window.examResultDetails.forEach(detail => {
+            const elId = detail.id;
+            
+            // Find input or select that belongs to this element
+            let targetEl = document.querySelector(`[wire\\:model\\.live="answers.${elId}"], [wire\\:model="answers.${elId}"], [name="${elId}"], [wire\\:model\\.change="answers.${elId}"]`);
+            
+            if (!targetEl) {
+                const allInputs = document.querySelectorAll('input, select, textarea');
+                for (let input of allInputs) {
+                    const wireModel = input.getAttribute('wire:model') || input.getAttribute('wire:model.live') || input.getAttribute('wire:model.change');
+                    if (wireModel && (wireModel === `answers.${elId}` || wireModel.startsWith(`answers.${elId}.`))) {
+                        targetEl = input;
+                        break;
+                    }
+                }
+            }
+
+            if (targetEl) {
+                let wrapper = targetEl.closest('.cloze-select-wrapper') || targetEl.closest('.mc-option-item') || targetEl.closest('.mc-question-row') || targetEl.closest('tr') || targetEl.parentElement;
+
+                if (wrapper && !wrapper.dataset.explanationAttached) {
+                    wrapper.dataset.explanationAttached = "true";
+                    wrapper.style.cursor = "pointer";
+                    
+                    wrapper.classList.add('hover:bg-yellow-50/50', 'transition-colors');
+
+                    // Create explanation div
+                    const explDiv = document.createElement('div');
+                    explDiv.className = 'explanation-box mt-2 p-3 bg-yellow-50 border-l-4 border-yellow-500 text-xs text-stone-750 rounded shadow-sm hidden text-left';
+                    explDiv.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+                    
+                    let explanationText = detail.explanation || '';
+                    if (!explanationText) {
+                        explanationText = detail.correct ? 'Richtig! Gut gemacht.' : 'Leider falsch.';
+                    }
+                    
+                    explDiv.innerHTML = `
+                        <div class="font-bold text-yellow-800 mb-1" style="font-weight: 700; color: #854d0e;">Erklärung & Feedback:</div>
+                        <p class="leading-relaxed" style="margin: 0; color: #451a03;">${explanationText}</p>
+                        ${!detail.correct && detail.expected ? `<div class="mt-1 text-green-700 font-bold" style="margin-top: 0.25rem; color: #15803d; font-weight: 700;">Richtige Antwort: ${detail.expected}</div>` : ''}
+                    `;
+                    
+                    if (wrapper.tagName === 'TR') {
+                        const newTr = document.createElement('tr');
+                        newTr.className = 'hidden';
+                        const newTd = document.createElement('td');
+                        newTd.colSpan = wrapper.cells.length;
+                        newTd.appendChild(explDiv);
+                        newTr.appendChild(newTd);
+                        
+                        wrapper.after(newTr);
+                        explDiv.classList.remove('hidden');
+                        
+                        wrapper.addEventListener('click', () => {
+                            newTr.classList.toggle('hidden');
+                        });
+                    } else {
+                        wrapper.appendChild(explDiv);
+                        wrapper.addEventListener('click', (e) => {
+                            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                            explDiv.classList.toggle('hidden');
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', applyExplanations);
+    document.addEventListener('livewire:navigated', applyExplanations);
+    
+    if (typeof Livewire !== 'undefined') {
+        Livewire.hook('request', ({ respond }) => {
+            respond(() => {
+                setTimeout(applyExplanations, 250);
+            });
+        });
     }
 </script>
 @endpush

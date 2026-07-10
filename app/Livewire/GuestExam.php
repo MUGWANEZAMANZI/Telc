@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\ExamAttempt;
 use App\Models\ExamTemplate;
 use App\Models\Setting;
+use App\Services\AnswerExplainer;
 use App\Services\ExamGrader;
 use Gemini\Data\Content;
 use Gemini\Laravel\Facades\Gemini;
@@ -87,6 +88,13 @@ class GuestExam extends Component
                 ->find($templateId);
 
             if ($record) {
+                $status = $this->getTemplateFreeStatus($record);
+                if (! $status['is_free']) {
+                    session(['intended_enroll_exam' => $record->id]);
+                    $this->redirect(route('register'));
+
+                    return;
+                }
                 $this->selectedLevel = $record->level;
                 $this->loadTemplate($record);
 
@@ -95,7 +103,7 @@ class GuestExam extends Component
         }
 
         $level = request()->query('level', '');
-        if (in_array($level, ['B1', 'B2', 'C2'], true)) {
+        if (in_array($level, ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'], true)) {
             $this->selectedLevel = $level;
         }
 
@@ -142,16 +150,70 @@ class GuestExam extends Component
         Cookie::queue('free_no_retry_sections', json_encode($this->noRetrySectionIds), 60 * 24 * 365);
     }
 
+    /**
+     * @return array{is_free: bool, free_sections: int}
+     */
+    public function getTemplateFreeStatus(ExamTemplate $record): array
+    {
+        if (str_contains(strtolower($record->title), 'premium')) {
+            return ['is_free' => false, 'free_sections' => 0];
+        }
+
+        if (str_contains(strtolower($record->title), 'test')) {
+            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
+
+            return ['is_free' => true, 'free_sections' => $settingLimit];
+        }
+
+        $all = ExamTemplate::query()
+            ->where('is_published', true)
+            ->where('exam_provider', $record->exam_provider)
+            ->where('level', $record->level)
+            ->orderBy('id')
+            ->pluck('id')
+            ->toArray();
+
+        $index = array_search($record->id, $all);
+        if ($index === 0) {
+            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
+
+            return ['is_free' => true, 'free_sections' => max($settingLimit, count($record->sections ?? []))];
+        } elseif ($index === 1) {
+            return ['is_free' => true, 'free_sections' => 2];
+        }
+
+        return ['is_free' => false, 'free_sections' => 0];
+    }
+
     public function recalculateRemaining(): void
     {
+        if (! $this->selectedTemplateId) {
+            $this->remainingSections = 0;
+            $this->hasReachedLimit = true;
+
+            return;
+        }
+
+        $record = ExamTemplate::find($this->selectedTemplateId);
+        if (! $record) {
+            $this->remainingSections = 0;
+            $this->hasReachedLimit = true;
+
+            return;
+        }
+
+        $status = $this->getTemplateFreeStatus($record);
+        $limit = $status['free_sections'];
         $completed = count($this->completedSectionIds);
-        $this->remainingSections = max(0, $this->freeSectionLimit - $completed);
+
+        $this->freeSectionLimit = $limit;
+        $this->remainingSections = (int) max(0, $limit - $completed);
         $this->hasReachedLimit = $this->remainingSections <= 0;
     }
 
     public function selectLevel(string $level): void
     {
-        if (! in_array($level, ['B1', 'B2', 'C2'], true)) {
+        if (! in_array($level, ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'], true)) {
             return;
         }
 
@@ -168,6 +230,7 @@ class GuestExam extends Component
         $record = ExamTemplate::query()
             ->where('is_published', true)
             ->where('level', $this->selectedLevel)
+            ->orderBy('id')
             ->first();
 
         if (! $record) {
@@ -183,12 +246,14 @@ class GuestExam extends Component
     /** @return list<string> */
     public function getLevels(): array
     {
+        $order = ['A1' => 0, 'A2' => 1, 'B1' => 2, 'B2' => 3, 'C1' => 4, 'C2' => 5];
+
         return array_values(ExamTemplate::query()
             ->where('is_published', true)
-            ->whereIn('level', ['B1', 'B2', 'C2'])
+            ->whereIn('level', ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'])
             ->pluck('level')
             ->unique()
-            ->sort()
+            ->sortBy(fn ($l) => $order[$l] ?? 99)
             ->toArray());
     }
 
@@ -342,6 +407,8 @@ class GuestExam extends Component
             [$currentSection],
             $this->answers
         );
+
+        $this->enrichExplanations();
 
         $sectionId = $currentSection['id'];
         $isFirstCompletion = ! in_array($sectionId, $this->completedSectionIds, true);
@@ -717,5 +784,47 @@ class GuestExam extends Component
     public function saveProgress(): void
     {
         // No-op for guest exam
+    }
+
+    private function enrichExplanations(): void
+    {
+        $explainer = app(AnswerExplainer::class);
+
+        foreach ($this->result['details'] ?? [] as &$detail) {
+            $element = collect((array) ($this->template['sections'] ?? []))
+                ->pluck('elements')
+                ->flatten(1)
+                ->firstWhere('id', $detail['id']);
+
+            if (! $element) {
+                continue;
+            }
+
+            $detail['explanation'] = $explainer->explainElement(
+                $element,
+                $detail['given'] ?? null,
+            );
+        }
+    }
+
+    public function repeat(): void
+    {
+        if ($this->activeSectionIndex !== null) {
+            $sections = $this->template['sections'] ?? [];
+            $currentSection = $sections[$this->activeSectionIndex] ?? null;
+            if ($currentSection) {
+                $sectionId = $currentSection['id'];
+                $this->completedSectionIds = array_values(array_diff($this->completedSectionIds, [$sectionId]));
+                $this->noRetrySectionIds = array_values(array_diff($this->noRetrySectionIds, [$sectionId]));
+                $this->saveCompletedToCookie();
+                $this->saveNoRetryToCookie();
+                $this->recalculateRemaining();
+            }
+
+            $this->answers = [];
+            $this->result = null;
+            $this->started = true;
+            $this->remainingSeconds = max((int) ($sections[$this->activeSectionIndex]['minutes'] ?? 1), 1) * 60;
+        }
     }
 }

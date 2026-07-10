@@ -885,8 +885,17 @@
                             <div class="free-result-panel">
                                 <div class="score-label">Your Score</div>
                                 <div class="score">{{ $result['earned'] }} / {{ $result['possible'] }}</div>
-                                <div style="font-size:1.1rem;font-weight:700;color:{{ ($result['percentage'] ?? 0) >= 60 ? '#22c55e' : '#ef4444' }};margin-top:0.5rem;">
+                                <div style="font-size:1.1rem;font-weight:700;color:{{ ($result['percentage'] ?? 0) >= 60 ? '#22c55e' : '#ef4444' }};margin-top:0.5rem;margin-bottom:1.5rem;">
                                     {{ $result['percentage'] }}%
+                                </div>
+
+                                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                                    <button type="button" wire:click="repeat" style="background-color: #166534; color: #ffffff; border: none; padding: 0.5rem 1.25rem; border-radius: 4px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;">
+                                        Wiederholen
+                                    </button>
+                                    <button type="button" wire:click="backToChapters" style="background-color: #333333; color: #ffffff; border: none; padding: 0.5rem 1.25rem; border-radius: 4px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;">
+                                        Zurück zur Übersicht
+                                    </button>
                                 </div>
                                 @if (!empty($result['details']))
                                     <div style="margin-top:1.5rem;text-align:left;border-top:1px solid #333;padding-top:1rem;">
@@ -926,4 +935,88 @@
             @endif
         @endif
     @endif
+
+    <script>
+        window.examResultDetails = @json($result ? $result['details'] : null);
+
+        function applyExplanations() {
+            if (!window.examResultDetails) return;
+
+            window.examResultDetails.forEach(detail => {
+                const elId = detail.id;
+                
+                let targetEl = document.querySelector(`[wire\\:model\\.live="answers.${elId}"], [wire\\:model="answers.${elId}"], [name="${elId}"], [wire\\:model\\.change="answers.${elId}"]`);
+                
+                if (!targetEl) {
+                    const allInputs = document.querySelectorAll('input, select, textarea');
+                    for (let input of allInputs) {
+                        const wireModel = input.getAttribute('wire:model') || input.getAttribute('wire:model.live') || input.getAttribute('wire:model.change');
+                        if (wireModel && (wireModel === `answers.${elId}` || wireModel.startsWith(`answers.${elId}.`))) {
+                            targetEl = input;
+                            break;
+                        }
+                    }
+                }
+
+                if (targetEl) {
+                    let wrapper = targetEl.closest('.cloze-select-wrapper') || targetEl.closest('.mc-option-item') || targetEl.closest('.mc-question-row') || targetEl.closest('tr') || targetEl.parentElement;
+
+                    if (wrapper && !wrapper.dataset.explanationAttached) {
+                        wrapper.dataset.explanationAttached = "true";
+                        wrapper.style.cursor = "pointer";
+                        
+                        wrapper.classList.add('hover:bg-yellow-50/50', 'transition-colors');
+
+                        const explDiv = document.createElement('div');
+                        explDiv.className = 'explanation-box mt-2 p-3 bg-yellow-50 border-l-4 border-yellow-500 text-xs text-stone-750 rounded shadow-sm hidden text-left';
+                        explDiv.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+                        
+                        let explanationText = detail.explanation || '';
+                        if (!explanationText) {
+                            explanationText = detail.correct ? 'Richtig! Gut gemacht.' : 'Leider falsch.';
+                        }
+                        
+                        explDiv.innerHTML = `
+                            <div class="font-bold text-yellow-800 mb-1" style="font-weight: 700; color: #854d0e;">Erklärung & Feedback:</div>
+                            <p class="leading-relaxed" style="margin: 0; color: #451a03;">${explanationText}</p>
+                            ${!detail.correct && detail.expected ? `<div class="mt-1 text-green-700 font-bold" style="margin-top: 0.25rem; color: #15803d; font-weight: 700;">Richtige Antwort: ${detail.expected}</div>` : ''}
+                        `;
+                        
+                        if (wrapper.tagName === 'TR') {
+                            const newTr = document.createElement('tr');
+                            newTr.className = 'hidden';
+                            const newTd = document.createElement('td');
+                            newTd.colSpan = wrapper.cells.length;
+                            newTd.appendChild(explDiv);
+                            newTr.appendChild(newTd);
+                            
+                            wrapper.after(newTr);
+                            explDiv.classList.remove('hidden');
+                            
+                            wrapper.addEventListener('click', () => {
+                                newTr.classList.toggle('hidden');
+                            });
+                        } else {
+                            wrapper.appendChild(explDiv);
+                            wrapper.addEventListener('click', (e) => {
+                                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                                explDiv.classList.toggle('hidden');
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', applyExplanations);
+        document.addEventListener('livewire:navigated', applyExplanations);
+        
+        if (typeof Livewire !== 'undefined') {
+            Livewire.hook('request', ({ respond }) => {
+                respond(() => {
+                    setTimeout(applyExplanations, 250);
+                });
+            });
+        }
+    </script>
 </div>

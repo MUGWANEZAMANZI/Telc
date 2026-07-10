@@ -4,7 +4,10 @@ namespace App\Actions\Fortify;
 
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
+use App\Mail\AccountCreatedMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -24,11 +27,19 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
             'role' => 'student',
         ]);
+
+        try {
+            Mail::to($user->email)->send(new AccountCreatedMail($user));
+        } catch (\Throwable $e) {
+            Log::error('Could not send welcome email: '.$e->getMessage());
+        }
+
+        return $user;
     }
 }

@@ -20,6 +20,17 @@
             .font-serif-display {
                 font-family: 'Playfair Display', serif;
             }
+            @keyframes bookPulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.1);
+                }
+            }
+            .animate-book-pulse {
+                animation: bookPulse 2.5s ease-in-out infinite;
+            }
         </style>
         @livewireStyles
     </head>
@@ -249,19 +260,12 @@
              @endauth
         </div>
 
-        <!-- Floating Bookshelf Button (bottom-right corner) -->
-        <div x-show="showSticky"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-75"
-             x-transition:enter-end="opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 scale-100"
-             x-transition:leave-end="opacity-0 scale-75"
-             class="fixed bottom-6 right-6 z-50">
+        <!-- Floating Bookshelf Button (bottom-right corner with pulse/scale animation, visible immediately) -->
+        <div class="fixed bottom-6 right-6 z-50 animate-book-pulse">
             <a href="{{ route('books.index') }}"
-               class="flex items-center justify-center w-12 h-12 bg-white/80 backdrop-blur border border-stone-200 rounded-full shadow-lg hover:shadow-xl hover:bg-white hover:border-yellow-500 hover:text-yellow-600 transition-all duration-200 group"
+               class="flex items-center justify-center w-14 h-14 bg-yellow-500 border-2 border-yellow-600 rounded-full shadow-2xl hover:bg-yellow-400 text-stone-950 transition-all duration-200 group"
                title="Bücher & Lernmaterial">
-                <svg class="w-5 h-5 text-stone-500 group-hover:text-yellow-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <svg class="w-6 h-6 text-stone-950 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
                 </svg>
             </a>

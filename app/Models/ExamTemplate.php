@@ -24,6 +24,9 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, ExamAttempt> $attempts
  * @property-read Collection<int, ExamEnrollment> $enrollments
+ * @property string|null $price_label
+ * @property bool $is_partially_free
+ * @property bool $is_actually_free
  */
 #[Fillable(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_published', 'exam_provider', 'price', 'is_free'])]
 class ExamTemplate extends Model
