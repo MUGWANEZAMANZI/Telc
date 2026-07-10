@@ -15,9 +15,6 @@ new class extends Component
     #[Validate('required|email|max:255')]
     public string $email = '';
 
-    #[Validate('required|string|min:6')]
-    public string $password = '';
-
     public string $successMessage = '';
 
     public function submit(): void
@@ -28,11 +25,11 @@ new class extends Component
             'name' => $this->name,
             'organization' => $this->organization,
             'email' => $this->email,
-            'password' => $this->password,
+            'password' => '',
             'status' => 'not_responded',
         ]);
 
-        $this->reset(['name', 'organization', 'email', 'password']);
+        $this->reset(['name', 'organization', 'email']);
         $this->successMessage = 'Vielen Dank! Ihre Kontaktanfrage wurde erfolgreich übermittelt.';
     }
 };
@@ -85,16 +82,6 @@ new class extends Component
                        style="width: 100%; box-sizing: border-box; background-color: #1c1917; border: 1px solid #44403c; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.88rem; color: #ffffff; outline: none; transition: border-color 0.2s;" 
                        placeholder="ihre.email@beispiel.de" />
                 @error('email') <span style="color: #ef4444; font-size: 0.75rem; margin-top: 0.25rem; display: block;">{{ $message }}</span> @enderror
-            </div>
-
-            <div>
-                <label for="contact-password" style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #a8a29e; margin-bottom: 0.35rem;">Passwort</label>
-                <input type="password" 
-                       id="contact-password" 
-                       wire:model="password" 
-                       style="width: 100%; box-sizing: border-box; background-color: #1c1917; border: 1px solid #44403c; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.88rem; color: #ffffff; outline: none; transition: border-color 0.2s;" 
-                       placeholder="******" />
-                @error('password') <span style="color: #ef4444; font-size: 0.75rem; margin-top: 0.25rem; display: block;">{{ $message }}</span> @enderror
             </div>
 
             <button type="submit" 

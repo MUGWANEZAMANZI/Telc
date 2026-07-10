@@ -402,7 +402,6 @@
                             <th style="padding: 0.75rem 1rem;">Name</th>
                             <th style="padding: 0.75rem 1rem;">Organisation</th>
                             <th style="padding: 0.75rem 1rem;">E-Mail</th>
-                            <th style="padding: 0.75rem 1rem;">Passwort</th>
                             <th style="padding: 0.75rem 1rem;">Datum</th>
                             <th style="padding: 0.75rem 1rem; text-align: center;">Status</th>
                             <th style="padding: 0.75rem 1rem; text-align: right;">Aktionen</th>
@@ -415,9 +414,6 @@
                                 <td style="padding: 0.75rem 1rem; color: #444444;">{{ $req->organization ?: '-' }}</td>
                                 <td style="padding: 0.75rem 1rem;">
                                     <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.85rem;">{{ $req->email }}</code>
-                                </td>
-                                <td style="padding: 0.75rem 1rem;">
-                                    <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.85rem;">{{ $req->password }}</code>
                                 </td>
                                 <td style="padding: 0.75rem 1rem; color: #666666;">{{ $req->created_at->format('d.m.Y H:i') }} Uhr</td>
                                 <td style="padding: 0.75rem 1rem; text-align: center;">

@@ -12,7 +12,6 @@ test('users can submit contact form successfully', function () {
         ->set('name', 'John Doe')
         ->set('organization', 'Acme Inc')
         ->set('email', 'john@acme.com')
-        ->set('password', 'secretpassword')
         ->call('submit')
         ->assertHasNoErrors()
         ->assertSet('successMessage', 'Vielen Dank! Ihre Kontaktanfrage wurde erfolgreich übermittelt.');
@@ -22,7 +21,6 @@ test('users can submit contact form successfully', function () {
     expect($req->name)->toBe('John Doe');
     expect($req->organization)->toBe('Acme Inc');
     expect($req->email)->toBe('john@acme.com');
-    expect($req->password)->toBe('secretpassword');
     expect($req->status)->toBe('not_responded');
 });
 
@@ -34,7 +32,7 @@ test('admin can toggle contact request response status', function () {
         'name' => 'Jane Smith',
         'organization' => 'Corp Inc',
         'email' => 'jane@corp.com',
-        'password' => 'pass1234',
+        'password' => '',
         'status' => 'not_responded',
     ]);
 
