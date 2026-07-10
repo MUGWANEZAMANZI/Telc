@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
                 'currency' => 'eur',
                 'interval' => 'one-off',
                 'features' => ['1 vollständige Prüfung (B1, B2, oder C1)', 'Gemini-KI-Sprechübung', 'Schreibkorrekturen', 'Auto-Safe & detaillierte Auswertung'],
-                'is_active' => true,
+                'is_active' => false,
             ]
         );
 
@@ -37,10 +37,10 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Monatliches Training (Standard)'],
             [
                 'description' => 'Perfekt für die kontinuierliche Prüfungsvorbereitung.',
-                'price' => 19.00,
+                'price' => 7.00,
                 'currency' => 'eur',
                 'interval' => 'month',
-                'features' => ['Bis zu 30 Prüfungen pro Monat', 'Voller Gemini-KI-Support', 'Auswertung & Fehleranalysen', 'Schreibübungen-Feedback'],
+                'features' => ['Unbegrenzte Prüfungssimulationen (B1, B2, C1)', 'Voller Gemini-KI-Support', 'Auswertung & Fehleranalysen', 'Schreibübungen-Feedback'],
                 'is_active' => true,
             ]
         );
@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
                 'currency' => 'eur',
                 'interval' => 'month',
                 'features' => ['Bis zu 60 Prüfungen pro Monat', 'Gemini-KI-Sprechübung unbegrenzt', 'Priorisierter Support', 'Individuelle Lernmodule'],
-                'is_active' => true,
+                'is_active' => false,
             ]
         );
     }

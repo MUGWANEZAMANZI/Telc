@@ -76,9 +76,7 @@ class StudentExam extends Component
 
     public function startEnroll(int $id): void
     {
-        $this->enrollTemplateId = $id;
-        $this->showEnrollModal = true;
-        $this->enrollModalError = '';
+        $this->redirect(route('pricing'));
     }
 
     public function cancelEnroll(): void
