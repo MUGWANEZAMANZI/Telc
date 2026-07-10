@@ -21,7 +21,7 @@ class RevolutCheckoutController extends Controller
         $request->validate([
             'type' => ['required', 'string', 'in:exam,plan'],
             'id' => ['required', 'integer'],
-            'duration_months' => ['nullable', 'integer', 'in:1,3,12'],
+            'duration_months' => ['nullable', 'integer', 'in:1,3,6,12'],
         ]);
 
         $amount = 0;
@@ -41,7 +41,7 @@ class RevolutCheckoutController extends Controller
             /** @var Plan $plan */
             $plan = Plan::query()->findOrFail($request->id);
             $duration = $request->integer('duration_months', 1);
-            $amount = (float) $plan->price * $duration;
+            $amount = (float) $plan->getPriceForDuration($duration);
             $description = $plan->name.' ('.$duration.' Monat(e))';
             $customData = 'plan_'.$plan->id.'_'.$duration;
         }

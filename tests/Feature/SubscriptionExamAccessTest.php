@@ -61,3 +61,19 @@ test('subscribed users can bypass enrollment payment modal and start exams direc
     // Verify enrollment was automatically created
     expect(ExamEnrollment::where('user_id', $student->id)->where('exam_template_id', $template->id)->exists())->toBeTrue();
 });
+
+test('it calculates pricing for different durations with correct discounts', function () {
+    $plan = Plan::create([
+        'name' => 'Monthly Plan',
+        'price' => 7.00,
+        'currency' => 'eur',
+        'interval' => 'month',
+        'features' => [],
+        'is_active' => true,
+    ]);
+
+    expect($plan->getPriceForDuration(1))->toBe(7.00);
+    expect($plan->getPriceForDuration(3))->toBe(19.53);
+    expect($plan->getPriceForDuration(6))->toBe(36.96);
+    expect($plan->getPriceForDuration(12))->toBe(60.00);
+});

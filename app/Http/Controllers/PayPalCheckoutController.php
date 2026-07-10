@@ -50,13 +50,13 @@ class PayPalCheckoutController extends Controller
     {
         $request->validate([
             'plan_id' => ['required', 'integer', 'exists:plans,id'],
-            'duration' => ['required', 'integer', 'in:1,3,12'],
+            'duration' => ['required', 'integer', 'in:1,3,6,12'],
         ]);
 
         /** @var Plan $plan */
         $plan = Plan::query()->findOrFail($request->plan_id);
         $duration = (int) $request->duration;
-        $amount = (float) $plan->price * $duration;
+        $amount = (float) $plan->getPriceForDuration($duration);
 
         $service = app(PayPalService::class);
 

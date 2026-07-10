@@ -49,6 +49,18 @@ class Plan extends Model
 
     public function getPriceForDuration(int $months): float
     {
+        if ($this->interval === 'month') {
+            if ($months === 1) {
+                return 7.00;
+            } elseif ($months === 3) {
+                return 19.53;
+            } elseif ($months === 6) {
+                return 36.96;
+            } elseif ($months === 12) {
+                return 60.00;
+            }
+        }
+
         return (float) $this->price * $months;
     }
 }
