@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\ContactRequest;
 use App\Models\ExamAttempt;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
@@ -100,6 +101,7 @@ class ExamDashboard extends Component
             'performanceRows' => $this->performanceRows(),
             'participants' => $this->selectedTemplateId ? ExamAttempt::query()->where('exam_template_id', $this->selectedTemplateId)->with('user')->latest()->get() : collect(),
             'pendingPayments' => ExamEnrollment::query()->where('status', 'pending')->with(['user', 'examTemplate'])->latest()->get(),
+            'contactRequests' => ContactRequest::query()->latest()->get(),
         ]);
     }
 
@@ -727,5 +729,10 @@ class ExamDashboard extends Component
         array_splice($items, $to, 0, [$item]);
 
         return $items;
+    }
+
+    public function toggleContactStatus(int $id, string $status): void
+    {
+        ContactRequest::findOrFail($id)->update(['status' => $status]);
     }
 }

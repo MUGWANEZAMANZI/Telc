@@ -271,6 +271,8 @@
             </a>
         </div>
 
+        <livewire:contact-form />
+
     @livewireScripts
     </body>
 </html>

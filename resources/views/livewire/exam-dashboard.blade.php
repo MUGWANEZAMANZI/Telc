@@ -10,6 +10,7 @@
                 <button type="button" wire:click="switchMode('builder')" @class(['active' => $mode === 'builder'])>Builder</button>
                 <button type="button" wire:click="switchMode('student')" @class(['active' => $mode === 'student'])>Student</button>
                 <button type="button" wire:click="switchMode('topics')" @class(['active' => $mode === 'topics'])>Topics</button>
+                <button type="button" wire:click="switchMode('contacts')" @class(['active' => $mode === 'contacts'])>Contacts</button>
                 @if (auth()->user()?->isOwner())
                     <button type="button" wire:click="switchMode('pricing')" @class(['active' => $mode === 'pricing'])>Pricing</button>
                 @endif
@@ -385,8 +386,75 @@
         <livewire:admin-topics />
     @elseif ($mode === 'pricing')
         <livewire:admin-pricing />
+    @elseif ($mode === 'contacts')
+        <div class="telc-panel" style="background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 2rem; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 0.25rem; color: #1a1a1a;">Kontaktanfragen</h3>
+                    <p style="color: #666666; font-size: 0.9rem; margin: 0;">Alle über das Kontaktformular eingegangenen Anfragen.</p>
+                </div>
+            </div>
 
-    @else
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+                    <thead>
+                        <tr style="background: #fafafa; border-bottom: 2px solid #edf0f4;">
+                            <th style="padding: 0.75rem 1rem;">Name</th>
+                            <th style="padding: 0.75rem 1rem;">Organisation</th>
+                            <th style="padding: 0.75rem 1rem;">E-Mail</th>
+                            <th style="padding: 0.75rem 1rem;">Passwort</th>
+                            <th style="padding: 0.75rem 1rem;">Datum</th>
+                            <th style="padding: 0.75rem 1rem; text-align: center;">Status</th>
+                            <th style="padding: 0.75rem 1rem; text-align: right;">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($contactRequests as $req)
+                            <tr style="border-bottom: 1px solid #edf0f4;">
+                                <td style="padding: 0.75rem 1rem; font-weight: 700; color: #1a1a1a;">{{ $req->name }}</td>
+                                <td style="padding: 0.75rem 1rem; color: #444444;">{{ $req->organization ?: '-' }}</td>
+                                <td style="padding: 0.75rem 1rem;">
+                                    <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.85rem;">{{ $req->email }}</code>
+                                </td>
+                                <td style="padding: 0.75rem 1rem;">
+                                    <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.85rem;">{{ $req->password }}</code>
+                                </td>
+                                <td style="padding: 0.75rem 1rem; color: #666666;">{{ $req->created_at->format('d.m.Y H:i') }} Uhr</td>
+                                <td style="padding: 0.75rem 1rem; text-align: center;">
+                                    @if ($req->status === 'responded')
+                                        <span style="background: #e6f4ea; color: #137333; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">
+                                            Beantwortet
+                                        </span>
+                                    @else
+                                        <span style="background: #fce8e6; color: #c5221f; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">
+                                            Offen
+                                        </span>
+                                    @endif
+                                </td>
+                                <td style="padding: 0.75rem 1rem; text-align: right;">
+                                    @if ($req->status === 'responded')
+                                        <button type="button" wire:click="toggleContactStatus({{ $req->id }}, 'not_responded')" class="telc-button" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; border-color: #6b7280; color: #374151;">
+                                            Als offen markieren
+                                        </button>
+                                    @else
+                                        <button type="button" wire:click="toggleContactStatus({{ $req->id }}, 'responded')" class="telc-button primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; background-color: #137333; border-color: #137333;">
+                                            Als beantwortet markieren
+                                        </button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" style="padding: 2rem; text-align: center; color: #666666; font-style: italic;">
+                                    Bislang keine Kontaktanfragen eingegangen.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @elseif ($mode === 'student')
         <div class="admin-student-preview" style="max-width: 100%;">
             @if (empty($template))
                 <p style="padding: 2rem; text-align: center; color: #6b7280; font-style: italic;">
