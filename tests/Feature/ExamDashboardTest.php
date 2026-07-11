@@ -3,6 +3,7 @@
 use App\Livewire\ExamDashboard;
 use App\Models\ExamTemplate;
 use App\Models\User;
+use Gemini\Laravel\Facades\Gemini;
 use Livewire\Livewire;
 
 test('admin can switch to student view on dashboard and run preview methods', function () {
@@ -61,4 +62,51 @@ test('admin can switch to student view on dashboard and run preview methods', fu
         ->assertSet('result', null)
         ->assertSet('answers', [])
         ->assertSet('activeSection', 0);
+});
+
+test('analyzeSpeaking retry flow on Gemini failure', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($admin);
+
+    $template = ExamTemplate::create([
+        'title' => 'B1 Test',
+        'level' => 'B1',
+        'is_published' => true,
+        'exam_provider' => 'telc',
+        'theme' => [],
+        'timings' => [],
+        'sections' => [
+            [
+                'id' => 'sec-1',
+                'title' => 'Mündliche Prüfung',
+                'minutes' => 15,
+                'elements' => [
+                    [
+                        'id' => 'B1-SP-1a',
+                        'type' => 'speaking',
+                        'content' => '1. Hobby / 2. Reise',
+                        'points' => 6,
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $component = Livewire::test(ExamDashboard::class)
+        ->call('loadTemplate', $template->id)
+        ->call('switchMode', 'student')
+        ->set('selectedTopic', 'Hobby');
+
+    // Mock Gemini to throw an exception
+    Gemini::fake([
+        new Exception('API Error'),
+    ]);
+
+    // Call analyzeSpeaking - it should fail but NOT keep user turn in history
+    $component->call('analyzeSpeaking', 'B1-SP-1a', 'User Vortrag Text');
+
+    // Assert that the user turn was popped/removed and error was set
+    $history = $component->get('speakingHistory');
+    expect($history['B1-SP-1a'] ?? [])->toBeEmpty();
+    expect($component->get('speakingFeedback.B1-SP-1a'))->toContain('Fehler: API Error');
 });

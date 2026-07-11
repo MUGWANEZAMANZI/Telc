@@ -711,6 +711,11 @@
                                         Abschicken
                                     </button>
                                 </div>
+                                @if (!empty($speakingFeedback['C1-SP-1a'] ?? ''))
+                                    <div style="margin-top:1rem;padding:1rem;background:#fdf2f2;border:1px solid #fbd5d5;border-radius:4px;color:#9b1c1c;text-align:left;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                                        <strong>Fehler bei der Bewertung:</strong> {{ $speakingFeedback['C1-SP-1a'] }}
+                                    </div>
+                                @endif
                             @else
                                 <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.9rem; color: #15803d; font-weight: 600; text-align: left;">
                                     ✓ Teil 1a abgeschlossen und bewertet.
@@ -817,6 +822,11 @@
                                                 Abschicken
                                             </button>
                                         </div>
+                                        @if (!empty($speakingFeedback['C1-SP-1b'] ?? ''))
+                                            <div style="margin-top:1rem;padding:1rem;background:#fdf2f2;border:1px solid #fbd5d5;border-radius:4px;color:#9b1c1c;text-align:left;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                                                <strong>Fehler bei der Bewertung:</strong> {{ $speakingFeedback['C1-SP-1b'] }}
+                                            </div>
+                                        @endif
                                     @else
                                         @if (isset($speakingHistory['C1-SP-1b'][1]))
                                             <div style="margin-top: 1.5rem; padding: 1rem; background-color: #f7f9fa; border: 1px solid #e5e5e5; border-radius: 4px; text-align: left;">
@@ -930,6 +940,11 @@
                                             Abschicken
                                         </button>
                                     </div>
+                                    @if (!empty($speakingFeedback['C1-SP-2'] ?? ''))
+                                        <div style="margin-top:1rem;padding:1rem;background:#fdf2f2;border:1px solid #fbd5d5;border-radius:4px;color:#9b1c1c;text-align:left;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                                            <strong>Fehler bei der Analyse:</strong> {{ $speakingFeedback['C1-SP-2'] }}
+                                        </div>
+                                    @endif
                                 @else
                                     <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.9rem; color: #15803d; font-weight: 600; text-align: left;">
                                         ✓ Teil 2: Diskussion erfolgreich abgeschlossen.

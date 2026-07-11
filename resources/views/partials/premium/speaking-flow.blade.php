@@ -165,6 +165,11 @@
                         Abschicken
                     </button>
                 </div>
+                @if (!empty($speakingFeedback[$sp1aId] ?? ''))
+                    <div style="margin-top:1rem;padding:1rem;background:#fdf2f2;border:1px solid #fbd5d5;border-radius:4px;color:#9b1c1c;text-align:left;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                        <strong>Fehler bei der Bewertung:</strong> {{ $speakingFeedback[$sp1aId] }}
+                    </div>
+                @endif
             @else
                 <div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:0.75rem 1rem;border-radius:4px;font-size:0.9rem;color:#15803d;font-weight:600;text-align:left;">
                     ✓ Präsentation abgeschlossen und bewertet.
@@ -264,12 +269,18 @@
                     @endif
 
                     @if (!empty($speakingFeedback[$sp1bId] ?? ''))
-                        <div style="margin-top:1rem;padding:1rem;background:#f7f9fa;border:1px solid #e5e5e5;border-radius:4px;text-align:left;">
-                            <strong style="font-size:0.85rem;color:#666;">Bewertung:</strong>
-                            <div class="markdown-content" style="font-size:0.9rem;line-height:1.6;margin-top:0.25rem;">
-                                {!! \Illuminate\Support\Str::markdown($speakingFeedback[$sp1bId]) !!}
+                        @if (str_starts_with($speakingFeedback[$sp1bId], 'Fehler'))
+                            <div style="margin-top:1rem;padding:1rem;background:#fdf2f2;border:1px solid #fbd5d5;border-radius:4px;color:#9b1c1c;text-align:left;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                                <strong>Fehler bei der Bewertung:</strong> {{ $speakingFeedback[$sp1bId] }}
                             </div>
-                        </div>
+                        @else
+                            <div style="margin-top:1rem;padding:1rem;background:#f7f9fa;border:1px solid #e5e5e5;border-radius:4px;text-align:left;">
+                                <strong style="font-size:0.85rem;color:#666;">Bewertung:</strong>
+                                <div class="markdown-content" style="font-size:0.9rem;line-height:1.6;margin-top:0.25rem;">
+                                    {!! \Illuminate\Support\Str::markdown($speakingFeedback[$sp1bId]) !!}
+                                </div>
+                            </div>
+                        @endif
                     @endif
                 </div>
             @endif
@@ -339,12 +350,18 @@
                 </div>
 
                 @if (!empty($speakingFeedback[$sp2Id] ?? ''))
-                    <div style="margin-top:1rem;padding:1rem;background:#f7f9fa;border:1px solid #e5e5e5;border-radius:4px;text-align:left;">
-                        <strong style="font-size:0.85rem;color:#666;">KI-Feedback:</strong>
-                        <div class="markdown-content" style="font-size:0.9rem;line-height:1.6;margin-top:0.25rem;">
-                            {!! \Illuminate\Support\Str::markdown($speakingFeedback[$sp2Id]) !!}
+                    @if (str_starts_with($speakingFeedback[$sp2Id], 'Fehler'))
+                        <div style="margin-top:1rem;padding:1rem;background:#fdf2f2;border:1px solid #fbd5d5;border-radius:4px;color:#9b1c1c;text-align:left;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                            <strong>Fehler bei der Analyse:</strong> {{ $speakingFeedback[$sp2Id] }}
                         </div>
-                    </div>
+                    @else
+                        <div style="margin-top:1rem;padding:1rem;background:#f7f9fa;border:1px solid #e5e5e5;border-radius:4px;text-align:left;">
+                            <strong style="font-size:0.85rem;color:#666;">KI-Feedback:</strong>
+                            <div class="markdown-content" style="font-size:0.9rem;line-height:1.6;margin-top:0.25rem;">
+                                {!! \Illuminate\Support\Str::markdown($speakingFeedback[$sp2Id]) !!}
+                            </div>
+                        </div>
+                    @endif
                 @endif
             </div>
         @endif

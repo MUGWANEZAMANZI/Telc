@@ -567,6 +567,7 @@ class ExamDashboard extends Component
                 $this->speakingStep = 2;
                 $this->saveProgress();
             } catch (\Throwable $e) {
+                array_pop($this->speakingHistory[$elementId]);
                 $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
             } finally {
                 $this->speakingProcessing[$elementId] = false;
@@ -605,6 +606,7 @@ class ExamDashboard extends Component
                 $this->speakingStep = 3;
                 $this->saveProgress();
             } catch (\Throwable $e) {
+                array_pop($this->speakingHistory[$elementId]);
                 $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
             } finally {
                 $this->speakingProcessing[$elementId] = false;
@@ -651,6 +653,7 @@ class ExamDashboard extends Component
             $this->answers[$elementId] = $transcribedText;
             $this->saveProgress();
         } catch (\Throwable $e) {
+            array_pop($this->speakingHistory[$elementId]);
             $this->speakingFeedback[$elementId] = 'Fehler bei der Analyse: '.$e->getMessage();
         } finally {
             $this->speakingProcessing[$elementId] = false;

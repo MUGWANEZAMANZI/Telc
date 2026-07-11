@@ -985,6 +985,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
                 $this->speakingStep = 2;
                 $this->saveProgress();
             } catch (\Throwable $e) {
+                array_pop($this->speakingHistory[$elementId]);
                 $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
             } finally {
                 $this->speakingProcessing[$elementId] = false;
@@ -1017,6 +1018,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
                 $this->speakingStep = 3;
                 $this->saveProgress();
             } catch (\Throwable $e) {
+                array_pop($this->speakingHistory[$elementId]);
                 $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
             } finally {
                 $this->speakingProcessing[$elementId] = false;
@@ -1054,6 +1056,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             $this->answers[$elementId] = $transcribedText;
             $this->saveProgress();
         } catch (\Throwable $e) {
+            array_pop($this->speakingHistory[$elementId]);
             $this->speakingFeedback[$elementId] = 'Fehler bei der Analyse: '.$e->getMessage();
         } finally {
             $this->speakingProcessing[$elementId] = false;
