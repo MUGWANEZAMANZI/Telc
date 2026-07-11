@@ -85,7 +85,7 @@ test('it returns correct dynamic speaking prompts based on provider and level', 
 
     expect($a1Telc)->toContain('conduct the actual exam prompts and responses in simple, clear A1 German');
     expect($b2Goethe)->toContain('conducting the official Goethe-Zertifikat B2 "Sprechen" exam');
-    expect($c1Telc)->toContain('The presentation in Teil 1 is a dual task: Candidate A presents, and Candidate B must listen carefully, summarize');
+    expect($c1Telc)->toContain('Die Ökonomisierung des Gesundheitssystems');
 });
 
 test('non-subscribed users get locked after completing two sections in their second free exam', function () {
