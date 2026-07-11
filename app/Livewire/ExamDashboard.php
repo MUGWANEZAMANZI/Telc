@@ -6,12 +6,12 @@ use App\Models\ContactRequest;
 use App\Models\ExamAttempt;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\ExamGrader;
 use App\Services\TelcTemplateFactory;
 use Gemini\Data\Content;
 use Gemini\Laravel\Facades\Gemini;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -36,6 +36,9 @@ class ExamDashboard extends Component
 
     /** @var array<string, mixed> */
     public array $answers = [];
+
+    /** @var array<int, string> */
+    public array $aiGeneratedTopics = [];
 
     /** @var array<string, mixed>|null */
     public ?array $result = null;
@@ -93,15 +96,40 @@ class ExamDashboard extends Component
 
     public function render(): View
     {
+        $templates = collect();
+        if (in_array($this->mode, ['builder', 'student'], true)) {
+            $templates = ExamTemplate::query()
+                ->where('exam_provider', $this->providerFilter)
+                ->orderBy('level')
+                ->get();
+        }
+
+        $participants = collect();
+        if ($this->mode === 'builder' && $this->selectedTemplateId) {
+            $participants = ExamAttempt::query()
+                ->where('exam_template_id', $this->selectedTemplateId)
+                ->with('user')
+                ->latest()
+                ->get();
+        }
+
+        $contactRequests = collect();
+        if ($this->mode === 'contacts') {
+            $contactRequests = ContactRequest::query()->latest()->get();
+        }
+
         return view('livewire.exam-dashboard', [
-            'templates' => ExamTemplate::query()->where('exam_provider', $this->providerFilter)->orderBy('level')->get(),
+            'templates' => $templates,
             'presets' => array_keys(TelcTemplateFactory::presets()),
             'elementTypes' => $this->elementTypes(),
             'metrics' => $this->metrics(),
-            'performanceRows' => $this->performanceRows(),
-            'participants' => $this->selectedTemplateId ? ExamAttempt::query()->where('exam_template_id', $this->selectedTemplateId)->with('user')->latest()->get() : collect(),
-            'pendingPayments' => ExamEnrollment::query()->where('status', 'pending')->with(['user', 'examTemplate'])->latest()->get(),
-            'contactRequests' => ContactRequest::query()->latest()->get(),
+            'participants' => $participants,
+            'pendingPayments' => ExamEnrollment::query()
+                ->where('status', 'pending')
+                ->with(['user', 'examTemplate'])
+                ->latest()
+                ->get(),
+            'contactRequests' => $contactRequests,
         ]);
     }
 
@@ -684,34 +712,8 @@ class ExamDashboard extends Component
             'students' => User::query()->where('role', 'student')->count(),
             'daily_logged_in' => User::query()->where('role', 'student')->where('last_login_at', '>=', $today)->count(),
             'attempts' => ExamAttempt::query()->count(),
-            'average_score' => round((float) ExamAttempt::query()->get()->avg(fn (ExamAttempt $attempt) => $attempt->result['percentage'] ?? 0), 2),
+            'average_score' => round((float) ExamAttempt::query()->avg('result->percentage'), 2),
         ];
-    }
-
-    /**
-     * @return Collection<int, array{student: User, attempts: int<0, max>, average: float, latest_score: float|null, latest_exam: string|null}>
-     */
-    private function performanceRows(): Collection
-    {
-        /** @phpstan-ignore return.type (covariant template issue) */
-        return User::query()
-            ->where('role', 'student')
-            ->with(['attempts' => fn ($query) => $query->latest()->limit(20), 'attempts.examTemplate'])
-            ->latest('last_login_at')
-            ->limit(20)
-            ->get()
-            ->map(function (User $student): array {
-                $attempts = $student->attempts;
-                $latest = $attempts->first();
-
-                return [
-                    'student' => $student,
-                    'attempts' => $attempts->count(),
-                    'average' => round((float) $attempts->avg(fn (ExamAttempt $attempt) => $attempt->result['percentage'] ?? 0), 2),
-                    'latest_score' => $latest?->result['percentage'] ?? null,
-                    'latest_exam' => $latest?->examTemplate?->level,
-                ];
-            });
     }
 
     /**
@@ -734,5 +736,118 @@ class ExamDashboard extends Component
     public function toggleContactStatus(int $id, string $status): void
     {
         ContactRequest::findOrFail($id)->update(['status' => $status]);
+    }
+
+    public function hasActiveSubscription(): bool
+    {
+        return true;
+    }
+
+    public function isFullyEnrolled(int $templateId): bool
+    {
+        return true;
+    }
+
+    public function getTemplateFreeStatus(ExamTemplate $record): array
+    {
+        if (str_contains(strtolower($record->title), 'premium')) {
+            return ['is_free' => false, 'free_sections' => 0];
+        }
+
+        if (str_contains(strtolower($record->title), 'test')) {
+            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
+
+            return ['is_free' => true, 'free_sections' => $settingLimit];
+        }
+
+        $all = ExamTemplate::query()
+            ->where('is_published', true)
+            ->where('exam_provider', $record->exam_provider)
+            ->where('level', $record->level)
+            ->orderBy('id')
+            ->pluck('id')
+            ->toArray();
+
+        $index = array_search($record->id, $all);
+        if ($index === 0) {
+            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
+
+            return ['is_free' => true, 'free_sections' => max($settingLimit, count($record->sections ?? []))];
+        } elseif ($index === 1) {
+            return ['is_free' => true, 'free_sections' => 2];
+        }
+
+        return ['is_free' => false, 'free_sections' => 0];
+    }
+
+    public function loadSpeakingTopics(): void
+    {
+        $elements = collect((array) ($this->template['sections'] ?? []))
+            ->pluck('elements')
+            ->flatten(1);
+        $sp1aEl = $elements->first(fn ($el) => str_ends_with((string) ($el['id'] ?? ''), '-SP-1a'));
+
+        $spContent = $sp1aEl['content'] ?? '';
+        $parsedTopics = [];
+        if (preg_match_all('/(\d+)\.\s*(.+?)(?=\s*(?:\/|oder)\s*\d+\.|\s*$)/u', $spContent, $topicMatches)) {
+            foreach ($topicMatches[2] as $t) {
+                $parsedTopics[] = trim($t);
+            }
+        }
+
+        if (count($parsedTopics) >= 2) {
+            $this->aiGeneratedTopics = $parsedTopics;
+        } else {
+            $level = $this->template['level'] ?? 'C1';
+            $provider = $this->template['exam_provider'] ?? 'telc';
+            try {
+                $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                    ->generateContent(
+                        "Generiere zwei verschiedene, niveauangemessene und typische Sprechthemen für eine mündliche {$provider} {$level} Prüfung.\n"
+                        ."Antworte NUR im folgenden JSON-Format:\n"
+                        .'["Thema 1", "Thema 2"]'
+                    );
+
+                $text = trim($result->text());
+                if (str_starts_with($text, '```json')) {
+                    $text = substr($text, 7, -3);
+                }
+                $decoded = json_decode(trim($text), true);
+                if (is_array($decoded) && count($decoded) >= 2) {
+                    $this->aiGeneratedTopics = $decoded;
+                }
+            } catch (\Throwable $e) {
+                $this->aiGeneratedTopics = ['Freies Thema A', 'Freies Thema B'];
+            }
+        }
+    }
+
+    public function chooseRandomTopic(string $elementId = ''): void
+    {
+        if (empty($this->aiGeneratedTopics)) {
+            $this->loadSpeakingTopics();
+        }
+        if (! empty($this->aiGeneratedTopics)) {
+            $topic = $this->aiGeneratedTopics[array_rand($this->aiGeneratedTopics)];
+            $this->chooseTopic($topic, $elementId);
+        }
+    }
+
+    public function submitSection(): void
+    {
+        $this->started = false;
+        $sections = $this->template['sections'] ?? [];
+        $currentSection = $sections[$this->activeSection] ?? null;
+        if ($currentSection) {
+            $this->result = app(ExamGrader::class)->grade([$currentSection], $this->answers);
+        }
+    }
+
+    public function exitExam(): void
+    {
+        $this->started = false;
+        $this->result = null;
+        $this->answers = [];
+        $this->activeSection = 0;
     }
 }
