@@ -65,8 +65,10 @@ class StudentExam extends Component
 
     public string $sortBy = 'title_asc';
 
+    /** @var array<int, string> */
     public array $aiGeneratedTopics = [];
 
+    /** @var array<int, string> */
     public array $completedSectionIds = [];
 
     public function selectLevel(string $level): void
@@ -563,12 +565,12 @@ class StudentExam extends Component
         }
 
         // Apply same inline_gap filtering if applicable
-        $hasInlineGap = collect($currentSection['elements'] ?? [])
+        $hasInlineGap = collect((array) ($currentSection['elements'] ?? []))
             ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
 
         $sectionToGrade = $currentSection;
         if ($hasInlineGap) {
-            $sectionToGrade['elements'] = collect($currentSection['elements'] ?? [])
+            $sectionToGrade['elements'] = collect((array) ($currentSection['elements'] ?? []))
                 ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
                 ->values()
                 ->all();
@@ -578,7 +580,7 @@ class StudentExam extends Component
 
         // Grade writing elements in this section
         $writingDetails = [];
-        $writingElements = collect($currentSection['elements'] ?? [])->where('type', 'writing');
+        $writingElements = collect((array) ($currentSection['elements'] ?? []))->where('type', 'writing');
         foreach ($writingElements as $element) {
             $elId = $element['id'];
             $maxPoints = (int) ($element['points'] ?? 48);
@@ -627,7 +629,7 @@ class StudentExam extends Component
 
         // Grade speaking elements in this section
         $speakingDetails = [];
-        $speakingElements = collect($currentSection['elements'] ?? [])->where('type', 'speaking');
+        $speakingElements = collect((array) ($currentSection['elements'] ?? []))->where('type', 'speaking');
         $autoScored = [];
         foreach ($speakingElements as $element) {
             $elId = $element['id'];
@@ -650,7 +652,6 @@ class StudentExam extends Component
                     'explanation' => 'Keine Beiträge aufgezeichnet.',
                 ];
                 $autoScored[$elId] = 0;
-
                 continue;
             }
 
@@ -698,7 +699,7 @@ class StudentExam extends Component
         }
 
         // Add SP-GLOBAL if speaking elements exist in the section
-        $spGlobalEl = collect($currentSection['elements'] ?? [])->first(fn ($el) => str_ends_with((string) ($el['id'] ?? ''), '-SP-GLOBAL') || str_ends_with((string) ($el['id'] ?? ''), '-SP-global'));
+        $spGlobalEl = collect((array) ($currentSection['elements'] ?? []))->first(fn ($el) => str_ends_with((string) ($el['id'] ?? ''), '-SP-GLOBAL') || str_ends_with((string) ($el['id'] ?? ''), '-SP-global'));
         if ($spGlobalEl) {
             $sum = array_sum($autoScored);
             $maxGlobal = (int) ($spGlobalEl['points'] ?? 24);

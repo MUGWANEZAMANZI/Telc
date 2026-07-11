@@ -526,6 +526,7 @@ class GuestExam extends Component
         return is_array($raw) ? array_values($raw) : [];
     }
 
+    /** @var array<int, string> */
     public array $aiGeneratedTopics = [];
 
     public function loadSpeakingTopics(): void
