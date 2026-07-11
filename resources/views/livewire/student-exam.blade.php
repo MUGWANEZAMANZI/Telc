@@ -420,7 +420,7 @@
                     </div>
                     <div style="font-size: 0.82rem; color: #a1a1aa; line-height: 1.5;">
                         <strong style="color: #ffffff; display: block; margin-bottom: 0.25rem;">💳 Freischaltung</strong>
-                        Bezahlen Sie sicher via PayPal oder Revolut und laden Sie Ihren Zahlungsbeleg hoch. Die Freischaltung erfolgt zügig.
+                        Bezahlen Sie sicher via PayPal oder Revolut. Die Freischaltung erfolgt vollautomatisch und sofort nach dem Kauf.
                     </div>
                 </div>
                 <div style="text-align: right; border-top: 1px solid #27272a; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
