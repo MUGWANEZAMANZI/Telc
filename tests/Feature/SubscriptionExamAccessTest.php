@@ -6,6 +6,7 @@ use App\Models\ExamTemplate;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\SpeakingPromptService;
 use Livewire\Livewire;
 
 test('subscribed users can bypass enrollment payment modal and start exams directly', function () {
@@ -79,9 +80,9 @@ test('it calculates pricing for different durations with correct discounts', fun
 });
 
 test('it returns correct dynamic speaking prompts based on provider and level', function () {
-    $a1Telc = \App\Services\SpeakingPromptService::getSystemInstruction('telc', 'A1');
-    $b2Goethe = \App\Services\SpeakingPromptService::getSystemInstruction('goethe', 'B2');
-    $c1Telc = \App\Services\SpeakingPromptService::getSystemInstruction('telc', 'C1');
+    $a1Telc = SpeakingPromptService::getSystemInstruction('telc', 'A1');
+    $b2Goethe = SpeakingPromptService::getSystemInstruction('goethe', 'B2');
+    $c1Telc = SpeakingPromptService::getSystemInstruction('telc', 'C1');
 
     expect($a1Telc)->toContain('conduct the actual exam prompts and responses in simple, clear A1 German');
     expect($b2Goethe)->toContain('conducting the official Goethe-Zertifikat B2 "Sprechen" exam');
