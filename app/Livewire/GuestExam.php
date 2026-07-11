@@ -392,6 +392,8 @@ class GuestExam extends Component
 
     public function submit(): void
     {
+        @set_time_limit(180);
+
         if (! $this->selectedTemplateId || $this->activeSectionIndex === null) {
             return;
         }
@@ -843,8 +845,10 @@ class GuestExam extends Component
     private function enrichExplanations(): void
     {
         $explainer = app(AnswerExplainer::class);
+        $batchItems = [];
+        $detailsToUpdate = [];
 
-        foreach ($this->result['details'] ?? [] as &$detail) {
+        foreach ($this->result['details'] ?? [] as $key => $detail) {
             $element = collect((array) ($this->template['sections'] ?? []))
                 ->pluck('elements')
                 ->flatten(1)
@@ -854,10 +858,43 @@ class GuestExam extends Component
                 continue;
             }
 
-            $detail['explanation'] = $explainer->explainElement(
-                $element,
-                $detail['given'] ?? null,
-            );
+            if (! empty($element['explanation'])) {
+                $this->result['details'][$key]['explanation'] = $element['explanation'];
+
+                continue;
+            }
+
+            $question = $element['label'] ?? '';
+            $content = $element['content'] ?? '';
+            if ($content !== '') {
+                $question .= "\n".$content;
+            }
+
+            $correctAnswer = $element['answer'] ?? '';
+            if ($correctAnswer === '' || $question === '') {
+                $this->result['details'][$key]['explanation'] = '';
+
+                continue;
+            }
+
+            $this->result['details'][$key]['explanation'] = '';
+            $batchItems[] = [
+                'id' => $detail['id'],
+                'question' => $question,
+                'correct_answer' => $correctAnswer,
+                'student_answer' => is_array($detail['given'] ?? null) ? json_encode($detail['given']) : ($detail['given'] ?? null),
+            ];
+            $detailsToUpdate[$detail['id']] = $key;
+        }
+
+        if (! empty($batchItems)) {
+            $explanations = $explainer->explainBatch($batchItems);
+            foreach ($explanations as $id => $explanation) {
+                if (isset($detailsToUpdate[$id])) {
+                    $key = $detailsToUpdate[$id];
+                    $this->result['details'][$key]['explanation'] = $explanation;
+                }
+            }
         }
     }
 
