@@ -652,6 +652,7 @@ class StudentExam extends Component
                     'explanation' => 'Keine Beiträge aufgezeichnet.',
                 ];
                 $autoScored[$elId] = 0;
+
                 continue;
             }
 
