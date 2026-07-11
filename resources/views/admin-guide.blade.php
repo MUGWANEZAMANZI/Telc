@@ -77,8 +77,8 @@
                         <p>Fügen Sie dem Prüfungsteil ein <strong>Inline-Gap</strong> hinzu. Im Fließtext markieren Sie die Lücken mit <code>--0--</code>, <code>--1--</code> etc. Im rechten Optionsfeld tragen Sie die Antwortkombinationen getrennt mit Kommas und Pipes ein (z. B. <code>a|ich,b|mir,c|mich</code>) und definieren die richtige Lösung.</p>
                     </div>
                     <div class="guide-item-card">
-                        <h3>Zahlungsfreigabe (PayPal Belege)</h3>
-                        <p>Teilnehmer laden oft manuell einen PayPal-Zahlungsbeleg hoch. Diese Anträge erscheinen am Ende des Admin-Panels. Nach Überprüfung der Transaktions-ID schalten Sie den Studenten per Klick auf <strong>Freigeben</strong> für die Prüfung frei.</p>
+                        <h3>Zahlungsfreigabe (Automatisch)</h3>
+                        <p>Die Freischaltung von erworbenen Prüfungen oder abgeschlossenen Abonnements erfolgt vollautomatisch über die Revolut- und PayPal-APIs.</p>
                     </div>
                     <div class="guide-item-card">
                         <h3>Überwachung der Studentenleistung</h3>

@@ -556,6 +556,7 @@
                 </div>
             @endif
         </section>
+    @else
         @php
             $isPaidExam = $this->hasActiveSubscription() || ($selectedTemplateId !== null && $this->isFullyEnrolled($selectedTemplateId));
         @endphp
