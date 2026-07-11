@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\VoiceTopic;
+use App\Services\SpeakingPromptService;
 use Gemini\Data\Content;
 use Gemini\Laravel\Facades\Gemini;
 use Illuminate\View\View;
@@ -48,12 +49,14 @@ Gib für jedes Kriterium eine Einzelpunktzahl und eine kurze Begründung.
 Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$this->maxPoints.'" an.';
 
         try {
+            $topicModel = VoiceTopic::query()->where('title', $this->selectedTopic)->first();
+            $level = $topicModel ? $topicModel->level : 'C1';
+            $provider = str_contains(strtolower($this->selectedTopic), 'goethe') ? 'goethe' : 'telc';
+            $systemInstruction = SpeakingPromptService::getSystemInstruction($provider, $level);
+
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                 ->withSystemInstruction(
-                    Content::parse(
-                        'Du bist ein offizieller TELC-C1-Prüfer für die mündliche Prüfung. '
-                        .'Bewerte den mündlichen Vortrag des Lernenden.'
-                    )
+                    Content::parse($systemInstruction)
                 )
                 ->generateContent(
                     "Thema: {$topic}\n\n"

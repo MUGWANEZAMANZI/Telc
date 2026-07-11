@@ -29,14 +29,7 @@ class RevolutCheckoutController extends Controller
         $customData = '';
 
         if ($request->type === 'exam') {
-            /** @var ExamTemplate $exam */
-            $exam = ExamTemplate::query()->findOrFail($request->id);
-            if (! $exam->price || $exam->price <= 0) {
-                return response()->json(['error' => 'Dieser Prüfungstermin ist kostenlos.'], 400);
-            }
-            $amount = (float) $exam->price;
-            $description = $exam->title;
-            $customData = 'exam_'.$exam->id;
+            return response()->json(['error' => 'Einmalige Prüfungen sind nicht mehr verfügbar. Bitte erwerben Sie ein Abonnement.'], 400);
         } else {
             /** @var Plan $plan */
             $plan = Plan::query()->findOrFail($request->id);

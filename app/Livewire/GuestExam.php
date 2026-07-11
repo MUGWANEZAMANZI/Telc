@@ -7,6 +7,7 @@ use App\Models\ExamTemplate;
 use App\Models\Setting;
 use App\Services\AnswerExplainer;
 use App\Services\ExamGrader;
+use App\Services\SpeakingPromptService;
 use Gemini\Data\Content;
 use Gemini\Laravel\Facades\Gemini;
 use Illuminate\Support\Facades\Cookie;
@@ -116,6 +117,7 @@ class GuestExam extends Component
         $this->selectedTemplateId = $record->id;
         $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
         $this->recalculateRemaining();
+        $this->loadSpeakingTopics();
     }
 
     public function loadCompletedFromCookie(): void
@@ -524,6 +526,61 @@ class GuestExam extends Component
         return is_array($raw) ? array_values($raw) : [];
     }
 
+    public array $aiGeneratedTopics = [];
+
+    public function loadSpeakingTopics(): void
+    {
+        $elements = collect((array) ($this->template['sections'] ?? []))
+            ->pluck('elements')
+            ->flatten(1);
+        $sp1aEl = $elements->first(fn ($el) => str_ends_with((string) ($el['id'] ?? ''), '-SP-1a'));
+
+        $spContent = $sp1aEl['content'] ?? '';
+        $parsedTopics = [];
+        if (preg_match_all('/(\d+)\.\s*(.+?)(?=\s*(?:\/|oder)\s*\d+\.|\s*$)/u', $spContent, $topicMatches)) {
+            foreach ($topicMatches[2] as $t) {
+                $parsedTopics[] = trim($t);
+            }
+        }
+
+        if (count($parsedTopics) >= 2) {
+            $this->aiGeneratedTopics = $parsedTopics;
+        } else {
+            $level = $this->template['level'] ?? 'C1';
+            $provider = 'telc'; // default guest provider
+            try {
+                $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                    ->generateContent(
+                        "Generiere zwei verschiedene, niveauangemessene und typische Sprechthemen für eine mündliche {$provider} {$level} Prüfung.\n"
+                        ."Antworte NUR im folgenden JSON-Format:\n"
+                        .'["Thema 1", "Thema 2"]'
+                    );
+
+                $text = trim($result->text());
+                if (str_starts_with($text, '```json')) {
+                    $text = substr($text, 7, -3);
+                }
+                $decoded = json_decode(trim($text), true);
+                if (is_array($decoded) && count($decoded) >= 2) {
+                    $this->aiGeneratedTopics = $decoded;
+                }
+            } catch (\Throwable $e) {
+                $this->aiGeneratedTopics = ['Freies Thema A', 'Freies Thema B'];
+            }
+        }
+    }
+
+    public function chooseRandomTopic(string $elementId = ''): void
+    {
+        if (empty($this->aiGeneratedTopics)) {
+            $this->loadSpeakingTopics();
+        }
+        if (! empty($this->aiGeneratedTopics)) {
+            $topic = $this->aiGeneratedTopics[array_rand($this->aiGeneratedTopics)];
+            $this->chooseTopic($topic, $elementId);
+        }
+    }
+
     public function chooseTopic(string $topic, string $elementId = ''): void
     {
         $this->selectedTopic = $topic;
@@ -544,6 +601,16 @@ class GuestExam extends Component
 
         $this->speakingHistory[$elementId] = [];
         $this->answers[$elementId] = '';
+
+        if (! empty($this->aiGeneratedTopics)) {
+            $remaining = array_values(array_filter($this->aiGeneratedTopics, fn ($t) => $t !== $topic));
+            if (! empty($remaining)) {
+                $this->unchosenTopic = $remaining[array_rand($remaining)];
+            }
+        }
+        if (empty($this->unchosenTopic)) {
+            $this->unchosenTopic = 'Das alternative Thema';
+        }
     }
 
     public function loadAiPresentation(): void
@@ -621,17 +688,15 @@ class GuestExam extends Component
             $criteriaPrompt = "Bewerte die mündliche Leistung des Lernenden.\nBitte gib eine Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
         }
 
+        $provider = 'telc'; // default guest provider
+        $systemInstruction = SpeakingPromptService::getSystemInstruction($provider, $level);
+
         // SP-1a: student's initial presentation on chosen topic
         if (str_ends_with($elementId, '-SP-1a')) {
             try {
-                $levelLabel = "TELC-{$level}";
                 $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                     ->withSystemInstruction(
-                        Content::parse(
-                            "Du bist ein offizieller {$levelLabel}-Prüfer. "
-                            .'Bewerte den mündlichen Vortrag des Lernenden zu dem von ihm gewählten Thema. '
-                            .$criteriaPrompt
-                        )
+                        Content::parse($systemInstruction."\n\n".$criteriaPrompt)
                     )
                     ->generateContent(
                         "Gewähltes Thema: {$this->selectedTopic}\n\n"
@@ -673,15 +738,9 @@ class GuestExam extends Component
         // SP-1b: student's reaction/summary of the AI presentation
         if (str_ends_with($elementId, '-SP-1b')) {
             try {
-                $levelLabel = "TELC-{$level}";
                 $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                     ->withSystemInstruction(
-                        Content::parse(
-                            "Du bist ein offizieller {$levelLabel}-Prüfer. "
-                            .'Der Lernende reagiert auf deine Zusammenfassung / deinen Vortrag. '
-                            .'Bewerte seine Reaktion darauf. Achte auf logischen Bezug, Sprachgefühl und syntaktische Korrektheit. '
-                            .$criteriaPrompt
-                        )
+                        Content::parse($systemInstruction."\n\n".$criteriaPrompt)
                     )
                     ->generateContent(
                         "AI Vortrag:\n{$this->aiPresentationText}\n\n"
@@ -716,18 +775,9 @@ class GuestExam extends Component
         }
 
         try {
-            $levelLabel = "TELC-{$level}";
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                 ->withSystemInstruction(
-                    Content::parse(
-                        "Du bist ein {$levelLabel}-Prüfer für die mündliche Prüfung. "
-                        .'Unterhalte dich interaktiv mit dem Lernenden über das gewählte Thema. '
-                        .'Lies den Gesprächsverlauf. Reagiere auf die letzte Antwort des Lernenden, '
-                        .'stelle eine kurze, logische Anschlussfrage oder führe das Gespräch fort. '
-                        .'WICHTIG: Wenn dies der 3. oder 4. Redebeitrag des Lernenden ist, '
-                        .'beende das Gespräch höflich und bewerte die Leistung. '
-                        .$criteriaPrompt
-                    )
+                    Content::parse($systemInstruction."\n\n".$criteriaPrompt)
                 )
                 ->generateContent(
                     "Aufgabenstellung/Thema: {$prompt}\n\n"

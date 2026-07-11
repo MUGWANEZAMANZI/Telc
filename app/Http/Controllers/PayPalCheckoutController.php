@@ -17,33 +17,8 @@ class PayPalCheckoutController extends Controller
 {
     public function examCheckout(Request $request, ExamTemplate $examTemplate): RedirectResponse
     {
-        $service = app(PayPalService::class);
-
-        $order = $service->createOrder(
-            (float) ($examTemplate->price ?? 5.00),
-            $examTemplate->title,
-            route('paypal.success'),
-            route('paypal.cancel'),
-        );
-
-        if (! isset($order['id'])) {
-            return redirect()->route('dashboard')
-                ->with('error', 'PayPal-Checkout konnte nicht erstellt werden.');
-        }
-
-        session([
-            'paypal_intent' => 'exam',
-            'exam_template_id' => $examTemplate->id,
-        ]);
-
-        $approvalUrl = $service->getApprovalLink($order);
-
-        if ($approvalUrl) {
-            return redirect()->away($approvalUrl);
-        }
-
-        return redirect()->route('dashboard')
-            ->with('error', 'PayPal-Zahlungslink konnte nicht gefunden werden.');
+        return redirect()->route('pricing')
+            ->with('error', 'Einmalige Prüfungen sind nicht mehr verfügbar. Bitte erwerben Sie ein Abonnement.');
     }
 
     public function planCheckout(Request $request): RedirectResponse

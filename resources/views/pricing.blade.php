@@ -255,7 +255,7 @@
                         <div class="pricing-amount">
                             <span class="price">
                                 @if($plan->interval === 'month')
-                                    7
+                                    6,98
                                 @else
                                     {{ number_format($plan->price, 0) }}
                                 @endif
@@ -288,21 +288,21 @@
                             </button>
                         @else
                             <div class="duration-selector" data-plan-id="{{ $plan->id }}">
-                                <div class="duration-option selected" data-months="1" onclick="selectDuration(this, {{ $plan->id }}, 7.00)">
+                                <div class="duration-option selected" data-months="1" onclick="selectDuration(this, {{ $plan->id }}, 6.98)">
                                     1 Monat
-                                    <span class="price-tag">7,00 €</span>
+                                    <span class="price-tag">6,98 €</span>
                                 </div>
-                                <div class="duration-option" data-months="3" onclick="selectDuration(this, {{ $plan->id }}, 19.53)">
+                                <div class="duration-option" data-months="3" onclick="selectDuration(this, {{ $plan->id }}, 19.47)">
                                     3 Monate
-                                    <span class="price-tag">19,53 € <small style="font-size:0.65rem; color:#137333;">(-7%)</small></span>
+                                    <span class="price-tag">19,47 € <small style="font-size:0.65rem; color:#137333;">(-7%)</small></span>
                                 </div>
-                                <div class="duration-option" data-months="6" onclick="selectDuration(this, {{ $plan->id }}, 36.96)">
+                                <div class="duration-option" data-months="6" onclick="selectDuration(this, {{ $plan->id }}, 36.85)">
                                     6 Monate
-                                    <span class="price-tag">36,96 € <small style="font-size:0.65rem; color:#137333;">(-12%)</small></span>
+                                    <span class="price-tag">36,85 € <small style="font-size:0.65rem; color:#137333;">(-12%)</small></span>
                                 </div>
-                                <div class="duration-option" data-months="12" onclick="selectDuration(this, {{ $plan->id }}, 60.00)">
+                                <div class="duration-option" data-months="12" onclick="selectDuration(this, {{ $plan->id }}, 59.90)">
                                     12 Monate
-                                    <span class="price-tag">60,00 € <small style="font-size:0.65rem; color:#137333;">(Festpreis)</small></span>
+                                    <span class="price-tag">59,90 € <small style="font-size:0.65rem; color:#137333;">(Festpreis)</small></span>
                                 </div>
                             </div>
                             <button type="button"

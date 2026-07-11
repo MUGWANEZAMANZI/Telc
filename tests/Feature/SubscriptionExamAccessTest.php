@@ -65,15 +65,15 @@ test('subscribed users can bypass enrollment payment modal and start exams direc
 test('it calculates pricing for different durations with correct discounts', function () {
     $plan = Plan::create([
         'name' => 'Monthly Plan',
-        'price' => 7.00,
+        'price' => 6.98,
         'currency' => 'eur',
         'interval' => 'month',
         'features' => [],
         'is_active' => true,
     ]);
 
-    expect($plan->getPriceForDuration(1))->toBe(7.00);
-    expect($plan->getPriceForDuration(3))->toBe(19.53);
-    expect($plan->getPriceForDuration(6))->toBe(36.96);
-    expect($plan->getPriceForDuration(12))->toBe(60.00);
+    expect($plan->getPriceForDuration(1))->toBe(6.98);
+    expect($plan->getPriceForDuration(3))->toBe(19.47);
+    expect($plan->getPriceForDuration(6))->toBe(36.85);
+    expect($plan->getPriceForDuration(12))->toBe(59.90);
 });

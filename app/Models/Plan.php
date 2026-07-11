@@ -51,13 +51,13 @@ class Plan extends Model
     {
         if ($this->interval === 'month') {
             if ($months === 1) {
-                return 7.00;
+                return 6.98;
             } elseif ($months === 3) {
-                return 19.53;
+                return 19.47;
             } elseif ($months === 6) {
-                return 36.96;
+                return 36.85;
             } elseif ($months === 12) {
-                return 60.00;
+                return 59.90;
             }
         }
 

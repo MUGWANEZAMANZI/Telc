@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Einmalige Prüfung'],
             [
                 'description' => 'Zugang zu einer vollständigen Prüfung Ihrer Wahl.',
-                'price' => 5.00,
+                'price' => 1.00,
                 'currency' => 'eur',
                 'interval' => 'one-off',
                 'features' => ['1 vollständige Prüfung (B1, B2, oder C1)', 'Gemini-KI-Sprechübung', 'Schreibkorrekturen', 'Auto-Safe & detaillierte Auswertung'],
@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Monatliches Training (Standard)'],
             [
                 'description' => 'Perfekt für die kontinuierliche Prüfungsvorbereitung.',
-                'price' => 7.00,
+                'price' => 6.98,
                 'currency' => 'eur',
                 'interval' => 'month',
                 'features' => ['Unbegrenzte Prüfungssimulationen (B1, B2, C1)', 'Voller Gemini-KI-Support', 'Auswertung & Fehleranalysen', 'Schreibübungen-Feedback'],
