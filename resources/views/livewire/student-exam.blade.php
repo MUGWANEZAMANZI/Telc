@@ -556,16 +556,19 @@
                 </div>
             @endif
         </section>
-    @else
-        {{-- Premium Document Layout for C1 / B1 / B2 --}}
-        @if (in_array($template['level'] ?? '', ['B1', 'B2', 'C1', 'C2'], true))
+        @php
+            $isPaidExam = $this->hasActiveSubscription() || ($selectedTemplateId !== null && $this->isFullyEnrolled($selectedTemplateId));
+        @endphp
+
+        {{-- Premium Document Layout for Paid C1 / B1 / B2 --}}
+        @if ($isPaidExam && in_array($template['level'] ?? '', ['B1', 'B2', 'C1', 'C2'], true))
             <div class="premium-document" wire:poll.1s="tick">
                 @include('partials.premium.header')
                 @include('partials.exam-levels.' . strtolower($template['level']))
                 @include('partials.premium.timer')
             </div>
         @else
-            {{-- Standard Split View for non-C1 levels (B1, B2) --}}
+            {{-- Standard Split View for free exams or non-premium levels --}}
             <div class="paper-exam-shell">
                 <aside class="paper-exam-controls">
                     <div class="paper-exam-brand">
@@ -578,8 +581,14 @@
 
                     <div class="student-sections">
                         @foreach (($template['sections'] ?? []) as $index => $part)
-                            <button type="button" wire:click="startSection({{ $index }})" @class(['student-section-button', 'active' => $activeSection === $index])>
-                                <span>{{ $part['title'] }}</span>
+                            @php
+                                $isLocked = false;
+                                if (isset($answers['_locked_limit_reached']) && $index >= 2) {
+                                    $isLocked = true;
+                                }
+                            @endphp
+                            <button type="button" wire:click="startSection({{ $index }})" @class(['student-section-button', 'active' => $activeSection === $index]) @disabled($isLocked)>
+                                <span>{{ $part['title'] }} {!! $isLocked ? '🔒' : '' !!}</span>
                                 <small>{{ $part['minutes'] }} min</small>
                             </button>
                         @endforeach
@@ -589,9 +598,39 @@
                         {{ sprintf('%02d:%02d', $minutes, $seconds) }}
                     </div>
 
-                    <button type="button" wire:click="submit" class="telc-button primary wide">
-                        Antwortbogen abgeben
-                    </button>
+                    @if ($isPaidExam)
+                        <button type="button" wire:click="submit" class="telc-button primary wide">
+                            Antwortbogen abgeben
+                        </button>
+                    @else
+                        @if (!$result)
+                            <button type="button" wire:click="submitSection" class="telc-button primary wide">
+                                Abschnitt abgeben
+                            </button>
+                        @else
+                            @if (isset($template['sections'][$activeSection + 1]))
+                                @php
+                                    $nextLocked = isset($answers['_locked_limit_reached']) && ($activeSection + 1) >= 2;
+                                @endphp
+                                @if ($nextLocked)
+                                    <div style="background:#fdf2f2;border:1px solid #fbd5d5;color:#9b1c1c;padding:0.5rem;border-radius:4px;font-size:0.75rem;margin-bottom:0.75rem;">
+                                        Bitte abonnieren Sie, um weitere Abschnitte freizuschalten.
+                                    </div>
+                                    <a href="{{ route('pricing') }}" class="telc-button primary wide" style="background-color: #d8232a; border-color: #d8232a; text-align: center; display: block; text-decoration: none; color: #fff;">
+                                        Jetzt abonnieren
+                                    </a>
+                                @else
+                                    <button type="button" wire:click="startSection({{ $activeSection + 1 }})" class="telc-button primary wide" style="background-color: #137333; border-color: #137333;">
+                                        Nächster Abschnitt →
+                                    </button>
+                                @endif
+                            @else
+                                <button type="button" wire:click="exitExam" class="telc-button primary wide" style="background-color: #1a1a1a; border-color: #1a1a1a;">
+                                    Prüfung beenden
+                                </button>
+                            @endif
+                        @endif
+                    @endif
 
                     @if ($result)
                         <div class="student-score">

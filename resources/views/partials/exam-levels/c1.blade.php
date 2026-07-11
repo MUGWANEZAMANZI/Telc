@@ -620,12 +620,20 @@
                             <h4 style="font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #1a1a1a; margin-bottom: 1rem;">Wählen Sie ein Präsentationsthema für Teil 1a</h4>
                             <p style="color: #666666; font-size: 0.95rem; margin-bottom: 2rem;">Das andere Thema wird für die KI-Präsentation in Teil 1b verwendet.</p>
                             
+                            @php
+                                $c1Topics = !empty($this->aiGeneratedTopics) ? $this->aiGeneratedTopics : [
+                                    'Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?',
+                                    'Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus?'
+                                ];
+                            @endphp
                             <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto;">
-                                <button type="button" wire:click="chooseTopic('Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?','C1-SP-1a')" class="telc-button primary" style="background: #ffffff; color: #1a1a1a; border: 1px solid #cbcbcb; padding: 1.25rem; text-align: left; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                    Thema A: Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft? Berichten Sie!
-                                </button>
-                                <button type="button" wire:click="chooseTopic('Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus?','C1-SP-1a')" class="telc-button primary" style="background: #ffffff; color: #1a1a1a; border: 1px solid #cbcbcb; padding: 1.25rem; text-align: left; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                    Thema B: Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus? Erzählen Sie!
+                                @foreach ($c1Topics as $i => $topic)
+                                    <button type="button" wire:click="chooseTopic(@js($topic),'C1-SP-1a')" class="telc-button primary" style="background: #ffffff; color: #1a1a1a; border: 1px solid #cbcbcb; padding: 1.25rem; text-align: left; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                        Thema {{ chr(65 + $i) }}: {{ $topic }}
+                                    </button>
+                                @endforeach
+                                <button type="button" wire:click="chooseRandomTopic('C1-SP-1a')" class="telc-button primary" style="background: #1a1a1a; color: #ffffff; border: 1px solid #1a1a1a; padding: 1.25rem; text-align: center; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                    🎲 Zufälliges Thema wählen
                                 </button>
                             </div>
                         </div>

@@ -22,6 +22,9 @@
     if (count($parsedTopics) < 2) {
         $parsedTopics = ['Thema 1', 'Thema 2'];
     }
+    if (!empty($this->aiGeneratedTopics)) {
+        $parsedTopics = $this->aiGeneratedTopics;
+    }
     $discussionTopic = $sp2El['content'] ?? 'Diskussionsthema';
 @endphp
 
@@ -76,6 +79,10 @@
                         Thema {{ chr(65 + $i) }}: {{ $topic }}
                     </button>
                 @endforeach
+                <button type="button" wire:click="chooseRandomTopic(@js($sp1aId))"
+                    style="background:#1a1a1a;border:1px solid #1a1a1a;color:#fff;padding:1rem;text-align:center;font-size:0.9rem;border-radius:4px;cursor:pointer;font-weight:600;">
+                    🎲 Zufälliges Thema wählen
+                </button>
             </div>
         </div>
     @else

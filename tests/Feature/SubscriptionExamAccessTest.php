@@ -77,3 +77,70 @@ test('it calculates pricing for different durations with correct discounts', fun
     expect($plan->getPriceForDuration(6))->toBe(36.85);
     expect($plan->getPriceForDuration(12))->toBe(59.90);
 });
+
+test('it returns correct dynamic speaking prompts based on provider and level', function () {
+    $a1Telc = \App\Services\SpeakingPromptService::getSystemInstruction('telc', 'A1');
+    $b2Goethe = \App\Services\SpeakingPromptService::getSystemInstruction('goethe', 'B2');
+    $c1Telc = \App\Services\SpeakingPromptService::getSystemInstruction('telc', 'C1');
+
+    expect($a1Telc)->toContain('conduct the actual exam prompts and responses in simple, clear A1 German');
+    expect($b2Goethe)->toContain('conducting the official Goethe-Zertifikat B2 "Sprechen" exam');
+    expect($c1Telc)->toContain('The presentation in Teil 1 is a dual task: Candidate A presents, and Candidate B must listen carefully, summarize');
+});
+
+test('non-subscribed users get locked after completing two sections in their second free exam', function () {
+    ExamTemplate::query()->delete();
+    // Create first template of a level (completely free)
+    $t1 = ExamTemplate::create([
+        'title' => 'First Free B1 Exam',
+        'level' => 'B1',
+        'exam_provider' => 'telc',
+        'is_published' => true,
+        'theme' => [],
+        'timings' => [],
+        'sections' => [
+            ['id' => 'sec1', 'title' => 'Section 1', 'minutes' => 15, 'elements' => []],
+            ['id' => 'sec2', 'title' => 'Section 2', 'minutes' => 15, 'elements' => []],
+            ['id' => 'sec3', 'title' => 'Section 3', 'minutes' => 15, 'elements' => []],
+        ],
+    ]);
+
+    // Create second template of the same level (only 2 free sections allowed)
+    $t2 = ExamTemplate::create([
+        'title' => 'Second Free B1 Exam',
+        'level' => 'B1',
+        'exam_provider' => 'telc',
+        'is_published' => true,
+        'theme' => [],
+        'timings' => [],
+        'sections' => [
+            ['id' => 'secA', 'title' => 'Section A', 'minutes' => 15, 'elements' => []],
+            ['id' => 'secB', 'title' => 'Section B', 'minutes' => 15, 'elements' => []],
+            ['id' => 'secC', 'title' => 'Section C', 'minutes' => 15, 'elements' => []],
+        ],
+    ]);
+
+    $student = User::factory()->create(['role' => 'student']);
+    $this->actingAs($student);
+
+    // Verify first exam is fully free
+    $status1 = Livewire::test(StudentExam::class)->instance()->getTemplateFreeStatus($t1);
+    expect($status1['is_free'])->toBeTrue();
+    expect($status1['free_sections'])->toBeGreaterThanOrEqual(3);
+
+    // Verify second exam gets only 2 free sections limit
+    $status2 = Livewire::test(StudentExam::class)->instance()->getTemplateFreeStatus($t2);
+    expect($status2['is_free'])->toBeTrue();
+    expect($status2['free_sections'])->toBe(2);
+
+    // Let's take the second exam and submit two sections
+    $comp = Livewire::test(StudentExam::class)
+        ->call('startOrResumeExam', $t2->id)
+        ->set('activeSection', 0)
+        ->call('submitSection')
+        ->set('activeSection', 1)
+        ->call('submitSection');
+
+    // Assert that limit reached flag is stored, which triggers lock in view
+    expect($comp->get('answers')['_locked_limit_reached'] ?? false)->toBeTrue();
+});
