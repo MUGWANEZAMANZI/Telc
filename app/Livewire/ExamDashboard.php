@@ -748,6 +748,9 @@ class ExamDashboard extends Component
         return true;
     }
 
+    /**
+     * @return array{is_free: bool, free_sections: int}
+     */
     public function getTemplateFreeStatus(ExamTemplate $record): array
     {
         if (str_contains(strtolower($record->title), 'premium')) {
