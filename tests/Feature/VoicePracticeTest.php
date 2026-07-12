@@ -3,9 +3,8 @@
 use App\Livewire\VoiceInput;
 use App\Models\User;
 use App\Models\VoiceTopic;
-use App\Models\Subscription;
-use App\Models\Plan;
 use Gemini\Laravel\Facades\Gemini;
+use Gemini\Responses\GenerativeModel\GenerateContentResponse;
 use Livewire\Livewire;
 
 test('voice topics are seeded on mount if database is empty', function () {
@@ -47,31 +46,31 @@ test('non-subscribed users are limited to 2 speaking practices', function () {
     session(['speaking_practice_count' => 0]);
 
     Gemini::fake([
-        \Gemini\Responses\GenerativeModel\GenerateContentResponse::fake([
+        GenerateContentResponse::fake([
             'candidates' => [
                 [
                     'content' => [
                         'parts' => [
                             [
-                                'text' => 'SCORE: 18/24 Gute Aussprache.'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'text' => 'SCORE: 18/24 Gute Aussprache.',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]),
-        \Gemini\Responses\GenerativeModel\GenerateContentResponse::fake([
+        GenerateContentResponse::fake([
             'candidates' => [
                 [
                     'content' => [
                         'parts' => [
                             [
-                                'text' => 'SCORE: 19/24 Sehr flüssig.'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'text' => 'SCORE: 19/24 Sehr flüssig.',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]),
     ]);
 

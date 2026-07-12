@@ -806,7 +806,7 @@ class StudentExam extends Component
         $this->started = false;
 
         $sections = $this->template['sections'] ?? [];
-        
+
         $isLastSection = ($this->activeSection === count($sections) - 1);
         if ($isLastSection) {
             $this->submit();

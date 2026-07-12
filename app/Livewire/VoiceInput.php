@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Subscription;
 use App\Models\VoiceTopic;
 use App\Services\SpeakingPromptService;
 use Gemini\Data\Content;
@@ -67,7 +68,7 @@ class VoiceInput extends Component
             ->first();
 
         $this->selectedTopic = $first ? $first->title : '';
-        
+
         $this->dispatch('topic-changed', topic: $this->selectedTopic);
     }
 
@@ -77,7 +78,7 @@ class VoiceInput extends Component
             return false;
         }
 
-        return \App\Models\Subscription::query()
+        return Subscription::query()
             ->where('user_id', auth()->id())
             ->where('status', 'active')
             ->where(function ($q) {
@@ -88,10 +89,11 @@ class VoiceInput extends Component
 
     public function evaluateSpeech(): void
     {
-        if (!$this->hasActiveSubscription() && !auth()->user()?->isAdmin()) {
+        if (! $this->hasActiveSubscription() && ! auth()->user()?->isAdmin()) {
             $count = session('speaking_practice_count', 0);
             if ($count >= 2) {
                 $this->addError('speaking_limit', 'Sie haben Ihre 2 kostenlosen Sprechübungen aufgebraucht. Bitte abonnieren Sie ein Paket.');
+
                 return;
             }
         }
@@ -140,7 +142,7 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$this->maxPoints.'" an.';
             }
             $this->evaluated = true;
 
-            if (!$this->hasActiveSubscription() && !auth()->user()?->isAdmin()) {
+            if (! $this->hasActiveSubscription() && ! auth()->user()?->isAdmin()) {
                 session(['speaking_practice_count' => session('speaking_practice_count', 0) + 1]);
             }
         } catch (\Throwable $e) {
