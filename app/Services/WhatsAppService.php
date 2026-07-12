@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 class WhatsAppService
 {
     protected ?string $token;
+
     protected ?string $phoneNumberId;
+
     protected string $version;
 
     public function __construct()
@@ -72,6 +74,7 @@ class WhatsAppService
 
         if (empty($this->token) || empty($this->phoneNumberId)) {
             Log::error('WhatsApp configuration is missing.');
+
             return [
                 'success' => false,
                 'error' => 'Configuration missing',
@@ -83,6 +86,7 @@ class WhatsAppService
 
         if ($response->successful()) {
             Log::info('WhatsApp message sent successfully', $response->json());
+
             return [
                 'success' => true,
                 'data' => $response->json(),
