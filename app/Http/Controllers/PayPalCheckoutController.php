@@ -40,6 +40,7 @@ class PayPalCheckoutController extends Controller
             $plan->name.' ('.$duration.' Monat(e))',
             route('paypal.success'),
             route('paypal.cancel'),
+            'plan_'.$plan->id.'_'.$duration
         );
 
         if (! isset($order['id'])) {
@@ -67,7 +68,40 @@ class PayPalCheckoutController extends Controller
 
     public function success(Request $request): RedirectResponse
     {
+        $token = $request->query('token');
         $intent = session('paypal_intent');
+
+        if (! $intent && $token) {
+            try {
+                $service = app(PayPalService::class);
+                $orderDetails = $service->showOrderDetails($token);
+                $customId = $orderDetails['purchase_units'][0]['custom_id'] ?? '';
+
+                if (str_starts_with($customId, 'plan_')) {
+                    $parts = explode('_', $customId);
+                    $planId = (int) ($parts[1] ?? 0);
+                    $duration = (int) ($parts[2] ?? 1);
+                    session([
+                        'paypal_intent' => 'plan',
+                        'plan_id' => $planId,
+                        'paypal_duration' => $duration,
+                        'paypal_amount' => (float) ($orderDetails['purchase_units'][0]['amount']['value'] ?? 0),
+                        'paypal_order_id' => $token,
+                    ]);
+                    $intent = 'plan';
+                } elseif (str_starts_with($customId, 'exam_')) {
+                    $examTemplateId = (int) str_replace('exam_', '', $customId);
+                    session([
+                        'paypal_intent' => 'exam',
+                        'exam_template_id' => $examTemplateId,
+                        'paypal_order_id' => $token,
+                    ]);
+                    $intent = 'exam';
+                }
+            } catch (\Exception $e) {
+                Log::error('PayPal success session recovery failed', ['error' => $e->getMessage()]);
+            }
+        }
 
         if ($intent === 'exam') {
             return $this->handleExamSuccess($request);
@@ -139,6 +173,12 @@ class PayPalCheckoutController extends Controller
             }
         }
 
+        // Deactivate any existing active subscriptions for this user
+        Subscription::query()
+            ->where('user_id', $request->user()->id)
+            ->where('status', 'active')
+            ->update(['status' => 'cancelled', 'ends_at' => now()]);
+
         $endsAt = now()->addMonths($duration);
 
         Subscription::create([
@@ -190,34 +230,83 @@ class PayPalCheckoutController extends Controller
     {
         $customId = $payload['resource']['custom_id'] ?? '';
 
-        if (! str_starts_with((string) $customId, 'exam_')) {
+        if (! str_starts_with((string) $customId, 'exam_') && ! str_starts_with((string) $customId, 'plan_')) {
             return;
         }
 
-        $examTemplateId = (int) str_replace('exam_', '', (string) $customId);
-        $payerEmail = $payload['resource']['payer']['email_address'] ?? '';
+        if (str_starts_with((string) $customId, 'exam_')) {
+            $examTemplateId = (int) str_replace('exam_', '', (string) $customId);
+            $payerEmail = $payload['resource']['payer']['email_address'] ?? '';
 
-        $user = User::query()->where('email', $payerEmail)->first();
+            $user = User::query()->where('email', $payerEmail)->first();
 
-        if (! $user) {
-            Log::warning('PayPal webhook: user not found', ['email' => $payerEmail]);
+            if (! $user) {
+                Log::warning('PayPal webhook: user not found', ['email' => $payerEmail]);
 
-            return;
+                return;
+            }
+
+            ExamEnrollment::updateOrCreate(
+                ['user_id' => $user->id, 'exam_template_id' => $examTemplateId],
+                [
+                    'status' => 'active',
+                    'payment_status' => 'paid',
+                    'enrolled_at' => now(),
+                    'active_section' => 0,
+                ],
+            );
+
+            Log::info('PayPal exam enrollment completed via webhook', [
+                'user_id' => $user->id,
+                'exam_template_id' => $examTemplateId,
+            ]);
         }
 
-        ExamEnrollment::updateOrCreate(
-            ['user_id' => $user->id, 'exam_template_id' => $examTemplateId],
-            [
+        if (str_starts_with((string) $customId, 'plan_')) {
+            $parts = explode('_', (string) $customId);
+            $planId = (int) ($parts[1] ?? 0);
+            $duration = (int) ($parts[2] ?? 1);
+            $payerEmail = $payload['resource']['payer']['email_address'] ?? '';
+
+            $user = User::query()->where('email', $payerEmail)->first();
+
+            if (! $user || ! $planId) {
+                Log::warning('PayPal webhook: user or plan not found', ['email' => $payerEmail, 'plan_id' => $planId]);
+
+                return;
+            }
+
+            // Deactivate any existing active subscriptions for this user
+            Subscription::query()
+                ->where('user_id', $user->id)
+                ->where('status', 'active')
+                ->update(['status' => 'cancelled', 'ends_at' => now()]);
+
+            $endsAt = now()->addMonths($duration);
+            $amount = (float) ($payload['resource']['amount']['value'] ?? 0);
+            if ($amount <= 0) {
+                $plan = Plan::query()->find($planId);
+                if ($plan) {
+                    $amount = $plan->getPriceForDuration($duration);
+                }
+            }
+
+            Subscription::create([
+                'user_id' => $user->id,
+                'plan_id' => $planId,
+                'provider' => 'paypal',
+                'provider_order_id' => $payload['resource']['id'] ?? '',
                 'status' => 'active',
-                'payment_status' => 'paid',
-                'enrolled_at' => now(),
-                'active_section' => 0,
-            ],
-        );
+                'price_paid' => $amount,
+                'duration_months' => $duration,
+                'starts_at' => now(),
+                'ends_at' => $endsAt,
+            ]);
 
-        Log::info('PayPal exam enrollment completed via webhook', [
-            'user_id' => $user->id,
-            'exam_template_id' => $examTemplateId,
-        ]);
+            Log::info('PayPal plan subscription created via webhook', [
+                'user_id' => $user->id,
+                'plan_id' => $planId,
+            ]);
+        }
     }
 }

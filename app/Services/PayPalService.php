@@ -18,18 +18,24 @@ class PayPalService
     }
 
     /** @return array<string, mixed> */
-    public function createOrder(float $amount, string $description, string $returnUrl, string $cancelUrl): array
+    public function createOrder(float $amount, string $description, string $returnUrl, string $cancelUrl, ?string $customId = null): array
     {
+        $purchaseUnit = [
+            'amount' => [
+                'currency_code' => 'EUR',
+                'value' => number_format($amount, 2, '.', ''),
+            ],
+            'description' => $description,
+        ];
+
+        if ($customId) {
+            $purchaseUnit['custom_id'] = $customId;
+        }
+
         $order = $this->provider->createOrder([
             'intent' => 'CAPTURE',
             'purchase_units' => [
-                [
-                    'amount' => [
-                        'currency_code' => 'EUR',
-                        'value' => number_format($amount, 2, '.', ''),
-                    ],
-                    'description' => $description,
-                ],
+                $purchaseUnit,
             ],
             'application_context' => [
                 'brand_name' => config('app.name'),

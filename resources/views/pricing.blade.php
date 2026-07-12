@@ -4,276 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Erfolg — Prüfungsvorbereitung & Tarife</title>
+    <link rel="icon" href="{{ asset('logo.jpeg') }}" type="image/jpeg">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        :root {
-            --telc-ink: #1a1a1a;
-            --telc-accent: #d8232a;
-            --telc-bg: #f9f9fb;
-            --telc-paper: #ffffff;
-        }
-
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--telc-bg);
-            color: var(--telc-ink);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
         }
-
-        .pricing-landing {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 5rem 1.5rem;
-            text-align: center;
-        }
-
-        .pricing-header h1 {
+        .font-serif {
             font-family: 'Playfair Display', serif;
-            font-size: 3.2rem;
-            color: var(--telc-ink);
-            margin: 0 0 1rem;
-            line-height: 1.15;
         }
-
-        .pricing-header p {
-            font-size: 1.15rem;
-            color: #666666;
-            max-width: 600px;
-            margin: 0 auto 4rem;
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2.2rem;
-            align-items: stretch;
-            margin-bottom: 4rem;
-        }
-
-        .pricing-card {
-            background: var(--telc-paper);
-            border: 2px solid #e5e5e5;
-            border-radius: 12px;
-            padding: 3rem 2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.3s ease;
-            position: relative;
-            text-align: left;
-        }
-
-        .pricing-card.premium-tier {
-            border-color: var(--telc-ink);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        .pricing-card.premium-tier::before {
-            content: "BELIEBTESTER TARIF";
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--telc-ink);
-            color: var(--telc-paper);
-            font-size: 0.7rem;
-            font-weight: 800;
-            padding: 0.35rem 0.85rem;
-            border-radius: 99px;
-            letter-spacing: 0.1em;
-        }
-
-        .pricing-card h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.75rem;
-            margin: 0 0 0.5rem;
-            color: var(--telc-ink);
-        }
-
-        .pricing-desc {
-            font-size: 0.9rem;
-            color: #666666;
-            margin: 0 0 2rem;
-            min-height: 2.5rem;
-        }
-
-        .pricing-amount {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--telc-ink);
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: baseline;
-            gap: 0.25rem;
-        }
-
-        .pricing-amount span.currency {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .pricing-amount span.interval {
-            font-size: 0.95rem;
-            color: #666666;
-            font-weight: 500;
-        }
-
-        .pricing-features {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 2.5rem;
-            border-top: 1px solid #eeeeee;
-            padding-top: 1.5rem;
-            flex-grow: 1;
-        }
-
-        .pricing-features li {
-            font-size: 0.92rem;
-            color: #444444;
-            margin-bottom: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .pricing-features li::before {
-            content: "✓";
-            color: #137333;
-            font-weight: 800;
-        }
-
-        .telc-button {
-            display: block;
-            text-align: center;
-            text-decoration: none;
-            background: #ffffff;
-            border: 2px solid var(--telc-ink);
-            color: var(--telc-ink);
-            padding: 0.9rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .telc-button.primary {
-            background: var(--telc-ink);
-            color: var(--telc-paper);
-        }
-
-        .telc-button:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .duration-selector {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .duration-option {
-            flex: 1;
-            padding: 0.6rem 0.5rem;
-            border: 2px solid #e5e5e5;
-            border-radius: 6px;
-            background: #fafafa;
-            cursor: pointer;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .duration-option.selected {
-            border-color: var(--telc-ink);
-            background: var(--telc-ink);
-            color: #fff;
-        }
-
-        .duration-option .price-tag {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 400;
-            margin-top: 0.15rem;
-            opacity: 0.7;
-        }
-
-        .duration-option.selected .price-tag {
-            opacity: 0.9;
-        }
-
-        .pricing-footer {
-            margin-top: 5rem;
-            border-top: 1px solid #e5e5e5;
-            padding-top: 3rem;
-            color: #666666;
-            font-size: 0.85rem;
-        }
-
-        #revolut-pay-button {
-            min-height: 48px;
-        }
-
         .loading-spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
             border: 2px solid #e5e5e5;
-            border-top-color: var(--telc-ink);
+            border-top-color: #1a1a1a;
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
         }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body>
-    <div class="pricing-landing">
-        <div class="pricing-header">
-            <h1>Einfache, transparente Tarife</h1>
-            <p>Schalten Sie originalgetreue Prüfungssimulationen frei und bereiten Sie sich optimal auf Goethe & telc Zertifikate vor.</p>
+<body class="bg-gradient-to-br from-zinc-50 via-zinc-100 to-zinc-200 text-zinc-900 min-h-screen py-4 px-4 md:px-6">
+    <div class="max-w-[1100px] mx-auto">
+        
+        {{-- Header Section --}}
+        <div class="text-center max-w-3xl mx-auto mb-6">
+            <span class="text-[0.65rem] font-bold tracking-widest text-[#d8232a] uppercase bg-red-50 px-2 py-0.5 rounded-full border border-red-100 inline-block mb-2">Tarife & Optionen</span>
+            <h1 class="font-serif text-2xl md:text-3xl lg:text-4xl text-zinc-900 mb-2 font-bold tracking-tight leading-tight">Einfache, transparente Tarife</h1>
+            <p class="text-zinc-600 text-xs md:text-sm leading-relaxed">Schalten Sie originalgetreue Prüfungssimulationen frei und bereiten Sie sich optimal auf Goethe & telc Zertifikate vor.</p>
         </div>
 
-        <div class="pricing-grid">
+        {{-- Pricing Grid --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch mb-6">
             @php $plans = \App\Models\Plan::query()->where('is_active', true)->orderBy('price')->get(); @endphp
             @forelse ($plans as $plan)
                 @php
                     $isPremium = $plan->name === 'Monatliches Training (Standard)';
                     $isOneOff = $plan->interval !== 'month';
                 @endphp
-                <article class="pricing-card {{ $isPremium ? 'premium-tier' : '' }}">
-                    <div>
-                        <h2>{{ $plan->name }}</h2>
-                        <p class="pricing-desc">{{ $plan->description }}</p>
+                <article class="relative flex flex-col justify-between bg-white border {{ $isPremium ? 'border-zinc-950 ring-2 ring-zinc-950 shadow-2xl' : 'border-zinc-200 shadow-md' }} rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                    @if ($isPremium)
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-zinc-950 text-white text-[0.65rem] font-extrabold px-3 py-0.5 rounded-full tracking-widest uppercase shadow-md">
+                            Beliebtester Tarif
+                        </div>
+                    @endif
 
-                        <div class="pricing-amount">
-                            <span class="price">
-                                @if($plan->interval === 'month')
-                                    6,98
-                                @else
-                                    {{ number_format($plan->price, 0) }}
-                                @endif
-                            </span>
-                            <span class="currency">€</span>
-                            <span class="interval">
-                                @if($isOneOff)
-                                    / einmalig
-                                @else
-                                    / Monat
-                                @endif
-                            </span>
+                    <div>
+                        <h2 class="font-serif text-lg md:text-xl font-bold mb-1 text-zinc-900">{{ $plan->name }}</h2>
+                        <p class="text-zinc-500 text-xs mb-4 min-h-[1.5rem]">{{ $plan->description }}</p>
+
+                        <div class="mb-4">
+                            <div class="flex items-baseline text-zinc-900 mb-0.5">
+                                <span class="text-2xl md:text-3xl font-black tracking-tight" id="price-display-{{ $plan->id }}">
+                                    {{ number_format($plan->getPriceForDuration(1), 2, ',', '.') }}
+                                </span>
+                                <span class="text-lg font-bold ml-0.5">€</span>
+                                <span class="text-zinc-500 text-xs font-semibold ml-1.5" id="interval-display-{{ $plan->id }}">
+                                    @if($isOneOff)
+                                        / einmalig
+                                    @else
+                                        / Monat
+                                    @endif
+                                </span>
+                            </div>
+                            @if (!$isOneOff)
+                                <div class="text-[0.65rem] text-zinc-400 font-medium" id="subtext-display-{{ $plan->id }}">
+                                    Monatliche Abrechnung
+                                </div>
+                            @endif
                         </div>
 
                         @if ($plan->features)
-                            <ul class="pricing-features">
+                            <ul class="space-y-2 mb-6 border-t border-zinc-100 pt-4 flex-grow">
                                 @foreach ((array) $plan->features as $feature)
-                                    <li>{{ $feature }}</li>
+                                    <li class="flex items-start text-xs text-zinc-600 leading-normal">
+                                        <svg class="h-4 w-4 text-emerald-600 shrink-0 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                        </svg>
+                                        <span>{{ $feature }}</span>
+                                    </li>
                                 @endforeach
                             </ul>
                         @endif
@@ -283,81 +96,91 @@
                         @if ($isOneOff)
                             <button type="button"
                                     onclick="openPaymentModal({{ $plan->id }}, 'plan', null)"
-                                    class="telc-button primary">
+                                    class="w-full text-center py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 border-2 border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md cursor-pointer">
                                 Jetzt freischalten
                             </button>
                         @else
-                            <div class="duration-selector" data-plan-id="{{ $plan->id }}">
-                                <div class="duration-option selected" data-months="1" onclick="selectDuration(this, {{ $plan->id }}, 6.98)">
-                                    1 Monat
-                                    <span class="price-tag">6,98 €</span>
+                            {{-- Sliding segmented selector style --}}
+                            <div class="duration-selector flex gap-1 p-0.5 bg-zinc-100 rounded-lg mb-4" data-plan-id="{{ $plan->id }}">
+                                <div class="duration-option selected bg-white text-zinc-900 border border-zinc-200/50 shadow-sm flex-1 py-1.5 px-0.5 rounded-md cursor-pointer text-center transition-all duration-200" 
+                                     data-months="1" 
+                                     onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->getPriceForDuration(1) }}, {{ $plan->getPriceForDuration(1) / 1 }}, 1)">
+                                    <span class="block font-bold text-[0.7rem]">1 Mo.</span>
+                                    <span class="block text-[0.6rem] text-zinc-500 mt-0.5">{{ number_format($plan->getPriceForDuration(1) / 1, 2, ',', '.') }} €</span>
                                 </div>
-                                <div class="duration-option" data-months="3" onclick="selectDuration(this, {{ $plan->id }}, 19.47)">
-                                    3 Monate
-                                    <span class="price-tag">19,47 € <small style="font-size:0.65rem; color:#137333;">(-7%)</small></span>
+                                <div class="duration-option bg-transparent text-zinc-600 hover:text-zinc-900 flex-1 py-1.5 px-0.5 rounded-md cursor-pointer text-center transition-all duration-200" 
+                                     data-months="3" 
+                                     onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->getPriceForDuration(3) }}, {{ $plan->getPriceForDuration(3) / 3 }}, 3)">
+                                    <span class="block font-bold text-[0.7rem]">3 Mo.</span>
+                                    <span class="block text-[0.6rem] text-zinc-500 mt-0.5">{{ number_format($plan->getPriceForDuration(3) / 3, 2, ',', '.') }} €</span>
                                 </div>
-                                <div class="duration-option" data-months="6" onclick="selectDuration(this, {{ $plan->id }}, 36.85)">
-                                    6 Monate
-                                    <span class="price-tag">36,85 € <small style="font-size:0.65rem; color:#137333;">(-12%)</small></span>
+                                <div class="duration-option bg-transparent text-zinc-600 hover:text-zinc-900 flex-1 py-1.5 px-0.5 rounded-md cursor-pointer text-center transition-all duration-200" 
+                                     data-months="6" 
+                                     onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->getPriceForDuration(6) }}, {{ $plan->getPriceForDuration(6) / 6 }}, 6)">
+                                    <span class="block font-bold text-[0.7rem]">6 Mo.</span>
+                                    <span class="block text-[0.6rem] text-zinc-500 mt-0.5">{{ number_format($plan->getPriceForDuration(6) / 6, 2, ',', '.') }} €</span>
                                 </div>
-                                <div class="duration-option" data-months="12" onclick="selectDuration(this, {{ $plan->id }}, 59.90)">
-                                    12 Monate
-                                    <span class="price-tag">59,90 € <small style="font-size:0.65rem; color:#137333;">(Festpreis)</small></span>
+                                <div class="duration-option bg-transparent text-zinc-600 hover:text-zinc-900 flex-1 py-1.5 px-0.5 rounded-md cursor-pointer text-center transition-all duration-200" 
+                                     data-months="12" 
+                                     onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->getPriceForDuration(12) }}, {{ $plan->getPriceForDuration(12) / 12 }}, 12)">
+                                    <span class="block font-bold text-[0.7rem]">12 Mo.</span>
+                                    <span class="block text-[0.6rem] text-zinc-500 mt-0.5">{{ number_format($plan->getPriceForDuration(12) / 12, 2, ',', '.') }} €</span>
                                 </div>
                             </div>
                             <button type="button"
                                     onclick="openPaymentModal({{ $plan->id }}, 'plan', getSelectedDuration({{ $plan->id }}))"
-                                    class="telc-button primary">
+                                    class="w-full text-center py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 border-2 border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md cursor-pointer">
                                 Jetzt kaufen
                             </button>
                         @endif
                     @else
-                        <a href="{{ route('register') }}" class="telc-button primary">Konto erstellen</a>
+                        <a href="{{ route('register') }}" class="w-full text-center py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 border-2 border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md block no-underline cursor-pointer">Konto erstellen</a>
                     @endauth
                 </article>
             @empty
-                <div style="background: #ffffff; border: 2px solid #e5e5e5; border-radius: 8px; padding: 3rem; grid-column: 1 / -1;">
-                    <p style="color: #666666;">Aktuell sind keine Preispläne verfügbar.</p>
+                <div class="bg-white border border-zinc-200 rounded-2xl p-12 text-center col-span-full shadow-md">
+                    <p class="text-zinc-500 font-medium">Aktuell sind keine Preispläne verfügbar.</p>
                 </div>
             @endforelse
         </div>
 
-        <div class="pricing-footer">
+        {{-- Footer --}}
+        <div class="mt-6 border-t border-zinc-200/80 pt-4 text-center text-zinc-500 text-[0.65rem] leading-relaxed">
             <p>&copy; {{ date('Y') }} Erfolg. Alle Preise inkl. gesetzlicher MwSt. Zahlungen werden sicher über Revolut und PayPal abgewickelt.</p>
         </div>
     </div>
 
     {{-- Payment Method Modal --}}
-    <div id="paymentModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        <div style="background: #ffffff; padding: 2.5rem; max-width: 480px; width: 90%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid #d8232a; font-family: 'Plus Jakarta Sans', sans-serif; text-align: left;">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 0.5rem; color: #1a1a1a;">Zahlungsmethode wählen</h3>
-            <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">Bitte wählen Sie eine Zahlungsmethode.</p>
+    <div id="paymentModal" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center backdrop-blur-md transition-all duration-300">
+        <div class="bg-white p-8 md:p-10 max-w-lg w-[90%] rounded-2xl shadow-2xl border-l-4 border-[#d8232a] text-left transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
+            <h3 class="font-serif text-2xl md:text-3xl font-bold mb-2 text-zinc-900">Zahlungsmethode wählen</h3>
+            <p class="text-zinc-500 text-sm mb-6 leading-relaxed">Bitte wählen Sie eine Zahlungsmethode.</p>
 
-            <div id="revolut-section" style="display: none; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
-                <div style="border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa;">
-                    <strong style="font-size: 0.95rem; color: #1a1a1a; display: block; margin-bottom: 1rem;">Mit Revolut bezahlen</strong>
+            <div id="revolut-section" class="hidden flex-col gap-3 mb-6">
+                <div class="border-2 border-zinc-950 p-4 rounded-xl bg-zinc-50">
+                    <strong class="text-sm text-zinc-900 block mb-4">Mit Revolut bezahlen</strong>
                     <div id="revolut-pay-button"></div>
-                    <div id="revolut-loading" style="text-align: center; padding: 1rem;">
+                    <div id="revolut-loading" class="text-center py-4">
                         <div class="loading-spinner"></div>
-                        <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Zahlung wird vorbereitet...</p>
+                        <p class="text-xs text-zinc-500 mt-2">Zahlung wird vorbereitet...</p>
                     </div>
-                    <div id="revolut-error" style="display: none; color: #d8232a; font-size: 0.85rem; margin-top: 0.5rem;"></div>
+                    <div id="revolut-error" class="hidden text-[#d8232a] text-xs mt-2 font-medium"></div>
                 </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
-                <a id="paypalBtn" href="#" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; text-decoration: none; color: inherit; box-sizing: border-box;">
-                    <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit PayPal bezahlen</strong>
-                    <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Weiter</span>
+            <div class="flex flex-col gap-3 mb-8">
+                <a id="paypalBtn" href="#" class="flex items-center justify-between border-2 border-zinc-200 hover:border-zinc-950 p-4 rounded-xl bg-zinc-50 hover:bg-white transition-all duration-200 text-decoration-none text-inherit box-border">
+                    <strong class="text-sm text-zinc-900">Mit PayPal bezahlen</strong>
+                    <span class="text-xs text-[#d8232a] font-bold">Weiter →</span>
                 </a>
-                <button type="button" onclick="initRevolutPay()" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; text-decoration: none; color: inherit; box-sizing: border-box; font-family: inherit; font-size: inherit;">
-                    <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit Kreditkarte (Revolut) zahlen</strong>
-                    <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Jetzt bezahlen</span>
+                <button type="button" onclick="initRevolutPay()" class="flex items-center justify-between border-2 border-zinc-200 hover:border-zinc-950 p-4 rounded-xl bg-zinc-50 hover:bg-white transition-all duration-200 text-left box-border font-inherit text-inherit">
+                    <strong class="text-sm text-zinc-900">Mit Kreditkarte (Revolut) zahlen</strong>
+                    <span class="text-xs text-[#d8232a] font-bold">Jetzt bezahlen →</span>
                 </button>
             </div>
 
-            <div style="display: flex; justify-content: flex-end;">
-                <button type="button" onclick="closePaymentModal()" style="border: none; background: none; padding: 0.5rem 1rem; cursor: pointer; color: #666666; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Abbrechen</button>
+            <div class="flex justify-end">
+                <button type="button" onclick="closePaymentModal()" class="border-none bg-transparent py-2 px-4 cursor-pointer text-zinc-500 hover:text-zinc-900 text-sm font-bold tracking-wide uppercase transition-colors">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -367,9 +190,32 @@
         let selectedDuration = 1;
         let selectedItemType = 'plan';
 
-        function selectDuration(el, planId, monthlyPrice) {
-            el.parentElement.querySelectorAll('.duration-option').forEach(o => o.classList.remove('selected'));
-            el.classList.add('selected');
+        function selectDuration(el, planId, totalPrice, monthlyPrice, months) {
+            // Find all options in the container and reset their classes
+            el.parentElement.querySelectorAll('.duration-option').forEach(o => {
+                o.classList.remove('bg-white', 'text-zinc-900', 'border', 'border-zinc-200/50', 'shadow-sm', 'selected');
+                o.classList.add('bg-transparent', 'text-zinc-600', 'hover:text-zinc-900');
+            });
+            
+            // Mark the selected one
+            el.classList.remove('bg-transparent', 'text-zinc-600', 'hover:text-zinc-900');
+            el.classList.add('bg-white', 'text-zinc-900', 'border', 'border-zinc-200/50', 'shadow-sm', 'selected');
+
+            // Update top price display
+            const priceEl = document.getElementById(`price-display-${planId}`);
+            if (priceEl) {
+                priceEl.textContent = monthlyPrice.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+
+            // Update subtext display
+            const subtextEl = document.getElementById(`subtext-display-${planId}`);
+            if (subtextEl) {
+                if (months === 1) {
+                    subtextEl.textContent = 'Monatliche Abrechnung';
+                } else {
+                    subtextEl.textContent = `Gesamtpreis: ${totalPrice.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € (alle ${months} Monate abgerechnet)`;
+                }
+            }
         }
 
         function getSelectedDuration(planId) {
@@ -400,12 +246,29 @@
             document.getElementById('revolut-pay-button').innerHTML = '';
             document.getElementById('revolut-error').style.display = 'none';
 
-            document.getElementById('paymentModal').style.display = 'flex';
+            const modal = document.getElementById('paymentModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Trigger animation frame for transition
+            setTimeout(() => {
+                const content = document.getElementById('modalContent');
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
         }
 
         function closePaymentModal() {
-            document.getElementById('paymentModal').style.display = 'none';
-            document.getElementById('revolut-section').style.display = 'none';
+            const content = document.getElementById('modalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                const modal = document.getElementById('paymentModal');
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+                document.getElementById('revolut-section').style.display = 'none';
+            }, 300);
         }
 
         async function initRevolutPay() {
@@ -414,9 +277,11 @@
             const revolutLoading = document.getElementById('revolut-loading');
             const revolutError = document.getElementById('revolut-error');
 
-            revolutSection.style.display = 'flex';
+            revolutSection.classList.remove('hidden');
+            revolutSection.classList.add('flex');
             revolutLoading.style.display = 'block';
             revolutError.style.display = 'none';
+            revolutError.classList.add('hidden');
 
             try {
                 const response = await fetch('{{ route('revolut.create') }}', {
@@ -437,6 +302,7 @@
                 if (data.error) {
                     revolutError.textContent = data.error;
                     revolutError.style.display = 'block';
+                    revolutError.classList.remove('hidden');
                     revolutLoading.style.display = 'none';
                     return;
                 }
@@ -452,6 +318,7 @@
                         script.onerror = () => {
                             revolutError.textContent = 'Revolut SDK konnte nicht geladen werden.';
                             revolutError.style.display = 'block';
+                            revolutError.classList.remove('hidden');
                             reject();
                         };
                         document.head.appendChild(script);
@@ -467,15 +334,18 @@
                     onError(error) {
                         revolutError.textContent = 'Zahlung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler');
                         revolutError.style.display = 'block';
+                        revolutError.classList.remove('hidden');
                     },
                     onCancel() {
-                        revolutSection.style.display = 'none';
+                        revolutSection.classList.remove('flex');
+                        revolutSection.classList.add('hidden');
                         revolutButton.innerHTML = '';
                     }
                 });
             } catch (e) {
                 revolutError.textContent = 'Zahlungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.';
                 revolutError.style.display = 'block';
+                revolutError.classList.remove('hidden');
                 revolutLoading.style.display = 'none';
             }
         }

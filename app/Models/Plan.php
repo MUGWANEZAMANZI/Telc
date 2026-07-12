@@ -50,14 +50,28 @@ class Plan extends Model
     public function getPriceForDuration(int $months): float
     {
         if ($this->interval === 'month') {
+            // Keep original standard plan prices exactly to preserve standard billing logic
+            if (abs((float) $this->price - 6.98) < 0.01) {
+                if ($months === 1) {
+                    return 6.98;
+                } elseif ($months === 3) {
+                    return 19.47;
+                } elseif ($months === 6) {
+                    return 36.85;
+                } elseif ($months === 12) {
+                    return 59.90;
+                }
+            }
+
+            // General monthly plan calculation with the same discount structure
             if ($months === 1) {
-                return 6.98;
+                return (float) $this->price;
             } elseif ($months === 3) {
-                return 19.47;
+                return round((float) $this->price * 3 * 0.93, 2);
             } elseif ($months === 6) {
-                return 36.85;
+                return round((float) $this->price * 6 * 0.88, 2);
             } elseif ($months === 12) {
-                return 59.90;
+                return round((float) $this->price * 12 * 0.715, 2);
             }
         }
 

@@ -111,6 +111,12 @@ class RevolutCheckoutController extends Controller
                     return redirect()->route('billing')->with('error', 'Tarif nicht gefunden.');
                 }
 
+                // Deactivate any existing active subscriptions for this user
+                Subscription::query()
+                    ->where('user_id', $request->user()->id)
+                    ->where('status', 'active')
+                    ->update(['status' => 'cancelled', 'ends_at' => now()]);
+
                 $endsAt = now()->addMonths($duration ?? 1);
 
                 Subscription::create([
@@ -204,6 +210,12 @@ class RevolutCheckoutController extends Controller
                     if ($payerEmail && $planId) {
                         $user = User::query()->where('email', $payerEmail)->first();
                         if ($user) {
+                            // Deactivate any existing active subscriptions for this user
+                            Subscription::query()
+                                ->where('user_id', $user->id)
+                                ->where('status', 'active')
+                                ->update(['status' => 'cancelled', 'ends_at' => now()]);
+
                             $endsAt = now()->addMonths($duration);
                             Subscription::create([
                                 'user_id' => $user->id,
