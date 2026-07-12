@@ -20,6 +20,8 @@ class GuestExam extends Component
 
     public int $freeSectionLimit = 3;
 
+    public bool $showLoginPrompt = false;
+
     /** @var array<int, string> */
     public array $completedSectionIds = [];
 
@@ -78,6 +80,16 @@ class GuestExam extends Component
 
     public function mount(?int $templateId = null): void
     {
+        if (auth()->check()) {
+            if ($templateId) {
+                $this->redirect(route('dashboard').'?start_exam='.$templateId);
+            } else {
+                $this->redirect(route('dashboard'));
+            }
+
+            return;
+        }
+
         $this->freeSectionLimit = max(1, (int) Setting::value('free_section_limit', '3'));
 
         $this->loadCompletedFromCookie();
@@ -115,7 +127,11 @@ class GuestExam extends Component
     public function loadTemplate(ExamTemplate $record): void
     {
         $this->selectedTemplateId = $record->id;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
+        $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
+        $data['sections'] = collect($data['sections'] ?? [])->filter(function ($section) {
+            return ! collect($section['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
+        })->values()->all();
+        $this->template = $data;
         $this->recalculateRemaining();
         $this->loadSpeakingTopics();
     }
@@ -405,6 +421,36 @@ class GuestExam extends Component
             return;
         }
 
+        $sectionId = $currentSection['id'];
+        $isFirstCompletion = ! in_array($sectionId, $this->completedSectionIds, true);
+
+        $tempCompleted = $this->completedSectionIds;
+        if ($isFirstCompletion) {
+            $tempCompleted[] = $sectionId;
+        }
+
+        $isLastSectionOfTemplate = ($this->activeSectionIndex === count($sections) - 1);
+        $reachesFreeLimit = (count($tempCompleted) >= $this->freeSectionLimit);
+
+        if ($isLastSectionOfTemplate || $reachesFreeLimit) {
+            $this->started = false;
+
+            // Save to session
+            session([
+                'guest_pending_attempt' => [
+                    'template_id' => $this->selectedTemplateId,
+                    'active_section' => $this->activeSectionIndex,
+                    'answers' => $this->answers,
+                    'completed_sections' => array_unique(array_merge($this->completedSectionIds, [$sectionId])),
+                    'no_retry_sections' => array_unique(array_merge($this->noRetrySectionIds, [$sectionId])),
+                ],
+            ]);
+
+            $this->showLoginPrompt = true;
+
+            return;
+        }
+
         $this->started = false;
 
         $this->result = app(ExamGrader::class)->grade(
@@ -413,9 +459,6 @@ class GuestExam extends Component
         );
 
         $this->enrichExplanations();
-
-        $sectionId = $currentSection['id'];
-        $isFirstCompletion = ! in_array($sectionId, $this->completedSectionIds, true);
 
         if ($isFirstCompletion) {
             $this->completedSectionIds[] = $sectionId;

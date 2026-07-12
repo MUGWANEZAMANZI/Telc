@@ -25,11 +25,11 @@
                     transform: scale(1);
                 }
                 50% {
-                    transform: scale(1.1);
+                    transform: scale(1.5);
                 }
             }
             .animate-book-pulse {
-                animation: bookPulse 2.5s ease-in-out infinite;
+                animation: bookPulse 0.5s ease-in-out infinite;
             }
         </style>
         @livewireStyles

@@ -74,6 +74,7 @@ test('user can start a section and submit it', function () {
             ['id' => 'sec1', 'title' => 'Reading', 'minutes' => 10, 'elements' => [
                 ['id' => 'q1', 'type' => 'multiple_choice', 'label' => 'Q1', 'options' => 'a,b,c', 'answer' => 'b', 'points' => 2],
             ]],
+            ['id' => 'sec2', 'title' => 'Writing', 'minutes' => 10, 'elements' => []],
         ],
     ]);
 
@@ -134,6 +135,7 @@ test('retry does not consume another free slot', function () {
             ['id' => 'sec-x', 'title' => 'Section X', 'minutes' => 5, 'elements' => [
                 ['id' => 'q1', 'type' => 'multiple_choice', 'label' => 'Q1', 'options' => 'a,b,c', 'answer' => 'a', 'points' => 1],
             ]],
+            ['id' => 'sec-y', 'title' => 'Section Y', 'minutes' => 5, 'elements' => []],
         ],
     ]);
 
@@ -158,7 +160,7 @@ test('retry does not consume another free slot', function () {
     expect($component->get('remainingSections'))->toBe(3);
 });
 
-test('limit reached shows hasReachedLimit true', function () {
+test('limit reached shows login prompt true', function () {
     // Override freeSectionLimit to 1
     Setting::query()->updateOrCreate(
         ['key' => 'free_section_limit'],
@@ -184,13 +186,8 @@ test('limit reached shows hasReachedLimit true', function () {
     // 1 free section limit, complete 1 section
     $component->call('startSection', 0)
         ->set('answers', ['q1' => 'a'])
-        ->call('submit');
-
-    expect($component->get('hasReachedLimit'))->toBeTrue();
-
-    // Try to start a new section - should NOT load because limit reached
-    $component->call('startSection', 1)
-        ->assertSet('activeSectionIndex', null);
+        ->call('submit')
+        ->assertSet('showLoginPrompt', true);
 });
 
 test('guest users can switch levels', function () {

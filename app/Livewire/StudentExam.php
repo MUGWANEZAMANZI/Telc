@@ -112,6 +112,209 @@ class StudentExam extends Component
     {
         $this->ensurePresets();
 
+        if (session()->has('guest_pending_attempt')) {
+            $pending = session()->pull('guest_pending_attempt');
+            $templateId = $pending['template_id'] ?? null;
+            $activeSectionIdx = $pending['active_section'] ?? 0;
+            $answers = $pending['answers'] ?? [];
+
+            if ($templateId) {
+                $record = ExamTemplate::find($templateId);
+                if ($record) {
+                    $sections = $record->sections ?? [];
+                    $currentSection = $sections[$activeSectionIdx] ?? null;
+                    if ($currentSection) {
+                        $hasInlineGap = collect($currentSection['elements'] ?? [])
+                            ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
+
+                        $sectionToGrade = $currentSection;
+                        if ($hasInlineGap) {
+                            $sectionToGrade['elements'] = collect((array) ($currentSection['elements'] ?? []))
+                                ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
+                                ->values()
+                                ->all();
+                        }
+
+                        $result = app(ExamGrader::class)->grade([$sectionToGrade], $answers);
+
+                        // Grade writing
+                        $writingDetails = [];
+                        $writingElements = collect((array) ($currentSection['elements'] ?? []))->where('type', 'writing');
+                        foreach ($writingElements as $element) {
+                            $elId = $element['id'];
+                            $maxPoints = (int) ($element['points'] ?? 48);
+                            $passMark = (int) ceil($maxPoints * 0.6);
+                            $content = (string) ($answers[$elId] ?? '');
+                            $feedback = 'Keine Abgabe für den schriftlichen Ausdruck.';
+                            $score = 0;
+
+                            if (! empty(trim($content))) {
+                                try {
+                                    $level = $record->level ?? 'C1';
+                                    $provider = $record->exam_provider ?? 'telc';
+                                    $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                                        ->withSystemInstruction(
+                                            Content::parse(
+                                                "Du bist ein offizieller {$provider} {$level} Prüfer für die schriftliche Prüfung. "
+                                                ."Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis {$maxPoints} Punkten zurück."
+                                            )
+                                        );
+                                    $resp = $model->generateContent(
+                                        "Aufsatz:\n{$content}\n\n"
+                                        ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                                    );
+                                    $feedback = $resp->text();
+                                    preg_match('/SCORE:\s*(\d+)/i', $feedback, $matches);
+                                    if (isset($matches[1])) {
+                                        $score = (int) $matches[1];
+                                    }
+                                } catch (\Throwable $e) {
+                                    $score = (int) ($maxPoints / 2);
+                                    $feedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
+                                }
+                            }
+
+                            $writingDetails[] = [
+                                'id' => $elId,
+                                'label' => 'Schriftlicher Ausdruck',
+                                'given' => $content,
+                                'expected' => 'Gemini AI Graded',
+                                'points' => $score,
+                                'max_points' => $maxPoints,
+                                'correct' => $score >= $passMark,
+                                'explanation' => $feedback,
+                            ];
+                        }
+
+                        // Grade speaking
+                        $speakingDetails = [];
+                        $speakingElements = collect((array) ($currentSection['elements'] ?? []))->where('type', 'speaking');
+                        $autoScored = [];
+                        foreach ($speakingElements as $element) {
+                            $elId = $element['id'];
+                            $maxPoints = (int) ($element['points'] ?? 24);
+
+                            if (str_ends_with($elId, '-SP-GLOBAL') || str_ends_with($elId, '-SP-global')) {
+                                continue;
+                            }
+
+                            $history = $answers[$elId] ?? [];
+                            if (is_string($history)) {
+                                $history = [['role' => 'user', 'text' => $history]];
+                            }
+                            if (empty($history)) {
+                                $speakingDetails[] = [
+                                    'id' => $elId,
+                                    'label' => 'Mündliche Prüfung — '.$element['label'],
+                                    'given' => [],
+                                    'expected' => 'Gemini AI Graded',
+                                    'points' => 0,
+                                    'max_points' => $maxPoints,
+                                    'correct' => false,
+                                    'explanation' => 'Keine Beiträge aufgezeichnet.',
+                                ];
+                                $autoScored[$elId] = 0;
+
+                                continue;
+                            }
+
+                            $speakingText = '';
+                            foreach ($history as $turn) {
+                                $speakingText .= "{$turn['role']}: {$turn['text']}\n";
+                            }
+
+                            try {
+                                $level = $record->level ?? 'C1';
+                                $provider = $record->exam_provider ?? 'telc';
+                                $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                                    ->withSystemInstruction(
+                                        Content::parse(
+                                            "Du bist ein offizieller {$provider} {$level} Prüfer für die mündliche Prüfung. "
+                                            ."Bewerte das vorliegende Sprechprotokoll. Gib eine exakte Punktzahl von 0 bis {$maxPoints} Punkten zurück."
+                                        )
+                                    );
+                                $resp = $model->generateContent(
+                                    "Sprechprotokoll:\n{$speakingText}\n\n"
+                                    ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                                );
+                                $feedback = $resp->text();
+                                $score = 0;
+                                preg_match('/SCORE:\s*(\d+)/i', $feedback, $matches);
+                                if (isset($matches[1])) {
+                                    $score = (int) $matches[1];
+                                }
+                            } catch (\Throwable $e) {
+                                $score = (int) ($maxPoints / 2);
+                                $feedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
+                            }
+
+                            $speakingDetails[] = [
+                                'id' => $elId,
+                                'label' => 'Mündliche Prüfung — '.$element['label'],
+                                'given' => $history,
+                                'expected' => 'Gemini AI Graded',
+                                'points' => $score,
+                                'max_points' => $maxPoints,
+                                'correct' => $score >= (int) ceil($maxPoints * 0.6),
+                                'explanation' => $feedback,
+                            ];
+                            $autoScored[$elId] = $score;
+                        }
+
+                        $spGlobalEl = collect((array) ($currentSection['elements'] ?? []))->first(fn ($el) => str_ends_with((string) ($el['id'] ?? ''), '-SP-GLOBAL') || str_ends_with((string) ($el['id'] ?? ''), '-SP-global'));
+                        if ($spGlobalEl) {
+                            $sum = array_sum($autoScored);
+                            $maxGlobal = (int) ($spGlobalEl['points'] ?? 24);
+                            $speakingDetails[] = [
+                                'id' => $spGlobalEl['id'],
+                                'label' => 'Mündliche Prüfung — '.$spGlobalEl['label'],
+                                'given' => [],
+                                'expected' => 'Gemini AI Graded',
+                                'points' => $sum,
+                                'max_points' => $maxGlobal,
+                                'correct' => $sum >= (int) ceil($maxGlobal * 0.6),
+                                'explanation' => 'Automatisch summiert aus den Teilbewertungen.',
+                            ];
+                        }
+
+                        $result['details'] = array_merge($result['details'], $writingDetails, $speakingDetails);
+
+                        $totalPoints = 0;
+                        $earnedPoints = 0;
+                        foreach ($result['details'] as $detail) {
+                            $totalPoints += (int) ($detail['max_points'] ?? 0);
+                            $earnedPoints += (int) ($detail['points'] ?? 0);
+                        }
+                        $result['total_points'] = $totalPoints;
+                        $result['points'] = $earnedPoints;
+                        $result['passed'] = $totalPoints > 0 ? ($earnedPoints / $totalPoints >= 0.6) : false;
+
+                        // Set up properties for explainer
+                        $this->selectedTemplateId = $templateId;
+                        $this->loadTemplateData($record);
+                        $this->answers = $answers;
+                        $this->result = $result;
+                        $this->enrichExplanations();
+
+                        // Create attempt
+                        $attempt = ExamAttempt::create([
+                            'exam_template_id' => $templateId,
+                            'user_id' => Auth::id(),
+                            'answers' => $this->answers,
+                            'result' => $this->result,
+                            'started_at' => now(),
+                            'submitted_at' => now(),
+                        ]);
+
+                        // View it
+                        $this->viewAttempt($attempt->id);
+
+                        return;
+                    }
+                }
+            }
+        }
+
         if (request()->query('start_exam')) {
             $this->startOrResumeExam((int) request()->query('start_exam'));
         }
@@ -199,6 +402,46 @@ class StudentExam extends Component
             ->toArray();
 
         $index = array_search($record->id, $all);
+
+        if (Auth::check()) {
+            // Find what free exam levels this user has completed
+            $completedFreeLevels = ExamAttempt::query()
+                ->where('user_id', Auth::id())
+                ->get()
+                ->filter(function ($attempt) {
+                    $template = $attempt->examTemplate;
+                    if (! $template) {
+                        return false;
+                    }
+
+                    // Check if this template is the first exam (index 0)
+                    $allTemplates = ExamTemplate::query()
+                        ->where('is_published', true)
+                        ->where('exam_provider', $template->exam_provider)
+                        ->where('level', $template->level)
+                        ->orderBy('id')
+                        ->pluck('id')
+                        ->toArray();
+
+                    return array_search($template->id, $allTemplates) === 0;
+                })
+                ->map(fn ($attempt) => $attempt->examTemplate->level)
+                ->unique()
+                ->toArray();
+
+            if ($index === 0) {
+                return ['is_free' => true, 'free_sections' => count($record->sections ?? [])];
+            }
+
+            if ($index === 1) {
+                if (! empty($completedFreeLevels)) {
+                    return ['is_free' => true, 'free_sections' => 2];
+                }
+            }
+
+            return ['is_free' => false, 'free_sections' => 0];
+        }
+
         if ($index === 0) {
             $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
 
@@ -236,7 +479,7 @@ class StudentExam extends Component
                 ]);
 
             $record = ExamTemplate::findOrFail($this->selectedTemplateId);
-            $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
+            $this->loadTemplateData($record);
             $this->answers = [];
             $this->result = null;
             $this->speakingFeedback = [];
@@ -269,7 +512,7 @@ class StudentExam extends Component
         abort_unless($this->isEnrolled($record->id), 403);
 
         $this->selectedTemplateId = $record->id;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
+        $this->loadTemplateData($record);
         $this->answers = [];
         $this->result = null;
         $this->speakingFeedback = [];
@@ -327,7 +570,7 @@ class StudentExam extends Component
 
         $this->selectedTemplateId = $templateId;
         $record = $enrollment->examTemplate;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
+        $this->loadTemplateData($record);
 
         if ($enrollment->active_answers !== null) {
             // Resume previous session
@@ -339,7 +582,8 @@ class StudentExam extends Component
             $this->unchosenTopic = $stored['_unchosenTopic'] ?? '';
             $this->aiGeneratedTopics = $stored['_aiGeneratedTopics'] ?? [];
             $this->completedSectionIds = $stored['_completed_sections'] ?? [];
-            $this->activeSection = min($enrollment->active_section, ! empty($this->template['is_free']) ? 2 : 999);
+            $status = $this->getTemplateFreeStatus($record);
+            $this->activeSection = min($enrollment->active_section, $status['is_free'] ? ($status['free_sections'] - 1) : 999);
             $this->remainingSeconds = $enrollment->remaining_seconds ?? 0;
             $this->started = $this->remainingSeconds > 0;
 
@@ -385,7 +629,7 @@ class StudentExam extends Component
 
         $this->selectedTemplateId = $attempt->exam_template_id;
         $record = $attempt->examTemplate;
-        $this->template = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
+        $this->loadTemplateData($record);
         $stored = $attempt->answers;
         $this->answers = array_filter((array) $stored, fn ($key) => ! str_starts_with((string) $key, '_'), ARRAY_FILTER_USE_KEY);
         $this->selectedTopic = $stored['_selectedTopic'] ?? '';
@@ -562,6 +806,14 @@ class StudentExam extends Component
         $this->started = false;
 
         $sections = $this->template['sections'] ?? [];
+        
+        $isLastSection = ($this->activeSection === count($sections) - 1);
+        if ($isLastSection) {
+            $this->submit();
+
+            return;
+        }
+
         $currentSection = $sections[$this->activeSection] ?? null;
 
         if (! $currentSection) {
@@ -1420,30 +1672,20 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
     private function calculateFinalResult(array $result): array
     {
         $writtenEarned = 0;
-        $oralEarned = 0;
         $possible = 0;
 
         foreach ($result['details'] as $detail) {
-            $possible += $detail['max_points'];
-            if (str_contains($detail['id'], '-SP-')) {
-                $oralEarned += $detail['points'];
-            } else {
-                $writtenEarned += $detail['points'];
+            if (str_contains($detail['id'], '-SP-') || str_contains(strtolower($detail['id']), '-sp-')) {
+                continue; // Do not count speaking marks in total paper format exam
             }
+            $possible += $detail['max_points'];
+            $writtenEarned += $detail['points'];
         }
 
-        $earned = $writtenEarned + $oralEarned;
+        $earned = $writtenEarned;
 
-        /** @var array<int, array<string, mixed>> $details */
-        $details = $result['details'];
-        $oralMax = collect($details)->filter(fn ($d) => str_contains((string) ($d['id'] ?? ''), '-SP-'))->sum('max_points');
-        $writtenMax = $possible - $oralMax;
-
-        $passedWritten = $writtenMax > 0 ? ($writtenEarned / $writtenMax) >= 0.6 : true;
-        $passedOral = $oralMax > 0 ? ($oralEarned / $oralMax) >= 0.6 : true;
-        $passed = $possible > 0
-            ? ($earned / $possible) >= 0.6 && $passedWritten && $passedOral
-            : false;
+        $passedWritten = $possible > 0 ? ($writtenEarned / $possible) >= 0.6 : true;
+        $passed = $possible > 0 ? $passedWritten : false;
 
         $grade = 'Nicht bestanden';
         if ($passed) {
@@ -1463,9 +1705,9 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
         $result['possible'] = $possible;
         $result['percentage'] = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0;
         $result['written_earned'] = $writtenEarned;
-        $result['written_max'] = $writtenMax;
-        $result['oral_earned'] = $oralEarned;
-        $result['oral_max'] = $oralMax;
+        $result['written_max'] = $possible;
+        $result['oral_earned'] = 0;
+        $result['oral_max'] = 0;
         $result['passed'] = $passed;
         $result['grade'] = $grade;
 
@@ -1485,6 +1727,18 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
         }
 
         return $this->isFullyEnrolled($templateId);
+    }
+
+    private function loadTemplateData(ExamTemplate $record): void
+    {
+        $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
+        $status = $this->getTemplateFreeStatus($record);
+        if ($status['is_free']) {
+            $data['sections'] = collect($data['sections'] ?? [])->filter(function ($section) {
+                return ! collect($section['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
+            })->values()->all();
+        }
+        $this->template = $data;
     }
 
     private function ensurePresets(): void

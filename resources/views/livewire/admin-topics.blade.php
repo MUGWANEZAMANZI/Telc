@@ -26,6 +26,13 @@
                         <option value="C1">C1</option>
                     </select>
                 </div>
+                <div style="min-width: 100px;">
+                    <label style="font-size: 0.8rem; color: #6b7280; font-weight: 600; display: block; margin-bottom: 0.25rem;">Anbieter</label>
+                    <select wire:model="newTopicProvider" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #d9dde5; border-radius: 6px; font-size: 0.9rem; background: #fff;">
+                        <option value="telc">telc</option>
+                        <option value="goethe">Goethe</option>
+                    </select>
+                </div>
                 <div style="padding-top: 1.25rem;">
                     <button type="button" wire:click="createTopic" style="background: #d8232a; color: #fff; border: none; padding: 0.6rem 1.25rem; border-radius: 6px; font-weight: 700; font-size: 0.9rem; cursor: pointer;">Hinzufügen</button>
                 </div>
@@ -39,6 +46,7 @@
                     <tr style="background: #fafafa; border-bottom: 2px solid #edf0f4;">
                         <th style="padding: 0.75rem;">Thema</th>
                         <th style="padding: 0.75rem; width: 80px;">Niveau</th>
+                        <th style="padding: 0.75rem; width: 100px;">Anbieter</th>
                         <th style="padding: 0.75rem; width: 80px;">Aktiv</th>
                         <th style="padding: 0.75rem; width: 160px;">Aktionen</th>
                     </tr>
@@ -60,6 +68,12 @@
                                         <option value="C1">C1</option>
                                     </select>
                                 </td>
+                                <td style="padding: 0.5rem 0.75rem;">
+                                    <select wire:model="editTopicProvider" style="padding: 0.4rem 0.5rem; border: 1px solid #d9dde5; border-radius: 4px; font-size: 0.85rem; background: #fff;">
+                                        <option value="telc">telc</option>
+                                        <option value="goethe">Goethe</option>
+                                    </select>
+                                </td>
                                 <td style="padding: 0.5rem 0.75rem;">{{ $topic->is_active ? '✅' : '❌' }}</td>
                                 <td style="padding: 0.5rem 0.75rem;">
                                     <button type="button" wire:click="saveEdit" style="background: #137333; color: #fff; border: none; padding: 0.35rem 0.75rem; border-radius: 4px; font-weight: 600; font-size: 0.8rem; cursor: pointer; margin-right: 0.25rem;">Speichern</button>
@@ -69,6 +83,9 @@
                                 <td style="padding: 0.75rem; font-weight: 600;">{{ $topic->title }}</td>
                                 <td style="padding: 0.75rem;">
                                     <span style="display: inline-block; padding: 0.15rem 0.4rem; background: #f3f4f6; border-radius: 4px; font-size: 0.8rem; font-weight: 700;">{{ $topic->level }}</span>
+                                </td>
+                                <td style="padding: 0.75rem;">
+                                    <span style="display: inline-block; padding: 0.15rem 0.4rem; background: #f3f4f6; border-radius: 4px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">{{ $topic->exam_provider ?? 'telc' }}</span>
                                 </td>
                                 <td style="padding: 0.75rem;">
                                     <button type="button" wire:click="toggleActive({{ $topic->id }})" style="background: none; border: none; cursor: pointer; font-size: 1.1rem;">{{ $topic->is_active ? '✅' : '❌' }}</button>
@@ -81,7 +98,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" style="padding: 1.5rem; text-align: center; color: #666666; font-style: italic;">Keine Themen vorhanden. Erstellen Sie oben das erste Thema.</td>
+                            <td colspan="5" style="padding: 1.5rem; text-align: center; color: #666666; font-style: italic;">Keine Themen vorhanden. Erstellen Sie oben das erste Thema.</td>
                         </tr>
                     @endforelse
                 </tbody>

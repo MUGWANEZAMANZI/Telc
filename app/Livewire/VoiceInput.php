@@ -25,8 +25,77 @@ class VoiceInput extends Component
 
     public bool $evaluating = false;
 
+    public string $selectedProvider = 'telc';
+
+    public string $selectedLevel = 'B1';
+
+    public function mount(): void
+    {
+        if (VoiceTopic::count() === 0) {
+            $defaults = [
+                ['title' => 'Vorteile und Nachteile von Social Media (Goethe B1)', 'level' => 'B1', 'exam_provider' => 'goethe'],
+                ['title' => 'Reisen bildet — Stimmt das? (telc B1)', 'level' => 'B1', 'exam_provider' => 'telc'],
+                ['title' => 'Homeoffice: Flexibilität vs. Isolation (Goethe B2)', 'level' => 'B2', 'exam_provider' => 'goethe'],
+                ['title' => 'Umweltschutz im Alltag (telc B2)', 'level' => 'B2', 'exam_provider' => 'telc'],
+                ['title' => 'Die Rolle der künstlichen Intelligenz in der Zukunft (Goethe C1)', 'level' => 'C1', 'exam_provider' => 'goethe'],
+                ['title' => 'Bedeutung des lebenslangen Lernens (telc C1)', 'level' => 'C1', 'exam_provider' => 'telc'],
+            ];
+            foreach ($defaults as $d) {
+                VoiceTopic::create($d + ['is_active' => true]);
+            }
+        }
+        $this->selectFirstTopic();
+    }
+
+    public function updatedSelectedProvider(): void
+    {
+        $this->selectFirstTopic();
+    }
+
+    public function updatedSelectedLevel(): void
+    {
+        $this->selectFirstTopic();
+    }
+
+    private function selectFirstTopic(): void
+    {
+        $first = VoiceTopic::query()
+            ->where('is_active', true)
+            ->where('exam_provider', $this->selectedProvider)
+            ->where('level', $this->selectedLevel)
+            ->orderBy('title')
+            ->first();
+
+        $this->selectedTopic = $first ? $first->title : '';
+        
+        $this->dispatch('topic-changed', topic: $this->selectedTopic);
+    }
+
+    public function hasActiveSubscription(): bool
+    {
+        if (! auth()->check()) {
+            return false;
+        }
+
+        return \App\Models\Subscription::query()
+            ->where('user_id', auth()->id())
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
+            })
+            ->exists();
+    }
+
     public function evaluateSpeech(): void
     {
+        if (!$this->hasActiveSubscription() && !auth()->user()?->isAdmin()) {
+            $count = session('speaking_practice_count', 0);
+            if ($count >= 2) {
+                $this->addError('speaking_limit', 'Sie haben Ihre 2 kostenlosen Sprechübungen aufgebraucht. Bitte abonnieren Sie ein Paket.');
+                return;
+            }
+        }
+
         $text = trim($this->transcribedText);
         if (empty($text)) {
             return;
@@ -50,8 +119,8 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$this->maxPoints.'" an.';
 
         try {
             $topicModel = VoiceTopic::query()->where('title', $this->selectedTopic)->first();
-            $level = $topicModel ? $topicModel->level : 'C1';
-            $provider = str_contains(strtolower($this->selectedTopic), 'goethe') ? 'goethe' : 'telc';
+            $level = $topicModel ? $topicModel->level : $this->selectedLevel;
+            $provider = $topicModel ? ($topicModel->exam_provider ?: 'telc') : $this->selectedProvider;
             $systemInstruction = SpeakingPromptService::getSystemInstruction($provider, $level);
 
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
@@ -70,6 +139,10 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$this->maxPoints.'" an.';
                 $this->score = (int) $matches[1];
             }
             $this->evaluated = true;
+
+            if (!$this->hasActiveSubscription() && !auth()->user()?->isAdmin()) {
+                session(['speaking_practice_count' => session('speaking_practice_count', 0) + 1]);
+            }
         } catch (\Throwable $e) {
             $this->aiFeedback = 'Fehler bei der Bewertung: '.$e->getMessage();
             $this->score = 0;
@@ -84,7 +157,8 @@ Gib am Ende die Gesamtpunktzahl im Format "SCORE: X/'.$this->maxPoints.'" an.';
         return view('livewire.voice-input', [
             'topics' => VoiceTopic::query()
                 ->where('is_active', true)
-                ->orderBy('level')
+                ->where('exam_provider', $this->selectedProvider)
+                ->where('level', $this->selectedLevel)
                 ->orderBy('title')
                 ->get(),
         ]);

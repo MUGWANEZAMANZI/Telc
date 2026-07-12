@@ -13,11 +13,15 @@ class AdminTopics extends Component
 
     public string $newTopicLevel = 'C1';
 
+    public string $newTopicProvider = 'telc';
+
     public ?int $editingTopicId = null;
 
     public string $editTopicTitle = '';
 
     public string $editTopicLevel = 'C1';
+
+    public string $editTopicProvider = 'telc';
 
     public function mount(): void
     {
@@ -36,15 +40,18 @@ class AdminTopics extends Component
         $this->validate([
             'newTopicTitle' => ['required', 'string', 'max:500'],
             'newTopicLevel' => ['required', 'string', 'max:8'],
+            'newTopicProvider' => ['required', 'string', 'in:telc,goethe'],
         ]);
 
         VoiceTopic::create([
             'title' => $this->newTopicTitle,
             'level' => $this->newTopicLevel,
+            'exam_provider' => $this->newTopicProvider,
         ]);
 
         $this->newTopicTitle = '';
         $this->newTopicLevel = 'C1';
+        $this->newTopicProvider = 'telc';
         $this->dispatch('topics-saved');
     }
 
@@ -54,6 +61,7 @@ class AdminTopics extends Component
         $this->editingTopicId = $topic->id;
         $this->editTopicTitle = $topic->title;
         $this->editTopicLevel = $topic->level;
+        $this->editTopicProvider = $topic->exam_provider ?: 'telc';
     }
 
     public function saveEdit(): void
@@ -61,11 +69,13 @@ class AdminTopics extends Component
         $this->validate([
             'editTopicTitle' => ['required', 'string', 'max:500'],
             'editTopicLevel' => ['required', 'string', 'max:8'],
+            'editTopicProvider' => ['required', 'string', 'in:telc,goethe'],
         ]);
 
         VoiceTopic::findOrFail($this->editingTopicId)->update([
             'title' => $this->editTopicTitle,
             'level' => $this->editTopicLevel,
+            'exam_provider' => $this->editTopicProvider,
         ]);
 
         $this->cancelEdit();
@@ -77,6 +87,7 @@ class AdminTopics extends Component
         $this->editingTopicId = null;
         $this->editTopicTitle = '';
         $this->editTopicLevel = 'C1';
+        $this->editTopicProvider = 'telc';
     }
 
     public function toggleActive(int $id): void

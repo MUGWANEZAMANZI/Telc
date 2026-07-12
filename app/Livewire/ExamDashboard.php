@@ -243,7 +243,7 @@ class ExamDashboard extends Component
     public function addElement(int $sectionIndex, string $type): void
     {
         $defaultOptions = match ($type) {
-            'multiple_choice', 'true_false' => 'a,b,c',
+            'multiple_choice', 'true_false' => 'a,b,c,d',
             'inline_gap' => '[]',
             default => '',
         };
@@ -283,6 +283,8 @@ class ExamDashboard extends Component
     {
         $this->validate([
             'audioUpload' => ['required', 'file', 'mimes:mp3,wav,ogg,m4a', 'max:102400'],
+        ], [
+            'audioUpload.required' => 'Bitte wählen Sie zuerst eine Audio-Datei aus.',
         ]);
 
         $path = $this->audioUpload->store('', 'exam-audio');
@@ -306,7 +308,7 @@ class ExamDashboard extends Component
             } else {
                 $updated[$id] = [
                     'type' => 'dropdown',
-                    'options' => 'a:,b:,c:',
+                    'options' => 'a:,b:,c:,d:',
                     'answer' => '',
                 ];
             }

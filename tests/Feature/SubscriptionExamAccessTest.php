@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\StudentExam;
+use App\Models\ExamAttempt;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
 use App\Models\Plan;
@@ -128,6 +129,16 @@ test('non-subscribed users get locked after completing two sections in their sec
     $status1 = Livewire::test(StudentExam::class)->instance()->getTemplateFreeStatus($t1);
     expect($status1['is_free'])->toBeTrue();
     expect($status1['free_sections'])->toBeGreaterThanOrEqual(3);
+
+    // Complete first exam to unlock the second exam's 2 sections
+    ExamAttempt::create([
+        'exam_template_id' => $t1->id,
+        'user_id' => $student->id,
+        'answers' => [],
+        'result' => ['points' => 10, 'total_points' => 10, 'passed' => true, 'details' => []],
+        'started_at' => now(),
+        'submitted_at' => now(),
+    ]);
 
     // Verify second exam gets only 2 free sections limit
     $status2 = Livewire::test(StudentExam::class)->instance()->getTemplateFreeStatus($t2);

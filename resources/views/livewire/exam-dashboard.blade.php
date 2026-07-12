@@ -189,7 +189,10 @@
                                                 <label>Audio file</label>
                                                 <div class="telc-audio-upload">
                                                     <input type="file" wire:model.live="audioUpload" accept="audio/*">
-                                                    <button type="button" wire:click="uploadAudio({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-button primary">Upload</button>
+                                                    <button type="button" wire:click="uploadAudio({{ $sectionIndex }}, {{ $elementIndex }})" wire:loading.attr="disabled" class="telc-button primary">
+                                                        <span wire:loading.remove>Upload</span>
+                                                        <span wire:loading>Uploading...</span>
+                                                    </button>
                                                     @error('audioUpload') <span class="telc-error">{{ $message }}</span> @enderror
                                                     @if (! empty($element['content']))
                                                         <audio controls src="{{ $element['content'] }}" class="telc-audio-preview"></audio>

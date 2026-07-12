@@ -180,6 +180,31 @@
         </div>
     @endif
 
+    @if ($showLoginPrompt)
+        <div class="fixed inset-0 z-[1050] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 transition-all duration-300">
+            <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-2xl max-w-md w-full shadow-2xl relative text-center overflow-hidden animate-[slideUp_0.3s_ease-out]">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#d8232a] via-yellow-500 to-[#d8232a]"></div>
+                <div class="w-16 h-16 bg-[#d8232a]/10 border border-[#d8232a]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-[#d8232a]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-zinc-100 font-serif mb-4">Ergebnisse anzeigen und speichern</h2>
+                <p class="text-zinc-400 text-sm leading-relaxed mb-8">
+                    Bitte loggen Sie sich ein oder registrieren Sie sich, um Ihre Testergebnisse zu sehen und dauerhaft in Ihrem Profil zu speichern.
+                </p>
+                <div class="flex flex-col gap-3">
+                    <a href="{{ route('register') }}" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-lg bg-[#d8232a] text-white hover:bg-[#c11f25] transition duration-150 ease-in-out uppercase tracking-wide">
+                        Konto erstellen
+                    </a>
+                    <a href="{{ route('login') }}" class="w-full inline-flex items-center justify-center px-6 py-3 border border-zinc-700 text-sm font-semibold rounded-lg text-zinc-300 hover:bg-zinc-800 transition duration-150 ease-in-out uppercase tracking-wide">
+                        Einloggen
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if ($hasReachedLimit && $activeSectionIndex === null)
         {{-- Limit reached --}}
         <div class="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
