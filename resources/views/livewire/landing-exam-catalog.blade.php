@@ -1,8 +1,8 @@
 <div class="space-y-6 scroll-mt-24" id="exam-catalog">
     <div class="text-center space-y-2">
         <span class="text-xs font-bold uppercase tracking-widest text-red-600">Prüfungskatalog</span>
-        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight uppercase">
-            Wähle deine <span class="text-yellow-600">Prüfung</span>
+        <h2 class="text-3xl md:text-3xl font-extrabold tracking-tight uppercase">
+            Bestehe deine TELC oder Goethe <span class="text-yellow-600">Prüfung beim erstenVersuch</span>
         </h2>
         <p class="text-stone-600 max-w-xl mx-auto text-sm md:text-base">
             Bereite dich auf telc- und Goethe-Zertifikate vor – kostenlos oder mit vollem Zugang.

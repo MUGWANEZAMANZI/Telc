@@ -1405,7 +1405,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
 
         return match ($element['type'] ?? '') {
             'true_false' => ['+', '-'],
-            'multiple_choice' => ['a', 'b', 'c'],
+            'multiple_choice' => ['a', 'b', 'c', 'd'],
             'matching' => range('a', 'j'),
             default => [],
         };

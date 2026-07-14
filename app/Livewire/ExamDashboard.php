@@ -417,7 +417,7 @@ class ExamDashboard extends Component
 
         return match ($element['type'] ?? '') {
             'true_false' => ['+', '-'],
-            'multiple_choice' => ['a', 'b', 'c'],
+            'multiple_choice' => ['a', 'b', 'c', 'd'],
             'matching' => range('a', 'j'),
             default => [],
         };

@@ -233,6 +233,7 @@ class GuestExam extends Component
 
         $status = $this->getTemplateFreeStatus($record);
         $limit = $status['free_sections'];
+
         $completed = count($this->completedSectionIds);
 
         $this->freeSectionLimit = $limit;
@@ -443,23 +444,68 @@ class GuestExam extends Component
         $isLastSectionOfTemplate = ($this->activeSectionIndex === count($sections) - 1);
         $reachesFreeLimit = (count($tempCompleted) >= $this->freeSectionLimit);
 
-        if ($isLastSectionOfTemplate || $reachesFreeLimit) {
-            $this->started = false;
+        $level = strtoupper($this->template['level'] ?? '');
+        $isB1B2C1 = in_array($level, ['B1', 'B2', 'C1'], true);
 
-            // Save to session
-            session([
-                'guest_pending_attempt' => [
-                    'template_id' => $this->selectedTemplateId,
-                    'active_section' => $this->activeSectionIndex,
+        if ($isB1B2C1) {
+            if ($isLastSectionOfTemplate) {
+                $this->started = false;
+                $this->result = app(ExamGrader::class)->grade($sections, $this->answers);
+                $this->enrichExplanations();
+
+                $this->completedSectionIds = [];
+                $this->noRetrySectionIds = [];
+                $this->saveCompletedToCookie();
+                $this->saveNoRetryToCookie();
+
+                ExamAttempt::create([
+                    'exam_template_id' => $this->selectedTemplateId,
+                    'user_id' => null,
                     'answers' => $this->answers,
-                    'completed_sections' => array_unique(array_merge($this->completedSectionIds, [$sectionId])),
-                    'no_retry_sections' => array_unique(array_merge($this->noRetrySectionIds, [$sectionId])),
-                ],
-            ]);
+                    'result' => $this->result,
+                    'started_at' => now(),
+                    'submitted_at' => now(),
+                ]);
 
-            $this->showLoginPrompt = true;
+                return;
+            }
 
-            return;
+            if ($reachesFreeLimit) {
+                $this->started = false;
+
+                session([
+                    'guest_pending_attempt' => [
+                        'template_id' => $this->selectedTemplateId,
+                        'active_section' => $this->activeSectionIndex,
+                        'answers' => $this->answers,
+                        'completed_sections' => array_unique(array_merge($this->completedSectionIds, [$sectionId])),
+                        'no_retry_sections' => array_unique(array_merge($this->noRetrySectionIds, [$sectionId])),
+                    ],
+                ]);
+
+                $this->showLoginPrompt = true;
+
+                return;
+            }
+        } else {
+            if ($isLastSectionOfTemplate || $reachesFreeLimit) {
+                $this->started = false;
+
+                // Save to session
+                session([
+                    'guest_pending_attempt' => [
+                        'template_id' => $this->selectedTemplateId,
+                        'active_section' => $this->activeSectionIndex,
+                        'answers' => $this->answers,
+                        'completed_sections' => array_unique(array_merge($this->completedSectionIds, [$sectionId])),
+                        'no_retry_sections' => array_unique(array_merge($this->noRetrySectionIds, [$sectionId])),
+                    ],
+                ]);
+
+                $this->showLoginPrompt = true;
+
+                return;
+            }
         }
 
         $this->started = false;
@@ -561,7 +607,7 @@ class GuestExam extends Component
 
         return match ($element['type'] ?? '') {
             'true_false' => ['+', '-'],
-            'multiple_choice' => ['a', 'b', 'c'],
+            'multiple_choice' => ['a', 'b', 'c', 'd'],
             'matching' => range('a', 'j'),
             default => [],
         };

@@ -241,7 +241,7 @@
                                                              @foreach ($gKeys as $gKey)
                                                                  @php
                                                                      $gapIdx = (int) $gKey;
-                                                                     $cur = $gapData[$gapIdx] ?? ['options' => 'a|Option A,b|Option B,c|Option C', 'answer' => 'a'];
+                                                                     $cur = $gapData[$gapIdx] ?? ['options' => 'a|Option A,b|Option B,c|Option C,d|Option D', 'answer' => 'a'];
                                                                      // Parse options list
                                                                      $parts = explode(',', $cur['options']);
                                                                      $optList = [];
@@ -253,15 +253,15 @@
                                                                  <div style="margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #e5e7eb; font-size: 0.85rem;" wire:key="inline-gap-{{ $sectionIndex }}-{{ $elementIndex }}-{{ $gapIdx }}">
                                                                      <strong style="color: #6366f1; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Gap #{{ $gapIdx }}</strong>
                                                                      
-                                                                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
-                                                                         @foreach (['a', 'b', 'c'] as $letter)
+                                                                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
+                                                                         @foreach (['a', 'b', 'c', 'd'] as $letter)
                                                                              <div>
                                                                                  <label style="font-size: 0.7rem; color: #4b5563; display: block; text-transform: uppercase; font-weight: 600; margin-bottom: 0.2rem;">Option {{ $letter }}</label>
                                                                                  <input type="text" 
                                                                                         value="{{ $optList[$letter] ?? '' }}" 
                                                                                         x-on:input="
                                                                                             let arr = JSON.parse($wire.get('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options') || '[]');
-                                                                                            if (!arr[{{ $gapIdx }}]) arr[{{ $gapIdx }}] = {options: 'a|,b|,c|', answer: 'a'};
+                                                                                            if (!arr[{{ $gapIdx }}]) arr[{{ $gapIdx }}] = {options: 'a|,b|,c|,d|', answer: 'a'};
                                                                                             let opts = (arr[{{ $gapIdx }}].options || '').split(',').map(o => o.split('|'));
                                                                                             let match = opts.find(o => o[0] === '{{ $letter }}');
                                                                                             if (match) match[1] = $event.target.value;
@@ -273,7 +273,7 @@
                                                                                  <button type="button" 
                                                                                          x-on:click="
                                                                                             let arr = JSON.parse($wire.get('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options') || '[]');
-                                                                                            if (!arr[{{ $gapIdx }}]) arr[{{ $gapIdx }}] = {options: 'a|,b|,c|', answer: 'a'};
+                                                                                            if (!arr[{{ $gapIdx }}]) arr[{{ $gapIdx }}] = {options: 'a|,b|,c|,d|', answer: 'a'};
                                                                                             arr[{{ $gapIdx }}].answer = '{{ $letter }}';
                                                                                             $wire.set('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options', JSON.stringify(arr));
                                                                                          "
