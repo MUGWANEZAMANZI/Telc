@@ -25,7 +25,7 @@
                     transform: scale(1);
                 }
                 50% {
-                    transform: scale(1.5);
+                    transform: scale(1.1);
                 }
             }
             .animate-book-pulse {
