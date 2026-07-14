@@ -3,7 +3,6 @@
 use App\Livewire\GuestExam;
 use App\Models\ExamAttempt;
 use App\Models\ExamTemplate;
-use App\Models\Setting;
 use Livewire\Livewire;
 
 test('guest users can access the free exam page without being logged in', function () {

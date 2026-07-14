@@ -1,7 +1,6 @@
 <?php
 
 use App\Livewire\StudentExam;
-use App\Models\ExamAttempt;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
 use App\Models\Plan;

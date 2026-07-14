@@ -6,7 +6,6 @@ use App\Models\ContactRequest;
 use App\Models\ExamAttempt;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
-use App\Models\Setting;
 use App\Models\User;
 use App\Services\ExamGrader;
 use App\Services\TelcTemplateFactory;

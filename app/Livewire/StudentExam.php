@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\ExamAttempt;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
-use App\Models\Setting;
 use App\Models\Subscription;
 use App\Services\AnswerExplainer;
 use App\Services\ExamGrader;
