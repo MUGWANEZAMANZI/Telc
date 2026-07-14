@@ -39,25 +39,13 @@ class LandingExamCatalog extends Component
     {
         $exam = ExamTemplate::findOrFail($examId);
 
-        // Find index of this exam to see if it is free/partially free
-        $all = ExamTemplate::where('is_published', true)
-            ->where('exam_provider', $exam->exam_provider)
-            ->where('level', $exam->level)
-            ->orderBy('id')
-            ->pluck('id')
-            ->toArray();
-
-        $index = array_search($exam->id, $all);
-
-        if ($index === 0 || $index === 1) {
-            // Free or partially free
+        if ($exam->is_free) {
             if (Auth::check()) {
                 $this->redirect(route('dashboard').'?start_exam='.$exam->id);
             } else {
                 $this->redirect(route('free.exam', ['templateId' => $exam->id]));
             }
         } else {
-            // Paid
             if (Auth::check()) {
                 session()->flash('trigger-enroll', $exam->id);
                 $this->redirect(route('dashboard'));
@@ -93,21 +81,13 @@ class LandingExamCatalog extends Component
         $freeExams = collect();
         $paidExams = collect();
 
-        foreach ($allExams as $index => $exam) {
-            if ($index === 0) {
-                // First exam: 100% Free
+        foreach ($allExams as $exam) {
+            if ($exam->is_free) {
                 $exam->price_label = 'KOSTENLOS';
                 $exam->is_partially_free = false;
                 $exam->is_actually_free = true;
                 $freeExams->push($exam);
-            } elseif ($index === 1) {
-                // Second exam: 2 sections free
-                $exam->price_label = '2 TEILE KOSTENLOS';
-                $exam->is_partially_free = true;
-                $exam->is_actually_free = true;
-                $freeExams->push($exam);
             } else {
-                // Paid
                 $exam->price_label = '€'.number_format($exam->price ?: 5.00, 2);
                 $exam->is_partially_free = false;
                 $exam->is_actually_free = false;

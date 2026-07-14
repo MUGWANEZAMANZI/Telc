@@ -90,14 +90,14 @@ test('it returns correct dynamic speaking prompts based on provider and level', 
     expect($c1Telc)->toContain('Die Ökonomisierung des Gesundheitssystems');
 });
 
-test('non-subscribed users get locked after completing two sections in their second free exam', function () {
+test('non-subscribed users can access free exams but non-free exams require payment', function () {
     ExamTemplate::query()->delete();
-    // Create first template of a level (completely free)
-    $t1 = ExamTemplate::create([
-        'title' => 'First Free B1 Exam',
+    $freeTemplate = ExamTemplate::create([
+        'title' => 'Free B1 Exam',
         'level' => 'B1',
         'exam_provider' => 'telc',
         'is_published' => true,
+        'is_free' => true,
         'theme' => [],
         'timings' => [],
         'sections' => [
@@ -107,52 +107,28 @@ test('non-subscribed users get locked after completing two sections in their sec
         ],
     ]);
 
-    // Create second template of the same level (only 2 free sections allowed)
-    $t2 = ExamTemplate::create([
-        'title' => 'Second Free B1 Exam',
+    $paidTemplate = ExamTemplate::create([
+        'title' => 'Paid B1 Exam',
         'level' => 'B1',
         'exam_provider' => 'telc',
         'is_published' => true,
+        'is_free' => false,
         'theme' => [],
         'timings' => [],
         'sections' => [
             ['id' => 'secA', 'title' => 'Section A', 'minutes' => 15, 'elements' => []],
             ['id' => 'secB', 'title' => 'Section B', 'minutes' => 15, 'elements' => []],
-            ['id' => 'secC', 'title' => 'Section C', 'minutes' => 15, 'elements' => []],
         ],
     ]);
 
     $student = User::factory()->create(['role' => 'student']);
     $this->actingAs($student);
 
-    // Verify first exam is fully free
-    $status1 = Livewire::test(StudentExam::class)->instance()->getTemplateFreeStatus($t1);
+    $status1 = Livewire::test(StudentExam::class)->instance()->getTemplateFreeStatus($freeTemplate);
     expect($status1['is_free'])->toBeTrue();
-    expect($status1['free_sections'])->toBeGreaterThanOrEqual(3);
+    expect($status1['free_sections'])->toBe(3);
 
-    // Complete first exam to unlock the second exam's 2 sections
-    ExamAttempt::create([
-        'exam_template_id' => $t1->id,
-        'user_id' => $student->id,
-        'answers' => [],
-        'result' => ['points' => 10, 'total_points' => 10, 'passed' => true, 'details' => []],
-        'started_at' => now(),
-        'submitted_at' => now(),
-    ]);
-
-    // Verify second exam gets only 2 free sections limit
-    $status2 = Livewire::test(StudentExam::class)->instance()->getTemplateFreeStatus($t2);
-    expect($status2['is_free'])->toBeTrue();
-    expect($status2['free_sections'])->toBe(2);
-
-    // Let's take the second exam and submit two sections
-    $comp = Livewire::test(StudentExam::class)
-        ->call('startOrResumeExam', $t2->id)
-        ->set('activeSection', 0)
-        ->call('submitSection')
-        ->set('activeSection', 1)
-        ->call('submitSection');
-
-    // Assert that limit reached flag is stored, which triggers lock in view
-    expect($comp->get('answers')['_locked_limit_reached'] ?? false)->toBeTrue();
+    $status2 = Livewire::test(StudentExam::class)->instance()->getTemplateFreeStatus($paidTemplate);
+    expect($status2['is_free'])->toBeFalse();
+    expect($status2['free_sections'])->toBe(0);
 });

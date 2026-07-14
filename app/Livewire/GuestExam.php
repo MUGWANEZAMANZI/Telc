@@ -184,31 +184,8 @@ class GuestExam extends Component
      */
     public function getTemplateFreeStatus(ExamTemplate $record): array
     {
-        if (str_contains(strtolower($record->title), 'premium')) {
-            return ['is_free' => false, 'free_sections' => 0];
-        }
-
-        if (str_contains(strtolower($record->title), 'test')) {
-            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
-
-            return ['is_free' => true, 'free_sections' => $settingLimit];
-        }
-
-        $all = ExamTemplate::query()
-            ->where('is_published', true)
-            ->where('exam_provider', $record->exam_provider)
-            ->where('level', $record->level)
-            ->orderBy('id')
-            ->pluck('id')
-            ->toArray();
-
-        $index = array_search($record->id, $all);
-        if ($index === 0) {
-            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
-
-            return ['is_free' => true, 'free_sections' => max($settingLimit, count($record->sections ?? []))];
-        } elseif ($index === 1) {
-            return ['is_free' => true, 'free_sections' => 2];
+        if ($record->is_free) {
+            return ['is_free' => true, 'free_sections' => count($record->sections ?? [])];
         }
 
         return ['is_free' => false, 'free_sections' => 0];
@@ -259,6 +236,7 @@ class GuestExam extends Component
     {
         $record = ExamTemplate::query()
             ->where('is_published', true)
+            ->where('is_free', true)
             ->where('level', $this->selectedLevel)
             ->orderBy('id')
             ->first();
@@ -280,6 +258,7 @@ class GuestExam extends Component
 
         return array_values(ExamTemplate::query()
             ->where('is_published', true)
+            ->where('is_free', true)
             ->whereIn('level', ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'])
             ->pluck('level')
             ->unique()

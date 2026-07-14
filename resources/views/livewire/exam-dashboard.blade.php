@@ -98,7 +98,7 @@
                 <div style="margin-bottom: 1rem;">
                     <label class="telc-checkbox-label" style="margin-bottom: 0.5rem;">
                         <input type="checkbox" wire:model.live="template.is_free">
-                        Free exam (3-section limit, no payment required)
+                        Free exam (all sections, no payment required)
                     </label>
                     <div style="margin-top: 0.5rem;">
                         <label>Exam Price (EUR) — leave 0 for free / subscription only</label>

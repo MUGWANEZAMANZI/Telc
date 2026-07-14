@@ -396,68 +396,8 @@ class StudentExam extends Component
      */
     public function getTemplateFreeStatus(ExamTemplate $record): array
     {
-        if (str_contains(strtolower($record->title), 'premium')) {
-            return ['is_free' => false, 'free_sections' => 0];
-        }
-
-        if (str_contains(strtolower($record->title), 'test')) {
-            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
-
-            return ['is_free' => true, 'free_sections' => $settingLimit];
-        }
-
-        $all = ExamTemplate::query()
-            ->where('is_published', true)
-            ->where('exam_provider', $record->exam_provider)
-            ->where('level', $record->level)
-            ->orderBy('id')
-            ->pluck('id')
-            ->toArray();
-
-        $index = array_search($record->id, $all);
-
-        if (Auth::check()) {
-            // Find what free exam levels this user has completed
-            $completedFreeLevels = ExamAttempt::query()
-                ->where('user_id', Auth::id())
-                ->get()
-                ->filter(function ($attempt) {
-                    $template = $attempt->examTemplate;
-
-                    // Check if this template is the first exam (index 0)
-                    $allTemplates = ExamTemplate::query()
-                        ->where('is_published', true)
-                        ->where('exam_provider', $template->exam_provider)
-                        ->where('level', $template->level)
-                        ->orderBy('id')
-                        ->pluck('id')
-                        ->toArray();
-
-                    return array_search($template->id, $allTemplates) === 0;
-                })
-                ->map(fn ($attempt) => $attempt->examTemplate->level)
-                ->unique()
-                ->toArray();
-
-            if ($index === 0) {
-                return ['is_free' => true, 'free_sections' => count($record->sections ?? [])];
-            }
-
-            if ($index === 1) {
-                if (! empty($completedFreeLevels)) {
-                    return ['is_free' => true, 'free_sections' => 2];
-                }
-            }
-
-            return ['is_free' => false, 'free_sections' => 0];
-        }
-
-        if ($index === 0) {
-            $settingLimit = max(1, (int) Setting::value('free_section_limit', '3'));
-
-            return ['is_free' => true, 'free_sections' => max($settingLimit, count($record->sections ?? []))];
-        } elseif ($index === 1) {
-            return ['is_free' => true, 'free_sections' => 2];
+        if ($record->is_free) {
+            return ['is_free' => true, 'free_sections' => count($record->sections ?? [])];
         }
 
         return ['is_free' => false, 'free_sections' => 0];
