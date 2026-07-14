@@ -9,7 +9,6 @@ use App\Models\VoiceTopic;
 use App\Services\SpeakingPromptService;
 use Gemini\Data\Content;
 use Gemini\Laravel\Facades\Gemini;
-use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -77,7 +76,8 @@ class VoiceInput extends Component
         }
     }
 
-    public function getFilteredTopicsProperty(): Collection
+    /** @return \Illuminate\Database\Eloquent\Collection<int, VoiceTopic> */
+    public function getFilteredTopicsProperty(): \Illuminate\Database\Eloquent\Collection
     {
         return VoiceTopic::query()
             ->where('exam_provider', $this->selectedProvider)
@@ -638,7 +638,7 @@ class VoiceInput extends Component
     public function render(): View
     {
         return view('livewire.voice-input', [
-            'filteredTopics' => $this->filteredTopics,
+            'filteredTopics' => $this->getFilteredTopicsProperty(),
         ]);
     }
 }

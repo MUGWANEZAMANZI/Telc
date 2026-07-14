@@ -29,7 +29,7 @@
                 }
             }
             .animate-book-pulse {
-                animation: bookPulse 0.5s ease-in-out infinite;
+                animation: bookPulse 2.5s ease-in-out infinite;
             }
         </style>
         @livewireStyles
