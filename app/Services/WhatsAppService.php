@@ -15,13 +15,16 @@ class WhatsAppService
 
     public function __construct()
     {
-        $this->token = config('services.whatsapp.token') ?: env('WHATSAPP_ACCESS_TOKEN');
-        $this->phoneNumberId = config('services.whatsapp.phone_number_id') ?: env('WHATSAPP_PHONE_NUMBER_ID');
-        $this->version = config('services.whatsapp.version') ?: env('WHATSAPP_API_VERSION', 'v25.0');
+        $this->token = config('services.whatsapp.token');
+        $this->phoneNumberId = config('services.whatsapp.phone_number_id');
+        $this->version = config('services.whatsapp.version', 'v25.0');
     }
 
     /**
      * Send a template message.
+     *
+     * @param  array<int, mixed>  $components
+     * @return array<string, mixed>
      */
     public function sendTemplate(string $to, string $templateName, string $languageCode = 'en_US', array $components = []): array
     {
@@ -39,6 +42,8 @@ class WhatsAppService
 
     /**
      * Send a plain text message.
+     *
+     * @return array<string, mixed>
      */
     public function sendTextMessage(string $to, string $text): array
     {
@@ -52,6 +57,9 @@ class WhatsAppService
 
     /**
      * Send raw payload.
+     *
+     * @param  array<string, mixed>  $messageData
+     * @return array<string, mixed>
      */
     public function sendMessage(string $to, array $messageData): array
     {

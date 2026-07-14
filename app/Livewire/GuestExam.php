@@ -128,9 +128,20 @@ class GuestExam extends Component
     {
         $this->selectedTemplateId = $record->id;
         $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
-        $data['sections'] = collect($data['sections'] ?? [])->filter(function ($section) {
-            return ! collect($section['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
-        })->values()->all();
+        $sections = [];
+        foreach ($data['sections'] as $section) {
+            $hasSpeaking = false;
+            foreach ($section['elements'] ?? [] as $el) {
+                if (($el['type'] ?? '') === 'speaking') {
+                    $hasSpeaking = true;
+                    break;
+                }
+            }
+            if (! $hasSpeaking) {
+                $sections[] = $section;
+            }
+        }
+        $data['sections'] = $sections;
         $this->template = $data;
         $this->recalculateRemaining();
         $this->loadSpeakingTopics();

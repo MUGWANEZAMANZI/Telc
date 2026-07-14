@@ -120,26 +120,39 @@ class StudentExam extends Component
 
             if ($templateId) {
                 $record = ExamTemplate::find($templateId);
-                if ($record) {
+                if ($record instanceof ExamTemplate) {
                     $sections = $record->sections ?? [];
                     $currentSection = $sections[$activeSectionIdx] ?? null;
                     if ($currentSection) {
-                        $hasInlineGap = collect($currentSection['elements'] ?? [])
-                            ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
+                        $hasInlineGap = false;
+                        foreach ($currentSection['elements'] ?? [] as $el) {
+                            if (($el['type'] ?? '') === 'inline_gap') {
+                                $hasInlineGap = true;
+                                break;
+                            }
+                        }
 
                         $sectionToGrade = $currentSection;
                         if ($hasInlineGap) {
-                            $sectionToGrade['elements'] = collect((array) ($currentSection['elements'] ?? []))
-                                ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
-                                ->values()
-                                ->all();
+                            $inlineElements = [];
+                            foreach ($currentSection['elements'] ?? [] as $el) {
+                                if (($el['type'] ?? '') === 'inline_gap') {
+                                    $inlineElements[] = $el;
+                                }
+                            }
+                            $sectionToGrade['elements'] = $inlineElements;
                         }
 
                         $result = app(ExamGrader::class)->grade([$sectionToGrade], $answers);
 
                         // Grade writing
                         $writingDetails = [];
-                        $writingElements = collect((array) ($currentSection['elements'] ?? []))->where('type', 'writing');
+                        $writingElements = [];
+                        foreach ($currentSection['elements'] ?? [] as $el) {
+                            if (($el['type'] ?? '') === 'writing') {
+                                $writingElements[] = $el;
+                            }
+                        }
                         foreach ($writingElements as $element) {
                             $elId = $element['id'];
                             $maxPoints = (int) ($element['points'] ?? 48);
@@ -410,9 +423,6 @@ class StudentExam extends Component
                 ->get()
                 ->filter(function ($attempt) {
                     $template = $attempt->examTemplate;
-                    if (! $template) {
-                        return false;
-                    }
 
                     // Check if this template is the first exam (index 0)
                     $allTemplates = ExamTemplate::query()
@@ -1734,9 +1744,20 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
         $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
         $status = $this->getTemplateFreeStatus($record);
         if ($status['is_free']) {
-            $data['sections'] = collect($data['sections'] ?? [])->filter(function ($section) {
-                return ! collect($section['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
-            })->values()->all();
+            $sections = [];
+            foreach ($data['sections'] as $section) {
+                $hasSpeaking = false;
+                foreach ($section['elements'] ?? [] as $el) {
+                    if (($el['type'] ?? '') === 'speaking') {
+                        $hasSpeaking = true;
+                        break;
+                    }
+                }
+                if (! $hasSpeaking) {
+                    $sections[] = $section;
+                }
+            }
+            $data['sections'] = $sections;
         }
         $this->template = $data;
     }
