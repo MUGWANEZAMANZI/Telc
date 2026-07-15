@@ -356,7 +356,8 @@
                         <span x-show="isRecording">⏹ Aufnahme beenden</span>
                     </button>
                     @if($stageTimer > 0)
-                        <button type="button" wire:click="submitStage1" class="tab-btn" style="border-color: #166534; color: #166534; font-weight: 700;">
+                        <button type="button" wire:click="submitStage1" class="tab-btn" :disabled="$speakingProcessing['SP-1a'] ?? false"
+                            :style="($speakingProcessing['SP-1a'] ?? false) ? 'opacity: 0.5; cursor: not-allowed;' : 'border-color: #166534; color: #166534; font-weight: 700;'">
                             Vorzeitig abgeben →
                         </button>
                     @endif
@@ -414,7 +415,7 @@
                 <div class="ai-text-box">{{ $aiPresentationText }}</div>
 
                 <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem;">
-                    <button type="button" @click="ttsPlaying ? stopTts() : speakAiText('{{ addslashes($aiPresentationText) }}')"
+                    <button type="button" @click="ttsPlaying ? stopTts() : speakAiText({!! \Illuminate\Support\Js::from($aiPresentationText) !!})"
                         :style="ttsPlaying ? 'background-color: #1a1a1a;' : 'background-color: #7c3aed;'"
                         style="color: #ffffff; border: none; padding: 0.85rem 2rem; border-radius: 4px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
                         <span x-show="!ttsPlaying">🔊 KI-Vortrag anhören</span>
@@ -464,7 +465,8 @@
                         <span x-show="isRecording">⏹ Aufnahme beenden</span>
                     </button>
                     @if($stageTimer > 0)
-                        <button type="button" wire:click="submitStage3" class="tab-btn" style="border-color: #166534; color: #166534; font-weight: 700;">
+                        <button type="button" wire:click="submitStage3" class="tab-btn" :disabled="$speakingProcessing['SP-2'] ?? false"
+                            :style="($speakingProcessing['SP-2'] ?? false) ? 'opacity: 0.5; cursor: not-allowed;' : 'border-color: #166534; color: #166534; font-weight: 700;'">
                             Vorzeitig abgeben →
                         </button>
                     @endif

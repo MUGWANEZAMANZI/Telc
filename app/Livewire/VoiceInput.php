@@ -35,6 +35,7 @@ class VoiceInput extends Component
 
     public string $transcribedText = '';
 
+    /** @var array<string, mixed> */
     public array $answers = [];
 
     public int $stageTimer = 0;
@@ -349,7 +350,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             $details[] = [
                 'id' => 'SP-2',
                 'label' => 'Teil 3 — Zusammenfassung',
-                'given' => $this->transcribedText ?? '',
+                'given' => $this->transcribedText,
                 'expected' => $this->selectedCounterTopic,
                 'points' => $sp2Score,
                 'max_points' => 24,
@@ -402,7 +403,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
 
             $earned = array_sum(array_column($details, 'points'));
             $possible = array_sum(array_column($details, 'max_points'));
-            $pct = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0;
+            $pct = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0; // @phpstan-ignore-line
 
             $this->result = [
                 'earned' => $earned,
