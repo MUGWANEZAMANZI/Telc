@@ -330,7 +330,7 @@
             @endif
 
             {{-- Premium document column --}}
-            @if ($sectionLocked)
+            @if ($sectionLocked && !$result)
                 <div class="premium-document">
                     <div style="text-align: center; padding: 3rem 1rem; color: #888;">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="width: 48px; height: 48px; margin: 0 auto 1rem; color: #555;">
@@ -606,7 +606,7 @@
                     @endforeach
 
                     {{-- Result display --}}
-                    @if ($result && !$sectionLocked)
+                    @if ($result)
                         <hr class="c1-divider">
                         <div style="background: #ffffff; border: 2px solid #1a1a1a; border-radius: 8px; padding: 2.5rem; max-width: 600px; margin: 2rem auto 0; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
                             <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #666; display: block; margin-bottom: 0.5rem;">Ergebnis</span>
