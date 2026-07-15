@@ -11,6 +11,8 @@ class AdminTopics extends Component
 {
     public string $newTopicTitle = '';
 
+    public string $newCounterTopic = '';
+
     public string $newTopicLevel = 'C1';
 
     public string $newTopicProvider = 'telc';
@@ -18,6 +20,8 @@ class AdminTopics extends Component
     public ?int $editingTopicId = null;
 
     public string $editTopicTitle = '';
+
+    public string $editCounterTopic = '';
 
     public string $editTopicLevel = 'C1';
 
@@ -39,17 +43,20 @@ class AdminTopics extends Component
     {
         $this->validate([
             'newTopicTitle' => ['required', 'string', 'max:500'],
-            'newTopicLevel' => ['required', 'string', 'max:8'],
+            'newCounterTopic' => ['nullable', 'string', 'max:500'],
+            'newTopicLevel' => ['required', 'string', 'in:A1,A2,B1,B2,C1,C2'],
             'newTopicProvider' => ['required', 'string', 'in:telc,goethe'],
         ]);
 
         VoiceTopic::create([
             'title' => $this->newTopicTitle,
+            'counter_topic' => $this->newCounterTopic ?: null,
             'level' => $this->newTopicLevel,
             'exam_provider' => $this->newTopicProvider,
         ]);
 
         $this->newTopicTitle = '';
+        $this->newCounterTopic = '';
         $this->newTopicLevel = 'C1';
         $this->newTopicProvider = 'telc';
         $this->dispatch('topics-saved');
@@ -60,6 +67,7 @@ class AdminTopics extends Component
         $topic = VoiceTopic::findOrFail($id);
         $this->editingTopicId = $topic->id;
         $this->editTopicTitle = $topic->title;
+        $this->editCounterTopic = $topic->counter_topic ?? '';
         $this->editTopicLevel = $topic->level;
         $this->editTopicProvider = $topic->exam_provider ?: 'telc';
     }
@@ -68,12 +76,14 @@ class AdminTopics extends Component
     {
         $this->validate([
             'editTopicTitle' => ['required', 'string', 'max:500'],
-            'editTopicLevel' => ['required', 'string', 'max:8'],
+            'editCounterTopic' => ['nullable', 'string', 'max:500'],
+            'editTopicLevel' => ['required', 'string', 'in:A1,A2,B1,B2,C1,C2'],
             'editTopicProvider' => ['required', 'string', 'in:telc,goethe'],
         ]);
 
         VoiceTopic::findOrFail($this->editingTopicId)->update([
             'title' => $this->editTopicTitle,
+            'counter_topic' => $this->editCounterTopic ?: null,
             'level' => $this->editTopicLevel,
             'exam_provider' => $this->editTopicProvider,
         ]);
@@ -86,6 +96,7 @@ class AdminTopics extends Component
     {
         $this->editingTopicId = null;
         $this->editTopicTitle = '';
+        $this->editCounterTopic = '';
         $this->editTopicLevel = 'C1';
         $this->editTopicProvider = 'telc';
     }

@@ -64,6 +64,8 @@ class StudentExam extends Component
 
     public string $sortBy = 'title_asc';
 
+    public bool $filterFree = false;
+
     /** @var array<int, string> */
     public array $aiGeneratedTopics = [];
 
@@ -327,6 +329,10 @@ class StudentExam extends Component
             }
         }
 
+        if (request()->query('filter') === 'free') {
+            $this->filterFree = true;
+        }
+
         if (request()->query('start_exam')) {
             $this->startOrResumeExam((int) request()->query('start_exam'));
         }
@@ -358,6 +364,10 @@ class StudentExam extends Component
     {
         $query = ExamTemplate::query()
             ->where('is_published', true);
+
+        if ($this->filterFree) {
+            $query->where('is_free', true);
+        }
 
         if ($this->selectedLevel !== '') {
             $query->where('level', $this->selectedLevel);

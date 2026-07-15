@@ -28,7 +28,7 @@
                         {{ __('Billing') }}
                     </flux:sidebar.item>
                     @unless (auth()->user()?->isAdmin())
-                        <flux:sidebar.item icon="play-circle" :href="route('free.exam')" :current="request()->routeIs('free.exam')" wire:navigate>
+                        <flux:sidebar.item icon="play-circle" :href="route('dashboard') . '?filter=free'" :current="request()->routeIs('dashboard') && request()->query('filter') === 'free'" wire:navigate>
                             {{ __('Free') }}
                         </flux:sidebar.item>
                     @endunless

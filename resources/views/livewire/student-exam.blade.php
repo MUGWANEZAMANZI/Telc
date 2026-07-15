@@ -395,9 +395,9 @@
     @if (empty($template))
         <section class="exam-store">
             <div class="exam-store-header">
-                <p>TELC Exam Store</p>
-                <h1>Erwerben Sie eine Prüfungssimulation vor dem Start</h1>
-                <span>Wählen Sie unten eine Prüfung aus, um zu beginnen.</span>
+                <p>{{ $filterFree ? 'Kostenlose Übungen' : 'TELC Exam Store' }}</p>
+                <h1>{{ $filterFree ? 'Üben Sie kostenlos mit unseren Freiübungen' : 'Erwerben Sie eine Prüfungssimulation vor dem Start' }}</h1>
+                <span>{{ $filterFree ? 'Wählen Sie unten eine kostenlose Übung aus, um zu beginnen.' : 'Wählen Sie unten eine Prüfung aus, um zu beginnen.' }}</span>
             </div>
 
             {{-- Rich Helper Banner for Students --}}

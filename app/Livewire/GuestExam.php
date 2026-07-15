@@ -82,9 +82,9 @@ class GuestExam extends Component
     {
         if (auth()->check()) {
             if ($templateId) {
-                $this->redirect(route('dashboard').'?start_exam='.$templateId);
+                $this->redirect(route('dashboard').'?filter=free&start_exam='.$templateId);
             } else {
-                $this->redirect(route('dashboard'));
+                $this->redirect(route('dashboard').'?filter=free');
             }
 
             return;

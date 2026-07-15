@@ -8,6 +8,7 @@ class VoiceTopic extends Model
 {
     protected $fillable = [
         'title',
+        'counter_topic',
         'level',
         'exam_provider',
         'is_active',
