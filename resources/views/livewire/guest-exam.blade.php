@@ -183,12 +183,12 @@
         </div>
 
     @elseif ($activeSectionIndex === null)
-        {{-- Chapter list view --}}
+        {{-- Free exam landing --}}
         <section class="exam-store">
             <div class="exam-store-header">
                 <p>Free Exam</p>
                 <h1>Try an exam before subscribing</h1>
-                <span>Select a chapter below to begin your free trial.</span>
+                <span>Select a level below to begin your free trial.</span>
             </div>
 
             @if ($levels)
@@ -208,80 +208,16 @@
                     <p>An administrator should publish a template first.</p>
                 </div>
             @else
-                <div class="max-w-2xl mx-auto mb-16">
-                    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <span class="text-xs font-bold uppercase tracking-widest text-yellow-500">{{ $template['level'] ?? '' }}</span>
-                                <h2 class="text-xl font-bold text-zinc-100 mt-1">{{ $template['title'] ?? '' }}</h2>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-xs text-zinc-500">Free sections</div>
-                                <div class="text-lg font-bold text-yellow-500">{{ $remainingSections }} / {{ $freeSectionLimit }}</div>
-                            </div>
-                        </div>
-
-                        <div class="space-y-3">
-                            @foreach ($sections as $index => $section)
-                                @php
-                                    $status = $this->sectionStatus($index);
-                                    $statusIcon = match($status) {
-                                        'completed' => '✓',
-                                        'locked' => '🔒',
-                                        'in-progress' => '→',
-                                        default => ''
-                                    };
-                                    $statusClass = match($status) {
-                                        'completed' => 'border-green-800/50 bg-zinc-800/30',
-                                        'locked' => 'border-red-900/30 bg-zinc-800/20 opacity-50',
-                                        'in-progress' => 'border-yellow-600/50 bg-zinc-800/50',
-                                        default => 'border-zinc-700 bg-zinc-800/50 hover:bg-zinc-800 hover:border-yellow-500/50'
-                                    };
-                                    $canStart = match($status) {
-                                        'locked' => false,
-                                        'completed' => true,
-                                        default => true
-                                    };
-                                @endphp
-                                <button type="button"
-                                    wire:click="startSection({{ $index }})"
-                                    @disabled(!$canStart)
-                                    class="w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center justify-between {{ $statusClass }}">
-                                    <div class="flex items-center gap-3">
-                                        <div @class([
-                                            'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0',
-                                            'bg-zinc-700 text-zinc-300' => $status === 'new',
-                                            'bg-green-700 text-white' => $status === 'completed',
-                                            'bg-red-800 text-red-200' => $status === 'locked',
-                                            'bg-yellow-700 text-yellow-200' => $status === 'in-progress',
-                                        ])>
-                                            @if ($status === 'completed')
-                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-                                            @elseif ($status === 'locked')
-                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                            @elseif ($status === 'in-progress')
-                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>
-                                            @else
-                                                {{ $index + 1 }}
-                                            @endif
-                                        </div>
-                                        <div>
-                                            <span class="text-sm font-semibold text-zinc-200">{{ $section['title'] ?? 'Section ' . ($index + 1) }}</span>
-                                            <span class="text-xs text-zinc-500 block">{{ $section['minutes'] ?? '?' }} min · {{ ucfirst($this->sectionType($index)) }}</span>
-                                        </div>
-                                    </div>
-                                    <span @class([
-                                        'text-xs font-medium px-2 py-0.5 rounded-full',
-                                        'text-zinc-500 bg-zinc-800' => $status === 'new',
-                                        'text-green-400 bg-green-900/30' => $status === 'completed',
-                                        'text-red-400 bg-red-900/30' => $status === 'locked',
-                                        'text-yellow-400 bg-yellow-900/30' => $status === 'in-progress',
-                                    ])>
-                                        {{ match($status) { 'completed' => 'Completed', 'locked' => 'Locked', 'in-progress' => 'In Progress', default => 'Start' } }}
-                                    </span>
-                                </button>
-                            @endforeach
-                        </div>
+                <div class="max-w-md mx-auto mb-16">
+                    <div class="bg-white border border-zinc-200 rounded-2xl p-8 text-center shadow-sm">
+                        <span class="inline-block text-xs font-bold uppercase tracking-widest text-yellow-600 mb-2">{{ $template['level'] ?? '' }}</span>
+                        <h2 class="text-xl font-bold text-zinc-900 mb-1">{{ $template['title'] ?? '' }}</h2>
+                        <p class="text-sm text-zinc-500 mb-6">Complete the exam to see your results</p>
+                        <button type="button" wire:click="startSection(0)"
+                            class="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 transition">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z" /></svg>
+                            Start Exam
+                        </button>
                     </div>
                 </div>
             @endif
