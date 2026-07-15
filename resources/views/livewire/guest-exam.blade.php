@@ -1,33 +1,21 @@
 <div class="guest-exam-shell">
     <style>
-        .free-left-nav { width: 260px; min-width: 260px; background: #1a1a1a; display: flex; flex-direction: column; border-right: 1px solid #2a2a2a; overflow-y: auto; }
-        .free-left-nav .nav-header { padding: 1rem 1.25rem; border-bottom: 1px solid #2a2a2a; }
-        .free-left-nav .nav-header h3 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #a0a0a0; margin: 0 0 0.25rem; }
-        .free-left-nav .nav-header h2 { font-size: 0.95rem; font-weight: 700; color: #ffffff; margin: 0; }
-        .free-left-nav .nav-section-list { flex: 1; padding: 0.75rem 0; }
-        .free-left-nav .nav-section-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.25rem; cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; text-align: left; width: 100%; background: none; border-right: none; border-top: none; border-bottom: none; font-family: inherit; }
-        .free-left-nav .nav-section-item:hover { background: #252525; border-left-color: #555; }
-        .free-left-nav .nav-section-item.active { background: #252525; border-left-color: #eab308; }
-        .free-left-nav .nav-section-item .nav-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
-        .free-left-nav .nav-section-item .nav-icon.new { background: #333; color: #888; }
-        .free-left-nav .nav-section-item .nav-icon.completed { background: #166534; color: #fff; }
-        .free-left-nav .nav-section-item .nav-icon.locked { background: #7f1d1d; color: #fca5a5; }
-        .free-left-nav .nav-section-item .nav-icon.in-progress { background: #a16207; color: #fef08a; }
-        .free-left-nav .nav-section-item .nav-label { flex: 1; font-size: 0.82rem; color: #ccc; text-align: left; }
-        .free-left-nav .nav-section-item .nav-duration { font-size: 0.7rem; color: #666; }
-        .free-left-nav .nav-section-item.locked { opacity: 0.4; cursor: not-allowed; }
-        .free-left-nav .nav-footer { padding: 0.75rem 1.25rem; border-top: 1px solid #2a2a2a; }
-        .free-left-nav .nav-footer button { width: 100%; padding: 0.6rem; font-size: 0.78rem; font-weight: 600; border-radius: 4px; cursor: pointer; transition: all 0.15s; }
+        .guest-exam-shell { font-family: 'Plus Jakarta Sans', sans-serif; }
 
         .free-notification { position: fixed; top: 1rem; right: 1rem; z-index: 1000; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 0.6rem 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 0.5rem; }
         .free-notification svg { width: 16px; height: 16px; color: #eab308; flex-shrink: 0; }
         .free-notification span { font-size: 0.78rem; color: #aaa; }
         .free-notification strong { color: #eab308; }
 
-        .free-exam-layout { display: flex; min-height: 85vh; background: #111; }
-        .free-exam-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
-        .free-exam-workbench { flex: 1; padding: 2rem; }
-        .free-exam-workbench .telc-paper { max-width: 800px; margin: 0 auto; }
+        .free-exam-body { min-height: 100vh; background: #f7f7f7; padding: 0 1rem; }
+
+        .doc-timer-bar { position: fixed; top: 1rem; right: 1rem; z-index: 1001; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 200px; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .doc-timer-text { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
+        .save-indicator { display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #666; }
+        .save-pulse { width: 6px; height: 6px; border-radius: 50%; background: #166534; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .submit-button { background: #1a1a1a; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 4px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; font-family: inherit; width: 100%; white-space: nowrap; }
+        .submit-button:hover { opacity: 0.85; }
 
         .level-tabs { display: flex; justify-content: center; gap: 0.5rem; padding: 1.5rem 1rem; background: #111; border-bottom: 1px solid #222; }
         .level-tabs button { padding: 0.4rem 1.2rem; border-radius: 999px; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.15s; border: none; font-family: inherit; }
@@ -35,18 +23,12 @@
         .level-tabs button.inactive { background: #222; color: #666; }
         .level-tabs button.inactive:hover { background: #2a2a2a; color: #999; }
 
-        .free-result-panel { max-width: 600px; margin: 2rem auto; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 2rem; text-align: center; }
-        .free-result-panel .score { font-size: 2.5rem; font-weight: 800; color: #fff; }
-        .free-result-panel .score-label { font-size: 0.85rem; color: #888; }
-
-        .free-timer-widget { position: fixed; top: 1rem; right: 1rem; z-index: 1001; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 0.6rem 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 0.5rem; }
-        .free-timer-widget svg { width: 16px; height: 16px; color: #d8232a; flex-shrink: 0; }
-        .free-timer-widget .timer-text { font-size: 0.85rem; font-weight: 700; color: #d8232a; font-variant-numeric: tabular-nums; }
-        .free-timer-widget .submit-inline { background: #d8232a; color: #fff; border: none; padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
-        .free-timer-widget .submit-inline:hover { opacity: 0.85; }
+        .free-result-panel { max-width: 600px; margin: 2rem auto; background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .free-result-panel .score { font-size: 2.5rem; font-weight: 800; color: #1a1a1a; }
+        .free-result-panel .score-label { font-size: 0.85rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
 
         .premium-document {
-            max-width: 800px; margin: 0 auto; background: #ffffff; border: 1px solid #d9dde5;
+            max-width: 800px; margin: 2rem auto; background: #ffffff; border: 1px solid #d9dde5;
             position: relative; padding: 4rem 3.5rem 8rem 5.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
             border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; color: #1a1a1a; line-height: 1.85;
         }
@@ -65,6 +47,7 @@
         .cloze-select { border: none; border-bottom: 2px solid #1a1a1a; background: transparent; font-family: inherit; font-size: 1rem; font-weight: 700; color: #d8232a; padding: 0 0.25rem; outline: none; cursor: pointer; border-radius: 0; max-width: 100%; white-space: normal; }
         .cloze-select:focus { border-bottom-color: #d8232a; }
         .cloze-gap-num { font-size: 0.7rem; font-weight: 800; vertical-align: super; color: #666; margin-right: 0.1rem; }
+
         .mc-question-row { margin-bottom: 2rem; }
         .mc-question-header { font-weight: 600; font-size: 1rem; margin-bottom: 0.75rem; }
         .mc-options-list { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -85,15 +68,6 @@
         .tf-choice-input { display: none; }
         .tf-choice-input:checked + .tf-choice-label { border-color: #1a1a1a; background: #1a1a1a; color: #fff; }
 
-        .writing-textarea-lined { width: 100%; min-height: 350px; padding: 1rem; font-family: inherit; font-size: 1rem; line-height: 2rem; border: 1px solid #d9dde5; background: transparent; background-image: linear-gradient(transparent, transparent 1.95rem, #cbcbcb 1.95rem, #cbcbcb 2rem); background-size: 100% 2rem; color: #1a1a1a; resize: vertical; outline: none; }
-
-        .hv3-lined-input { border: none; border-bottom: 1.5px solid #cbcbcb; background: transparent; font-family: inherit; font-size: 0.95rem; font-weight: 600; color: #d8232a; width: 100%; padding: 0.2rem 0; outline: none; }
-        .hv3-lined-input:focus { border-bottom-color: #1a1a1a; }
-
-        .feedback-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 3px; margin-left: 0.25rem; text-transform: uppercase; white-space: nowrap; }
-        .feedback-badge.ok { background: #e6f4ea; color: #137333; }
-        .feedback-badge.fail { background: #fce8e6; color: #c5221f; }
-
         .bubble.selected.correct { background: #166534; color: #fff; border-color: #166534; }
         .bubble.selected.wrong { background: #991b1b; color: #fff; border-color: #991b1b; }
         .bubble.correct-key:not(.selected) { border-color: #166534; background: #e6f4ea; }
@@ -111,10 +85,7 @@
         .writing-section.marked textarea { opacity: 0.7; }
         .writing-section .writing-score { display: inline-block; background: #1a1a1a; color: #eab308; font-size: 0.8rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 4px; margin-top: 0.5rem; }
 
-        .exam-layout { display: flex; gap: 0; max-width: 1200px; margin: 0 auto; }
-        .exam-paper-column { flex: 1; min-width: 0; }
-        .exam-answer-column { width: 300px; min-width: 300px; margin-left: 2rem; }
-        .answer-sheet { background: #fff; border: 1px solid #d9dde5; border-radius: 6px; padding: 1.5rem; position: sticky; top: 1rem; }
+        .answer-sheet { background: #fff; border: 1px solid #d9dde5; border-radius: 6px; padding: 1.5rem; margin-top: 2rem; }
         .answer-sheet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e5e5e5; }
         .answer-sheet-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #1a1a1a; display: block; }
         .answer-sheet-section { font-size: 0.75rem; color: #666; display: block; }
@@ -128,32 +99,6 @@
         .bubble input { display: none; }
         .matching-select { padding: 0.3rem 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; }
         .fill-blank-input { border: none; border-bottom: 1.5px solid #cbcbcb; padding: 0.2rem; font-size: 0.9rem; outline: none; width: 160px; }
-        .answer-mark { font-size: 0.75rem; font-weight: 700; }
-        .answer-mark.correct { color: #137333; }
-        .answer-mark.wrong { color: #c5221f; }
-        .writing-section { margin-top: 1.5rem; }
-        .writing-label { font-size: 0.85rem; font-weight: 700; display: block; margin-bottom: 0.5rem; }
-        .writing-textarea { width: 100%; min-height: 200px; padding: 0.75rem; border: 1px solid #d9dde5; border-radius: 4px; font-family: inherit; font-size: 0.95rem; line-height: 1.6; resize: vertical; outline: none; }
-
-        .speaking-task { border: 1px solid #e5e5e5; padding: 1.5rem; border-radius: 6px; background: #fff; margin-bottom: 2rem; }
-        .speaking-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .speaking-badge { font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: #d8232a; }
-        .speaking-points { font-size: 0.8rem; color: #666; }
-        .speaking-prompt { background: #fafafa; border-left: 3px solid #1a1a1a; padding: 0.85rem 1rem; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.5; color: #4a4a4a; }
-        .speaking-controls { margin-bottom: 0.75rem; }
-        .speaking-record-btn { background: #d8232a; color: #fff; border: none; padding: 0.7rem 1.2rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; font-size: 0.85rem; font-family: inherit; }
-        .speaking-record-btn:hover { opacity: 0.85; }
-        .speaking-record-btn.recording { background: #1a1a1a; }
-        .speaking-recording-indicator { color: #d8232a; font-weight: 600; font-size: 0.85rem; margin-left: 0.75rem; }
-        .speaking-transcript { margin-bottom: 0.75rem; }
-        .speaking-transcript label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 0.35rem; color: #555; }
-        .speaking-textarea { width: 100%; min-height: 100px; padding: 0.75rem; border: 1px solid #d9dde5; border-radius: 4px; font-family: inherit; font-size: 0.9rem; line-height: 1.5; resize: vertical; outline: none; }
-        .speaking-actions { margin-top: 0.75rem; }
-        .speaking-feedback { margin-top: 1rem; padding: 1rem; background: #f7f9fa; border: 1px solid #e5e5e5; border-radius: 4px; }
-        .speaking-feedback h4 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #555; margin-bottom: 0.5rem; }
-        .speaking-feedback .feedback-content { font-size: 0.9rem; line-height: 1.5; color: #333; white-space: pre-wrap; }
-        .speaking-locked { text-align: center; padding: 3rem 1rem; color: #888; }
-        .speaking-locked svg { width: 48px; height: 48px; margin: 0 auto 1rem; color: #555; }
 
         .audio-player { margin: 1rem 0; }
         .audio-player audio { width: 100%; }
@@ -163,9 +108,18 @@
         .inline-gap-pill select { padding: 0.15rem 0.3rem; border: 1px solid #ccc; border-radius: 3px; font-size: 0.9rem; background: #fff; cursor: pointer; }
         .inline-gap-pill.filled select { border-color: #1a1a1a; font-weight: 600; background: #fafafa; }
 
+        .writing-textarea-lined { width: 100%; min-height: 350px; padding: 1rem; font-family: inherit; font-size: 1rem; line-height: 2rem; border: 1px solid #d9dde5; background: transparent; background-image: linear-gradient(transparent, transparent 1.95rem, #cbcbcb 1.95rem, #cbcbcb 2rem); background-size: 100% 2rem; color: #1a1a1a; resize: vertical; outline: none; }
+
         .free-back-btn { display: inline-flex; align-items: center; gap: 0.35rem; color: #888; font-size: 0.8rem; cursor: pointer; background: none; border: none; font-family: inherit; padding: 0.5rem 0; transition: color 0.15s; }
         .free-back-btn:hover { color: #eab308; }
         .free-back-btn svg { width: 14px; height: 14px; }
+
+        .feedback-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 3px; margin-left: 0.25rem; text-transform: uppercase; white-space: nowrap; }
+        .feedback-badge.ok { background: #e6f4ea; color: #137333; }
+        .feedback-badge.fail { background: #fce8e6; color: #c5221f; }
+
+        .speaking-locked { text-align: center; padding: 3rem 1rem; color: #888; }
+        .speaking-locked svg { width: 48px; height: 48px; margin: 0 auto 1rem; color: #555; }
 
         @keyframes slideUp { from { opacity:0;transform:translateY(1rem); } to { opacity:1;transform:translateY(0); } }
     </style>
@@ -334,7 +288,7 @@
         </section>
 
     @else
-        {{-- Section exam view with left nav --}}
+        {{-- Exam-taking view — single-column premium-document layout --}}
         @php
             $currentSection = $sections[$activeSectionIndex] ?? null;
             $theme = $template['theme'] ?? [];
@@ -342,618 +296,371 @@
             $seconds = $remainingSeconds % 60;
             $hasInlineGap = $currentSection && collect($currentSection['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
             $hasInteractiveText = $currentSection && collect($currentSection['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'interactive_text');
-            $hasSpeaking = $currentSection && collect($currentSection['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
             $hasAudio = $currentSection && collect($currentSection['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'audio');
             $hasWriting = $currentSection && collect($currentSection['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'writing');
             $sectionLocked = $this->isNoRetrySection($activeSectionIndex) && $this->isSectionCompleted($activeSectionIndex);
         @endphp
 
-        <div class="free-exam-layout">
-            {{-- Left nav sidebar --}}
-            <nav class="free-left-nav">
-                <div class="nav-header">
-                    <h3>{{ $template['level'] ?? '' }} Exam</h3>
-                    <h2>{{ $template['title'] ?? '' }}</h2>
-                </div>
-                <div class="nav-section-list">
-                    @foreach ($sections as $idx => $sec)
-                        @php
-                            $secStatus = $this->sectionStatus($idx);
-                            $secIconType = match($secStatus) {
-                                'completed' => 'completed',
-                                'locked' => 'locked',
-                                'in-progress' => 'in-progress',
-                                default => 'new'
-                            };
-                            $secIconLabel = match($secStatus) {
-                                'completed' => '✓',
-                                'locked' => '!',
-                                'in-progress' => '→',
-                                default => (string)($idx + 1)
-                            };
-                            $isActive = $activeSectionIndex === $idx;
-                        @endphp
-                        <button type="button"
-                            wire:click="startSection({{ $idx }})"
-                            @disabled($secStatus === 'locked')
-                            @class([
-                                'nav-section-item', 'active' => $isActive,
-                                'locked' => $secStatus === 'locked'
-                            ])>
-                            <span class="nav-icon {{ $secIconType }}">{{ $secIconLabel }}</span>
-                            <span class="nav-label">{{ $sec['title'] }}</span>
-                            <span class="nav-duration">{{ $sec['minutes'] }}min</span>
-                        </button>
-                    @endforeach
-                </div>
-                <div class="nav-footer">
-                    <button type="button" wire:click="backToChapters" style="background:#333;color:#ccc;border:none;font-family:inherit;">
-                        ← Back to chapters
-                    </button>
-                </div>
-            </nav>
-
-            {{-- Main content area --}}
-            <div class="free-exam-content">
-                {{-- Timer + Submit floating widget --}}
-                @if ($currentSection && !$result)
-                    <div class="free-timer-widget" wire:poll.1s="tick">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <div class="free-exam-body">
+            {{-- Floating timer widget --}}
+            @if ($currentSection && !$result)
+                <div class="doc-timer-bar" wire:poll.1s="tick">
+                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; border-bottom: 1px solid #e5e5e5; padding-bottom: 0.25rem; width: 100%; text-align: center;">
+                        {{ $currentSection['title'] }}
+                    </div>
+                    <div class="doc-timer-text">
+                        <svg style="color: #d8232a;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        <span class="timer-text">{{ sprintf('%02d:%02d', $minutes, $seconds) }}</span>
-                        <button type="button" wire:click="submit" class="submit-inline">Submit</button>
+                        <span>Restzeit:</span>
+                        <strong style="color: #d8232a;">{{ sprintf('%02d:%02d', $minutes, $seconds) }} Min.</strong>
                     </div>
-                @elseif ($currentSection && $result)
-                    <div class="free-timer-widget">
-                        <button type="button" wire:click="backToChapters" style="background:#333;color:#ccc;border:none;padding:0.35rem 0.75rem;border-radius:4px;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;">← Back</button>
+                    <div class="save-indicator">
+                        <span class="save-pulse"></span>
+                        <span>Auto-Safe aktiv</span>
                     </div>
-                @endif
+                    <button type="button" wire:click="backToChapters" style="background: none; border: none; color: #666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">Menü verlassen</button>
+                    <button type="button" wire:click="submit" class="submit-button">Prüfung abgeben</button>
+                </div>
+            @elseif ($currentSection && $result)
+                <div class="doc-timer-bar">
+                    <button type="button" wire:click="backToChapters" style="background: none; border: none; color: #666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">← Zurück</button>
+                </div>
+            @endif
 
-                <div class="free-exam-workbench">
-                    @if ($sectionLocked)
-                        <div class="speaking-locked">
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            <h3 class="text-lg font-bold text-zinc-400 mb-2">Section completed</h3>
-                            <p class="text-zinc-600 text-sm">This section cannot be retaken.</p>
-                        </div>
-                    @elseif ($currentSection)
-                        {{-- Render section content matching paid exam styles --}}
+            {{-- Premium document column --}}
+            @if ($sectionLocked)
+                <div class="premium-document">
+                    <div style="text-align: center; padding: 3rem 1rem; color: #888;">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="width: 48px; height: 48px; margin: 0 auto 1rem; color: #555;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <h3 style="font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 0.5rem;">Section completed</h3>
+                        <p style="color: #666; font-size: 0.9rem;">This section cannot be retaken.</p>
+                    </div>
+                </div>
 
-                        {{-- === INTERACTIVE TEXT VIEW (like paid) --}}
-                        @if ($hasInteractiveText)
-                            <div class="exam-layout">
-                                <div class="exam-paper-column">
-                                    @foreach ($currentSection['elements'] as $element)
-                                        @if (($element['type'] ?? '') === 'interactive_text')
-                                            <div class="premium-document">
-                                                <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">{{ $element['label'] }}</h3>
-                                                <div class="c1-passage">{!! nl2br(e($element['content'] ?? '')) !!}</div>
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                </div>
-                                <aside class="exam-answer-column">
-                                    <div class="answer-sheet">
-                                        <div class="answer-sheet-header">
-                                            <div>
-                                                <span class="answer-sheet-title">Antwortbogen</span>
-                                                <span class="answer-sheet-section">{{ $currentSection['title'] }}</span>
-                                            </div>
-                                            @if ($hasAudio)
-                                                @foreach ($currentSection['elements'] as $el)
-                                                    @if (($el['type'] ?? '') === 'audio')
-                                                        <div class="audio-player"><audio controls src="{{ $el['content'] }}"></audio></div>
-                                                    @endif
-                                                @endforeach
-                                            @endif
-                                        </div>
-                                        <div class="answer-sheet-grid">
-                                            @foreach ($currentSection['elements'] as $element)
-                                                @if (in_array($element['type'] ?? '', ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true))
-                                                    @php
-                                                        $options = $this->optionsFor($element);
-                                                        $qNum = preg_replace('/[^0-9]/', '', $element['label']) ?: $loop->iteration;
-                                                        $isMatching = ($element['type'] ?? '') === 'matching';
-                                                        $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
-                                                        $selectedVal = $answers[$element['id']] ?? '';
-                                                    @endphp
-                                                    <div class="answer-sheet-row">
-                                                        <span class="question-num">{{ $qNum }}</span>
-                                                        @if (($element['type'] ?? '') === 'fill_blank' && $options === [])
-                                                            @php $fbCorrect = $detail ? $detail['correct'] : null; @endphp
-                                                            <input type="text" wire:model.live="answers.{{ $element['id'] }}" class="fill-blank-input {{ $result && $selectedVal !== '' ? ($fbCorrect ? 'correct' : 'wrong') : '' }}" placeholder="Antwort" @disabled($result)>
-                                                            @if ($result && $selectedVal !== '')
-                                                                <span class="feedback-badge {{ $fbCorrect ? 'ok' : 'fail' }}">{{ $fbCorrect ? '✓' : '✗ ' . $detail['expected'] }}</span>
-                                                            @endif
-                                                        @elseif ($isMatching && count($options) > 5)
-                                                            @php $matCorrect = $detail ? $detail['correct'] : null; @endphp
-                                                            <select wire:model.live="answers.{{ $element['id'] }}" class="matching-select {{ $result && $selectedVal !== '' ? ($matCorrect ? 'correct' : 'wrong') : '' }}" @disabled($result)>
-                                                                <option value="">—</option>
-                                                                @foreach ($options as $opt)
-                                                                    <option value="{{ $opt }}">{{ $opt }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            @if ($result && $selectedVal !== '')
-                                                                <span class="feedback-badge {{ $matCorrect ? 'ok' : 'fail' }}">{{ $matCorrect ? '✓' : '✗ ' . $detail['expected'] }}</span>
-                                                            @endif
-                                                        @else
-                                                            <div class="bubble-group">
-                                                                @foreach ($options as $option)
-                                                                    @php
-                                                                        $isSelected = $selectedVal === $option;
-                                                                        $bubbleCls = 'bubble';
-                                                                        if ($result) {
-                                                                            if ($isSelected) {
-                                                                                $bubbleCls .= $detail && $detail['correct'] ? ' selected correct' : ' selected wrong';
-                                                                            } elseif ($detail && $option === $detail['expected']) {
-                                                                                $bubbleCls .= ' correct-key';
-                                                                            }
-                                                                        } elseif ($isSelected) {
-                                                                            $bubbleCls .= ' selected';
-                                                                        }
-                                                                    @endphp
-                                                                    <label @class([$bubbleCls])>
-                                                                        <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}" @disabled($result)>
-                                                                        <span>{{ $option }}</span>
-                                                                    </label>
-                                                                @endforeach
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                        @foreach ($currentSection['elements'] as $element)
-                                            @if (($element['type'] ?? '') === 'writing')
-                                                @php $writeDetail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null; @endphp
-                                                <div class="writing-section @if($result) marked @endif">
-                                                    <label class="writing-label">{{ $element['label'] }}</label>
-                                                    <textarea wire:model.live="answers.{{ $element['id'] }}" class="writing-textarea" placeholder="Schreibe deinen Text hier..." @disabled($result)></textarea>
-                                                    @if ($writeDetail)
-                                                        <span class="writing-score">{{ $writeDetail['points'] }} / {{ $writeDetail['max_points'] }} Punkte</span>
-                                                    @endif
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                </aside>
-                            </div>
+            @elseif ($currentSection)
+                <div class="premium-document">
+                    <div class="c1-badge">{{ $template['level'] ?? '' }}</div>
+                    <div class="section-label">{{ $currentSection['title'] }}</div>
+                    <p class="c1-subtitle">{{ $template['title'] ?? '' }}</p>
 
-                        {{-- === INLINE GAP VIEW with 2-column layout (paper + answer sheet) --}}
-                        @elseif ($hasInlineGap)
-                            <div class="exam-layout">
-                                <div class="exam-paper-column">
-                                    <div class="premium-document">
-                                        <div class="c1-badge">{{ $template['level'] ?? '' }}</div>
-                                        <h1 class="c1-title">{{ $currentSection['title'] }}</h1>
-                                        <p class="c1-subtitle">{{ $template['title'] ?? '' }}</p>
+                    {{-- Audio player --}}
+                    @if ($hasAudio)
+                        @foreach ($currentSection['elements'] as $el)
+                            @if (($el['type'] ?? '') === 'audio')
+                                <div class="audio-player"><audio controls src="{{ $el['content'] }}"></audio></div>
+                            @endif
+                        @endforeach
+                    @endif
 
-                                        @foreach ($currentSection['elements'] as $element)
-                                            @if (($element['type'] ?? '') === 'text')
-                                                <h4 style="font-weight:700;margin-bottom:0.5rem;">{{ $element['label'] }}</h4>
-                                                <p style="margin-bottom:1rem;">{!! nl2br(e($element['content'])) !!}</p>
-                                            @elseif (($element['type'] ?? '') === 'image')
-                                                <figure style="margin:1rem 0;"><img src="{{ $element['content'] }}" alt="{{ $element['label'] }}" style="max-width:100%;"></figure>
-                                            @elseif (($element['type'] ?? '') === 'inline_gap')
-                                                @php
-                                                    $gaps = $this->gapsFor($element);
-                                                    $parts = preg_split('/--(\d+)--/', $element['content'] ?? '', -1, PREG_SPLIT_DELIM_CAPTURE);
-                                                @endphp
-                                                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;">{{ $element['label'] }}</h3>
-                                                <div class="inline-gap-text">
-                                                    @foreach ($parts as $i => $part)
-                                                        @if ($i % 2 === 0)
-                                                            <span>{!! nl2br(e($part)) !!}</span>
-                                                        @else
-                                                            @php $gapIdx = (int) $part; $gapDef = $gaps[$gapIdx] ?? null; @endphp
-                                                            @if ($gapDef)
-                                                                @php
-                                                                    $optList = array_filter(array_map('trim', explode(',', $gapDef['options'] ?? '')));
-                                                                    $current = $answers[$element['id']][$gapIdx] ?? '';
-                                                                    $gapCorrect = null;
-                                                                    $gapExpected = $gapDef['answer'] ?? '';
-                                                                    if ($result) {
-                                                                        $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$gapIdx);
-                                                                        if ($gapDetail) {
-                                                                            $gapCorrect = $gapDetail['correct'] ?? null;
-                                                                            $gapExpected = $gapDetail['expected'] ?? $gapExpected;
-                                                                        }
-                                                                    }
-                                                                    $gapCls = '';
-                                                                    if ($result && $current !== '') {
-                                                                        $gapCls = $gapCorrect ? 'correct' : 'wrong';
-                                                                    }
-                                                                @endphp
-                                                                <span class="inline-gap-pill @if($current) filled @endif">
-                                                                    <select wire:model.live="answers.{{ $element['id'] }}.{{ $gapIdx }}" @disabled($result) @class(['cloze-select', 'correct' => $gapCls === 'correct', 'wrong' => $gapCls === 'wrong'])>
-                                                                        <option value="">--{{ $gapIdx }}--</option>
-                                                                        @foreach ($optList as $opt)
-                                                                            @php $optParts = explode('|', $opt, 2); $optKey = trim($optParts[0]); $optLabel = trim($optParts[1] ?? $optKey); @endphp
-                                                                            <option value="{{ $optKey }}">{{ $optLabel }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    @if ($result && $current !== '')
-                                                                        <span class="feedback-badge {{ $gapCorrect ? 'ok' : 'fail' }}">{{ $gapCorrect ? '✓' : '✗ ' . $gapExpected }}</span>
-                                                                    @endif
-                                                                </span>
-                                                            @endif
-                                                        @endif
-                                                    @endforeach
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                </div>
-                                <aside class="exam-answer-column">
-                                    <div class="answer-sheet">
-                                        <div class="answer-sheet-header">
-                                            <div>
-                                                <span class="answer-sheet-title">Antwortbogen</span>
-                                                <span class="answer-sheet-section">{{ $currentSection['title'] }}</span>
-                                            </div>
-                                            @if ($hasAudio)
-                                                @foreach ($currentSection['elements'] as $el)
-                                                    @if (($el['type'] ?? '') === 'audio')
-                                                        <div class="audio-player"><audio controls src="{{ $el['content'] }}"></audio></div>
-                                                    @endif
-                                                @endforeach
-                                            @endif
-                                        </div>
+                    {{-- Section content --}}
+                    @foreach ($currentSection['elements'] as $element)
+                        @php $elId = $element['id'] ?? ('el_' . $loop->index); @endphp
 
-                                        @php
-                                            $answerElements = collect($currentSection['elements'] ?? [])
-                                                ->filter(fn ($el) => in_array($el['type'] ?? '', ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true))
-                                                ->values();
-                                        @endphp
+                        {{-- TEXT --}}
+                        @if (($element['type'] ?? '') === 'text')
+                            @if ($element['label'] ?? null)
+                                <h4 style="font-weight:700;margin-bottom:0.5rem;">{{ $element['label'] }}</h4>
+                            @endif
+                            <article class="c1-passage">{!! nl2br(e($element['content'] ?? '')) !!}</article>
 
-                                        @if ($answerElements->isNotEmpty())
-                                            <div class="answer-sheet-grid">
-                                                @foreach ($answerElements as $element)
-                                                    @php
-                                                        $options = $this->optionsFor($element);
-                                                        $qNum = preg_replace('/[^0-9]/', '', $element['label']) ?: $loop->iteration;
-                                                        $isMatching = ($element['type'] ?? '') === 'matching';
-                                                        $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
-                                                        $selectedVal = $answers[$element['id']] ?? '';
-                                                    @endphp
-                                                    <div class="answer-sheet-row" wire:key="answer-{{ $element['id'] }}">
-                                                        <span class="question-num">{{ $qNum }}</span>
-                                                        @if (($element['type'] ?? '') === 'fill_blank' && $options === [])
-                                                            @php $fbCorrect = $detail ? $detail['correct'] : null; @endphp
-                                                            <input type="text" wire:model.live="answers.{{ $element['id'] }}" class="fill-blank-input {{ $result && $selectedVal !== '' ? ($fbCorrect ? 'correct' : 'wrong') : '' }}" placeholder="Antwort" @disabled($result)>
-                                                            @if ($result && $selectedVal !== '')
-                                                                <span class="feedback-badge {{ $fbCorrect ? 'ok' : 'fail' }}">{{ $fbCorrect ? '✓' : '✗ ' . $detail['expected'] }}</span>
-                                                            @endif
-                                                        @elseif ($isMatching && count($options) > 5)
-                                                            @php $matCorrect = $detail ? $detail['correct'] : null; @endphp
-                                                            <select wire:model.live="answers.{{ $element['id'] }}" class="matching-select {{ $result && $selectedVal !== '' ? ($matCorrect ? 'correct' : 'wrong') : '' }}" @disabled($result)>
-                                                                <option value="">—</option>
-                                                                @foreach ($options as $opt)
-                                                                    <option value="{{ $opt }}">{{ $opt }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            @if ($result && $selectedVal !== '')
-                                                                <span class="feedback-badge {{ $matCorrect ? 'ok' : 'fail' }}">{{ $matCorrect ? '✓' : '✗ ' . $detail['expected'] }}</span>
-                                                            @endif
-                                                        @else
-                                                            <div class="bubble-group">
-                                                                @foreach ($options as $option)
-                                                                    @php
-                                                                        $isSelected = $selectedVal === $option;
-                                                                        $bubbleCls = 'bubble';
-                                                                        if ($result) {
-                                                                            if ($isSelected) {
-                                                                                $bubbleCls .= $detail && $detail['correct'] ? ' selected correct' : ' selected wrong';
-                                                                            } elseif ($detail && $option === $detail['expected']) {
-                                                                                $bubbleCls .= ' correct-key';
-                                                                            }
-                                                                        } elseif ($isSelected) {
-                                                                            $bubbleCls .= ' selected';
-                                                                        }
-                                                                    @endphp
-                                                                    <label @class([$bubbleCls])>
-                                                                        <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}" @disabled($result)>
-                                                                        <span>{{ $option }}</span>
-                                                                    </label>
-                                                                @endforeach
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @endif
+                        {{-- IMAGE --}}
+                        @elseif (($element['type'] ?? '') === 'image')
+                            <figure style="margin:1rem 0;"><img src="{{ $element['content'] }}" alt="{{ $element['label'] }}" style="max-width:100%;"></figure>
 
-                                        @foreach ($currentSection['elements'] as $element)
-                                            @if (($element['type'] ?? '') === 'writing')
-                                                @php $writeDetail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null; @endphp
-                                                <div class="writing-section @if($result) marked @endif">
-                                                    <label class="writing-label">{{ $element['label'] }}</label>
-                                                    <textarea wire:model.live="answers.{{ $element['id'] }}" class="writing-textarea" placeholder="Schreibe deinen Text hier..." @disabled($result)></textarea>
-                                                    @if ($writeDetail)
-                                                        <span class="writing-score">{{ $writeDetail['points'] }} / {{ $writeDetail['max_points'] }} Punkte</span>
-                                                    @endif
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                </aside>
-                            </div>
-
-                        {{-- === SPEAKING VIEW (like paid) --}}
-                        @elseif ($hasSpeaking)
-                            <div class="telc-paper booklet-paper premium-document">
-                                <div class="telc-paper-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-                                    <div>
-                                        <p style="font-size:0.75rem;color:#666;margin:0;">{{ $template['title'] ?? '' }}</p>
-                                        <h2 style="font-size:1.3rem;font-weight:700;margin:0.25rem 0 0;">{{ $currentSection['title'] }}</h2>
-                                    </div>
-                                    <span style="font-weight:700;color:#888;">{{ $template['level'] ?? '' }}</span>
-                                </div>
-                                <div class="telc-paper-body">
-                                    @foreach ($currentSection['elements'] as $element)
-                                        @if (($element['type'] ?? '') === 'speaking')
+                        {{-- INLINE GAP --}}
+                        @elseif (($element['type'] ?? '') === 'inline_gap')
+                            @php
+                                $gaps = $this->gapsFor($element);
+                                $parts = preg_split('/--(\d+)--/', $element['content'] ?? '', -1, PREG_SPLIT_DELIM_CAPTURE);
+                            @endphp
+                            @if ($element['label'] ?? null)
+                                <h4 style="font-weight:700;margin-bottom:0.5rem;">{{ $element['label'] }}</h4>
+                            @endif
+                            <div class="inline-gap-text">
+                                @foreach ($parts as $i => $part)
+                                    @if ($i % 2 === 0)
+                                        <span>{!! nl2br(e($part)) !!}</span>
+                                    @else
+                                        @php $gapIdx = (int) $part; $gapDef = $gaps[$gapIdx] ?? null; @endphp
+                                        @if ($gapDef)
                                             @php
-                                                $elId = $element['id'];
-                                                $elCompleted = in_array($elId, $this->completedSectionIds, true);
+                                                $optList = array_filter(array_map('trim', explode(',', $gapDef['options'] ?? '')));
+                                                $current = $answers[$element['id']][$gapIdx] ?? '';
+                                                $gapCorrect = null;
+                                                $gapExpected = $gapDef['answer'] ?? '';
+                                                if ($result) {
+                                                    $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$gapIdx);
+                                                    if ($gapDetail) {
+                                                        $gapCorrect = $gapDetail['correct'] ?? null;
+                                                        $gapExpected = $gapDetail['expected'] ?? $gapExpected;
+                                                    }
+                                                }
+                                                $gapCls = '';
+                                                if ($result && $current !== '') {
+                                                    $gapCls = $gapCorrect ? 'correct' : 'wrong';
+                                                }
                                             @endphp
-                                            @if ($elCompleted)
-                                                @php $spDetail = $result ? collect($result['details'])->firstWhere('id', $elId) : null; @endphp
-                                                <div class="speaking-locked">
-                                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    <h3 class="text-lg font-bold text-zinc-600 mb-2">Abgeschlossen</h3>
-                                                    <p class="text-zinc-500 text-sm">Dieser Abschnitt kann nicht wiederholt werden.</p>
-                                                    @if ($spDetail)
-                                                        <div style="margin-top:0.75rem;font-size:1rem;font-weight:700;color:#eab308;">{{ $spDetail['points'] }} / {{ $spDetail['max_points'] }} Punkte</div>
-                                                    @endif
-                                                </div>
-                                            @elseif (!$result)
-                                                <div class="speaking-task" x-data="{
-                                                    isRecording: false, recognition: null, interimText: '',
-                                                    initRecognition() {
-                                                        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-                                                        if (!SR) return;
-                                                        this.recognition = new SR(); this.recognition.lang = 'de-DE';
-                                                        this.recognition.continuous = true; this.recognition.interimResults = true;
-                                                        this.recognition.onresult = (e) => { let t = ''; for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript; this.interimText = t; };
-                                                        this.recognition.onerror = () => this.stopRecording();
-                                                    },
-                                                    startRecording() { if (!this.recognition) this.initRecognition(); if (!this.recognition) return; this.isRecording = true; this.recognition.start(); },
-                                                    stopRecording() { this.isRecording = false; if (this.recognition) this.recognition.stop(); },
-                                                    toggleRecording() { this.isRecording ? this.stopRecording() : this.startRecording(); },
-                                                    sendToAi(id) { $wire.set('answers.' + id, this.interimText); $wire.call('submit'); }
-                                                }">
-                                                    <div class="speaking-header">
-                                                        <span class="speaking-badge">{{ $element['label'] }}</span>
-                                                        <span class="speaking-points">{{ $element['points'] ?? 25 }} Punkte</span>
-                                                    </div>
-                                                    <div class="speaking-prompt"><p>{{ $element['content'] }}</p></div>
-                                                    <div class="speaking-controls">
-                                                        <button type="button" @click="toggleRecording" class="speaking-record-btn" :class="{ recording: isRecording }">
-                                                            <template x-if="!isRecording"><span>🎤 Antwort aufnehmen</span></template>
-                                                            <template x-if="isRecording"><span>⏹ Aufnahme stoppen</span></template>
-                                                        </button>
-                                                        <template x-if="isRecording"><span class="speaking-recording-indicator">● Aufnahme läuft...</span></template>
-                                                    </div>
-                                                    <div class="speaking-transcript">
-                                                        <label>Transkription / Antwort:</label>
-                                                        <textarea x-model="interimText" wire:model.live="answers.{{ $elId }}" class="speaking-textarea" placeholder="Deine transkribierte Antwort erscheint hier."></textarea>
-                                                    </div>
-                                                    <div class="speaking-actions">
-                                                        <button type="button" @click="sendToAi('{{ $elId }}')" class="telc-button primary">
-                                                            <span>Absenden und bewerten</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            @else
-                                                @php $spDetail = $result ? collect($result['details'])->firstWhere('id', $elId) : null; @endphp
-                                                <div class="speaking-task" style="opacity:0.8;">
-                                                    <div class="speaking-header">
-                                                        <span class="speaking-badge">{{ $element['label'] }}</span>
-                                                        <span class="speaking-points">{{ $element['points'] ?? 25 }} Punkte</span>
-                                                    </div>
-                                                    <div class="speaking-prompt"><p>{{ $element['content'] }}</p></div>
-                                                    <div class="speaking-transcript">
-                                                        <label>Deine Antwort:</label>
-                                                        <textarea class="speaking-textarea" disabled>{{ $answers[$elId] ?? '' }}</textarea>
-                                                    </div>
-                                                    @if ($spDetail)
-                                                        <div class="speaking-feedback">
-                                                            <h4>Bewertung</h4>
-                                                            <div class="feedback-content">{{ $spDetail['points'] }} / {{ $spDetail['max_points'] }} Punkte</div>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            @endif
+                                            <span class="inline-gap-pill @if($current) filled @endif">
+                                                <select wire:model.live="answers.{{ $element['id'] }}.{{ $gapIdx }}" @disabled($result) @class(['cloze-select', 'correct' => $gapCls === 'correct', 'wrong' => $gapCls === 'wrong'])>
+                                                    <option value="">--{{ $gapIdx }}--</option>
+                                                    @foreach ($optList as $opt)
+                                                        @php $optParts = explode('|', $opt, 2); $optKey = trim($optParts[0]); $optLabel = trim($optParts[1] ?? $optKey); @endphp
+                                                        <option value="{{ $optKey }}">{{ $optLabel }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @if ($result && $current !== '')
+                                                    <span class="feedback-badge {{ $gapCorrect ? 'ok' : 'fail' }}">{{ $gapCorrect ? '✓' : '✗ ' . $gapExpected }}</span>
+                                                @endif
+                                            </span>
                                         @endif
+                                    @endif
+                                @endforeach
+                            </div>
+
+                        {{-- INTERACTIVE TEXT --}}
+                        @elseif (($element['type'] ?? '') === 'interactive_text')
+                            @php
+                                $parser = app(\App\Services\GapParser::class);
+                                $segments = $parser->parse($element['content'] ?? '', $element['gaps'] ?? []);
+                            @endphp
+                            @if ($element['label'] ?? null)
+                                <h4 style="font-weight:700;margin-bottom:0.5rem;">{{ $element['label'] }}</h4>
+                            @endif
+                            <div class="c1-passage" style="line-height: 2.2;">
+                                @foreach ($segments as $seg)
+                                    @if ($seg['type'] === 'text')
+                                        <span>{!! nl2br(e($seg['content'])) !!}</span>
+                                    @elseif ($seg['type'] === 'gap')
+                                        @php
+                                            $wireKey = $element['id'].'.'.$seg['gapId'];
+                                            $current = $answers[$element['id']][$seg['gapId']] ?? '';
+                                            $isDropdown = ($seg['gapDef']['type'] ?? '') === 'dropdown';
+                                            $optList = $parser->optionList($seg['gapDef']);
+                                        @endphp
+                                        <span class="inline-gap-pill">
+                                            @if ($isDropdown && count($optList) > 0)
+                                                <select wire:model.live="answers.{{ $wireKey }}" class="cloze-select">
+                                                    <option value="">{{ $current ?: '___' }}</option>
+                                                    @foreach ($optList as $opt)
+                                                        <option value="{{ $opt['value'] }}" @selected($current === $opt['value'])>{{ $opt['label'] }}</option>
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                <input type="text" wire:model.live="answers.{{ $wireKey }}" class="cloze-select" style="width:80px;" placeholder="___" value="{{ $current }}">
+                                            @endif
+                                        </span>
+                                    @endif
+                                @endforeach
+                            </div>
+
+                        {{-- MULTIPLE CHOICE --}}
+                        @elseif (in_array($element['type'] ?? '', ['multiple_choice', 'true_false'], true))
+                            @php $rawOptions = $this->optionsFor($element); @endphp
+                            <div class="mc-question-row">
+                                @if ($element['label'] ?? null)
+                                    <div class="mc-question-header">{{ $element['label'] }}</div>
+                                @endif
+                                @if ($element['instruction'] ?? null)
+                                    <p style="font-size:0.9rem;color:#666;margin-bottom:0.75rem;">{{ $element['instruction'] }}</p>
+                                @endif
+                                <div class="mc-options-list">
+                                    @foreach ($rawOptions as $opt)
+                                        @php
+                                            $isSelected = ($answers[$element['id']] ?? '') === $opt;
+                                            $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
+                                            $optionCls = 'mc-option-item';
+                                            if ($result && $isSelected) {
+                                                $optionCls .= $detail && $detail['correct'] ? ' selected' : ' selected';
+                                            } elseif ($isSelected) {
+                                                $optionCls .= ' selected';
+                                            }
+                                        @endphp
+                                        <label class="{{ $optionCls }}">
+                                            <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $opt }}" @disabled($result) class="mc-radio-input">
+                                            <span class="mc-option-bullet"></span>
+                                            <span>{{ $opt }}</span>
+                                            @if ($result)
+                                                @php $det = collect($result['details'])->firstWhere('id', $element['id']); @endphp
+                                                @if ($det && $opt === ($det['expected'] ?? '') && !$det['correct'])
+                                                    <span class="feedback-badge fail">Richtige Antwort: {{ $det['expected'] }}</span>
+                                                @endif
+                                                @if ($det && $isSelected && $det['correct'])
+                                                    <span class="feedback-badge ok">✓</span>
+                                                @endif
+                                            @endif
+                                        </label>
                                     @endforeach
                                 </div>
                             </div>
 
-                        {{-- === DEFAULT VIEW with answer sheet (like paid) --}}
-                        @else
-                            <div class="exam-layout">
-                                <div class="exam-paper-column">
-                                    <div class="premium-document">
-                                        <div class="c1-badge">{{ $template['level'] ?? '' }}</div>
-                                        <h1 class="c1-title">ERFOLG</h1>
-                                        <p class="c1-subtitle">Free Exam — {{ $currentSection['title'] }}</p>
-
-                                        @if ($currentSection['elements'] ?? false)
-                                            @foreach ($currentSection['elements'] as $element)
-                                                @if (($element['type'] ?? '') === 'text')
-                                                    <h4 style="font-weight:700;margin-bottom:0.5rem;">{{ $element['label'] }}</h4>
-                                                    <p style="margin-bottom:1rem;">{!! nl2br(e($element['content'])) !!}</p>
-                                                @elseif (($element['type'] ?? '') === 'image')
-                                                    <figure style="margin:1rem 0;"><img src="{{ $element['content'] }}" alt="{{ $element['label'] }}" style="max-width:100%;"></figure>
-                                                @endif
+                        {{-- MATCHING --}}
+                        @elseif (($element['type'] ?? '') === 'matching')
+                            @php $matchOptions = $this->optionsFor($element); @endphp
+                            <div class="mc-question-row">
+                                @if ($element['label'] ?? null)
+                                    <div class="mc-question-header">{{ $element['label'] }}</div>
+                                @endif
+                                @if (($element['type'] ?? '') === 'matching' && count($matchOptions) > 5)
+                                    <div class="answer-sheet-row">
+                                        <span class="question-num">{{ preg_replace('/[^0-9]/', '', $element['label']) ?: $loop->iteration }}</span>
+                                        <select wire:model.live="answers.{{ $element['id'] }}" class="matching-select" @disabled($result)>
+                                            <option value="">—</option>
+                                            @foreach ($matchOptions as $opt)
+                                                <option value="{{ $opt }}">{{ $opt }}</option>
                                             @endforeach
-                                        @endif
-
-                                        @if ($result)
-                                            <div style="background:#fff;border:2px solid #1a1a1a;border-radius:8px;padding:2rem;max-width:500px;margin:2rem auto 0;text-align:center;">
-                                                <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#666;display:block;margin-bottom:0.5rem;">Ergebnis</span>
-                                                <div style="display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;">
-                                                    <div><span style="font-size:0.8rem;color:#666;">Erreicht</span><br><strong style="font-size:2rem;">{{ $result['earned'] }}</strong></div>
-                                                    <div><span style="font-size:0.8rem;color:#666;">Mögliche</span><br><strong style="font-size:2rem;">{{ $result['possible'] }}</strong></div>
-                                                </div>
-                                                <div style="font-size:1.2rem;font-weight:700;">{{ $result['percentage'] }}%</div>
-                                            </div>
-                                        @endif
+                                        </select>
                                     </div>
-                                </div>
-
-                                <aside class="exam-answer-column">
-                                    <div class="answer-sheet">
-                                        <div class="answer-sheet-header">
-                                            <div>
-                                                <span class="answer-sheet-title">Antwortbogen</span>
-                                                <span class="answer-sheet-section">{{ $currentSection['title'] }}</span>
-                                            </div>
-                                            @if ($hasAudio)
-                                                @foreach ($currentSection['elements'] as $el)
-                                                    @if (($el['type'] ?? '') === 'audio')
-                                                        <div class="audio-player"><audio controls src="{{ $el['content'] }}"></audio></div>
-                                                    @endif
-                                                @endforeach
-                                            @endif
-                                        </div>
-
-                                        @php
-                                            $sheetItems = collect($currentSection['elements'] ?? [])
-                                                ->filter(fn ($el) => in_array($el['type'] ?? '', ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true))
-                                                ->values();
-                                        @endphp
-
-                                        @if ($sheetItems->isNotEmpty())
-                                            <div class="answer-sheet-grid">
-                                                @foreach ($sheetItems as $element)
-                                                    @php
-                                                        $options = $this->optionsFor($element);
-                                                        $qNum = preg_replace('/[^0-9]/', '', $element['label']) ?: $loop->iteration;
-                                                        $isMatching = ($element['type'] ?? '') === 'matching';
-                                                        $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
-                                                        $selectedVal = $answers[$element['id']] ?? '';
-                                                    @endphp
-                                                    <div class="answer-sheet-row" wire:key="answer-{{ $element['id'] }}">
-                                                        <span class="question-num">{{ $qNum }}</span>
-                                                        @if (($element['type'] ?? '') === 'fill_blank' && $options === [])
-                                                            @php $fbCorrect = $detail ? $detail['correct'] : null; @endphp
-                                                            <input type="text" wire:model.live="answers.{{ $element['id'] }}" class="fill-blank-input {{ $result && $selectedVal !== '' ? ($fbCorrect ? 'correct' : 'wrong') : '' }}" placeholder="Antwort" @disabled($result)>
-                                                            @if ($result && $selectedVal !== '')
-                                                                <span class="feedback-badge {{ $fbCorrect ? 'ok' : 'fail' }}">{{ $fbCorrect ? '✓' : '✗ ' . $detail['expected'] }}</span>
-                                                            @endif
-                                                        @elseif ($isMatching && count($options) > 5)
-                                                            @php $matCorrect = $detail ? $detail['correct'] : null; @endphp
-                                                            <select wire:model.live="answers.{{ $element['id'] }}" class="matching-select {{ $result && $selectedVal !== '' ? ($matCorrect ? 'correct' : 'wrong') : '' }}" @disabled($result)>
-                                                                <option value="">—</option>
-                                                                @foreach ($options as $opt)
-                                                                    <option value="{{ $opt }}">{{ $opt }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            @if ($result && $selectedVal !== '')
-                                                                <span class="feedback-badge {{ $matCorrect ? 'ok' : 'fail' }}">{{ $matCorrect ? '✓' : '✗ ' . $detail['expected'] }}</span>
-                                                            @endif
-                                                        @else
-                                                            <div class="bubble-group">
-                                                                @foreach ($options as $option)
-                                                                    @php
-                                                                        $isSelected = $selectedVal === $option;
-                                                                        $bubbleCls = 'bubble';
-                                                                        if ($result) {
-                                                                            if ($isSelected) {
-                                                                                $bubbleCls .= $detail && $detail['correct'] ? ' selected correct' : ' selected wrong';
-                                                                            } elseif ($detail && $option === $detail['expected']) {
-                                                                                $bubbleCls .= ' correct-key';
-                                                                            }
-                                                                        } elseif ($isSelected) {
-                                                                            $bubbleCls .= ' selected';
-                                                                        }
-                                                                    @endphp
-                                                                    <label @class([$bubbleCls])>
-                                                                        <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}" @disabled($result)>
-                                                                        <span>{{ $option }}</span>
-                                                                    </label>
-                                                                @endforeach
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @endif
-
-                                        {{-- Writing --}}
-                                        @foreach ($currentSection['elements'] as $element)
-                                            @if (($element['type'] ?? '') === 'writing')
-                                                @php $writeDetail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null; @endphp
-                                                <div class="writing-section @if($result) marked @endif">
-                                                    <label class="writing-label">{{ $element['label'] }}</label>
-                                                    <textarea wire:model.live="answers.{{ $element['id'] }}" class="writing-textarea" placeholder="Schreibe deinen Text hier..." @disabled($result)></textarea>
-                                                    @if ($writeDetail)
-                                                        <span class="writing-score">{{ $writeDetail['points'] }} / {{ $writeDetail['max_points'] }} Punkte</span>
-                                                    @endif
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                </aside>
-                            </div>
-                        @endif
-
-                        {{-- Result display after submission --}}
-                        @if ($result && !$sectionLocked)
-                            <div class="free-result-panel">
-                                <div class="score-label">Your Score</div>
-                                <div class="score">{{ $result['earned'] }} / {{ $result['possible'] }}</div>
-                                <div style="font-size:1.1rem;font-weight:700;color:{{ ($result['percentage'] ?? 0) >= 60 ? '#22c55e' : '#ef4444' }};margin-top:0.5rem;margin-bottom:1.5rem;">
-                                    {{ $result['percentage'] }}%
-                                </div>
-
-                                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-                                    <button type="button" wire:click="repeat" style="background-color: #166534; color: #ffffff; border: none; padding: 0.5rem 1.25rem; border-radius: 4px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;">
-                                        Wiederholen
-                                    </button>
-                                    <button type="button" wire:click="backToChapters" style="background-color: #333333; color: #ffffff; border: none; padding: 0.5rem 1.25rem; border-radius: 4px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;">
-                                        Zurück zur Übersicht
-                                    </button>
-                                </div>
-                                @if (!empty($result['details']))
-                                    <div style="margin-top:1.5rem;text-align:left;border-top:1px solid #333;padding-top:1rem;">
-                                        @foreach ($result['details'] as $detail)
-                                            <div style="display:flex;justify-content:space-between;padding:0.35rem 0;font-size:0.85rem;border-bottom:1px solid #222;">
-                                                <span style="color:#aaa;">{{ $detail['label'] }}</span>
-                                                <span style="color:{{ ($detail['correct'] ?? false) ? '#22c55e' : '#ef4444' }};">
-                                                    {{ $detail['points'] }}/{{ $detail['max_points'] }}
-                                                    {{ ($detail['correct'] ?? false) ? '✓' : '✗' }}
-                                                </span>
-                                            </div>
+                                @else
+                                    <div class="bubble-group">
+                                        @foreach ($matchOptions as $option)
+                                            @php
+                                                $isSelected = ($answers[$element['id']] ?? '') === $option;
+                                                $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
+                                                $bubbleCls = 'bubble';
+                                                if ($result) {
+                                                    if ($isSelected) {
+                                                        $bubbleCls .= $detail && $detail['correct'] ? ' selected correct' : ' selected wrong';
+                                                    } elseif ($detail && $option === $detail['expected']) {
+                                                        $bubbleCls .= ' correct-key';
+                                                    }
+                                                } elseif ($isSelected) {
+                                                    $bubbleCls .= ' selected';
+                                                }
+                                            @endphp
+                                            <label @class([$bubbleCls])>
+                                                <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}" @disabled($result)>
+                                                <span>{{ $option }}</span>
+                                            </label>
                                         @endforeach
                                     </div>
                                 @endif
                             </div>
-                        @endif
 
-                    @else
-                        <div class="telc-panel"><h2>Section not found.</h2></div>
+                        {{-- FILL BLANK --}}
+                        @elseif (($element['type'] ?? '') === 'fill_blank')
+                            @php $fbOptions = $this->optionsFor($element); @endphp
+                            <div class="mc-question-row">
+                                @if ($element['label'] ?? null)
+                                    <div class="mc-question-header">{{ $element['label'] }}</div>
+                                @endif
+                                @if ($fbOptions === [])
+                                    @php
+                                        $selectedVal = $answers[$element['id']] ?? '';
+                                        $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
+                                        $fbCorrect = $detail ? $detail['correct'] : null;
+                                    @endphp
+                                    <div class="answer-sheet-row">
+                                        <input type="text" wire:model.live="answers.{{ $element['id'] }}" class="fill-blank-input {{ $result && $selectedVal !== '' ? ($fbCorrect ? 'correct' : 'wrong') : '' }}" placeholder="Antwort" @disabled($result) style="width: 100%;">
+                                        @if ($result && $selectedVal !== '')
+                                            <span class="feedback-badge {{ $fbCorrect ? 'ok' : 'fail' }}">{{ $fbCorrect ? '✓' : '✗ ' . ($detail['expected'] ?? '') }}</span>
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="bubble-group">
+                                        @foreach ($fbOptions as $option)
+                                            @php
+                                                $isSelected = ($answers[$element['id']] ?? '') === $option;
+                                                $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
+                                                $bubbleCls = 'bubble';
+                                                if ($result) {
+                                                    if ($isSelected) {
+                                                        $bubbleCls .= $detail && $detail['correct'] ? ' selected correct' : ' selected wrong';
+                                                    } elseif ($detail && $option === $detail['expected']) {
+                                                        $bubbleCls .= ' correct-key';
+                                                    }
+                                                } elseif ($isSelected) {
+                                                    $bubbleCls .= ' selected';
+                                                }
+                                            @endphp
+                                            <label @class([$bubbleCls])>
+                                                <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}" @disabled($result)>
+                                                <span>{{ $option }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+
+                        {{-- WRITING --}}
+                        @elseif (($element['type'] ?? '') === 'writing')
+                            @php $writeDetail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null; @endphp
+                            <div class="writing-section @if($result) marked @endif" style="margin-top: 2rem;">
+                                <label class="writing-label" style="font-weight: 700; display: block; margin-bottom: 0.5rem;">{{ $element['label'] ?? $element['instruction'] ?? 'Schreiben' }}</label>
+                                <div class="writing-textarea-lined">
+                                    <textarea wire:model.live="answers.{{ $element['id'] }}" placeholder="Ihre Antwort..." @disabled($result) rows="6"></textarea>
+                                </div>
+                                @if ($writeDetail)
+                                    <span class="writing-score">{{ $writeDetail['points'] }} / {{ $writeDetail['max_points'] }} Punkte</span>
+                                    @if ($writeDetail['feedback'] ?? '')
+                                        <div style="margin-top:0.75rem;padding:0.75rem;background:#f9f9f9;border-left:3px solid #d8232a;border-radius:4px;font-size:0.85rem;">
+                                            <strong>Feedback:</strong> {{ $writeDetail['feedback'] }}
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                        @endif
+                    @endforeach
+
+                    {{-- Result display --}}
+                    @if ($result && !$sectionLocked)
+                        <hr class="c1-divider">
+                        <div style="background: #ffffff; border: 2px solid #1a1a1a; border-radius: 8px; padding: 2.5rem; max-width: 600px; margin: 2rem auto 0; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #666; display: block; margin-bottom: 0.5rem;">Ergebnis</span>
+                            <div style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem;">
+                                <div><span style="font-size: 0.8rem; color: #666;">Erreicht</span><br><strong style="font-size: 2rem;">{{ $result['earned'] }}</strong></div>
+                                <div><span style="font-size: 0.8rem; color: #666;">Mögliche</span><br><strong style="font-size: 2rem;">{{ $result['possible'] }}</strong></div>
+                            </div>
+                            <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem;">{{ $result['percentage'] }}%</div>
+
+                            <div style="background-color: {{ ($result['percentage'] ?? 0) >= 60 ? '#e6f4ea' : '#fce8e6' }}; padding: 0.75rem; border-radius: 4px; font-weight: 700; font-size: 1.1rem; color: {{ ($result['percentage'] ?? 0) >= 60 ? '#137333' : '#c5221f' }}; margin-bottom: 1.5rem;">
+                                Status: {{ ($result['percentage'] ?? 0) >= 60 ? 'Bestanden' : 'Nicht bestanden' }}
+                            </div>
+
+                            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                                <button type="button" wire:click="repeat" style="background-color: #137333; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    Prüfung wiederholen
+                                </button>
+                                <button type="button" wire:click="backToChapters" style="background-color: #1a1a1a; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    Zurück zur Übersicht
+                                </button>
+                            </div>
+
+                            @if (!empty($result['details']))
+                                <div style="margin-top: 1.5rem; text-align: left; border-top: 1px solid #e5e5e5; padding-top: 1rem;">
+                                    @foreach ($result['details'] as $detail)
+                                        <div style="display: flex; justify-content: space-between; padding: 0.35rem 0; font-size: 0.85rem; border-bottom: 1px solid #f5f5f5;">
+                                            <span style="color: #666;">{{ $detail['label'] }}</span>
+                                            <span style="color: {{ ($detail['correct'] ?? false) ? '#137333' : '#c5221f' }};">
+                                                {{ $detail['points'] }}/{{ $detail['max_points'] }}
+                                                {{ ($detail['correct'] ?? false) ? '✓' : '✗' }}
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
                     @endif
                 </div>
-            </div>
+            @else
+                <div class="premium-document">
+                    <h2>Section not found.</h2>
+                </div>
+            @endif
         </div>
 
-        {{-- Next-section popup (bottom-left) --}}
+        {{-- Next-section popup --}}
         @if ($result && $nextSectionIndex !== null)
             @php $nextSec = $sections[$nextSectionIndex] ?? null; @endphp
             @if ($nextSec)
-                <div style="position:fixed;bottom:1rem;left:1rem;z-index:1002;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:0.6rem 1rem;box-shadow:0 4px 20px rgba(0,0,0,0.4);display:flex;align-items:center;gap:0.75rem;animation:slideUp 0.3s ease;">
-                    <span style="font-size:0.78rem;color:#aaa;">
-                        Nächstes: <strong style="color:#eab308;">{{ $nextSec['title'] }}</strong>
+                <div style="position:fixed;bottom:1rem;left:1rem;z-index:1002;background:#ffffff;border:1px solid #e5e5e5;border-radius:8px;padding:0.6rem 1rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);display:flex;align-items:center;gap:0.75rem;animation:slideUp 0.3s ease;">
+                    <span style="font-size:0.78rem;color:#666;">
+                        Nächstes: <strong style="color:#1a1a1a;">{{ $nextSec['title'] }}</strong>
                     </span>
-                    <button type="button" wire:click="startSection({{ $nextSectionIndex }})" style="background:#eab308;color:#1a1a1a;border:none;padding:0.35rem 0.75rem;border-radius:4px;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    <button type="button" wire:click="startSection({{ $nextSectionIndex }})" style="background:#1a1a1a;color:#fff;border:none;padding:0.35rem 0.75rem;border-radius:4px;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.15s;">
                         Starten →
                     </button>
                 </div>
@@ -969,9 +676,9 @@
 
             window.examResultDetails.forEach(detail => {
                 const elId = detail.id;
-                
+
                 let targetEl = document.querySelector(`[wire\\:model\\.live="answers.${elId}"], [wire\\:model="answers.${elId}"], [name="${elId}"], [wire\\:model\\.change="answers.${elId}"]`);
-                
+
                 if (!targetEl) {
                     const allInputs = document.querySelectorAll('input, select, textarea');
                     for (let input of allInputs) {
@@ -989,24 +696,24 @@
                     if (wrapper && !wrapper.dataset.explanationAttached) {
                         wrapper.dataset.explanationAttached = "true";
                         wrapper.style.cursor = "pointer";
-                        
+
                         wrapper.classList.add('hover:bg-yellow-50/50', 'transition-colors');
 
                         const explDiv = document.createElement('div');
                         explDiv.className = 'explanation-box mt-2 p-3 bg-yellow-50 border-l-4 border-yellow-500 text-xs text-stone-750 rounded shadow-sm hidden text-left';
                         explDiv.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
-                        
+
                         let explanationText = detail.explanation || '';
                         if (!explanationText) {
                             explanationText = detail.correct ? 'Richtig! Gut gemacht.' : 'Leider falsch.';
                         }
-                        
+
                         explDiv.innerHTML = `
                             <div class="font-bold text-yellow-800 mb-1" style="font-weight: 700; color: #854d0e;">Erklärung & Feedback:</div>
                             <p class="leading-relaxed" style="margin: 0; color: #451a03;">${explanationText}</p>
                             ${!detail.correct && detail.expected ? `<div class="mt-1 text-green-700 font-bold" style="margin-top: 0.25rem; color: #15803d; font-weight: 700;">Richtige Antwort: ${detail.expected}</div>` : ''}
                         `;
-                        
+
                         if (wrapper.tagName === 'TR') {
                             const newTr = document.createElement('tr');
                             newTr.className = 'hidden';
@@ -1014,10 +721,10 @@
                             newTd.colSpan = wrapper.cells.length;
                             newTd.appendChild(explDiv);
                             newTr.appendChild(newTd);
-                            
+
                             wrapper.after(newTr);
                             explDiv.classList.remove('hidden');
-                            
+
                             wrapper.addEventListener('click', () => {
                                 newTr.classList.toggle('hidden');
                             });
@@ -1035,7 +742,7 @@
 
         document.addEventListener('DOMContentLoaded', applyExplanations);
         document.addEventListener('livewire:navigated', applyExplanations);
-        
+
         if (typeof Livewire !== 'undefined') {
             Livewire.hook('request', ({ respond }) => {
                 respond(() => {
