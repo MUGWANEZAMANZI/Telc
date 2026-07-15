@@ -7,6 +7,16 @@
         <title>ERFOLG - KI-gestütztes C1 Deutschzertifikat-Portal</title>
 
         <link rel="icon" href="/logo.jpeg" sizes="any">
+        <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
+        <meta name="description" content="ERFOLG - KI-gestützte TELC Prüfungsvorbereitung. Kostenlose Übungen, Sprechübungen mit KI und vieles mehr.">
+        <meta name="keywords" content="TELC, Deutsch, C1, B2, B1, Prüfung, Vorbereitung, KI, Sprechübung, Kostenlos">
+        <meta property="og:title" content="ERFOLG - KI-gestütztes Deutschzertifikat-Portal">
+        <meta property="og:description" content="Bereiten Sie sich mit KI-gestützten Übungen auf Ihre TELC-Prüfung vor.">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url('/') }}">
+        <meta property="og:image" content="{{ url('/logo.jpeg') }}">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="{{ url('/') }}">
         <script src="https://cdn.tailwindcss.com"></script>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,6 +61,12 @@
             </div>
             @if (Route::has('login'))
                 <nav class="flex items-center gap-4">
+                    <a href="{{ route('blog') }}" class="text-stone-600 hover:text-stone-900 text-sm font-bold transition-colors duration-200">
+                        Blog
+                    </a>
+                    <a href="{{ route('survey') }}" class="text-stone-600 hover:text-stone-900 text-sm font-bold transition-colors duration-200">
+                        Umfrage
+                    </a>
                     @auth
                         <a href="{{ route('dashboard') }}" class="bg-yellow-500 hover:bg-yellow-400 text-stone-950 px-6 py-2 rounded-full font-bold text-sm transition-colors duration-200 uppercase tracking-wider">
                             Dashboard

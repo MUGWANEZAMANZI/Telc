@@ -3,13 +3,18 @@
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\PayPalCheckoutController;
 use App\Http\Controllers\RevolutCheckoutController;
+use App\Livewire\AdminBlog;
 use App\Livewire\AdminBooks;
 use App\Livewire\AdminFinance;
 use App\Livewire\BillingPortal;
+use App\Livewire\Blog;
+use App\Livewire\BlogPostView;
 use App\Livewire\BookReader;
 use App\Livewire\GuestExam;
 use App\Livewire\OwnerDashboard;
 use App\Livewire\StudentPerformance;
+use App\Livewire\SurveyPage;
+use App\Models\BlogPost;
 use App\Models\Book;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -20,12 +25,14 @@ Route::view('pricing', 'pricing')->name('pricing');
 Route::get('free-exam/{templateId?}', GuestExam::class)->name('free.exam');
 Route::view('premium-exam', 'premium-exam')->name('premium.exam');
 
+Route::get('blog', Blog::class)->name('blog');
+Route::get('blog/{slug}', BlogPostView::class)->name('blog.show');
+
 Route::get('books', [BookController::class, 'index'])->name('books.index');
 Route::get('books/{book}/read', BookReader::class)->name('books.read');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
-    Route::view('voice-practice', 'voice-practice')->name('voice.practice');
     Route::view('admin-guide', 'admin-guide')->name('admin.guide');
     Route::view('user-guide', 'user-guide')->name('user.guide');
     Route::get('billing', BillingPortal::class)->name('billing');
@@ -33,7 +40,58 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('admin/finance', AdminFinance::class)->name('admin.finance');
     Route::get('owner/panel', OwnerDashboard::class)->name('owner.panel');
     Route::get('admin/books', AdminBooks::class)->name('admin.books');
+    Route::get('admin/blog', AdminBlog::class)->name('admin.blog');
 });
+
+Route::get('voice-practice', function () {
+    if (auth()->check()) {
+        return view('voice-practice');
+    }
+
+    return view('guest-voice-practice');
+})->name('voice.practice');
+
+Route::get('survey', SurveyPage::class)->name('survey');
+
+Route::get('sitemap.xml', function () {
+    $posts = BlogPost::query()
+        ->published()
+        ->select(['slug', 'updated_at'])
+        ->get();
+
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+
+    $urls = [
+        ['loc' => url('/'), 'priority' => '1.0'],
+        ['loc' => url('/pricing'), 'priority' => '0.8'],
+        ['loc' => url('/free-exam'), 'priority' => '0.9'],
+        ['loc' => url('/voice-practice'), 'priority' => '0.7'],
+        ['loc' => url('/blog'), 'priority' => '0.8'],
+        ['loc' => url('/survey'), 'priority' => '0.5'],
+    ];
+
+    foreach ($urls as $url) {
+        $xml .= '  <url>'."\n";
+        $xml .= '    <loc>'.$url['loc'].'</loc>'."\n";
+        $xml .= '    <changefreq>weekly</changefreq>'."\n";
+        $xml .= '    <priority>'.$url['priority'].'</priority>'."\n";
+        $xml .= '  </url>'."\n";
+    }
+
+    foreach ($posts as $post) {
+        $xml .= '  <url>'."\n";
+        $xml .= '    <loc>'.url('/blog/'.$post->slug).'</loc>'."\n";
+        $xml .= '    <lastmod>'.$post->updated_at->format('Y-m-d').'</lastmod>'."\n";
+        $xml .= '    <changefreq>monthly</changefreq>'."\n";
+        $xml .= '    <priority>0.6</priority>'."\n";
+        $xml .= '  </url>'."\n";
+    }
+
+    $xml .= '</urlset>';
+
+    return response($xml, 200, ['Content-Type' => 'application/xml']);
+})->name('sitemap');
 
 Route::middleware(['auth'])->group(function () {
     // PayPal

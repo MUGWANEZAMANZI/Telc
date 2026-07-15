@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\ExamAttempt;
 use App\Models\ExamTemplate;
-use App\Models\Setting;
 use App\Services\AnswerExplainer;
 use App\Services\ExamGrader;
 use App\Services\SpeakingPromptService;
@@ -31,6 +30,10 @@ class GuestExam extends Component
     public int $remainingSections = 4;
 
     public bool $hasReachedLimit = false;
+
+    public int $freeExamsCompleted = 0;
+
+    public bool $isBlocked = false;
 
     public ?int $selectedTemplateId = null;
 
@@ -90,10 +93,19 @@ class GuestExam extends Component
             return;
         }
 
-        $this->freeSectionLimit = max(1, (int) Setting::value('free_section_limit', '3'));
-
+        $this->loadExamCountFromCookie();
         $this->loadCompletedFromCookie();
         $this->loadNoRetryFromCookie();
+
+        if ($this->freeExamsCompleted >= 2) {
+            $this->isBlocked = true;
+            $this->hasReachedLimit = true;
+            $this->remainingSections = 0;
+
+            return;
+        }
+
+        $this->applyTierLimit();
 
         if ($templateId) {
             $record = ExamTemplate::query()
@@ -179,6 +191,37 @@ class GuestExam extends Component
         Cookie::queue('free_no_retry_sections', json_encode($this->noRetrySectionIds), 60 * 24 * 365);
     }
 
+    public function loadExamCountFromCookie(): void
+    {
+        $raw = request()->cookie('free_exams_completed');
+        if (is_string($raw) && $raw !== '') {
+            $decoded = json_decode($raw, true);
+            $this->freeExamsCompleted = is_int($decoded) ? $decoded : 0;
+        } else {
+            $this->freeExamsCompleted = 0;
+        }
+    }
+
+    public function saveExamCountToCookie(): void
+    {
+        Cookie::queue('free_exams_completed', $this->freeExamsCompleted, 60 * 24 * 365);
+    }
+
+    public function incrementExamCount(): void
+    {
+        $this->freeExamsCompleted++;
+        $this->saveExamCountToCookie();
+    }
+
+    public function applyTierLimit(): void
+    {
+        if ($this->freeExamsCompleted === 0) {
+            $this->freeSectionLimit = 999;
+        } else {
+            $this->freeSectionLimit = 2;
+        }
+    }
+
     /**
      * @return array{is_free: bool, free_sections: int}
      */
@@ -208,13 +251,11 @@ class GuestExam extends Component
             return;
         }
 
-        $status = $this->getTemplateFreeStatus($record);
-        $limit = $status['free_sections'];
+        $this->applyTierLimit();
 
         $completed = count($this->completedSectionIds);
 
-        $this->freeSectionLimit = $limit;
-        $this->remainingSections = (int) max(0, $limit - $completed);
+        $this->remainingSections = (int) max(0, $this->freeSectionLimit - $completed);
         $this->hasReachedLimit = $this->remainingSections <= 0;
     }
 
@@ -437,6 +478,8 @@ class GuestExam extends Component
                 $this->saveCompletedToCookie();
                 $this->saveNoRetryToCookie();
 
+                $this->incrementExamCount();
+
                 ExamAttempt::create([
                     'exam_template_id' => $this->selectedTemplateId,
                     'user_id' => null,
@@ -451,6 +494,8 @@ class GuestExam extends Component
 
             if ($reachesFreeLimit) {
                 $this->started = false;
+
+                $this->incrementExamCount();
 
                 session([
                     'guest_pending_attempt' => [
@@ -469,6 +514,8 @@ class GuestExam extends Component
         } else {
             if ($isLastSectionOfTemplate || $reachesFreeLimit) {
                 $this->started = false;
+
+                $this->incrementExamCount();
 
                 // Save to session
                 session([

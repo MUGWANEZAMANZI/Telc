@@ -9,7 +9,9 @@ use App\Models\VoiceTopic;
 use App\Services\SpeakingPromptService;
 use Gemini\Data\Content;
 use Gemini\Laravel\Facades\Gemini;
+use Gemini\Resources\ChatSession;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -23,47 +25,52 @@ class VoiceInput extends Component
 
     public bool $examFinished = false;
 
-    public int $currentStage = 0;
-
     public ?int $activeVoiceTopicId = null;
 
-    public string $selectedTopic = '';
+    /** @var array<int, array{role: string, text: string}> */
+    public array $chatHistory = [];
 
-    public string $selectedCounterTopic = '';
+    public bool $aiResponding = false;
 
-    public string $aiPresentationText = '';
+    public bool $autoPlayTts = true;
 
-    public string $transcribedText = '';
+    public bool $examComplete = false;
 
-    /** @var array<string, mixed> */
-    public array $answers = [];
+    public string $userInput = '';
 
-    public int $stageTimer = 0;
+    public bool $isRecording = false;
+
+    public int $examTimer = 0;
 
     public bool $timerRunning = false;
 
-    public int $stage1Duration = 180;
+    public int $currentTeil = 0;
 
-    public int $stage2Duration = 240;
+    public string $currentTeilLabel = '';
 
-    public int $stage3Duration = 120;
+    /** @var array<int, array{teil: int, label: string, seconds: int}> */
+    public array $teilTimings = [];
 
-    /** @var array<string, array<int, array<string, string>>> */
-    public array $speakingHistory = [];
-
-    /** @var array<string, string> */
-    public array $speakingFeedback = [];
-
-    /** @var array<string, bool> */
-    public array $speakingProcessing = [];
+    public int $totalExamTime = 0;
 
     /** @var array<string, mixed>|null */
     public ?array $result = null;
 
-    public bool $aiSpeakingDone = false;
+    public bool $isGuest = false;
+
+    public int $guestPracticeCount = 0;
+
+    public bool $showTierPrompt = false;
+
+    public string $tierPromptMessage = '';
+
+    /** @var array<string, ChatSession> */
+    private static array $chatSessions = [];
 
     public function mount(): void
     {
+        $this->isGuest = ! auth()->check();
+        $this->loadGuestPracticeCountFromCookie();
         $this->seedVoiceTopicsIfEmpty();
     }
 
@@ -77,11 +84,33 @@ class VoiceInput extends Component
                 ['title' => 'Bildung und Weiterbildung', 'counter_topic' => 'Bildung im digitalen Zeitalter', 'level' => 'B2', 'exam_provider' => 'telc', 'is_active' => true],
                 ['title' => 'Gesellschaft und Politik', 'counter_topic' => 'Demokratie und gesellschaftlicher Wandel', 'level' => 'C1', 'exam_provider' => 'telc', 'is_active' => true],
                 ['title' => 'Umweltschutz und Nachhaltigkeit', 'counter_topic' => 'Wirtschaftswachstum vs. Umweltschutz', 'level' => 'C2', 'exam_provider' => 'telc', 'is_active' => true],
+
+                // Goethe topics
+                ['title' => 'Mein Alltag und meine Freizeit', 'counter_topic' => 'Digitale Medien im Alltag', 'level' => 'A2', 'exam_provider' => 'goethe', 'is_active' => true],
+                ['title' => 'Brauchen Kinder Mobiltelefone?', 'counter_topic' => 'Haustiere – Ja oder Nein?', 'level' => 'B1', 'exam_provider' => 'goethe', 'is_active' => true],
+                ['title' => 'Alternative Wohnformen', 'counter_topic' => 'Konsumverhalten von Jugendlichen', 'level' => 'B2', 'exam_provider' => 'goethe', 'is_active' => true],
+                ['title' => 'Chancen und Risiken des lebenslangen Lernens', 'counter_topic' => 'Digitalisierung in der Bildung', 'level' => 'C1', 'exam_provider' => 'goethe', 'is_active' => true],
             ];
             foreach ($topics as $topic) {
                 VoiceTopic::create($topic);
             }
         }
+    }
+
+    public function loadGuestPracticeCountFromCookie(): void
+    {
+        $raw = request()->cookie('guest_voice_practice_count');
+        if (is_string($raw) && $raw !== '') {
+            $decoded = json_decode($raw, true);
+            $this->guestPracticeCount = is_int($decoded) ? $decoded : 0;
+        } else {
+            $this->guestPracticeCount = 0;
+        }
+    }
+
+    public function saveGuestPracticeCountToCookie(): void
+    {
+        Cookie::queue('guest_voice_practice_count', $this->guestPracticeCount, 60 * 24 * 365);
     }
 
     /** @return Collection<int, VoiceTopic> */
@@ -113,27 +142,29 @@ class VoiceInput extends Component
     {
         $topic = VoiceTopic::findOrFail($topicId);
         $this->activeVoiceTopicId = $topic->id;
-        $this->selectedTopic = $topic->title;
-        $this->selectedCounterTopic = $topic->counter_topic ?? 'Das alternative Thema';
     }
 
     public function startExam(): void
     {
-        if (! auth()->check()) {
-            $this->addError('login', 'Bitte loggen Sie sich ein, um die Sprechprüfung zu starten.');
-
-            return;
-        }
-
-        if (! auth()->user()->isAdmin() && ! $this->hasActiveSubscription()) {
-            $count = ExamAttempt::query()
-                ->where('user_id', auth()->id())
-                ->where('result->is_speaking_only', true)
-                ->count();
-            if ($count >= 2) {
-                $this->addError('limit', 'Sie haben Ihre 2 kostenlosen Sprechprüfungen aufgebraucht. Bitte abonnieren Sie ein Premium-Paket.');
+        if ($this->isGuest) {
+            if ($this->guestPracticeCount >= 1) {
+                $this->showTierPrompt = true;
+                $this->tierPromptMessage = 'Sie haben Ihre kostenlose Sprechübung genutzt. Erstellen Sie ein Konto für weitere Übungen.';
 
                 return;
+            }
+        } else {
+            if (! auth()->user()->isAdmin() && ! $this->hasActiveSubscription()) {
+                $count = ExamAttempt::query()
+                    ->where('user_id', auth()->id())
+                    ->where('result->is_speaking_only', true)
+                    ->count();
+                if ($count >= 2) {
+                    $this->showTierPrompt = true;
+                    $this->tierPromptMessage = 'Sie haben Ihre 2 kostenlosen Sprechprüfungen aufgebraucht. Bitte abonnieren Sie ein Premium-Paket.';
+
+                    return;
+                }
             }
         }
 
@@ -143,320 +174,416 @@ class VoiceInput extends Component
             return;
         }
 
+        $this->configureTeilTimings();
+
+        $systemPrompt = SpeakingPromptService::getSystemInstruction($this->selectedProvider, $this->selectedLevel);
+        $chat = Gemini::chat('gemini-2.5-flash')
+            ->withSystemInstruction(Content::parse($systemPrompt));
+
+        $this->chatHistory = [];
         $this->examStarted = true;
         $this->examFinished = false;
-        $this->currentStage = 1;
-        $this->stageTimer = $this->stage1Duration;
-        $this->timerRunning = true;
-        $this->transcribedText = '';
-        $this->aiPresentationText = '';
-        $this->speakingHistory = [];
-        $this->speakingFeedback = [];
-        $this->speakingProcessing = [];
+        $this->examComplete = false;
         $this->result = null;
-        $this->aiSpeakingDone = false;
+        $this->userInput = '';
+        $this->aiResponding = true;
+        $this->currentTeil = 1;
+        $this->currentTeilLabel = $this->teilTimings[0]['label'] ?? 'Teil 1';
+        $this->examTimer = $this->teilTimings[0]['seconds'] ?? 240;
+        $this->timerRunning = true;
+
+        try {
+            $topic = VoiceTopic::find($this->activeVoiceTopicId);
+            $topicContext = $topic ? "Das gewählte Thema des Lernenden ist: \"{$topic->title}\"." : '';
+            $response = $chat->sendMessage("Bitte beginnen Sie mit der Prüfung. {$topicContext}");
+            $aiText = $response->text();
+
+            $cleanText = $this->stripExamCompleteMarker($aiText);
+            $this->chatHistory[] = ['role' => 'model', 'text' => $cleanText];
+            $this->checkExamComplete($aiText);
+
+            $this->cacheChatSession($chat);
+            $this->dispatch('playAiTts', text: $cleanText);
+        } catch (\Throwable $e) {
+            $this->chatHistory[] = ['role' => 'model', 'text' => 'Fehler bei der Initialisierung: '.$e->getMessage()];
+        } finally {
+            $this->aiResponding = false;
+        }
+    }
+
+    public function sendMessage(): void
+    {
+        $text = trim($this->userInput);
+        if ($text === '' || $this->aiResponding || $this->examComplete) {
+            return;
+        }
+
+        $this->chatHistory[] = ['role' => 'user', 'text' => $text];
+        $this->userInput = '';
+        $this->aiResponding = true;
+
+        $chat = $this->getCachedChatSession();
+        if (! $chat) {
+            $this->chatHistory[] = ['role' => 'model', 'text' => 'Fehler: Chat-Sitzung nicht gefunden. Bitte starten Sie die Übung neu.'];
+            $this->aiResponding = false;
+
+            return;
+        }
+
+        try {
+            $response = $chat->sendMessage($text);
+            $aiText = $response->text();
+
+            $cleanText = $this->stripExamCompleteMarker($aiText);
+            $this->chatHistory[] = ['role' => 'model', 'text' => $cleanText];
+
+            $this->detectTeilTransition($aiText);
+            $this->checkExamComplete($aiText);
+
+            $this->cacheChatSession($chat);
+            $this->dispatch('playAiTts', text: $cleanText);
+
+            if ($this->examComplete) {
+                $this->timerRunning = false;
+                $this->gradeExam();
+            }
+        } catch (\Throwable $e) {
+            $this->chatHistory[] = ['role' => 'model', 'text' => 'Fehler bei der KI-Antwort: '.$e->getMessage()];
+        } finally {
+            $this->aiResponding = false;
+        }
+    }
+
+    public function sendVoiceInput(string $transcript): void
+    {
+        $this->userInput = $transcript;
+        $this->isRecording = false;
+        $this->sendMessage();
     }
 
     public function tick(): void
     {
-        if (! $this->timerRunning || $this->stageTimer <= 0) {
+        if (! $this->timerRunning || $this->examTimer <= 0) {
             return;
         }
 
-        $this->stageTimer--;
+        $this->examTimer--;
 
-        if ($this->stageTimer <= 0) {
+        if ($this->examTimer <= 0) {
             $this->timerRunning = false;
 
-            if ($this->currentStage === 1) {
-                $this->submitStage1();
-            } elseif ($this->currentStage === 3) {
-                $this->submitStage3();
+            if ($this->examComplete) {
+                $this->gradeExam();
             }
         }
     }
 
-    public function submitStage1(): void
+    public function advanceTeil(): void
     {
-        $text = trim($this->transcribedText);
-        if ($text === '' && $this->stageTimer > 0) {
-            return;
-        }
-
-        $this->timerRunning = false;
-        $this->speakingProcessing['SP-1a'] = true;
-
-        $level = $this->selectedLevel;
-        $provider = $this->selectedProvider;
-        $systemInstruction = SpeakingPromptService::getSystemInstruction($provider, $level);
-        $maxPoints = 24;
-
-        $criteriaPrompt = "Bewerte den Vortrag des Lernenden zu dem von ihm gewählten Thema.
-Kriterien:
-- Inhaltliche Angemessenheit & Relevanz (0-8 Punkte)
-- Struktur und logischer Aufbau (0-8 Punkte)
-- Ausdrucksweise und Kohärenz (0-8 Punkte)
-
-Bitte gib eine kurze Begründung für jedes Kriterium an.
-Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
-
-        try {
-            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
-                ->withSystemInstruction(
-                    Content::parse($systemInstruction."\n\n".$criteriaPrompt)
-                )
-                ->generateContent(
-                    "Gewähltes Thema: {$this->selectedTopic}\n\n"
-                    ."Transkription des Vortrags:\n{$text}\n\n"
-                    .'Bitte bewerten Sie die Präsentation:'
-                );
-
-            $feedback = $result->text();
-            $this->speakingFeedback['SP-1a'] = $feedback;
-            $this->speakingHistory['SP-1a'] = [
-                ['role' => 'user', 'text' => $text],
-                ['role' => 'assistant', 'text' => $feedback],
-            ];
-
-            $this->answers['SP-1a'] = $text;
-        } catch (\Throwable $e) {
-            $this->speakingFeedback['SP-1a'] = 'Fehler bei der Bewertung: '.$e->getMessage();
-            $this->speakingHistory['SP-1a'] = [
-                ['role' => 'user', 'text' => $text],
-            ];
-        } finally {
-            $this->speakingProcessing['SP-1a'] = false;
-        }
-
-        $this->currentStage = 2;
-        $this->stageTimer = $this->stage2Duration;
-        $this->aiSpeakingDone = false;
-        $this->generateAiPresentation();
-    }
-
-    public function generateAiPresentation(): void
-    {
-        $this->speakingProcessing['SP-1b'] = true;
-
-        try {
-            $prompt = "Schreibe einen gut strukturierten Vortrag (Einleitung, Hauptteil, Eigene Meinung, Schluss/Fazit) zum Thema: \"{$this->selectedCounterTopic}\". Der Vortrag soll klar und verständlich sein, mit einer deutlichen Argumentationslinie. Der Vortrag soll etwa 4 Minuten zum Vorlesen dauern.";
-
-            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
-                ->withSystemInstruction(Content::parse('Du bist ein TELC-Prüfungskandidat, der einen Vortrag hält. Sprich den Lernenden direkt an.'))
-                ->generateContent($prompt);
-
-            $this->aiPresentationText = $result->text();
+        if ($this->currentTeil < count($this->teilTimings)) {
+            $this->currentTeil++;
+            $teil = $this->teilTimings[$this->currentTeil - 1];
+            $this->currentTeilLabel = $teil['label'];
+            $this->examTimer = $teil['seconds'];
             $this->timerRunning = true;
-        } catch (\Throwable $e) {
-            $this->aiPresentationText = 'Fehler bei der Vortragserstellung: '.$e->getMessage();
-            $this->timerRunning = true;
-        } finally {
-            $this->speakingProcessing['SP-1b'] = false;
         }
     }
 
-    public function advanceToStage3(): void
+    public function submitExam(): void
     {
-        $this->currentStage = 3;
-        $this->stageTimer = $this->stage3Duration;
-        $this->timerRunning = true;
-        $this->transcribedText = '';
-    }
-
-    public function submitStage3(): void
-    {
-        $text = trim($this->transcribedText);
-        $this->timerRunning = false;
-        $this->speakingProcessing['SP-2'] = true;
-
-        $level = $this->selectedLevel;
-        $provider = $this->selectedProvider;
-        $systemInstruction = SpeakingPromptService::getSystemInstruction($provider, $level);
-        $maxPoints = 24;
-
-        $criteriaPrompt = "Bewerte die Zusammenfassung des Lernenden zum Vortrag des Prüfers.
-Kriterien:
-- Verständnis des gehörten Vortrags (0-8 Punkte)
-- Treffende Zusammenfassung der Kernpunkte (0-8 Punkte)
-- Sprachliche Richtigkeit und Kohärenz (0-8 Punkte)
-
-Bitte gib eine kurze Begründung für jedes Kriterium an.
-Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
-
-        try {
-            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
-                ->withSystemInstruction(
-                    Content::parse($systemInstruction."\n\n".$criteriaPrompt)
-                )
-                ->generateContent(
-                    "Gegen-Thema: {$this->selectedCounterTopic}\n\n"
-                    ."Vortrag des Prüfers:\n{$this->aiPresentationText}\n\n"
-                    ."Zusammenfassung des Lernenden:\n{$text}\n\n"
-                    .'Bitte bewerten Sie die Zusammenfassung:'
-                );
-
-            $feedback = $result->text();
-            $this->speakingFeedback['SP-2'] = $feedback;
-            $this->speakingHistory['SP-2'] = [
-                ['role' => 'assistant', 'text' => $this->aiPresentationText],
-                ['role' => 'user', 'text' => $text],
-                ['role' => 'assistant', 'text' => $feedback],
-            ];
-        } catch (\Throwable $e) {
-            $this->speakingFeedback['SP-2'] = 'Fehler bei der Bewertung: '.$e->getMessage();
-            $this->speakingHistory['SP-2'] = [
-                ['role' => 'assistant', 'text' => $this->aiPresentationText],
-                ['role' => 'user', 'text' => $text],
-            ];
-        } finally {
-            $this->speakingProcessing['SP-2'] = false;
+        if ($this->examComplete) {
+            $this->timerRunning = false;
+            $this->gradeExam();
         }
-
-        $this->gradeExam();
     }
 
     public function gradeExam(): void
     {
-        $this->speakingProcessing['global'] = true;
+        if ($this->result !== null) {
+            return;
+        }
+
+        $this->aiResponding = true;
+
+        $conversationText = '';
+        foreach ($this->chatHistory as $turn) {
+            $speaker = $turn['role'] === 'user' ? 'Lernender' : 'Prüfer';
+            $conversationText .= "{$speaker}: {$turn['text']}\n\n";
+        }
 
         try {
-            $details = [];
-            $level = $this->selectedLevel;
-            $provider = $this->selectedProvider;
+            $gradingPrompt = "Analysiere das folgende Sprechprüfungsprotokoll und erstelle eine strukturierte Bewertung.
 
-            // Grade SP-1a
-            $sp1aScore = 0;
-            $sp1aFeedback = $this->speakingFeedback['SP-1a'] ?? 'Keine Beiträge aufgezeichnet.';
-            if (preg_match('/SCORE:\s*(\d+)/i', $sp1aFeedback, $m)) {
-                $sp1aScore = (int) $m[1];
+Protokoll:
+{$conversationText}
+
+Erstelle eine strukturierte Bewertung mit folgenden Kriterien basierend auf dem offiziellen Prüfungsformat ({$this->selectedProvider} {$this->selectedLevel}):
+
+Gib das Ergebnis EXAKT im folgenden JSON-Format zurück (KEIN Markdown, KEIN Code-Block, nur纯 JSON):
+{
+  \"earned\": <Gesamtpunkte>,
+  \"possible\": <Maximumpunkte>,
+  \"percentage\": <Prozentsatz>,
+  \"passed\": <true/false>,
+  \"details\": [
+    {
+      \"id\": \"teil-1\",
+      \"label\": \"Teil 1 — <Beschreibung>\",
+      \"points\": <Punkte>,
+      \"max_points\": <Max>,
+      \"explanation\": \"<Bewertungstext>\"
+    }
+  ],
+  \"musterSaeften\": [\"<Muster-Satz 1>\", \"<Muster-Satz 2>\"]
+}
+
+Bewerte jeden Teil einzeln. Gib Muster-Sätze für Korrekturen. Das Ergebnis muss valides JSON sein.";
+
+            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                ->withSystemInstruction(
+                    Content::parse('Du bist ein präziser deutscher Prüfer. Antworte NUR mit validem JSON. Keine Erklärungen vor oder nach dem JSON.')
+                )
+                ->generateContent($gradingPrompt);
+
+            $responseText = trim($result->text());
+            $responseText = preg_replace('/```json\s*/i', '', $responseText);
+            $responseText = preg_replace('/```\s*/i', '', $responseText);
+            $responseText = trim($responseText);
+
+            $parsed = json_decode($responseText, true);
+
+            if (json_last_error() === JSON_ERROR_NONE && is_array($parsed)) {
+                $parsed['is_speaking_only'] = true;
+                $parsed['percentage'] = $parsed['percentage'] ?? ($parsed['possible'] > 0 ? round(($parsed['earned'] / $parsed['possible']) * 100, 2) : 0);
+                $parsed['passed'] = $parsed['passed'] ?? ($parsed['percentage'] >= 60);
+
+                $this->result = $parsed;
+            } else {
+                $this->result = $this->fallbackGrading($conversationText);
             }
-            $details[] = [
-                'id' => 'SP-1a',
-                'label' => 'Teil 1 — Ihre Präsentation',
-                'given' => $this->answers['SP-1a'] ?? '',
-                'expected' => $this->selectedTopic,
-                'points' => $sp1aScore,
-                'max_points' => 24,
-                'correct' => $sp1aScore >= (int) ceil(24 * 0.6),
-                'explanation' => $sp1aFeedback,
-            ];
+        } catch (\Throwable $e) {
+            $this->result = $this->fallbackGrading($conversationText);
+        }
 
-            // Grade SP-2 (summary)
-            $sp2Score = 0;
-            $sp2Feedback = $this->speakingFeedback['SP-2'] ?? 'Keine Beiträge aufgezeichnet.';
-            if (preg_match('/SCORE:\s*(\d+)/i', $sp2Feedback, $m)) {
-                $sp2Score = (int) $m[1];
-            }
-            $details[] = [
-                'id' => 'SP-2',
-                'label' => 'Teil 3 — Zusammenfassung',
-                'given' => $this->transcribedText,
-                'expected' => $this->selectedCounterTopic,
-                'points' => $sp2Score,
-                'max_points' => 24,
-                'correct' => $sp2Score >= (int) ceil(24 * 0.6),
-                'explanation' => $sp2Feedback,
-            ];
+        $template = ExamTemplate::query()
+            ->where('exam_provider', $this->selectedProvider)
+            ->where('level', $this->selectedLevel)
+            ->first();
 
-            // Global linguistic competence
-            $fullHistory = '';
-            foreach ($this->speakingHistory as $stage => $turns) {
-                $fullHistory .= "--- {$stage} ---\n";
-                foreach ($turns as $turn) {
-                    $fullHistory .= "{$turn['role']}: {$turn['text']}\n";
-                }
-            }
+        if ($template && auth()->check()) {
+            ExamAttempt::create([
+                'exam_template_id' => $template->id,
+                'user_id' => auth()->id(),
+                'answers' => ['chat_history' => $this->chatHistory],
+                'result' => $this->result,
+                'started_at' => now(),
+                'submitted_at' => now(),
+            ]);
+        }
 
-            $maxGlobal = 24;
-            $globalScore = 0;
-            $globalFeedback = '';
-            try {
-                $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
-                    ->withSystemInstruction(
-                        Content::parse(
-                            "Du bist ein {$provider} {$level} Mündlicher Prüfer. "
-                            .'Bewerte das gesamte Sprechprotokoll hinsichtlich Flüssigkeit, Wortschatz, Grammatik und Aussprache. '
-                            ."Gib eine Gesamtpunktzahl von 0 bis {$maxGlobal} Punkten im Format 'SCORE: X/{$maxGlobal}' zurück, gefolgt von einer Analyse."
-                        )
-                    );
-                $resp = $model->generateContent($fullHistory);
-                $globalFeedback = $resp->text();
-                preg_match('/SCORE:\s*(\d+)/i', $globalFeedback, $gm);
-                if (isset($gm[1])) {
-                    $globalScore = (int) $gm[1];
-                }
-            } catch (\Throwable $e) {
-                $globalScore = (int) ($maxGlobal * 0.6);
-                $globalFeedback = 'Automatisch berechnet: '.$e->getMessage();
+        if ($this->isGuest) {
+            $this->guestPracticeCount++;
+            $this->saveGuestPracticeCountToCookie();
+        }
+
+        $this->examFinished = true;
+        $this->aiResponding = false;
+    }
+
+    /** @return array<string, mixed> */
+    private function fallbackGrading(string $conversationText): array
+    {
+        try {
+            $fallbackPrompt = "Bewerte dieses Sprechprüfungsprotokoll ({@{$this->selectedProvider}} {$this->selectedLevel}).
+
+Protokoll:
+{$conversationText}
+
+Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt von der Bewertung.";
+
+            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                ->generateContent($fallbackPrompt);
+
+            $text = $result->text();
+            $earned = 0;
+            $possible = $this->getMaxPoints();
+
+            if (preg_match('/(\d+)\s*\/\s*(\d+)/', $text, $m)) {
+                $earned = (int) $m[1];
+                $possible = (int) $m[2];
+            } elseif (preg_match('/SCORE:\s*(\d+)/i', $text, $m)) {
+                $earned = (int) $m[1];
             }
 
-            $details[] = [
-                'id' => 'SP-GLOBAL',
-                'label' => 'Gesamtbewertung — Sprachkompetenz',
-                'given' => [],
-                'expected' => 'Gemini AI Graded',
-                'points' => $globalScore,
-                'max_points' => $maxGlobal,
-                'correct' => $globalScore >= (int) ceil($maxGlobal * 0.6),
-                'explanation' => $globalFeedback,
-            ];
+            $pct = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0;
 
-            $earned = array_sum(array_column($details, 'points'));
-            $possible = array_sum(array_column($details, 'max_points'));
-            $pct = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0; // @phpstan-ignore-line
-
-            $this->result = [
+            return [
                 'earned' => $earned,
                 'possible' => $possible,
                 'percentage' => $pct,
                 'passed' => $pct >= 60,
-                'details' => $details,
+                'details' => [
+                    [
+                        'id' => 'global',
+                        'label' => 'Gesamtbewertung',
+                        'points' => $earned,
+                        'max_points' => $possible,
+                        'explanation' => $text,
+                    ],
+                ],
+                'musterSaeften' => [],
                 'is_speaking_only' => true,
             ];
-
-            $template = ExamTemplate::query()
-                ->where('exam_provider', $this->selectedProvider)
-                ->where('level', $this->selectedLevel)
-                ->first();
-
-            if ($template) {
-                ExamAttempt::create([
-                    'exam_template_id' => $template->id,
-                    'user_id' => auth()->id(),
-                    'answers' => $this->answers,
-                    'result' => $this->result,
-                    'started_at' => now(),
-                    'submitted_at' => now(),
-                ]);
-            }
-
-            $this->examFinished = true;
-            $this->currentStage = 4;
         } catch (\Throwable $e) {
-            $this->addError('exam', 'Fehler bei der Bewertung: '.$e->getMessage());
-        } finally {
-            $this->speakingProcessing['global'] = false;
+            return [
+                'earned' => 0,
+                'possible' => $this->getMaxPoints(),
+                'percentage' => 0,
+                'passed' => false,
+                'details' => [
+                    [
+                        'id' => 'error',
+                        'label' => 'Bewertung fehlgeschlagen',
+                        'points' => 0,
+                        'max_points' => $this->getMaxPoints(),
+                        'explanation' => 'Fehler bei der Bewertung: '.$e->getMessage(),
+                    ],
+                ],
+                'musterSaeften' => [],
+                'is_speaking_only' => true,
+            ];
         }
+    }
+
+    private function getMaxPoints(): int
+    {
+        return match (true) {
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'A1' => 15,
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'A2' => 15,
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'B1' => 75,
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'B2' => 75,
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'C1' => 48,
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'A2' => 15,
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'B1' => 100,
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'B2' => 100,
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'C1' => 100,
+            default => 75,
+        };
+    }
+
+    private function configureTeilTimings(): void
+    {
+        $this->teilTimings = match (true) {
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'A1' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Sich vorstellen', 'seconds' => 120],
+                ['teil' => 2, 'label' => 'Teil 2 — Fragen stellen', 'seconds' => 180],
+                ['teil' => 3, 'label' => 'Teil 3 — Bitten formulieren', 'seconds' => 180],
+            ],
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'A2' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Präsentation', 'seconds' => 180],
+                ['teil' => 2, 'label' => 'Teil 2 — Gespräch führen', 'seconds' => 180],
+                ['teil' => 3, 'label' => 'Teil 3 — Etwas aushandeln', 'seconds' => 180],
+            ],
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'B1' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Präsentation', 'seconds' => 180],
+                ['teil' => 2, 'label' => 'Teil 2 — Diskussion', 'seconds' => 300],
+                ['teil' => 3, 'label' => 'Teil 3 — Gemeinsam planen', 'seconds' => 300],
+            ],
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'B2' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Präsentation', 'seconds' => 180],
+                ['teil' => 2, 'label' => 'Teil 2 — Diskussion', 'seconds' => 300],
+                ['teil' => 3, 'label' => 'Teil 3 — Problemlösung', 'seconds' => 300],
+            ],
+            $this->selectedProvider === 'telc' && $this->selectedLevel === 'C1' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Präsentation & Zusammenfassung', 'seconds' => 300],
+                ['teil' => 2, 'label' => 'Teil 2 — Diskussion', 'seconds' => 360],
+            ],
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'A2' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Fragen stellen', 'seconds' => 180],
+                ['teil' => 2, 'label' => 'Teil 2 — Von sich erzählen', 'seconds' => 180],
+                ['teil' => 3, 'label' => 'Teil 3 — Gemeinsam planen', 'seconds' => 180],
+            ],
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'B1' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Gemeinsam planen', 'seconds' => 300],
+                ['teil' => 2, 'label' => 'Teil 2 — Präsentation', 'seconds' => 180],
+                ['teil' => 3, 'label' => 'Teil 3 — Rückmeldung & Fragen', 'seconds' => 240],
+            ],
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'B2' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Vortrag halten', 'seconds' => 300],
+                ['teil' => 2, 'label' => 'Teil 2 — Gespräch führen', 'seconds' => 300],
+            ],
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'C1' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Vortrag & Fragen', 'seconds' => 300],
+                ['teil' => 2, 'label' => 'Teil 2 — Gespräch führen', 'seconds' => 300],
+            ],
+            default => [
+                ['teil' => 1, 'label' => 'Teil 1', 'seconds' => 240],
+                ['teil' => 2, 'label' => 'Teil 2', 'seconds' => 300],
+            ],
+        };
+
+        $this->totalExamTime = array_sum(array_column($this->teilTimings, 'seconds'));
+    }
+
+    private function detectTeilTransition(string $aiResponse): void
+    {
+        if (preg_match('/Teil\s+(\d)/i', $aiResponse, $m)) {
+            $newTeil = (int) $m[1];
+            if ($newTeil > $this->currentTeil && $newTeil <= count($this->teilTimings)) {
+                $this->advanceTeil();
+            }
+        }
+    }
+
+    private function checkExamComplete(string $aiResponse): bool
+    {
+        if (str_contains($aiResponse, '[EXAM_COMPLETE]')) {
+            $this->examComplete = true;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private function stripExamCompleteMarker(string $text): string
+    {
+        return str_replace('[EXAM_COMPLETE]', '', $text);
+    }
+
+    private function cacheChatSession(ChatSession $chat): void
+    {
+        $key = session_id().'_'.$this->selectedProvider.'_'.$this->selectedLevel;
+        self::$chatSessions[$key] = $chat;
+    }
+
+    private function getCachedChatSession(): ?ChatSession
+    {
+        $key = session_id().'_'.$this->selectedProvider.'_'.$this->selectedLevel;
+
+        return self::$chatSessions[$key] ?? null;
     }
 
     public function repeatExam(): void
     {
+        $key = session_id().'_'.$this->selectedProvider.'_'.$this->selectedLevel;
+        unset(self::$chatSessions[$key]);
+
         $this->examStarted = false;
         $this->examFinished = false;
-        $this->currentStage = 0;
+        $this->examComplete = false;
         $this->activeVoiceTopicId = null;
-        $this->selectedTopic = '';
-        $this->selectedCounterTopic = '';
-        $this->aiPresentationText = '';
-        $this->transcribedText = '';
-        $this->stageTimer = 0;
+        $this->chatHistory = [];
+        $this->userInput = '';
+        $this->isRecording = false;
+        $this->examTimer = 0;
         $this->timerRunning = false;
-        $this->speakingHistory = [];
-        $this->speakingFeedback = [];
-        $this->speakingProcessing = [];
-        $this->answers = [];
+        $this->currentTeil = 0;
+        $this->currentTeilLabel = '';
+        $this->teilTimings = [];
+        $this->totalExamTime = 0;
         $this->result = null;
-        $this->aiSpeakingDone = false;
+        $this->aiResponding = false;
     }
 
     public function render(): View

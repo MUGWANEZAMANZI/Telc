@@ -6,7 +6,9 @@ use App\Models\ContactRequest;
 use App\Models\ExamAttempt;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
+use App\Models\Setting;
 use App\Models\User;
+use App\Services\AnswerExplainer;
 use App\Services\ExamGrader;
 use App\Services\TelcTemplateFactory;
 use Gemini\Data\Content;
@@ -81,11 +83,14 @@ class ExamDashboard extends Component
 
     public string $enrollModalError = '';
 
+    public string $googleFormUrl = '';
+
     public function mount(): void
     {
         abort_unless(Auth::user()?->isAdmin(), 403);
 
         $this->ensurePresets();
+        $this->googleFormUrl = Setting::value('google_form_url', '');
 
         $template = ExamTemplate::query()->where('exam_provider', $this->providerFilter)->orderBy('level')->first();
         if ($template) {
@@ -216,6 +221,15 @@ class ExamDashboard extends Component
         $this->save();
     }
 
+    public function saveGoogleFormUrl(): void
+    {
+        Setting::updateOrCreate(
+            ['key' => 'google_form_url'],
+            ['value' => $this->googleFormUrl]
+        );
+        session(['google_form_saved' => true]);
+    }
+
     public function addSection(): void
     {
         $this->template['sections'][] = [
@@ -314,6 +328,22 @@ class ExamDashboard extends Component
         }
 
         $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['gaps'] = $updated;
+    }
+
+    public function generateExplanation(int $sectionIndex, int $elementIndex): void
+    {
+        $element = $this->template['sections'][$sectionIndex]['elements'][$elementIndex] ?? null;
+        if (! $element) {
+            return;
+        }
+
+        $explainer = app(AnswerExplainer::class);
+        $explanation = $explainer->explainElement($element);
+
+        if ($explanation !== '') {
+            $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['explanation'] = $explanation;
+            $this->save();
+        }
     }
 
     public function switchMode(string $mode): void

@@ -125,12 +125,16 @@
     </style>
 
     {{-- Free sections notification (always visible during exam) --}}
-    @if ($activeSectionIndex !== null)
+    @if ($activeSectionIndex !== null && !$result)
         <div class="free-notification">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>Free sections: <strong>{{ $remainingSections }}</strong> / {{ $freeSectionLimit }}</span>
+            @if ($freeExamsCompleted === 0)
+                <span>Kostenlose Abschnitte: <strong>{{ count($template['sections'] ?? []) }}</strong> verbleibend</span>
+            @else
+                <span>Kostenlose Abschnitte: <strong>{{ $remainingSections }}</strong> / {{ $freeSectionLimit }}</span>
+            @endif
         </div>
     @endif
 
@@ -143,10 +147,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                 </div>
-                <h2 class="text-xl font-bold text-zinc-100 font-serif mb-4">Ergebnisse anzeigen und speichern</h2>
-                <p class="text-zinc-400 text-sm leading-relaxed mb-8">
-                    Bitte loggen Sie sich ein oder registrieren Sie sich, um Ihre Testergebnisse zu sehen und dauerhaft in Ihrem Profil zu speichern.
-                </p>
+                @if ($freeExamsCompleted >= 2)
+                    <h2 class="text-xl font-bold text-zinc-100 font-serif mb-4">Konto erforderlich</h2>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-8">
+                        Sie haben Ihre <strong>kostenlosen Prüfungen</strong> genutzt.
+                        Erstellen Sie ein Konto und absolvieren Sie ein Abonnement für weiteren Zugang.
+                    </p>
+                @else
+                    <h2 class="text-xl font-bold text-zinc-100 font-serif mb-4">Ergebnisse anzeigen und speichern</h2>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-8">
+                        Bitte loggen Sie sich ein oder registrieren Sie sich, um Ihre Testergebnisse zu sehen und dauerhaft in Ihrem Profil zu speichern.
+                    </p>
+                @endif
                 <div class="flex flex-col gap-3">
                     <a href="{{ route('register') }}" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-lg bg-[#d8232a] text-white hover:bg-[#c11f25] transition duration-150 ease-in-out uppercase tracking-wide">
                         Konto erstellen
@@ -167,15 +179,34 @@
                 <svg class="w-16 h-16 text-yellow-500 mx-auto mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <h1 class="text-2xl font-bold text-zinc-100 font-serif mb-4">Alle kostenlosen Abschnitte abgeschlossen</h1>
-                <p class="text-zinc-400 text-sm leading-relaxed mb-6">
-                    Sie haben alle <strong>{{ $freeSectionLimit }} kostenlosen Abschnitte</strong> genutzt.
-                    Bitte registrieren Sie sich oder schließen Sie ein Abonnement ab, um vollen Zugang zu erhalten.
-                </p>
+                @if ($isBlocked)
+                    <h1 class="text-2xl font-bold text-zinc-100 font-serif mb-4">Konto erforderlich</h1>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                        Sie haben Ihre <strong>kostenlosen Prüfungen</strong> bereits genutzt.
+                        Erstellen Sie ein Konto und absolvieren Sie ein Abonnement, um weiterzumachen.
+                    </p>
+                @else
+                    <h1 class="text-2xl font-bold text-zinc-100 font-serif mb-4">Kostenlose Abschnitte abgeschlossen</h1>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                        Sie haben alle <strong>{{ $freeSectionLimit }} kostenlosen Abschnitte</strong> dieser Prüfung genutzt.
+                        @if ($freeExamsCompleted === 0)
+                            Erstellen Sie ein Konto, um alle Abschnitte freizuschalten.
+                        @else
+                            Erstellen Sie ein Konto und absolvieren Sie ein Abonnement für weiteren Zugang.
+                        @endif
+                    </p>
+                @endif
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-lg bg-yellow-500 text-neutral-950 hover:bg-yellow-400 transition duration-150 ease-in-out font-mono tracking-wide uppercase">Jetzt Registrieren</a>
                     <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-6 py-3 border border-zinc-700 text-sm font-semibold rounded-lg text-zinc-300 hover:bg-zinc-800 transition duration-150 ease-in-out font-mono tracking-wide uppercase">Anmelden</a>
                 </div>
+                @if (!$isBlocked)
+                    <div class="mt-4">
+                        <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center px-6 py-3 border border-yellow-500/50 text-sm font-semibold rounded-lg text-yellow-400 hover:bg-yellow-500/10 transition duration-150 ease-in-out font-mono tracking-wide uppercase">Abonnement ansehen</a>
+                    </div>
+                @endif
+            </div>
+        </div>
                 <div class="mt-4">
                     <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center px-6 py-3 border border-yellow-500/50 text-sm font-semibold rounded-lg text-yellow-400 hover:bg-yellow-500/10 transition duration-150 ease-in-out font-mono tracking-wide uppercase">Abonnement ansehen</a>
                 </div>
@@ -190,6 +221,18 @@
                 <h1>Try an exam before subscribing</h1>
                 <span>Select a level below to begin your free trial.</span>
             </div>
+
+            @if ($freeExamsCompleted >= 1 && !$isBlocked)
+                <div style="max-width:600px;margin:0 auto 1.5rem;background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;">
+                    <svg style="width:20px;height:20px;color:#d97706;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span style="font-size:0.85rem;color:#92400e;">
+                        <strong>Hinweis:</strong> Bei dieser Prüfung können Sie nur <strong>2 Abschnitte</strong> kostenlos absolvieren.
+                        Erstellen Sie ein Konto für vollen Zugang.
+                    </span>
+                </div>
+            @endif
 
             @if ($levels)
                 <div class="level-tabs">
@@ -567,13 +610,36 @@
 
                             @if (!empty($result['details']))
                                 <div style="margin-top: 1.5rem; text-align: left; border-top: 1px solid #e5e5e5; padding-top: 1rem;">
+                                    <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#666;margin-bottom:0.75rem;">Antworten & Erklärungen</div>
                                     @foreach ($result['details'] as $detail)
-                                        <div style="display: flex; justify-content: space-between; padding: 0.35rem 0; font-size: 0.85rem; border-bottom: 1px solid #f5f5f5;">
-                                            <span style="color: #666;">{{ $detail['label'] }}</span>
-                                            <span style="color: {{ ($detail['correct'] ?? false) ? '#137333' : '#c5221f' }};">
-                                                {{ $detail['points'] }}/{{ $detail['max_points'] }}
-                                                {{ ($detail['correct'] ?? false) ? '✓' : '✗' }}
-                                            </span>
+                                        @php
+                                            $wasMissed = empty($detail['given']) || $detail['given'] === '' || $detail['given'] === null;
+                                        @endphp
+                                        <div style="margin-bottom: 0.5rem; border-bottom: 1px solid #f5f5f5; padding-bottom: 0.5rem;" x-data="{ showExpl: false }">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; font-size: 0.85rem; cursor: pointer;" @click="showExpl = !showExpl">
+                                                <span style="color: #666; display: flex; align-items: center; gap: 0.5rem;">
+                                                    {{ $detail['label'] }}
+                                                    @if ($wasMissed)
+                                                        <span style="font-size:0.7rem;background:#fef3c7;color:#92400e;padding:0.1rem 0.4rem;border-radius:3px;font-weight:600;">Verpasst</span>
+                                                    @endif
+                                                </span>
+                                                <span style="color: {{ ($detail['correct'] ?? false) ? '#137333' : '#c5221f' }}; display: flex; align-items: center; gap: 0.5rem;">
+                                                    {{ $detail['points'] }}/{{ $detail['max_points'] }}
+                                                    {{ ($detail['correct'] ?? false) ? '✓' : '✗' }}
+                                                    <svg style="width:12px;height:12px;transition:transform 0.2s;" :style="showExpl ? 'transform:rotate(180deg)' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                                                </span>
+                                            </div>
+                                            <div x-show="showExpl" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" style="margin-top:0.5rem;padding:0.75rem;background:#fefce8;border-left:3px solid #eab308;border-radius:4px;font-size:0.82rem;color:#713f12;line-height:1.6;">
+                                                @if (!empty($detail['explanation']))
+                                                    <div style="font-weight:700;margin-bottom:0.25rem;color:#854d0e;">Erklärung:</div>
+                                                    <div>{{ $detail['explanation'] }}</div>
+                                                @else
+                                                    <div style="color:#92400e;">{{ ($detail['correct'] ?? false) ? 'Richtig! Gut gemacht.' : 'Leider falsch.' }}</div>
+                                                @endif
+                                                @if (!($detail['correct'] ?? false) && !empty($detail['expected']))
+                                                    <div style="margin-top:0.35rem;font-weight:700;color:#15803d;">Richtige Antwort: {{ $detail['expected'] }}</div>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>

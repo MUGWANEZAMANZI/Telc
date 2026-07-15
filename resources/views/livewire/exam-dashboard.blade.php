@@ -11,6 +11,7 @@
                 <button type="button" wire:click="switchMode('student')" @class(['active' => $mode === 'student'])>Student</button>
                 <button type="button" wire:click="switchMode('topics')" @class(['active' => $mode === 'topics'])>Topics</button>
                 <button type="button" wire:click="switchMode('contacts')" @class(['active' => $mode === 'contacts'])>Contacts</button>
+                <button type="button" wire:click="switchMode('blog')" @class(['active' => $mode === 'blog'])>Blog</button>
                 @if (auth()->user()?->isOwner())
                     <button type="button" wire:click="switchMode('pricing')" @class(['active' => $mode === 'pricing'])>Pricing</button>
                 @endif
@@ -122,6 +123,16 @@
                     @endforeach
                 </div>
 
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+                    <h2>Umfrage-Einstellungen</h2>
+                    <label>Google Form URL</label>
+                    <input type="url" wire:model.live="googleFormUrl" class="telc-input" placeholder="https://docs.google.com/forms/d/...">
+                    <button type="button" wire:click="saveGoogleFormUrl" class="telc-button primary" style="margin-top: 0.5rem; width: 100%;">URL speichern</button>
+                    @if (session('google_form_saved'))
+                        <span style="color:#16a34a;font-size:0.8rem;margin-top:0.25rem;display:block;">✓ Gespeichert</span>
+                    @endif
+                </div>
+
                 <h2>Theme Colorway</h2>
                 <label>Accent</label>
                 <input type="color" wire:model.live="template.theme.accent" class="telc-color">
@@ -212,9 +223,21 @@
 
                                                 <label>Points</label>
                                                 <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.points" class="telc-input small">
+                                            @endif
 
-                                                <label>Explanation (leave empty for AI auto-generate)</label>
-                                                <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.explanation" class="telc-textarea" style="min-height:4rem" placeholder="Optional: Write a custom explanation for this answer."></textarea>
+                                            @if (in_array($element['type'], ['multiple_choice', 'matching', 'fill_blank', 'true_false', 'inline_gap', 'interactive_text'], true))
+                                                <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">
+                                                    <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Erklärung (Antwort-Erläuterung)</label>
+                                                    <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.explanation" class="telc-textarea" style="min-height:4rem" placeholder="Optional: Eigene Erklärung verfassen. Leer lassen für KI-Auto-Generierung."></textarea>
+                                                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;align-items:center;">
+                                                        <button type="button" wire:click="generateExplanation({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-link-button" style="font-size:0.8rem;color:#6366f1;" wire:loading.attr="disabled">
+                                                            🤖 Mit KI generieren
+                                                        </button>
+                                                        @if (!empty($element['explanation']))
+                                                            <span style="font-size:0.75rem;color:#16a34a;">✓ Erklärung vorhanden</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             @endif
 
                                             @if ($element['type'] === 'inline_gap')
@@ -389,6 +412,8 @@
         <livewire:admin-topics />
     @elseif ($mode === 'pricing')
         <livewire:admin-pricing />
+    @elseif ($mode === 'blog')
+        <livewire:admin-blog />
     @elseif ($mode === 'contacts')
         <div class="telc-panel" style="background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 2rem; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
             <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">

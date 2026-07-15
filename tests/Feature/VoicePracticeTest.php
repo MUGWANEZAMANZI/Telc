@@ -80,5 +80,5 @@ test('non-subscribed users are limited to 2 speaking practices', function () {
     Livewire::test(VoiceInput::class)
         ->call('chooseTopic', $topic->id)
         ->call('startExam')
-        ->assertHasErrors('limit');
+        ->assertSet('showTierPrompt', true);
 });
