@@ -55,28 +55,6 @@
                  event.preventDefault();
                  $wire.sendMessage();
              }
-         },
-         renderMarkdown(text) {
-             if (!text) return '';
-             let html = text
-                 .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                 .replace(/\n/g, '<br>');
-             const lines = html.split('<br>');
-             let out = '';
-             let inOl = false;
-             for (const line of lines) {
-                 const m = line.match(/^(\d+)\.\s+(.*)/);
-                 if (m) {
-                     if (!inOl) { out += '<ol style="margin:0.5rem 0;padding-left:1.5rem;">'; inOl = true; }
-                     out += '<li style="margin-bottom:0.25rem;">' + m[2] + '</li>';
-                 } else {
-                     if (inOl) { out += '</ol>'; inOl = false; }
-                     out += line + '<br>';
-                 }
-             }
-             if (inOl) out += '</ol>';
-             return out.replace(/<br><\/ol>/g, '</ol>').replace(/<br><br>/g, '<br>');
          }
      }"
      x-on:play-ai-tts.window="
@@ -504,8 +482,31 @@
         </div>
     @endif
 
-    {{-- Auto-scroll script --}}
+    {{-- Auto-scroll & markdown renderer --}}
     <script>
+        function renderMarkdown(text) {
+            if (!text) return '';
+            let html = text
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+            const lines = html.split('<br>');
+            let out = '';
+            let inOl = false;
+            for (const line of lines) {
+                const m = line.match(/^(\d+)\.\s+(.*)/);
+                if (m) {
+                    if (!inOl) { out += '<ol style="margin:0.5rem 0;padding-left:1.5rem;">'; inOl = true; }
+                    out += '<li style="margin-bottom:0.25rem;">' + m[2] + '</li>';
+                } else {
+                    if (inOl) { out += '</ol>'; inOl = false; }
+                    out += line + '<br>';
+                }
+            }
+            if (inOl) out += '</ol>';
+            return out.replace(/<br><\/ol>/g, '</ol>').replace(/<br><br>/g, '<br>');
+        }
+
         document.addEventListener('livewire:updated', () => {
             const chatArea = document.getElementById('chatArea');
             if (chatArea) {
