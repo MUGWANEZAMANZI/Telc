@@ -264,6 +264,11 @@ class VoiceInput extends Component
 
             if ($this->examComplete) {
                 $this->gradeExam();
+            } elseif ($this->currentTeil < count($this->teilTimings)) {
+                $this->advanceTeil();
+            } else {
+                $this->examComplete = true;
+                $this->gradeExam();
             }
         }
     }

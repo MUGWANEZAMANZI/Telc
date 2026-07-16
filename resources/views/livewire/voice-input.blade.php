@@ -55,6 +55,28 @@
                  event.preventDefault();
                  $wire.sendMessage();
              }
+         },
+         renderMarkdown(text) {
+             if (!text) return '';
+             let html = text
+                 .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                 .replace(/\n/g, '<br>');
+             const lines = html.split('<br>');
+             let out = '';
+             let inOl = false;
+             for (const line of lines) {
+                 const m = line.match(/^(\d+)\.\s+(.*)/);
+                 if (m) {
+                     if (!inOl) { out += '<ol style="margin:0.5rem 0;padding-left:1.5rem;">'; inOl = true; }
+                     out += '<li style="margin-bottom:0.25rem;">' + m[2] + '</li>';
+                 } else {
+                     if (inOl) { out += '</ol>'; inOl = false; }
+                     out += line + '<br>';
+                 }
+             }
+             if (inOl) out += '</ol>';
+             return out.replace(/<br><\/ol>/g, '</ol>').replace(/<br><br>/g, '<br>');
          }
      }"
      x-on:play-ai-tts.window="
@@ -322,9 +344,7 @@
                         <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: {{ $turn['role'] === 'user' ? '#666' : '#d8232a' }}; letter-spacing: 0.05em;">
                             {{ $turn['role'] === 'user' ? 'Sie' : 'Prüfer' }}
                         </span>
-                        <div style="font-size: 0.9rem; color: #374151; line-height: 1.6; {{ $turn['role'] === 'user' ? 'background: #f3f4f6; border-radius: 6px; padding: 0.5rem 0.75rem; display: inline-block; max-width: 80%; text-align: left;' : '' }}">
-                            {{ Str::limit($turn['text'], 300) }}
-                        </div>
+                        <div style="font-size: 0.9rem; color: #374151; line-height: 1.6; {{ $turn['role'] === 'user' ? 'background: #f3f4f6; border-radius: 6px; padding: 0.5rem 0.75rem; display: inline-block; max-width: 80%; text-align: left;' : '' }}" x-html="renderMarkdown({!! \Illuminate\Support\Js::from(Str::limit($turn['text'], 300)) !!})"></div>
                     </div>
                 @endforeach
             </div>
@@ -393,7 +413,7 @@
                             <span style="color: #fff; font-size: 0.75rem; font-weight: 700;">KI</span>
                         </div>
                         <div style="flex: 1; display: flex; align-items: flex-start; gap: 0.5rem;">
-                            <div class="chat-bubble-ai">{{ $turn['text'] }}</div>
+                            <div class="chat-bubble-ai" x-html="renderMarkdown({!! \Illuminate\Support\Js::from($turn['text']) !!})"></div>
                             <button type="button" @click="speakText({!! \Illuminate\Support\Js::from($turn['text']) !!})" title="Vorlesen" style="background: none; border: none; cursor: pointer; padding: 0.25rem; color: #9ca3af; flex-shrink: 0; font-size: 1rem;">🔊</button>
                         </div>
                     </div>
