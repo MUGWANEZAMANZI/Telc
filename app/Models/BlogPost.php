@@ -49,6 +49,9 @@ class BlogPost extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
@@ -59,6 +62,10 @@ class BlogPost extends Model
         return 'slug';
     }
 
+    /**
+     * @param  Builder<BlogPost>  $query
+     * @return Builder<BlogPost>
+     */
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true)
@@ -66,6 +73,10 @@ class BlogPost extends Model
             ->where('published_at', '<=', now());
     }
 
+    /**
+     * @param  Builder<BlogPost>  $query
+     * @return Builder<BlogPost>
+     */
     public function scopeForCategory(Builder $query, ?string $category): Builder
     {
         if ($category) {

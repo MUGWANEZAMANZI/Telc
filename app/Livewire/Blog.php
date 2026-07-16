@@ -3,10 +3,15 @@
 namespace App\Livewire;
 
 use App\Models\BlogPost;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * @property LengthAwarePaginator<int, BlogPost> $posts
+ * @property list<string> $categories
+ */
 class Blog extends Component
 {
     use WithPagination;
@@ -25,7 +30,8 @@ class Blog extends Component
         $this->resetPage();
     }
 
-    public function getPostsProperty()
+    /** @return LengthAwarePaginator<int, BlogPost> */
+    public function getPostsProperty(): LengthAwarePaginator
     {
         return BlogPost::query()
             ->published()
@@ -36,8 +42,10 @@ class Blog extends Component
             ->paginate(9);
     }
 
+    /** @return list<string> */
     public function getCategoriesProperty(): array
     {
+        /** @var list<string> */
         return BlogPost::query()
             ->published()
             ->whereNotNull('category')
@@ -45,7 +53,7 @@ class Blog extends Component
             ->pluck('category')
             ->sort()
             ->values()
-            ->toArray();
+            ->all();
     }
 
     public function render(): View

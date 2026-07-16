@@ -177,8 +177,9 @@ class VoiceInput extends Component
         $this->configureTeilTimings();
 
         $systemPrompt = SpeakingPromptService::getSystemInstruction($this->selectedProvider, $this->selectedLevel);
-        $chat = Gemini::chat('gemini-2.5-flash')
-            ->withSystemInstruction(Content::parse($systemPrompt));
+        $chat = Gemini::generativeModel(model: 'gemini-2.5-flash')
+            ->withSystemInstruction(Content::parse($systemPrompt))
+            ->startChat();
 
         $this->chatHistory = [];
         $this->examStarted = true;

@@ -111,7 +111,8 @@ test('first-time section submission is tracked as completed', function () {
     $component = Livewire::test(GuestExam::class);
 
     expect($component->get('completedSectionIds'))->toBe([]);
-    expect($component->get('remainingSections'))->toBe(2);
+    // First-time users get freeSectionLimit=999, so remaining = 999 - 0 = 999
+    expect($component->get('remainingSections'))->toBe(999);
 
     // Complete first section
     $component->call('startSection', 0)
@@ -121,7 +122,7 @@ test('first-time section submission is tracked as completed', function () {
 
     expect($component->get('completedSectionIds'))->toContain('sec-a');
     expect(count($component->get('completedSectionIds')))->toBe(1);
-    expect($component->get('remainingSections'))->toBe(1);
+    expect($component->get('remainingSections'))->toBe(998);
 });
 
 test('retry does not consume another free slot', function () {
@@ -145,7 +146,7 @@ test('retry does not consume another free slot', function () {
         ->call('submit');
 
     expect(count($component->get('completedSectionIds')))->toBe(1);
-    expect($component->get('remainingSections'))->toBe(1);
+    expect($component->get('remainingSections'))->toBe(998);
 
     // Retry - go back to chapters and start same section again
     $component->call('backToChapters')
@@ -153,9 +154,9 @@ test('retry does not consume another free slot', function () {
         ->set('answers', ['q1' => 'a'])
         ->call('submit');
 
-    // Should still only be 1 completed, remaining still 1
+    // Should still only be 1 completed (retry doesn't add another), remaining still 998
     expect(count($component->get('completedSectionIds')))->toBe(1);
-    expect($component->get('remainingSections'))->toBe(1);
+    expect($component->get('remainingSections'))->toBe(998);
 });
 
 test('limit reached shows login prompt true', function () {

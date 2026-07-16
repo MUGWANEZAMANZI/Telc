@@ -3,12 +3,16 @@
 namespace App\Livewire;
 
 use App\Models\BlogPost;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * @property LengthAwarePaginator<int, BlogPost> $posts
+ */
 class AdminBlog extends Component
 {
     use WithPagination;
@@ -42,7 +46,8 @@ class AdminBlog extends Component
         abort_unless(Auth::user()?->isAdmin(), 403);
     }
 
-    public function getPostsProperty()
+    /** @return LengthAwarePaginator<int, BlogPost> */
+    public function getPostsProperty(): LengthAwarePaginator
     {
         return BlogPost::query()
             ->with('author')
