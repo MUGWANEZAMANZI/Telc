@@ -8,6 +8,7 @@ use App\Models\Subscription;
 use App\Models\VoiceTopic;
 use App\Services\SpeakingPromptService;
 use Gemini\Data\Content;
+use Gemini\Enums\Role;
 use Gemini\Laravel\Facades\Gemini;
 use Gemini\Resources\ChatSession;
 use Illuminate\Database\Eloquent\Collection;
@@ -63,9 +64,6 @@ class VoiceInput extends Component
     public bool $showTierPrompt = false;
 
     public string $tierPromptMessage = '';
-
-    /** @var array<string, ChatSession> */
-    private static array $chatSessions = [];
 
     public function mount(): void
     {
@@ -203,7 +201,6 @@ class VoiceInput extends Component
             $this->chatHistory[] = ['role' => 'model', 'text' => $cleanText];
             $this->checkExamComplete($aiText);
 
-            $this->cacheChatSession($chat);
             $this->dispatch('playAiTts', text: $cleanText);
         } catch (\Throwable $e) {
             $this->chatHistory[] = ['role' => 'model', 'text' => 'Fehler bei der Initialisierung: '.$e->getMessage()];
@@ -223,15 +220,8 @@ class VoiceInput extends Component
         $this->userInput = '';
         $this->aiResponding = true;
 
-        $chat = $this->getCachedChatSession();
-        if (! $chat) {
-            $this->chatHistory[] = ['role' => 'model', 'text' => 'Fehler: Chat-Sitzung nicht gefunden. Bitte starten Sie die Übung neu.'];
-            $this->aiResponding = false;
-
-            return;
-        }
-
         try {
+            $chat = $this->rebuildChatSession();
             $response = $chat->sendMessage($text);
             $aiText = $response->text();
 
@@ -241,7 +231,6 @@ class VoiceInput extends Component
             $this->detectTeilTransition($aiText);
             $this->checkExamComplete($aiText);
 
-            $this->cacheChatSession($chat);
             $this->dispatch('playAiTts', text: $cleanText);
 
             if ($this->examComplete) {
@@ -552,24 +541,24 @@ Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt vo
         return str_replace('[EXAM_COMPLETE]', '', $text);
     }
 
-    private function cacheChatSession(ChatSession $chat): void
+    private function rebuildChatSession(): ChatSession
     {
-        $key = session_id().'_'.$this->selectedProvider.'_'.$this->selectedLevel;
-        self::$chatSessions[$key] = $chat;
-    }
+        $systemPrompt = SpeakingPromptService::getSystemInstruction($this->selectedProvider, $this->selectedLevel);
+        $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
+            ->withSystemInstruction(Content::parse($systemPrompt));
 
-    private function getCachedChatSession(): ?ChatSession
-    {
-        $key = session_id().'_'.$this->selectedProvider.'_'.$this->selectedLevel;
+        /** @var array<Content> $history */
+        $history = [];
+        foreach ($this->chatHistory as $turn) {
+            $role = $turn['role'] === 'user' ? Role::USER : Role::MODEL;
+            $history[] = Content::parse($turn['text'], $role);
+        }
 
-        return self::$chatSessions[$key] ?? null;
+        return $model->startChat(history: $history);
     }
 
     public function repeatExam(): void
     {
-        $key = session_id().'_'.$this->selectedProvider.'_'.$this->selectedLevel;
-        unset(self::$chatSessions[$key]);
-
         $this->examStarted = false;
         $this->examFinished = false;
         $this->examComplete = false;
