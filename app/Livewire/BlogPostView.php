@@ -14,7 +14,7 @@ class BlogPostView extends Component
     {
         $this->post = BlogPost::query()
             ->where('slug', $slug)
-            ->where('is_published', true)
+            ->published()
             ->firstOrFail();
     }
 

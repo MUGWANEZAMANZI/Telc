@@ -17,7 +17,9 @@
                 @endif
             </div>
 
-            <button type="button" wire:click="save" class="telc-button primary">Save</button>
+            @if ($mode !== 'blog')
+                <button type="button" wire:click="save" class="telc-button primary">Save</button>
+            @endif
         </div>
     </div>
 

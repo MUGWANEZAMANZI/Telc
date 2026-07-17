@@ -128,10 +128,12 @@ class AdminBlog extends Component
     public function togglePublish(int $id): void
     {
         $post = BlogPost::findOrFail($id);
+        $newStatus = ! $post->is_published;
         $post->update([
-            'is_published' => ! $post->is_published,
-            'published_at' => ! $post->is_published ? ($post->published_at ?? now()) : $post->published_at,
+            'is_published' => $newStatus,
+            'published_at' => $newStatus ? ($post->published_at ?? now()) : $post->published_at,
         ]);
+        session()->flash('blog_message', $newStatus ? 'Artikel veröffentlicht.' : 'Artikel deaktiviert.');
     }
 
     public function backToList(): void
