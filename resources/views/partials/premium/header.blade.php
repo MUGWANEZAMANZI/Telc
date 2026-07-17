@@ -2,7 +2,7 @@
                     <div class="c1-badge">
                         {{ ($template['exam_provider'] ?? 'telc') === 'goethe' ? 'Goethe' : 'telc' }} {{ $template['level'] ?? 'C1' }}
                     </div>
-                    <h1 class="c1-title">ERFOLG</h1>
+                    <h1 class="c1-title">GERMAN SUCCESS</h1>
                     <p class="c1-subtitle">Deutsches Sprachzertifikat — Offizieller Übungstest</p>
 
                     @if ($result)

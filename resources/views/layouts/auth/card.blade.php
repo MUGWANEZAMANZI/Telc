@@ -8,10 +8,10 @@
             <div class="flex w-full max-w-md flex-col gap-6">
                 <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
                     <span class="flex h-12 w-12 items-center justify-center rounded-md overflow-hidden">
-                        <img src="/logo.jpeg" class="h-12 w-12 object-cover" alt="ERFOLG Logo" />
+                        <img src="/logo.jpeg" class="h-12 w-12 object-cover" alt="GERMAN SUCCESS Logo" />
                     </span>
 
-                    <span class="sr-only">ERFOLG</span>
+                    <span class="sr-only">GERMAN SUCCESS</span>
                 </a>
 
                 <div class="flex flex-col gap-6">

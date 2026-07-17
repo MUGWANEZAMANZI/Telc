@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERFOLG — Premium C1 Deutsch Prüfung</title>
+    <title>GERMAN SUCCESS — Premium C1 Deutsch Prüfung</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -529,8 +529,8 @@
     <header class="header-nav">
         <div class="nav-container">
             <a href="/" class="brand">
-                <img src="/logo.jpeg" alt="ERFOLG Logo" class="logo-img">
-                <span class="brand-name">ERFOLG</span>
+                <img src="/logo.jpeg" alt="GERMAN SUCCESS Logo" class="logo-img">
+                <span class="brand-name">GERMAN SUCCESS</span>
             </a>
             <nav>
                 <ul class="nav-links">

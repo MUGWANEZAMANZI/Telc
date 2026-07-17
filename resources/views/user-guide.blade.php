@@ -21,7 +21,7 @@
 
         {{-- Handbook Main Title --}}
         <div class="handbook-title-block">
-            <span class="handbook-eyebrow">ERFOLG DEUTSCHLERN- & PRÜFUNGSSYSTEM</span>
+            <span class="handbook-eyebrow">GERMAN SUCCESS DEUTSCHLERN- & PRÜFUNGSSYSTEM</span>
             <h1 class="handbook-main-title">Offizielles System-Handbuch</h1>
             <p class="handbook-subtitle">Umfassende Dokumentation für Eigentümer, Administratoren und Kursteilnehmer</p>
         </div>

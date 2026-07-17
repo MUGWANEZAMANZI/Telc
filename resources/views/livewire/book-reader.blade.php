@@ -15,7 +15,7 @@
             @endif
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ route('home') }}" class="text-xs text-stone-500 hover:text-stone-900 transition-colors">ERFOLG</a>
+            <a href="{{ route('home') }}" class="text-xs text-stone-500 hover:text-stone-900 transition-colors">GERMAN SUCCESS</a>
         </div>
     </header>
 

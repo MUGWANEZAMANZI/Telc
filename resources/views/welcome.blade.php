@@ -4,13 +4,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>ERFOLG - KI-gestütztes C1 Deutschzertifikat-Portal</title>
+        <title>GERMAN SUCCESS - KI-gestütztes C1 Deutschzertifikat-Portal</title>
 
         <link rel="icon" href="/logo.jpeg" sizes="any">
         <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
-        <meta name="description" content="ERFOLG - KI-gestützte TELC Prüfungsvorbereitung. Kostenlose Übungen, Sprechübungen mit KI und vieles mehr.">
+        <meta name="description" content="GERMAN SUCCESS - KI-gestützte TELC Prüfungsvorbereitung. Kostenlose Übungen, Sprechübungen mit KI und vieles mehr.">
         <meta name="keywords" content="TELC, Deutsch, C1, B2, B1, Prüfung, Vorbereitung, KI, Sprechübung, Kostenlos">
-        <meta property="og:title" content="ERFOLG - KI-gestütztes Deutschzertifikat-Portal">
+        <meta property="og:title" content="GERMAN SUCCESS - KI-gestütztes Deutschzertifikat-Portal">
         <meta property="og:description" content="Bereiten Sie sich mit KI-gestützten Übungen auf Ihre TELC-Prüfung vor.">
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ url('/') }}">
@@ -56,8 +56,8 @@
         <!-- Navigation -->
         <header class="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between z-10 shrink-0">
             <div class="flex items-center gap-3">
-                <img src="logo.jpeg" class="h-10 w-auto rounded border border-stone-200" alt="ERFOLG Logo" />
-                <span class="text-xl font-extrabold tracking-wider text-stone-900 uppercase">ERFOLG</span>
+                <img src="logo.jpeg" class="h-10 w-auto rounded border border-stone-200" alt="GERMAN SUCCESS Logo" />
+                <span class="text-xl font-extrabold tracking-wider text-stone-900 uppercase">GERMAN SUCCESS</span>
             </div>
             @if (Route::has('login'))
                 <nav class="flex items-center gap-4">
@@ -139,7 +139,7 @@
             <section id="vorteile" class="space-y-12 scroll-mt-24">
                 <div class="text-center space-y-4">
                     <span class="text-xs font-bold uppercase tracking-widest text-red-600">Das Konzept</span>
-                    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight uppercase">Warum <span class="text-yellow-600">ERFOLG</span> funktioniert</h2>
+                    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight uppercase">Warum <span class="text-yellow-600">GERMAN SUCCESS</span> funktioniert</h2>
                     <p class="text-stone-600 max-w-xl mx-auto text-sm md:text-base">Unsere Lernplattform wurde mit nur einem Fokus entwickelt: Maximale Effizienz am Prüfungstag.</p>
                 </div>/div>
 
@@ -244,7 +244,7 @@
         <!-- Footer -->
         <footer class="w-full max-w-7xl mx-auto px-6 py-12 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-stone-500 shrink-0">
             <div>
-                <span>&copy; {{ date('Y') }} ERFOLG. Alle Rechte vorbehalten.</span>
+                <span>&copy; {{ date('Y') }} GERMAN SUCCESS. Alle Rechte vorbehalten.</span>
             </div>
             <div class="flex gap-6">
                 <a href="{{ route('pricing') }}" class="hover:text-stone-900 transition-colors">Preise</a>

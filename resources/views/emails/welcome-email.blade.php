@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Willkommen bei ERFOLG</title>
+    <title>Willkommen bei GERMAN SUCCESS</title>
     <style>
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -83,11 +83,11 @@
     <div class="wrapper">
         <div class="container">
             <div class="header">
-                <span style="color: #ffffff; font-size: 20px; font-weight: 800; letter-spacing: 0.1em;">ERFOLG</span>
+                <span style="color: #ffffff; font-size: 20px; font-weight: 800; letter-spacing: 0.1em;">GERMAN SUCCESS</span>
             </div>
             <div class="content">
-                <h1>Willkommen bei ERFOLG, {{ $name }}!</h1>
-                <p>Vielen Dank, dass Sie ein Konto bei ERFOLG erstellt haben – dem intelligenten Portal zur Vorbereitung auf Ihr deutsches Sprachzertifikat.</p>
+                <h1>Willkommen bei GERMAN SUCCESS, {{ $name }}!</h1>
+                <p>Vielen Dank, dass Sie ein Konto bei GERMAN SUCCESS erstellt haben – dem intelligenten Portal zur Vorbereitung auf Ihr deutsches Sprachzertifikat.</p>
                 <p>Mit unserer Plattform können Sie lebensechte C1-, B2- und B1-Prüfungssimulationen durchführen, interaktiv per Mikrofon üben und erhalten eine detaillierte KI-Auswertung Ihrer schriftlichen und mündlichen Leistungen.</p>
                 <div class="button-wrapper">
                     <a href="{{ url('/dashboard') }}" class="button">Zum Dashboard</a>
@@ -95,7 +95,7 @@
                 <p>Wir wünschen Ihnen viel Erfolg bei Ihrer Vorbereitung!</p>
             </div>
             <div class="footer">
-                &copy; {{ date('Y') }} ERFOLG. Alle Rechte vorbehalten.
+                &copy; {{ date('Y') }} GERMAN SUCCESS. Alle Rechte vorbehalten.
             </div>
         </div>
     </div>

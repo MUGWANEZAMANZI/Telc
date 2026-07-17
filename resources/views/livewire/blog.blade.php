@@ -2,7 +2,7 @@
     {{-- Header --}}
     <div style="text-align:center;margin-bottom:3rem;">
         <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#d8232a;">Blog</span>
-        <h1 style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;color:#1a1a1a;margin:0.5rem 0;">ERFOLG Blog</h1>
+        <h1 style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;color:#1a1a1a;margin:0.5rem 0;">GERMAN SUCCESS Blog</h1>
         <p style="color:#666;font-size:1.05rem;max-width:600px;margin:0 auto;">Tipps, Strategien und Neuigkeiten zur Vorbereitung auf Ihre TELC-Prüfung.</p>
     </div>
 

@@ -23,7 +23,7 @@ class AccountCreatedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Willkommen bei ERFOLG - Ihr Account wurde erstellt',
+            subject: 'Willkommen bei GERMAN SUCCESS - Ihr Account wurde erstellt',
         );
     }
 

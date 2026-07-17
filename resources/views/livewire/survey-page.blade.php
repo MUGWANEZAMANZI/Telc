@@ -6,7 +6,7 @@
             </svg>
         </div>
         <h1 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:#1a1a1a;margin-bottom:0.5rem;">Umfrage</h1>
-        <p style="color:#666;font-size:1rem;margin-bottom:2rem;">Helfen Sie uns, ERFOLG zu verbessern. Ihre Antworten sind anonym und werden vertraulich behandelt.</p>
+        <p style="color:#666;font-size:1rem;margin-bottom:2rem;">Helfen Sie uns, GERMAN SUCCESS zu verbessern. Ihre Antworten sind anonym und werden vertraulich behandelt.</p>
 
         @if ($googleFormUrl)
             <div style="border:1px solid #e5e5e5;border-radius:8px;overflow:hidden;margin-bottom:1.5rem;">
@@ -19,7 +19,7 @@
                     marginwidth="0"
                     style="border:none;min-height:600px;"
                     loading="lazy"
-                    title="ERFOLG Umfrage"
+                    title="GERMAN SUCCESS Umfrage"
                 >Wird geladen…</iframe>
             </div>
             <a href="{{ $googleFormUrl }}" target="_blank" rel="noopener noreferrer"

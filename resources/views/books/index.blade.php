@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Bücher — ERFOLG</title>
+        <title>Bücher — GERMAN SUCCESS</title>
         <link rel="icon" href="/logo.jpeg" sizes="any">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,8 +18,8 @@
     <body class="bg-stone-50 text-stone-900 min-h-screen flex flex-col">
         <header class="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between shrink-0">
             <a href="{{ route('home') }}" class="flex items-center gap-3">
-                <img src="/logo.jpeg" class="h-10 w-auto rounded border border-stone-200" alt="ERFOLG Logo" />
-                <span class="text-xl font-extrabold tracking-wider text-stone-900 uppercase">ERFOLG</span>
+                <img src="/logo.jpeg" class="h-10 w-auto rounded border border-stone-200" alt="GERMAN SUCCESS Logo" />
+                <span class="text-xl font-extrabold tracking-wider text-stone-900 uppercase">GERMAN SUCCESS</span>
             </a>
             <nav class="flex items-center gap-4">
                 <a href="{{ route('home') }}" class="text-stone-600 hover:text-stone-900 text-sm font-bold transition-colors">Startseite</a>

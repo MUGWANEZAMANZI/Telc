@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sprechübung - ERFOLG</title>
+    <title>Sprechübung - GERMAN SUCCESS</title>
     <link rel="icon" href="/logo.jpeg" sizes="any">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,8 +16,8 @@
     <header class="bg-white border-b border-stone-200 px-6 py-4">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <img src="/logo.jpeg" class="h-8 w-auto rounded" alt="ERFOLG" />
-                <span class="text-lg font-extrabold tracking-wider text-stone-900 uppercase">ERFOLG</span>
+                <img src="/logo.jpeg" class="h-8 w-auto rounded" alt="GERMAN SUCCESS" />
+                <span class="text-lg font-extrabold tracking-wider text-stone-900 uppercase">GERMAN SUCCESS</span>
             </div>
             <div class="flex items-center gap-4">
                 <a href="{{ route('login') }}" class="text-stone-600 hover:text-stone-900 text-sm font-bold">Einloggen</a>
