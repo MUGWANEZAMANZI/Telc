@@ -57,16 +57,10 @@
         <header class="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between z-10 shrink-0">
             <div class="flex items-center gap-3">
                 <img src="logo.jpeg" class="h-10 w-auto rounded border border-stone-200" alt="GERMAN SUCCESS Logo" />
-                <span class="text-xl font-extrabold tracking-wider text-stone-900 uppercase">GERMAN SUCCESS</span>
+                <span class="text-xl font-extrabold tracking-wider text-stone-900 uppercase md:text-sm">GERMAN SUCCESS</span>
             </div>
             @if (Route::has('login'))
                 <nav class="flex items-center gap-4">
-                    <a href="{{ route('blog') }}" class="text-stone-600 hover:text-stone-900 text-sm font-bold transition-colors duration-200">
-                        Blog
-                    </a>
-                    <a href="{{ route('survey') }}" class="text-stone-600 hover:text-stone-900 text-sm font-bold transition-colors duration-200">
-                        Umfrage
-                    </a>
                     @auth
                         <a href="{{ route('dashboard') }}" class="bg-yellow-500 hover:bg-yellow-400 text-stone-950 px-6 py-2 rounded-full font-bold text-sm transition-colors duration-200 uppercase tracking-wider">
                             Dashboard
@@ -241,6 +235,9 @@
 
         </main>
 
+        <!-- Contact Form -->
+        <livewire:contact-form />
+
         <!-- Footer -->
         <footer class="w-full bg-stone-900 text-stone-300 shrink-0">
             <div class="max-w-7xl mx-auto px-6 py-16">
@@ -349,8 +346,6 @@
                 </svg>
             </a>
         </div>
-
-        <livewire:contact-form />
 
     @livewireScripts
     </body>

@@ -51,7 +51,7 @@ return [
 
         'zoho_info' => [
             'transport' => 'smtp',
-            'scheme' => 'ssl',
+            'scheme' => 'smtps',
             'host' => env('MAIL_HOST', 'smtp.zoho.com'),
             'port' => (int) env('MAIL_PORT', 465),
             'username' => env('MAIL_USERNAME', 'info@germansuccess.com'),
@@ -62,7 +62,7 @@ return [
 
         'zoho_sales' => [
             'transport' => 'smtp',
-            'scheme' => 'ssl',
+            'scheme' => 'smtps',
             'host' => env('ZOHO_SALES_HOST', 'smtp.zoho.com'),
             'port' => (int) env('ZOHO_SALES_PORT', 465),
             'username' => env('ZOHO_SALES_USERNAME', 'sales@germansuccess.com'),
