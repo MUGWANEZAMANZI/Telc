@@ -31,6 +31,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, ExamAttempt> $attempts
  * @property-read Collection<int, ExamEnrollment> $examEnrollments
+ * @property-read Collection<int, Subscription> $subscriptions
  */
 #[Fillable(['name', 'email', 'password', 'role', 'last_login_at', 'login_count'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -74,6 +75,12 @@ class User extends Authenticatable
     public function examEnrollments(): HasMany
     {
         return $this->hasMany(ExamEnrollment::class);
+    }
+
+    /** @return HasMany<Subscription, $this> */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
     }
 
     /**

@@ -242,13 +242,76 @@
         </main>
 
         <!-- Footer -->
-        <footer class="w-full max-w-7xl mx-auto px-6 py-12 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-stone-500 shrink-0">
-            <div>
-                <span>&copy; {{ date('Y') }} GERMAN SUCCESS. Alle Rechte vorbehalten.</span>
-            </div>
-            <div class="flex gap-6">
-                <a href="{{ route('pricing') }}" class="hover:text-stone-900 transition-colors">Preise</a>
-                <a href="{{ route('free.exam') }}" class="hover:text-stone-900 transition-colors">Kostenlose Übung</a>
+        <footer class="w-full bg-stone-900 text-stone-300 shrink-0">
+            <div class="max-w-7xl mx-auto px-6 py-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                    {{-- Brand & Contact --}}
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <img src="logo.jpeg" class="h-8 w-auto rounded border border-stone-700" alt="GERMAN SUCCESS" />
+                            <span class="text-lg font-extrabold tracking-wider text-white uppercase">GERMAN SUCCESS</span>
+                        </div>
+                        <p class="text-sm text-stone-400 leading-relaxed">
+                            KI-gestützte Vorbereitung auf Ihre TELC- oder Goethe-Prüfung.
+                        </p>
+                        <div class="space-y-2 text-sm">
+                            <a href="mailto:support@germansuccess.com" class="flex items-center gap-2 text-stone-400 hover:text-white transition-colors">
+                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                                support@germansuccess.com
+                            </a>
+                            <a href="tel:+4915211766629" class="flex items-center gap-2 text-stone-400 hover:text-white transition-colors">
+                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
+                                +49 1521 1766629
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- Links --}}
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-extrabold uppercase tracking-widest text-white">Navigation</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="{{ route('pricing') }}" class="hover:text-white transition-colors">Preise</a></li>
+                            <li><a href="{{ route('free.exam') }}" class="hover:text-white transition-colors">Kostenlose Übung</a></li>
+                            <li><a href="{{ route('blog') }}" class="hover:text-white transition-colors">Blog</a></li>
+                            <li><a href="{{ route('survey') }}" class="hover:text-white transition-colors">Umfrage</a></li>
+                        </ul>
+                    </div>
+
+                    {{-- Legal --}}
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-extrabold uppercase tracking-widest text-white">Rechtliches</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="{{ route('terms') }}" class="hover:text-white transition-colors">Nutzungsbedingungen (AGB)</a></li>
+                            <li><a href="{{ route('privacy') }}" class="hover:text-white transition-colors">Datenschutzerklärung</a></li>
+                            <li><a href="{{ route('impressum') }}" class="hover:text-white transition-colors">Impressum</a></li>
+                        </ul>
+                    </div>
+
+                    {{-- Survey Embed --}}
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-extrabold uppercase tracking-widest text-white">Umfrage</h3>
+                        <p class="text-sm text-stone-400">Helfen Sie uns, besser zu werden.</p>
+                        @php $googleFormUrl = \App\Models\Setting::value('google_form_url', ''); @endphp
+                        @if ($googleFormUrl)
+                            <div class="rounded-lg overflow-hidden border border-stone-700 aspect-[4/3]">
+                                <iframe src="{{ $googleFormUrl }}" class="w-full h-full" frameborder="0" marginheight="0" marginwidth="0" loading="lazy">Laden...</iframe>
+                            </div>
+                        @else
+                            <a href="{{ route('survey') }}" class="inline-block text-sm text-yellow-500 hover:text-yellow-400 font-bold transition-colors">
+                                Zur Umfrage &rarr;
+                            </a>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-stone-500">
+                    <span>&copy; {{ date('Y') }} GERMAN SUCCESS. Alle Rechte vorbehalten.</span>
+                    <div class="flex gap-4">
+                        <a href="{{ route('terms') }}" class="hover:text-stone-300 transition-colors">AGB</a>
+                        <a href="{{ route('privacy') }}" class="hover:text-stone-300 transition-colors">Datenschutz</a>
+                        <a href="{{ route('impressum') }}" class="hover:text-stone-300 transition-colors">Impressum</a>
+                    </div>
+                </div>
             </div>
         </footer>
 

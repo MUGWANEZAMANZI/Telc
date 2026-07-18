@@ -20,8 +20,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $ends_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read User $user
- * @property-read Plan $plan
+ * @property-read User|null $user
+ * @property-read Plan|null $plan
  */
 class Subscription extends Model
 {

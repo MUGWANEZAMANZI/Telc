@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SubscriptionConfirmedMail;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
 use App\Models\Plan;
@@ -13,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class RevolutCheckoutController extends Controller
 {
@@ -119,7 +121,7 @@ class RevolutCheckoutController extends Controller
 
                 $endsAt = now()->addMonths($duration ?? 1);
 
-                Subscription::create([
+                $subscription = Subscription::create([
                     'user_id' => $request->user()->id,
                     'plan_id' => $plan->id,
                     'provider' => 'revolut',
@@ -130,6 +132,12 @@ class RevolutCheckoutController extends Controller
                     'starts_at' => now(),
                     'ends_at' => $endsAt,
                 ]);
+
+                try {
+                    Mail::mailer('zoho_sales')->to($request->user()->email)->send(new SubscriptionConfirmedMail($request->user(), $subscription, $plan));
+                } catch (\Throwable $e) {
+                    Log::error('Could not send subscription confirmation email (Revolut success): '.$e->getMessage());
+                }
 
                 session()->forget(['revolut_intent', 'revolut_item_id', 'revolut_duration', 'revolut_order_id', 'revolut_amount']);
 
@@ -217,7 +225,7 @@ class RevolutCheckoutController extends Controller
                                 ->update(['status' => 'cancelled', 'ends_at' => now()]);
 
                             $endsAt = now()->addMonths($duration);
-                            Subscription::create([
+                            $subscription = Subscription::create([
                                 'user_id' => $user->id,
                                 'plan_id' => $planId,
                                 'provider' => 'revolut',
@@ -228,6 +236,16 @@ class RevolutCheckoutController extends Controller
                                 'starts_at' => now(),
                                 'ends_at' => $endsAt,
                             ]);
+
+                            $plan = Plan::query()->find($planId);
+                            if ($plan) {
+                                try {
+                                    Mail::mailer('zoho_sales')->to($user->email)->send(new SubscriptionConfirmedMail($user, $subscription, $plan));
+                                } catch (\Throwable $e) {
+                                    Log::error('Could not send subscription confirmation email (Revolut webhook): '.$e->getMessage());
+                                }
+                            }
+
                             Log::info('Revolut plan subscription created via webhook', [
                                 'user_id' => $user->id,
                                 'plan_id' => $planId,

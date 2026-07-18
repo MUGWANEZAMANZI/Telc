@@ -35,7 +35,7 @@ class CreateNewUser implements CreatesNewUsers
         ]);
 
         try {
-            Mail::to($user->email)->send(new AccountCreatedMail($user));
+            Mail::mailer('zoho_info')->to($user->email)->send(new AccountCreatedMail($user));
         } catch (\Throwable $e) {
             Log::error('Could not send welcome email: '.$e->getMessage());
         }

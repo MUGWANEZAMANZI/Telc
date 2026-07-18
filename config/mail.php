@@ -49,6 +49,28 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        'zoho_info' => [
+            'transport' => 'smtp',
+            'scheme' => 'ssl',
+            'host' => env('MAIL_HOST', 'smtp.zoho.com'),
+            'port' => (int) env('MAIL_PORT', 465),
+            'username' => env('MAIL_USERNAME', 'info@germansuccess.com'),
+            'password' => env('MAIL_PASSWORD'),
+            'timeout' => 30,
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
+        'zoho_sales' => [
+            'transport' => 'smtp',
+            'scheme' => 'ssl',
+            'host' => env('ZOHO_SALES_HOST', 'smtp.zoho.com'),
+            'port' => (int) env('ZOHO_SALES_PORT', 465),
+            'username' => env('ZOHO_SALES_USERNAME', 'sales@germansuccess.com'),
+            'password' => env('ZOHO_SALES_PASSWORD'),
+            'timeout' => 30,
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],

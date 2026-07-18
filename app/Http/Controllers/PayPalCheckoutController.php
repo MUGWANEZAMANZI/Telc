@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SubscriptionConfirmedMail;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
 use App\Models\Plan;
@@ -12,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PayPalCheckoutController extends Controller
 {
@@ -181,7 +183,7 @@ class PayPalCheckoutController extends Controller
 
         $endsAt = now()->addMonths($duration);
 
-        Subscription::create([
+        $subscription = Subscription::create([
             'user_id' => $request->user()->id,
             'plan_id' => $planId,
             'provider' => 'paypal',
@@ -192,6 +194,15 @@ class PayPalCheckoutController extends Controller
             'starts_at' => now(),
             'ends_at' => $endsAt,
         ]);
+
+        $plan = Plan::query()->find($planId);
+        if ($plan instanceof Plan) {
+            try {
+                Mail::mailer('zoho_sales')->to($request->user()->email)->send(new SubscriptionConfirmedMail($request->user(), $subscription, $plan));
+            } catch (\Throwable $e) {
+                Log::error('Could not send subscription confirmation email (PayPal success): '.$e->getMessage());
+            }
+        }
 
         session()->forget(['paypal_intent', 'exam_template_id', 'plan_id', 'paypal_duration', 'paypal_amount', 'paypal_order_id']);
 
@@ -291,7 +302,7 @@ class PayPalCheckoutController extends Controller
                 }
             }
 
-            Subscription::create([
+            $subscription = Subscription::create([
                 'user_id' => $user->id,
                 'plan_id' => $planId,
                 'provider' => 'paypal',
@@ -302,6 +313,15 @@ class PayPalCheckoutController extends Controller
                 'starts_at' => now(),
                 'ends_at' => $endsAt,
             ]);
+
+            $plan = Plan::query()->find($planId);
+            if ($plan instanceof Plan) {
+                try {
+                    Mail::mailer('zoho_sales')->to($user->email)->send(new SubscriptionConfirmedMail($user, $subscription, $plan));
+                } catch (\Throwable $e) {
+                    Log::error('Could not send subscription confirmation email (PayPal webhook): '.$e->getMessage());
+                }
+            }
 
             Log::info('PayPal plan subscription created via webhook', [
                 'user_id' => $user->id,

@@ -5,6 +5,7 @@ use App\Http\Controllers\PayPalCheckoutController;
 use App\Http\Controllers\RevolutCheckoutController;
 use App\Livewire\AdminBlog;
 use App\Livewire\AdminBooks;
+use App\Livewire\AdminEmailScheduler;
 use App\Livewire\AdminFinance;
 use App\Livewire\BillingPortal;
 use App\Livewire\Blog;
@@ -22,6 +23,9 @@ use Illuminate\Support\Facades\Storage;
 Route::view('/', 'welcome')->name('home');
 
 Route::view('pricing', 'pricing')->name('pricing');
+Route::view('terms', 'terms')->name('terms');
+Route::view('privacy', 'privacy')->name('privacy');
+Route::view('impressum', 'impressum')->name('impressum');
 Route::get('free-exam/{templateId?}', GuestExam::class)->name('free.exam');
 Route::view('premium-exam', 'premium-exam')->name('premium.exam');
 
@@ -41,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('owner/panel', OwnerDashboard::class)->name('owner.panel');
     Route::get('admin/books', AdminBooks::class)->name('admin.books');
     Route::get('admin/blog', AdminBlog::class)->name('admin.blog');
+    Route::get('admin/email-scheduler', AdminEmailScheduler::class)->name('admin.email-scheduler');
 });
 
 Route::get('voice-practice', function () {

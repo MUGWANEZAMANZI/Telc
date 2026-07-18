@@ -45,6 +45,9 @@
                         <flux:sidebar.item icon="academic-cap" :href="route('admin.books')" :current="request()->routeIs('admin.books')" wire:navigate>
                             {{ __('Bücher') }}
                         </flux:sidebar.item>
+                        <flux:sidebar.item icon="envelope" :href="route('admin.email-scheduler')" :current="request()->routeIs('admin.email-scheduler')" wire:navigate>
+                            {{ __('E-Mail-Planung') }}
+                        </flux:sidebar.item>
                         @if (auth()->user()->isOwner())
                             <flux:sidebar.item icon="currency-dollar" :href="route('admin.finance')" :current="request()->routeIs('admin.finance')" wire:navigate>
                                 {{ __('Finance') }}
