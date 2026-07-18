@@ -17,7 +17,7 @@
         <meta property="og:image" content="{{ url('/logo.jpeg') }}">
         <meta name="robots" content="index, follow">
         <link rel="canonical" href="{{ url('/') }}">
-        <script src="https://cdn.tailwindcss.com"></script>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,8 +49,8 @@
         <!-- AI Background Orbs -->
         <div class="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
             <div class="absolute -top-40 -left-40 w-96 h-96 bg-red-100/40 rounded-full blur-3xl animate-[pulse_6s_infinite_ease-in-out]"></div>
-            <div class="absolute top-1/4 right-0 w-[500px] h-[500px] bg-yellow-100/30 rounded-full blur-3xl animate-[pulse_10s_infinite_ease-in-out]"></div>
-            <div class="absolute bottom-10 left-10 w-[600px] h-[600px] bg-red-50/40 rounded-full blur-3xl animate-[pulse_8s_infinite_ease-in-out]"></div>
+            <div class="absolute top-1/4 right-0 w-125 h-125 bg-yellow-100/30 rounded-full blur-3xl animate-[pulse_10s_infinite_ease-in-out]"></div>
+            <div class="absolute bottom-10 left-10 w-150 h-150 bg-red-50/40 rounded-full blur-3xl animate-[pulse_8s_infinite_ease-in-out]"></div>
         </div>
 
         <!-- Navigation -->
@@ -210,17 +210,17 @@
                     <div class="space-y-2">
                         <span class="block text-5xl md:text-7xl font-extrabold text-red-600">94%</span>
                         <strong class="block text-sm uppercase tracking-wider text-stone-900">Bestehensquote</strong>
-                        <p class="text-xs text-stone-500 max-w-[200px] mx-auto">unserer aktiven Abonnenten in der echten telc C1 Prüfung.</p>
+                        <p class="text-xs text-stone-500 max-w-50 mx-auto">unserer aktiven Abonnenten in der echten telc C1 Prüfung.</p>
                     </div>
                     <div class="space-y-2">
                         <span class="block text-5xl md:text-7xl font-extrabold text-red-600">3.2k+</span>
                         <strong class="block text-sm uppercase tracking-wider text-stone-900">Sprechprüfungen</strong>
-                        <p class="text-xs text-stone-500 max-w-[200px] mx-auto">durchgeführte interaktive Konversationen mit unserem KI-Prüfer.</p>
+                        <p class="text-xs text-stone-500 max-w-50 mx-auto">durchgeführte interaktive Konversationen mit unserem KI-Prüfer.</p>
                     </div>
                     <div class="space-y-2">
                         <span class="block text-5xl md:text-7xl font-extrabold text-red-600">&lt; 2s</span>
                         <strong class="block text-sm uppercase tracking-wider text-stone-900">KI-Latenz</strong>
-                        <p class="text-xs text-stone-500 max-w-[200px] mx-auto">für direkte Rückfragen und flüssige Gesprächsführung im mündlichen Teil.</p>
+                        <p class="text-xs text-stone-500 max-w-50 mx-auto">für direkte Rückfragen und flüssige Gesprächsführung im mündlichen Teil.</p>
                     </div>
                 </div>
 
@@ -290,7 +290,7 @@
                         <p class="text-sm text-stone-400">Helfen Sie uns, besser zu werden.</p>
                         @php $googleFormUrl = \App\Models\Setting::value('google_form_url', ''); @endphp
                         @if ($googleFormUrl)
-                            <div class="rounded-lg overflow-hidden border border-stone-700 aspect-[4/3]">
+                            <div class="rounded-lg overflow-hidden border border-stone-700 aspect-4/3">
                                 <iframe src="{{ $googleFormUrl }}" class="w-full h-full" frameborder="0" marginheight="0" marginwidth="0" loading="lazy">Laden...</iframe>
                             </div>
                         @else
@@ -320,7 +320,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 translate-y-10"
-             class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur border border-stone-200 px-6 py-4 rounded-full shadow-2xl z-50 flex items-center gap-6 min-w-[320px] md:min-w-[450px] justify-between pointer-events-auto">
+             class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur border border-stone-200 px-6 py-4 rounded-full shadow-2xl z-50 flex items-center gap-6 min-w-[320px] md:min-w-112.5 justify-between pointer-events-auto">
              <div class="text-left">
                  <span class="text-[10px] text-stone-500 block uppercase font-bold tracking-wider leading-none mb-1">Bereit für den Erfolg?</span>
                  <span class="text-xs text-stone-900 font-bold block leading-none">Jetzt C1-Zertifikat sichern</span>

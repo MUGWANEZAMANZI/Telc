@@ -4,9 +4,6 @@
 <title>
     {{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}
 </title>
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-
 <link rel="icon" href="/logo.jpeg" sizes="any">
 @fonts
 

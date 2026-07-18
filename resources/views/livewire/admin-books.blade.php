@@ -45,13 +45,13 @@
 
                 <div>
                     <label style="font-size: 0.8rem; color: #6b7280; font-weight: 600; display: block; margin-bottom: 0.25rem;">PDF-Datei {{ $editingBookId ? '(optional)' : '*' }}</label>
-                    <input type="file" wire:model="pdf" accept=".pdf" style="width: 100%; padding: 0.5rem 0; font-size: 0.9rem;">
+                    <input type="file" wire:model.live="pdf" accept=".pdf" style="width: 100%; padding: 0.5rem 0; font-size: 0.9rem;">
                     @error('pdf') <span style="color: #d8232a; font-size: 0.8rem;">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
                     <label style="font-size: 0.8rem; color: #6b7280; font-weight: 600; display: block; margin-bottom: 0.25rem;">Cover-Bild (optional)</label>
-                    <input type="file" wire:model="cover" accept="image/*" style="width: 100%; padding: 0.5rem 0; font-size: 0.9rem;">
+                    <input type="file" wire:model.live="cover" accept="image/*" style="width: 100%; padding: 0.5rem 0; font-size: 0.9rem;">
                     @error('cover') <span style="color: #d8232a; font-size: 0.8rem;">{{ $message }}</span> @enderror
                 </div>
 

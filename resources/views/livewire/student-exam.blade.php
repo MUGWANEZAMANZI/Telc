@@ -980,18 +980,19 @@
                                             </div>
                                         @endif
 
-                                        {{-- Writing --}}
-                                        @foreach ($section['elements'] as $element)
-                                            @if (($element['type'] ?? '') === 'writing')
-                                                <div class="writing-section">
-                                                    <label class="writing-label">{{ $element['label'] }}</label>
-                                                    <textarea wire:model.live="answers.{{ $element['id'] }}" class="writing-textarea" placeholder="Schreibe deinen Text hier..."></textarea>
-                                                </div>
-                                            @endif
-                                        @endforeach
                                     </div>
                                 </aside>
                             </div>
+
+                            {{-- Writing (full-width below the paper layout) --}}
+                            @foreach ($section['elements'] as $element)
+                                @if (($element['type'] ?? '') === 'writing')
+                                    <div class="writing-section" style="max-width: 794px; margin: 1rem auto;">
+                                        <label class="writing-label">{{ $element['label'] }}</label>
+                                        <textarea wire:model.live="answers.{{ $element['id'] }}" class="writing-textarea" placeholder="Schreibe deinen Text hier..." style="min-height: 600px;"></textarea>
+                                    </div>
+                                @endif
+                            @endforeach
                         @endif
                     @endif
                 </main>
