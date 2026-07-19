@@ -5,8 +5,8 @@
     $seconds = $remainingSeconds % 60;
 @endphp
 
-<div class="student-catalog-shell" @if($submitting) style="opacity:0.4;pointer-events:none;" @endif>
-    @if ($submitting)
+<div class="student-catalog-shell" @if($submitting ?? false) style="opacity:0.4;pointer-events:none;" @endif>
+    @if ($submitting ?? false)
         <div style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:all;">
             <img src="{{ asset('Spinner@1x-1.7s-199px-199px.svg') }}" alt="Laden..." style="width:120px;height:120px;" />
             <p style="color:#fff;font-weight:700;font-size:1rem;margin-top:1rem;font-family:'Plus Jakarta Sans',sans-serif;">Prüfung wird ausgewertet...</p>

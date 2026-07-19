@@ -12,6 +12,7 @@ test('users can submit contact form successfully', function () {
         ->set('name', 'John Doe')
         ->set('organization', 'Acme Inc')
         ->set('email', 'john@acme.com')
+        ->set('message', 'Hello, this is a test message.')
         ->call('submit')
         ->assertHasNoErrors()
         ->assertSet('successMessage', 'Vielen Dank! Ihre Kontaktanfrage wurde erfolgreich übermittelt.');
@@ -21,6 +22,7 @@ test('users can submit contact form successfully', function () {
     expect($req->name)->toBe('John Doe');
     expect($req->organization)->toBe('Acme Inc');
     expect($req->email)->toBe('john@acme.com');
+    expect($req->message)->toBe('Hello, this is a test message.');
     expect($req->status)->toBe('not_responded');
 });
 
