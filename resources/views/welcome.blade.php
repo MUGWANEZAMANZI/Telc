@@ -55,10 +55,10 @@
 
         <!-- Navigation -->
         <header class="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between z-10 shrink-0">
-            <div class="flex items-center gap-3">
+            <a href="/" class="flex items-center gap-3 no-underline">
                 <img src="logo.jpeg" class="h-10 w-auto rounded border border-stone-200" alt="GERMAN SUCCESS Logo" />
                 <span class="text-xl font-extrabold tracking-wider text-stone-900 uppercase md:text-sm">GERMAN SUCCESS</span>
-            </div>
+            </a>
             @if (Route::has('login'))
                 <nav class="flex items-center gap-4">
                     @auth
@@ -287,7 +287,7 @@
                     {{-- Survey Embed --}}
                     <div class="space-y-4">
                         <h3 class="text-sm font-extrabold uppercase tracking-widest text-white">Umfrage</h3>
-                        <p class="text-sm text-stone-400">Helfen Sie uns, besser zu werden.</p>
+                        <p class="text-sm text-stone-400">Für persönliche Bewerbungsprobleme füllen Sie bitte diese Umfrage aus.</p>
                         @php $googleFormUrl = \App\Models\Setting::value('google_form_url', ''); @endphp
                         @if ($googleFormUrl)
                             <div class="rounded-lg overflow-hidden border border-stone-700 aspect-4/3">

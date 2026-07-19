@@ -175,6 +175,13 @@ class VoiceInput extends Component
         $this->configureTeilTimings();
 
         $systemPrompt = SpeakingPromptService::getSystemInstruction($this->selectedProvider, $this->selectedLevel);
+        $systemPrompt .= "\n\nDu bist der KI-Prüfer namens \"ERFOLG\" der Speaking Exam Simulator Plattform (ähnlich wie Zara AI). Bitte stelle dich als \"ERFOLG\" vor und führe die Prüfung entsprechend durch.";
+        $systemPrompt .= "\nCRITICAL CONVERSATIONAL RULES for ERFOLG:\n";
+        $systemPrompt .= "- Speak entirely in clear, natural German suited for the designated exam tier ({$this->selectedLevel}).\n";
+        $systemPrompt .= "- Maintain a formal, professional, and encouraging tone, matching the cadence of an official German language examiner.\n";
+        $systemPrompt .= "- Adaptive Questioning: If the user provides an excellent answer, dynamically shift your next question to be slightly more complex. If they struggle, gently scale back the grammatical complexity of your next prompt.\n";
+        $systemPrompt .= "- Do not output any meta-text, markers or formatting other than plain German speech (and [EXAM_COMPLETE] when the exam is finished).";
+
         $chat = Gemini::generativeModel(model: 'gemini-2.5-flash')
             ->withSystemInstruction(Content::parse($systemPrompt))
             ->startChat();
@@ -246,6 +253,20 @@ class VoiceInput extends Component
 
     public function sendVoiceInput(string $transcript): void
     {
+        $transcript = trim($transcript);
+        if ($transcript !== '') {
+            try {
+                $response = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                    ->generateContent("Füge dem folgenden gesprochenen deutschen Text korrekte Satzzeichen (Punkt, Komma, Fragezeichen, etc.) hinzu. Antworte NUR mit dem korrigierten Text, ändere keine Wörter oder Bedeutungen. Text: \"{$transcript}\"");
+                $punctuated = trim($response->text());
+                $punctuated = trim($punctuated, '"\'');
+                if ($punctuated !== '') {
+                    $transcript = $punctuated;
+                }
+            } catch (\Throwable $e) {
+                // Fallback on error
+            }
+        }
         $this->userInput = $transcript;
         $this->isRecording = false;
         $this->sendMessage();
@@ -549,6 +570,13 @@ Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt vo
     private function rebuildChatSession(): ChatSession
     {
         $systemPrompt = SpeakingPromptService::getSystemInstruction($this->selectedProvider, $this->selectedLevel);
+        $systemPrompt .= "\n\nDu bist der KI-Prüfer namens \"ERFOLG\" der Speaking Exam Simulator Plattform (ähnlich wie Zara AI). Bitte stelle dich als \"ERFOLG\" vor und führe die Prüfung entsprechend durch.";
+        $systemPrompt .= "\nCRITICAL CONVERSATIONAL RULES for ERFOLG:\n";
+        $systemPrompt .= "- Speak entirely in clear, natural German suited for the designated exam tier ({$this->selectedLevel}).\n";
+        $systemPrompt .= "- Maintain a formal, professional, and encouraging tone, matching the cadence of an official German language examiner.\n";
+        $systemPrompt .= "- Adaptive Questioning: If the user provides an excellent answer, dynamically shift your next question to be slightly more complex. If they struggle, gently scale back the grammatical complexity of your next prompt.\n";
+        $systemPrompt .= "- Do not output any meta-text, markers or formatting other than plain German speech (and [EXAM_COMPLETE] when the exam is finished).";
+
         $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
             ->withSystemInstruction(Content::parse($systemPrompt));
 

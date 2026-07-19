@@ -37,6 +37,8 @@ class StudentExam extends Component
 
     public bool $started = false;
 
+    public bool $submitting = false;
+
     /** @var array<string, string> */
     public array $speakingFeedback = [];
 
@@ -47,6 +49,8 @@ class StudentExam extends Component
     public array $speakingHistory = [];
 
     public string $selectedTopic = '';
+
+    public string $transitionMessage = '';
 
     public string $aiPresentationText = '';
 
@@ -697,8 +701,10 @@ class StudentExam extends Component
     public function submit(): void
     {
         @set_time_limit(180);
+        $this->submitting = true;
 
         if (! $this->selectedTemplateId || ! $this->isEnrolled($this->selectedTemplateId)) {
+            $this->submitting = false;
             return;
         }
 
@@ -752,13 +758,17 @@ class StudentExam extends Component
                 'remaining_seconds' => null,
                 'active_section' => 0,
             ]);
+
+        $this->submitting = false;
     }
 
     public function submitSection(): void
     {
         @set_time_limit(180);
+        $this->submitting = true;
 
         if (! $this->selectedTemplateId || ! $this->isEnrolled($this->selectedTemplateId)) {
+            $this->submitting = false;
             return;
         }
 
@@ -776,6 +786,7 @@ class StudentExam extends Component
         $currentSection = $sections[$this->activeSection] ?? null;
 
         if (! $currentSection) {
+            $this->submitting = false;
             return;
         }
 
@@ -952,6 +963,8 @@ class StudentExam extends Component
         }
 
         $this->saveProgress();
+
+        $this->submitting = false;
     }
 
     private function enrichExplanations(): void
@@ -1233,6 +1246,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
                 }
 
                 $this->speakingStep = 2;
+                $this->transitionMessage = 'Teil 1a ist abgeschlossen. Sehr gut! Wir gehen jetzt zu Teil 1b über. Hören Sie sich bitte den KI-Vortrag an.';
                 $this->saveProgress();
             } catch (\Throwable $e) {
                 array_pop($this->speakingHistory[$elementId]);
@@ -1266,6 +1280,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
                 $this->speakingFeedback[$elementId] = $assistantReply;
                 $this->answers[$elementId] = $transcribedText;
                 $this->speakingStep = 3;
+                $this->transitionMessage = 'Teil 1b ist abgeschlossen. Sehr gut! Wir gehen jetzt zur Diskussion über.';
                 $this->saveProgress();
             } catch (\Throwable $e) {
                 array_pop($this->speakingHistory[$elementId]);

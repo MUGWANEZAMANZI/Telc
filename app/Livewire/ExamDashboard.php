@@ -54,6 +54,8 @@ class ExamDashboard extends Component
 
     public string $selectedTopic = '';
 
+    public string $transitionMessage = '';
+
     public string $aiPresentationText = '';
 
     public string $unchosenTopic = '';
@@ -596,6 +598,7 @@ class ExamDashboard extends Component
                 }
 
                 $this->speakingStep = 2;
+                $this->transitionMessage = 'Teil 1a ist abgeschlossen. Sehr gut! Wir gehen jetzt zu Teil 1b über. Hören Sie sich bitte den KI-Vortrag an.';
                 $this->saveProgress();
             } catch (\Throwable $e) {
                 array_pop($this->speakingHistory[$elementId]);
@@ -635,6 +638,7 @@ class ExamDashboard extends Component
                 $this->speakingFeedback[$elementId] = $assistantReply;
                 $this->answers[$elementId] = $transcribedText;
                 $this->speakingStep = 3;
+                $this->transitionMessage = 'Teil 1b ist abgeschlossen. Sehr gut! Wir gehen jetzt zur Diskussion über.';
                 $this->saveProgress();
             } catch (\Throwable $e) {
                 array_pop($this->speakingHistory[$elementId]);

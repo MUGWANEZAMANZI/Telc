@@ -31,6 +31,8 @@ class GuestExam extends Component
 
     public bool $hasReachedLimit = false;
 
+    public bool $submitting = false;
+
     public int $freeExamsCompleted = 0;
 
     public bool $isBlocked = false;
@@ -57,6 +59,8 @@ class GuestExam extends Component
     public bool $started = false;
 
     public string $selectedTopic = '';
+
+    public string $transitionMessage = '';
 
     public string $aiPresentationText = '';
 
@@ -441,8 +445,10 @@ class GuestExam extends Component
     public function submit(): void
     {
         @set_time_limit(180);
+        $this->submitting = true;
 
         if (! $this->selectedTemplateId || $this->activeSectionIndex === null) {
+            $this->submitting = false;
             return;
         }
 
@@ -450,6 +456,7 @@ class GuestExam extends Component
         $currentSection = $sections[$this->activeSectionIndex] ?? null;
 
         if (! $currentSection) {
+            $this->submitting = false;
             return;
         }
 
@@ -489,6 +496,7 @@ class GuestExam extends Component
                     'submitted_at' => now(),
                 ]);
 
+                $this->submitting = false;
                 return;
             }
 
@@ -509,6 +517,7 @@ class GuestExam extends Component
 
                 $this->showLoginPrompt = true;
 
+                $this->submitting = false;
                 return;
             }
         } else {
@@ -530,6 +539,7 @@ class GuestExam extends Component
 
                 $this->showLoginPrompt = true;
 
+                $this->submitting = false;
                 return;
             }
         }
@@ -566,6 +576,8 @@ class GuestExam extends Component
         ]);
 
         $this->nextSectionIndex = $this->findNextSectionToJump();
+
+        $this->submitting = false;
     }
 
     public function findNextSectionToJump(): ?int
@@ -854,6 +866,7 @@ class GuestExam extends Component
                 }
 
                 $this->speakingStep = 2;
+                $this->transitionMessage = 'Teil 1a ist abgeschlossen. Sehr gut! Wir gehen jetzt zu Teil 1b über. Hören Sie sich bitte den KI-Vortrag an.';
                 $this->saveProgress();
             } catch (\Throwable $e) {
                 array_pop($this->speakingHistory[$elementId]);
@@ -887,6 +900,7 @@ class GuestExam extends Component
                 $this->speakingFeedback[$elementId] = $assistantReply;
                 $this->answers[$elementId] = $transcribedText;
                 $this->speakingStep = 3;
+                $this->transitionMessage = 'Teil 1b ist abgeschlossen. Sehr gut! Wir gehen jetzt zur Diskussion über.';
                 $this->saveProgress();
             } catch (\Throwable $e) {
                 array_pop($this->speakingHistory[$elementId]);

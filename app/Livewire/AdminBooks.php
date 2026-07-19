@@ -47,7 +47,7 @@ class AdminBooks extends Component
     {
         $this->validate([
             'title' => ['required', 'string', 'max:255'],
-            'pdf' => ['required', 'file', 'mimes:pdf', 'max:51200'],
+            'pdf' => ['required', 'file', 'mimes:pdf', 'max:512000'],
             'cover' => ['nullable', 'image', 'max:2048'],
         ]);
 

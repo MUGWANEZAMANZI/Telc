@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property string|null $organization
  * @property string $email
+ * @property string|null $message
  * @property string $password
  * @property string $status
  * @property Carbon|null $created_at
@@ -21,6 +22,7 @@ class ContactRequest extends Model
         'name',
         'organization',
         'email',
+        'message',
         'password',
         'status',
     ];

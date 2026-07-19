@@ -615,11 +615,26 @@
                         </a>
                     </div>
 
+                    <style>
+                        .sf-phase-banner { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.85rem; }
+                        .sf-phase-banner.listen { background: #fef3c7; border-left: 3px solid #d97706; color: #92400e; }
+                        .sf-phase-banner.speak { background: #fef2f2; border-left: 3px solid #d8232a; color: #991b1b; }
+                        .sf-phase-banner .sf-icon { font-size: 1.1rem; animation: sf-pulse 1.5s ease-in-out infinite; }
+                        @keyframes sf-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+                        .sf-radio-card { display: flex; align-items: center; gap: 0.75rem; background: #fff; border: 2px solid #e5e5e5; padding: 1rem 1.25rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; text-align: left; font-weight: 600; font-size: 0.9rem; }
+                        .sf-radio-card:hover { border-color: #d8232a; background: #fff8f8; }
+                        .sf-radio-card.selected { border-color: #d8232a; background: #fef2f2; }
+                        .sf-radio-card input[type="radio"] { width: 18px; height: 18px; accent-color: #d8232a; flex-shrink: 0; cursor: pointer; }
+                        .sf-freq-canvas { border-radius: 4px; background: #1a1a1a; }
+                        @keyframes spin { to { transform: rotate(360deg); } }
+                    </style>
+
                     @if (!$selectedTopic)
-                        <div style="background: #ffffff; border: 1px solid #e5e5e5; padding: 2.5rem; border-radius: 6px; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;">
+                        <div style="background: #ffffff; border: 1px solid #e5e5e5; padding: 2.5rem; border-radius: 6px; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;"
+                             x-data="{ chosen: '' }">
                             <h4 style="font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #1a1a1a; margin-bottom: 1rem;">Wählen Sie ein Präsentationsthema für Teil 1a</h4>
                             <p style="color: #666666; font-size: 0.95rem; margin-bottom: 2rem;">Das andere Thema wird für die KI-Präsentation in Teil 1b verwendet.</p>
-                            
+
                             @php
                                 $c1Topics = !empty($this->aiGeneratedTopics) ? $this->aiGeneratedTopics : [
                                     'Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?',
@@ -628,22 +643,40 @@
                             @endphp
                             <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto;">
                                 @foreach ($c1Topics as $i => $topic)
-                                    <button type="button" wire:click="chooseTopic(@js($topic),'C1-SP-1a')" class="telc-button primary" style="background: #ffffff; color: #1a1a1a; border: 1px solid #cbcbcb; padding: 1.25rem; text-align: left; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                    <label class="sf-radio-card" :class="chosen === @js($topic) ? 'selected' : ''" @click="chosen = @js($topic)">
+                                        <input type="radio" name="c1-speaking-topic" value="{{ $topic }}" x-model="chosen">
                                         Thema {{ chr(65 + $i) }}: {{ $topic }}
-                                    </button>
+                                    </label>
                                 @endforeach
-                                <button type="button" wire:click="chooseRandomTopic('C1-SP-1a')" class="telc-button primary" style="background: #1a1a1a; color: #ffffff; border: 1px solid #1a1a1a; padding: 1.25rem; text-align: center; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                <button type="button" @click="chosen = @js($c1Topics[array_rand($c1Topics)]); $wire.chooseTopic(chosen, 'C1-SP-1a')" class="telc-button primary" style="background: #1a1a1a; color: #ffffff; border: 1px solid #1a1a1a; padding: 1.25rem; text-align: center; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                                     🎲 Zufälliges Thema wählen
+                                </button>
+                                <button type="button" x-show="chosen" x-cloak @click="$wire.chooseTopic(chosen, 'C1-SP-1a')" class="telc-button primary" style="background: #d8232a; color: #ffffff; border: 1px solid #d8232a; padding: 1.25rem; text-align: center; font-size: 0.95rem; line-height: 1.5; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                    ✅ Thema bestätigen
                                 </button>
                             </div>
                         </div>
                     @else
+                        @if ($transitionMessage)
+                            <div class="sf-phase-banner listen" style="margin-bottom:1.5rem;"
+                                 x-data="{ shown: false }" x-init="shown = true; if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(@js($transitionMessage)); u.lang = 'de-DE'; u.rate = 0.95; window.speechSynthesis.speak(u); } $wire.set('transitionMessage', '');"
+                                 x-show="shown" x-transition>
+                                <span class="sf-icon">🔊</span>
+                                <span style="font-weight:700;">{{ $transitionMessage }}</span>
+                            </div>
+                        @endif
+
                         <!-- Step 1: User Presentation -->
                         <div class="speaking-task" style="border: 1px solid #e5e5e5; padding: 2rem; border-radius: 6px; background-color: #ffffff; margin-bottom: 2.5rem;"
                              x-data="{
-                                 isRecording: false,
-                                 recognition: null,
-                                 transcript: '',
+                                     isRecording: false,
+                                     recognition: null,
+                                     transcript: '',
+                                     audioCtx: null,
+                                     analyser: null,
+                                     drawFrame: null,
+                                     mediaStream: null,
+                                 mediaStream: null,
                                  initRecognition() {
                                      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
                                      if (!SR) return;
@@ -659,15 +692,51 @@
                                      this.recognition.onerror = () => this.stopRecording();
                                  },
                                  startRecording() {
+                                     window.speechSynthesis.cancel();
                                      if (!this.recognition) this.initRecognition();
                                      if (!this.recognition) return;
                                      this.isRecording = true;
                                      this.recognition.start();
+                                     try {
+                                         if (!this.mediaStream) {
+                                             this.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                                         }
+                                         if (!this.audioCtx) {
+                                             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                                         }
+                                         const source = this.audioCtx.createMediaStreamSource(this.mediaStream);
+                                         this.analyser = this.audioCtx.createAnalyser();
+                                         this.analyser.fftSize = 64;
+                                         source.connect(this.analyser);
+                                         this.drawFrequency();
+                                     } catch (e) {}
                                  },
-                                 stopRecording() {
-                                     this.isRecording = false;
-                                     if (this.recognition) this.recognition.stop();
+                                 drawFrequency() {
+                                     const canvas = this.$refs.freqCanvas;
+                                     if (!canvas || !this.analyser) return;
+                                     const ctx = canvas.getContext('2d');
+                                     const data = new Uint8Array(this.analyser.frequencyBinCount);
+                                     const draw = () => {
+                                         if (!this.isRecording) return;
+                                         this.drawFrame = requestAnimationFrame(draw);
+                                         this.analyser.getByteFrequencyData(data);
+                                         ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                         const barW = (canvas.width / data.length) * 2;
+                                         for (let i = 0; i < data.length; i++) {
+                                             const barH = (data[i] / 255) * canvas.height;
+                                             ctx.fillStyle = `rgb(${180 + (data[i]/255)*75}, ${35 + (data[i]/255)*20}, ${42 + (data[i]/255)*20})`;
+                                             ctx.fillRect(i * barW, canvas.height - barH, barW - 1, barH);
+                                         }
+                                     };
+                                     draw();
                                  },
+                                     stopRecording() {
+                                         this.isRecording = false;
+                                         if (this.recognition) this.recognition.stop();
+                                         if (this.drawFrame) cancelAnimationFrame(this.drawFrame);
+                                         if (this.analyser) { this.analyser.disconnect(); this.analyser = null; }
+                                         setTimeout(() => { if (this.transcript.trim()) this.sendReply(); }, 300);
+                                     },
                                  toggleRecording() { this.isRecording ? this.stopRecording() : this.startRecording(); },
                                  sendReply() {
                                      $wire.call('analyzeSpeaking', 'C1-SP-1a', this.transcript);
@@ -701,10 +770,15 @@
                             @endif
 
                             @if (empty($speakingHistory['C1-SP-1a'] ?? []))
+                                <div class="sf-phase-banner speak" style="margin-bottom:1rem;" x-init="setTimeout(() => { if (!isRecording) startRecording(); }, 800)">
+                                    <span class="sf-icon">🎤</span>
+                                    <span style="font-weight:700;">Ihre Reihen: Sprechen Sie jetzt Ihre Präsentation</span>
+                                </div>
                                 <div style="display: flex; gap: 1rem; align-items: center;">
                                     <button type="button" @click="toggleRecording" class="speaking-record-btn" :style="isRecording ? 'background-color: #1a1a1a;' : 'background-color: #d8232a;'" style="color: #ffffff; border: none; padding: 0.85rem 1.5rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;">
                                         <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Vortrag sprechen'"></span>
                                     </button>
+                                    <canvas x-ref="freqCanvas" class="sf-freq-canvas" x-show="isRecording" width="120" height="32"></canvas>
                                     <span style="color: #666666; font-size: 0.9rem;">oder</span>
                                     <input type="text" x-model="transcript" placeholder="Transkription eingeben..." style="flex-grow: 1; border: 1px solid #cbcbcb; padding: 0.85rem 1rem; border-radius: 4px; font-size: 0.95rem; outline: none;" @keydown.enter.prevent="sendReply">
                                     <button type="button" @click="sendReply" class="telc-button primary" :disabled="$wire.speakingProcessing['C1-SP-1a'] || !transcript.trim()" style="padding: 0.85rem 1.5rem; white-space: nowrap;">
@@ -733,23 +807,98 @@
                                         Das KI-System erstellt einen Vortrag zum anderen Thema. Bitte warten Sie einen Moment.
                                     </p>
                                     <div style="display:inline-block;width:2rem;height:2rem;border:3px solid #e5e5e5;border-top-color:#d8232a;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-                                    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
                                 </div>
                             @else
                             <div class="speaking-task" style="border: 1px solid #e5e5e5; padding: 2rem; border-radius: 6px; background-color: #ffffff; margin-bottom: 2.5rem;"
                                  x-data="{
                                      isSynthesizing: false,
+                                     played: false,
+                                     isRecording: false,
+                                     recognition: null,
+                                     transcript: '',
+                                     audioCtx: null,
+                                     analyser: null,
+                                     drawFrame: null,
+                                     mediaStream: null,
                                      playAudio() {
-                                         const utterance = new SpeechSynthesisUtterance(@js($aiPresentationText));
-                                         utterance.lang = 'de-DE';
-                                         utterance.rate = 0.95;
-                                         utterance.onstart = () => { this.isSynthesizing = true; };
-                                         utterance.onend = () => { this.isSynthesizing = false; };
-                                         window.speechSynthesis.speak(utterance);
+                                         if (this.played) return;
+                                         this.played = true;
+                                         const u = new SpeechSynthesisUtterance(@js($aiPresentationText));
+                                         u.lang = 'de-DE';
+                                         u.rate = 0.95;
+                                         u.onstart = () => { this.isSynthesizing = true; };
+                                         u.onend = () => { this.isSynthesizing = false; };
+                                         window.speechSynthesis.speak(u);
                                      },
                                      stopAudio() {
                                          window.speechSynthesis.cancel();
                                          this.isSynthesizing = false;
+                                     },
+                                     initRecognition() {
+                                         const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                                         if (!SR) return;
+                                         this.recognition = new SR();
+                                         this.recognition.lang = 'de-DE';
+                                         this.recognition.continuous = true;
+                                         this.recognition.interimResults = true;
+                                         this.recognition.onresult = (e) => {
+                                             let t = '';
+                                             for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+                                             this.transcript = t;
+                                         };
+                                         this.recognition.onerror = () => this.stopRecording();
+                                     },
+                                     startRecording() {
+                                         window.speechSynthesis.cancel();
+                                         this.isSynthesizing = false;
+                                         if (!this.recognition) this.initRecognition();
+                                         if (!this.recognition) return;
+                                         this.isRecording = true;
+                                         this.recognition.start();
+                                         try {
+                                             if (!this.mediaStream) {
+                                                 this.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                                             }
+                                             if (!this.audioCtx) {
+                                                 this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                                             }
+                                             const source = this.audioCtx.createMediaStreamSource(this.mediaStream);
+                                             this.analyser = this.audioCtx.createAnalyser();
+                                             this.analyser.fftSize = 64;
+                                             source.connect(this.analyser);
+                                             this.drawFrequency();
+                                         } catch (e) {}
+                                     },
+                                     drawFrequency() {
+                                         const canvas = this.$refs.freqCanvas;
+                                         if (!canvas || !this.analyser) return;
+                                         const ctx = canvas.getContext('2d');
+                                         const data = new Uint8Array(this.analyser.frequencyBinCount);
+                                         const draw = () => {
+                                             if (!this.isRecording) return;
+                                             this.drawFrame = requestAnimationFrame(draw);
+                                             this.analyser.getByteFrequencyData(data);
+                                             ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                             const barW = (canvas.width / data.length) * 2;
+                                             for (let i = 0; i < data.length; i++) {
+                                                 const barH = (data[i] / 255) * canvas.height;
+                                                 ctx.fillStyle = `rgb(${180 + (data[i]/255)*75}, ${35 + (data[i]/255)*20}, ${42 + (data[i]/255)*20})`;
+                                                 ctx.fillRect(i * barW, canvas.height - barH, barW - 1, barH);
+                                             }
+                                         };
+                                         draw();
+                                     },
+                                     stopRecording() {
+                                         this.isRecording = false;
+                                         if (this.recognition) this.recognition.stop();
+                                         if (this.drawFrame) cancelAnimationFrame(this.drawFrame);
+                                         if (this.audioCtx) { this.audioCtx.close(); this.audioCtx = null; this.analyser = null; }
+                                         setTimeout(() => { if (this.transcript.trim()) this.sendReply(); }, 300);
+                                     },
+                                     toggleRecording() { this.isRecording ? this.stopRecording() : this.startRecording(); },
+                                     sendReply() {
+                                         $wire.call('analyzeSpeaking', 'C1-SP-1b', this.transcript);
+                                         this.transcript = '';
                                      }
                                  }"
                                  x-init="setTimeout(() => playAudio(), 500)">
@@ -762,93 +911,58 @@
                                     Hören Sie sich den C1-Vortrag der KI zum alternativen Thema an und reagieren Sie anschließend stichhaltig darauf.
                                 </p>
 
-                                <div style="background-color: #fafafa; border: 1px solid #cbcbcb; border-radius: 4px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: left; position: relative;">
-                                    <div style="display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1rem;">
-                                        <button type="button" @click="isSynthesizing ? stopAudio() : playAudio()" style="background-color: #1a1a1a; color: #ffffff; border: none; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
-                                            <span x-show="!isSynthesizing">🔊 Vortrag anhören</span>
-                                            <span x-show="isSynthesizing">⏹ Stoppen</span>
-                                        </button>
-                                        <span x-show="isSynthesizing" style="font-size: 0.85rem; color: #d8232a; font-weight: 600; animation: pulse 1.5s infinite;">Spielt Audio mit Gemini 2.5 Voice...</span>
+                                @if ($speakingStep === 2)
+                                    <div class="sf-phase-banner" :class="isSynthesizing ? 'listen' : 'speak'" style="margin-bottom:1rem;">
+                                        <span class="sf-icon" x-text="isSynthesizing ? '🔊' : '🎤'"></span>
+                                        <span style="font-weight:700;" x-text="isSynthesizing ? 'Der KI-Prüfer spricht' : 'Ihre Reihen: Reagieren Sie auf den Vortrag'"></span>
                                     </div>
+                                @endif
+
+                                <div style="background-color: #fafafa; border: 1px solid #cbcbcb; border-radius: 4px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: left; position: relative;">
                                     <strong style="display: block; font-size: 0.85rem; color: #1a1a1a; margin-bottom: 0.5rem;">KI-Vortrag (Transkript):</strong>
                                     <div class="markdown-content" style="font-size: 0.95rem; line-height: 1.6; color: #4a4a4a;">
                                         {!! \Illuminate\Support\Str::markdown($aiPresentationText) !!}
                                     </div>
                                 </div>
 
-                                <!-- User response dialogue step -->
-                                <div x-data="{
-                                     isRecording: false,
-                                     recognition: null,
-                                     transcript: '',
-                                     initRecognition() {
-                                         const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-                                         if (!SR) return;
-                                         this.recognition = new SR();
-                                         this.recognition.lang = 'de-DE';
-                                         this.recognition.continuous = true;
-                                         this.recognition.interimResults = true;
-                                         this.recognition.onresult = (e) => {
-                                             let t = '';
-                                             for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
-                                             this.transcript = t;
-                                         };
-                                         this.recognition.onerror = () => this.stopRecording();
-                                     },
-                                     startRecording() {
-                                         if (!this.recognition) this.initRecognition();
-                                         if (!this.recognition) return;
-                                         this.isRecording = true;
-                                         this.recognition.start();
-                                     },
-                                     stopRecording() {
-                                         this.isRecording = false;
-                                         if (this.recognition) this.recognition.stop();
-                                     },
-                                     toggleRecording() { this.isRecording ? this.stopRecording() : this.startRecording(); },
-                                     sendReply() {
-                                         $wire.call('analyzeSpeaking', 'C1-SP-1b', this.transcript);
-                                         this.transcript = '';
-                                     }
-                                 }">
-                                    @if ($speakingStep === 2)
-                                        <div style="border-top: 1px solid #e5e5e5; padding-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
-                                            <button type="button" @click="toggleRecording" class="speaking-record-btn" :style="isRecording ? 'background-color: #1a1a1a;' : 'background-color: #d8232a;'" style="color: #ffffff; border: none; padding: 0.85rem 1.5rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;">
-                                                <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Auf Vortrag antworten'"></span>
-                                            </button>
-                                            <span style="color: #666666; font-size: 0.9rem;">oder</span>
-                                            <input type="text" x-model="transcript" placeholder="Ihre Anschlussfragen / Zusammenfassung tippen..." style="flex-grow: 1; border: 1px solid #cbcbcb; padding: 0.85rem 1rem; border-radius: 4px; font-size: 0.95rem; outline: none;" @keydown.enter.prevent="sendReply">
-                                            <button type="button" @click="sendReply" class="telc-button primary" :disabled="$wire.speakingProcessing['C1-SP-1b'] || !transcript.trim()" style="padding: 0.85rem 1.5rem; white-space: nowrap;">
-                                                Abschicken
-                                            </button>
-                                        </div>
-                                        @if (!empty($speakingFeedback['C1-SP-1b'] ?? ''))
-                                            <div style="margin-top:1rem;padding:1rem;background:#fdf2f2;border:1px solid #fbd5d5;border-radius:4px;color:#9b1c1c;text-align:left;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;">
-                                                <strong>Fehler bei der Bewertung:</strong> {{ $speakingFeedback['C1-SP-1b'] }}
-                                            </div>
-                                        @endif
-                                    @else
-                                        @if (isset($speakingHistory['C1-SP-1b'][1]))
-                                            <div style="margin-top: 1.5rem; padding: 1rem; background-color: #f7f9fa; border: 1px solid #e5e5e5; border-radius: 4px; text-align: left;">
-                                                <strong style="font-size: 0.85rem; color: #666666;">Ihre Reaktion:</strong>
-                                                <p style="font-size: 0.95rem; margin-top: 0.25rem;">{{ $speakingHistory['C1-SP-1b'][1]['text'] }}</p>
-                                                
-                                                @if (isset($speakingHistory['C1-SP-1b'][2]))
-                                                    <div style="margin-top: 1rem; border-top: 1px dashed #e5e5e5; padding-top: 0.75rem;">
-                                                        <strong style="font-size: 0.85rem; color: #1a1a1a;">Bewertung der Reaktion:</strong>
-                                                        <div class="markdown-content" style="font-size: 0.95rem; line-height: 1.6; margin-top: 0.25rem;">
-                                                            {!! \Illuminate\Support\Str::markdown($speakingHistory['C1-SP-1b'][2]['text']) !!}
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        @endif
-                                        
-                                        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.9rem; color: #15803d; font-weight: 600; text-align: left; margin-top: 1rem;">
-                                            ✓ Teil 1b abgeschlossen und bewertet.
+                                @if ($speakingStep === 2)
+                                    <div style="display: flex; gap: 1rem; align-items: center;">
+                                        <button type="button" @click="toggleRecording" class="speaking-record-btn" :style="isRecording ? 'background-color: #1a1a1a;' : 'background-color: #d8232a;'" style="color: #ffffff; border: none; padding: 0.85rem 1.5rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;">
+                                            <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Auf Vortrag antworten'"></span>
+                                        </button>
+                                        <canvas x-ref="freqCanvas" class="sf-freq-canvas" x-show="isRecording" width="120" height="32"></canvas>
+                                        <span style="color: #666666; font-size: 0.9rem;">oder</span>
+                                        <input type="text" x-model="transcript" placeholder="Ihre Anschlussfragen / Zusammenfassung tippen..." style="flex-grow: 1; border: 1px solid #cbcbcb; padding: 0.85rem 1rem; border-radius: 4px; font-size: 0.95rem; outline: none;" @keydown.enter.prevent="sendReply">
+                                        <button type="button" @click="sendReply" class="telc-button primary" :disabled="$wire.speakingProcessing['C1-SP-1b'] || !transcript.trim()" style="padding: 0.85rem 1.5rem; white-space: nowrap;">
+                                            Abschicken
+                                        </button>
+                                    </div>
+                                    @if (!empty($speakingFeedback['C1-SP-1b'] ?? ''))
+                                        <div style="margin-top:1rem;padding:1rem;background:#fdf2f2;border:1px solid #fbd5d5;border-radius:4px;color:#9b1c1c;text-align:left;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                                            <strong>Fehler bei der Bewertung:</strong> {{ $speakingFeedback['C1-SP-1b'] }}
                                         </div>
                                     @endif
-                                </div>
+                                @else
+                                    @if (isset($speakingHistory['C1-SP-1b'][1]))
+                                        <div style="margin-top: 1.5rem; padding: 1rem; background-color: #f7f9fa; border: 1px solid #e5e5e5; border-radius: 4px; text-align: left;">
+                                            <strong style="font-size: 0.85rem; color: #666666;">Ihre Reaktion:</strong>
+                                            <p style="font-size: 0.95rem; margin-top: 0.25rem;">{{ $speakingHistory['C1-SP-1b'][1]['text'] }}</p>
+
+                                            @if (isset($speakingHistory['C1-SP-1b'][2]))
+                                                <div style="margin-top: 1rem; border-top: 1px dashed #e5e5e5; padding-top: 0.75rem;">
+                                                    <strong style="font-size: 0.85rem; color: #1a1a1a;">Bewertung der Reaktion:</strong>
+                                                    <div class="markdown-content" style="font-size: 0.95rem; line-height: 1.6; margin-top: 0.25rem;">
+                                                        {!! \Illuminate\Support\Str::markdown($speakingHistory['C1-SP-1b'][2]['text']) !!}
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+
+                                    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.9rem; color: #15803d; font-weight: 600; text-align: left; margin-top: 1rem;">
+                                        ✓ Teil 1b abgeschlossen und bewertet.
+                                    </div>
+                                @endif
                             </div>
                             @endif
                         @endif
@@ -860,6 +974,9 @@
                                      isRecording: false,
                                      recognition: null,
                                      transcript: '',
+                                     audioCtx: null,
+                                     analyser: null,
+                                     drawFrame: null,
                                      initRecognition() {
                                          const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
                                          if (!SR) return;
@@ -875,14 +992,50 @@
                                          this.recognition.onerror = () => this.stopRecording();
                                      },
                                      startRecording() {
+                                         window.speechSynthesis.cancel();
                                          if (!this.recognition) this.initRecognition();
                                          if (!this.recognition) return;
                                          this.isRecording = true;
                                          this.recognition.start();
+                                         try {
+                                             if (!this.mediaStream) {
+                                                 this.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                                             }
+                                             if (!this.audioCtx) {
+                                                 this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                                             }
+                                             const source = this.audioCtx.createMediaStreamSource(this.mediaStream);
+                                             this.analyser = this.audioCtx.createAnalyser();
+                                             this.analyser.fftSize = 64;
+                                             source.connect(this.analyser);
+                                             this.drawFrequency();
+                                         } catch (e) {}
+                                     },
+                                     drawFrequency() {
+                                         const canvas = this.$refs.freqCanvas;
+                                         if (!canvas || !this.analyser) return;
+                                         const ctx = canvas.getContext('2d');
+                                         const data = new Uint8Array(this.analyser.frequencyBinCount);
+                                         const draw = () => {
+                                             if (!this.isRecording) return;
+                                             this.drawFrame = requestAnimationFrame(draw);
+                                             this.analyser.getByteFrequencyData(data);
+                                             ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                             const barW = (canvas.width / data.length) * 2;
+                                             for (let i = 0; i < data.length; i++) {
+                                                 const barH = (data[i] / 255) * canvas.height;
+                                                 ctx.fillStyle = `rgb(${180 + (data[i]/255)*75}, ${35 + (data[i]/255)*20}, ${42 + (data[i]/255)*20})`;
+                                                 ctx.fillRect(i * barW, canvas.height - barH, barW - 1, barH);
+                                             }
+                                         };
+                                         draw();
                                      },
                                      stopRecording() {
                                          this.isRecording = false;
                                          if (this.recognition) this.recognition.stop();
+                                         if (this.drawFrame) cancelAnimationFrame(this.drawFrame);
+                                         if (this.audioCtx) { this.audioCtx.close(); this.audioCtx = null; this.analyser = null; }
+                                         setTimeout(() => { if (this.transcript.trim()) this.sendReply(); }, 300);
                                      },
                                      toggleRecording() { this.isRecording ? this.stopRecording() : this.startRecording(); },
                                      sendReply() {
@@ -890,13 +1043,18 @@
                                          this.transcript = '';
                                      }
                                  }">
-                                <div style="border-bottom: 1px solid #e5e5e5; padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; color: #d8232a;">Teil 2: Diskussion (6 Minuten, Max. 6 Punkte)</span>
+                                 <div style="border-bottom: 1px solid #e5e5e5; padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                                     <span style="font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; color: #d8232a;">Teil 2: Diskussion (6 Minuten, Max. 6 Punkte)</span>
                                     <span style="background: #f7f7f7; padding: 0.25rem 0.5rem; font-size: 0.8rem; border-radius: 4px;">Status: Step 3 / 3</span>
                                 </div>
 
                                 <div style="background-color: #fafafa; border-left: 3px solid #1a1a1a; padding: 1rem; font-size: 0.95rem; color: #4a4a4a; text-align: left; margin-bottom: 1.5rem;">
                                     <strong>Diskussionsthema:</strong> Beziehungen mit großem Altersunterschied sind immer problematisch.
+                                </div>
+
+                                <div class="sf-phase-banner speak" style="margin-bottom:1rem;">
+                                    <span class="sf-icon">🎤</span>
+                                    <span style="font-weight:700;">Ihre Reihen: Diskutieren Sie mit dem KI-Prüfer</span>
                                 </div>
 
                                 <div style="background-color: #f7f9fa; border: 1px solid #e5e5e5; border-radius: 4px; padding: 1.5rem; min-height: 120px; max-height: 350px; overflow-y: auto; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
@@ -934,6 +1092,7 @@
                                         <button type="button" @click="toggleRecording" class="speaking-record-btn" :style="isRecording ? 'background-color: #1a1a1a;' : 'background-color: #d8232a;'" style="color: #ffffff; border: none; padding: 0.85rem 1.5rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;">
                                             <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Sprechen'"></span>
                                         </button>
+                                        <canvas x-ref="freqCanvas" class="sf-freq-canvas" x-show="isRecording" width="120" height="32"></canvas>
                                         <span style="color: #666666; font-size: 0.9rem;">oder</span>
                                         <input type="text" x-model="transcript" placeholder="Argument tippen..." style="flex-grow: 1; border: 1px solid #cbcbcb; padding: 0.85rem 1rem; border-radius: 4px; font-size: 0.95rem; outline: none;" @keydown.enter.prevent="sendReply">
                                         <button type="button" @click="sendReply" class="telc-button primary" :disabled="$wire.speakingProcessing['C1-SP-2'] || !transcript.trim()" style="padding: 0.85rem 1.5rem; white-space: nowrap;">

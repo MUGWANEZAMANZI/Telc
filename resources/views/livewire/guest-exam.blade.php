@@ -1,4 +1,10 @@
-<div class="guest-exam-shell">
+<div class="guest-exam-shell" @if($submitting) style="opacity:0.4;pointer-events:none;" @endif>
+    @if ($submitting)
+        <div style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:all;">
+            <img src="{{ asset('Spinner@1x-1.7s-199px-199px.svg') }}" alt="Laden..." style="width:120px;height:120px;" />
+            <p style="color:#fff;font-weight:700;font-size:1rem;margin-top:1rem;font-family:'Plus Jakarta Sans',sans-serif;">Prüfung wird ausgewertet...</p>
+        </div>
+    @endif
     <style>
         .guest-exam-shell { font-family: 'Plus Jakarta Sans', sans-serif; }
 
@@ -9,7 +15,7 @@
 
         .free-exam-body { min-height: 100vh; background: #f7f7f7; padding: 0 1rem; }
 
-        .doc-timer-bar { position: fixed; top: 1rem; right: 1rem; z-index: 1001; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 200px; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .doc-timer-bar { position: sticky; top: 1rem; right: 1rem; z-index: 1001; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 200px; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; font-family: 'Plus Jakarta Sans', sans-serif; }
         .doc-timer-text { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
         .save-indicator { display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #666; }
         .save-pulse { width: 6px; height: 6px; border-radius: 50%; background: #166534; animation: pulse 2s infinite; }
