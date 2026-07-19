@@ -50,7 +50,7 @@
      @if ($selectedLevel)
          <div class="space-y-8">
              {{-- Free Exams + Voice Practice Side by Side --}}
-             <div class="flex flex-row gap-6">
+             <div class="flex flex-col gap-6 md:flex-row">
                  {{-- Free Exams --}}
                  @if ($freeExams->isNotEmpty())
                      <div class="flex-1">
