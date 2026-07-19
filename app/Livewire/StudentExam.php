@@ -705,6 +705,7 @@ class StudentExam extends Component
 
         if (! $this->selectedTemplateId || ! $this->isEnrolled($this->selectedTemplateId)) {
             $this->submitting = false;
+
             return;
         }
 
@@ -769,6 +770,7 @@ class StudentExam extends Component
 
         if (! $this->selectedTemplateId || ! $this->isEnrolled($this->selectedTemplateId)) {
             $this->submitting = false;
+
             return;
         }
 
@@ -787,6 +789,7 @@ class StudentExam extends Component
 
         if (! $currentSection) {
             $this->submitting = false;
+
             return;
         }
 

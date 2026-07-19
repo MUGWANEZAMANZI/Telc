@@ -449,6 +449,7 @@ class GuestExam extends Component
 
         if (! $this->selectedTemplateId || $this->activeSectionIndex === null) {
             $this->submitting = false;
+
             return;
         }
 
@@ -457,6 +458,7 @@ class GuestExam extends Component
 
         if (! $currentSection) {
             $this->submitting = false;
+
             return;
         }
 
@@ -497,6 +499,7 @@ class GuestExam extends Component
                 ]);
 
                 $this->submitting = false;
+
                 return;
             }
 
@@ -518,6 +521,7 @@ class GuestExam extends Component
                 $this->showLoginPrompt = true;
 
                 $this->submitting = false;
+
                 return;
             }
         } else {
@@ -540,6 +544,7 @@ class GuestExam extends Component
                 $this->showLoginPrompt = true;
 
                 $this->submitting = false;
+
                 return;
             }
         }

@@ -106,6 +106,7 @@ class ExamDashboard extends Component
         if (in_array($this->mode, ['builder', 'student'], true)) {
             $templates = ExamTemplate::query()
                 ->where('exam_provider', $this->providerFilter)
+                ->orderByDesc('is_free')
                 ->orderBy('level')
                 ->get();
         }

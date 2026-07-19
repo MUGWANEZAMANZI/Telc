@@ -38,104 +38,117 @@
         </div>
 
         {{-- Pricing Grid --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch mb-6">
             @php $plans = \App\Models\Plan::query()->where('is_active', true)->orderBy('price')->get(); @endphp
             @forelse ($plans as $plan)
                 @php
-                    $isPremium = $plan->name === 'Monatliches Training (Standard)';
                     $isOneOff = $plan->interval !== 'month';
                 @endphp
-                <article class="relative flex flex-col justify-between bg-white border {{ $isPremium ? 'border-zinc-950 ring-2 ring-zinc-950 shadow-2xl' : 'border-zinc-200 shadow-md' }} rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                    @if ($isPremium)
-                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-zinc-950 text-white text-[0.65rem] font-extrabold px-3 py-0.5 rounded-full tracking-widest uppercase shadow-md">
-                            Beliebtester Tarif
-                        </div>
-                    @endif
+                @if ($isOneOff)
+                    <article class="relative flex flex-col justify-between bg-white border border-zinc-200 shadow-md rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <div>
+                            <h2 class="font-serif text-lg md:text-xl font-bold mb-1 text-zinc-900">{{ $plan->name }}</h2>
+                            <p class="text-zinc-500 text-xs mb-4 min-h-[1.5rem]">{{ $plan->description }}</p>
 
-                    <div>
-                        <h2 class="font-serif text-lg md:text-xl font-bold mb-1 text-zinc-900">{{ $plan->name }}</h2>
-                        <p class="text-zinc-500 text-xs mb-4 min-h-[1.5rem]">{{ $plan->description }}</p>
-
-                        <div class="mb-4">
-                            <div class="flex items-baseline text-zinc-900 mb-0.5">
-                                <span class="text-2xl md:text-3xl font-black tracking-tight" id="price-display-{{ $plan->id }}">
-                                    {{ number_format($plan->getPriceForDuration(1), 2, ',', '.') }}
-                                </span>
-                                <span class="text-lg font-bold ml-0.5">€</span>
-                                <span class="text-zinc-500 text-xs font-semibold ml-1.5" id="interval-display-{{ $plan->id }}">
-                                    @if($isOneOff)
-                                        / einmalig
-                                    @else
-                                        / Monat
-                                    @endif
-                                </span>
-                            </div>
-                            @if (!$isOneOff)
-                                <div class="text-[0.65rem] text-zinc-400 font-medium" id="subtext-display-{{ $plan->id }}">
-                                    Monatliche Abrechnung
+                            <div class="mb-4">
+                                <div class="flex items-baseline text-zinc-900 mb-0.5">
+                                    <span class="text-2xl md:text-3xl font-black tracking-tight">
+                                        {{ number_format($plan->getPriceForDuration(1), 2, ',', '.') }}
+                                    </span>
+                                    <span class="text-lg font-bold ml-0.5">€</span>
+                                    <span class="text-zinc-500 text-xs font-semibold ml-1.5">/ einmalig</span>
                                 </div>
+                            </div>
+
+                            @if ($plan->features)
+                                <ul class="space-y-2 mb-6 border-t border-zinc-100 pt-4 flex-grow">
+                                    @foreach ((array) $plan->features as $feature)
+                                        <li class="flex items-start text-xs text-zinc-600 leading-normal">
+                                            <svg class="h-4 w-4 text-emerald-600 shrink-0 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                            </svg>
+                                            <span>{{ $feature }}</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             @endif
                         </div>
 
-                        @if ($plan->features)
-                            <ul class="space-y-2 mb-6 border-t border-zinc-100 pt-4 flex-grow">
-                                @foreach ((array) $plan->features as $feature)
-                                    <li class="flex items-start text-xs text-zinc-600 leading-normal">
-                                        <svg class="h-4 w-4 text-emerald-600 shrink-0 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                        </svg>
-                                        <span>{{ $feature }}</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @endif
-                    </div>
-
-                    @auth
-                        @if ($isOneOff)
+                        @auth
                             <button type="button"
                                     onclick="openPaymentModal({{ $plan->id }}, 'plan', null)"
                                     class="w-full text-center py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 border-2 border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md cursor-pointer">
                                 Jetzt freischalten
                             </button>
                         @else
-                            {{-- Sliding segmented selector style --}}
-                            <div class="duration-selector flex gap-1 p-0.5 bg-zinc-100 rounded-lg mb-4" data-plan-id="{{ $plan->id }}">
-                                <div class="duration-option selected bg-white text-zinc-900 border border-zinc-200/50 shadow-sm flex-1 py-1.5 px-0.5 rounded-md cursor-pointer text-center transition-all duration-200" 
-                                     data-months="1" 
-                                     onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->getPriceForDuration(1) }}, {{ $plan->getPriceForDuration(1) / 1 }}, 1)">
-                                    <span class="block font-bold text-[0.7rem]">1 Mo.</span>
-                                    <span class="block text-[0.6rem] text-zinc-500 mt-0.5">{{ number_format($plan->getPriceForDuration(1) / 1, 2, ',', '.') }} €</span>
+                            <a href="{{ route('register') }}" class="w-full text-center py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 border-2 border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md block no-underline cursor-pointer">Konto erstellen</a>
+                        @endauth
+                    </article>
+                @else
+                    @foreach ([1, 3, 6, 12] as $months)
+                        @php
+                            $isPremium = $months === 3;
+                            $pricePerMonth = $plan->getPriceForDuration($months) / $months;
+                            $totalPrice = $plan->getPriceForDuration($months);
+                        @endphp
+                        <article class="relative flex flex-col justify-between bg-white border {{ $isPremium ? 'border-zinc-950 ring-2 ring-zinc-950 shadow-2xl' : 'border-zinc-200 shadow-md' }} rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                            @if ($isPremium)
+                                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-zinc-950 text-white text-[0.65rem] font-extrabold px-3 py-0.5 rounded-full tracking-widest uppercase shadow-md">
+                                    Beliebtester Tarif
                                 </div>
-                                <div class="duration-option bg-transparent text-zinc-600 hover:text-zinc-900 flex-1 py-1.5 px-0.5 rounded-md cursor-pointer text-center transition-all duration-200" 
-                                     data-months="3" 
-                                     onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->getPriceForDuration(3) }}, {{ $plan->getPriceForDuration(3) / 3 }}, 3)">
-                                    <span class="block font-bold text-[0.7rem]">3 Mo.</span>
-                                    <span class="block text-[0.6rem] text-zinc-500 mt-0.5">{{ number_format($plan->getPriceForDuration(3) / 3, 2, ',', '.') }} €</span>
+                            @endif
+
+                            <div>
+                                <h2 class="font-serif text-lg md:text-xl font-bold mb-1 text-zinc-900">
+                                    @if($months === 1)
+                                        1 Monat Training
+                                    @else
+                                        {{ $months }} Monate Training
+                                    @endif
+                                </h2>
+                                <p class="text-zinc-500 text-xs mb-4 min-h-[1.5rem]">
+                                    Voller Zugang für {{ $months }} {{ $months === 1 ? 'Monat' : 'Monate' }}
+                                </p>
+
+                                <div class="mb-4">
+                                    <div class="flex items-baseline text-zinc-900 mb-0.5">
+                                        <span class="text-2xl md:text-3xl font-black tracking-tight">
+                                            {{ number_format($pricePerMonth, 2, ',', '.') }}
+                                        </span>
+                                        <span class="text-lg font-bold ml-0.5">€</span>
+                                        <span class="text-zinc-500 text-xs font-semibold ml-1.5">/ Monat</span>
+                                    </div>
+                                    <div class="text-[0.65rem] text-zinc-400 font-semibold">
+                                        Gesamtpreis: {{ number_format($totalPrice, 2, ',', '.') }} € (einmalige Abrechnung)
+                                    </div>
                                 </div>
-                                <div class="duration-option bg-transparent text-zinc-600 hover:text-zinc-900 flex-1 py-1.5 px-0.5 rounded-md cursor-pointer text-center transition-all duration-200" 
-                                     data-months="6" 
-                                     onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->getPriceForDuration(6) }}, {{ $plan->getPriceForDuration(6) / 6 }}, 6)">
-                                    <span class="block font-bold text-[0.7rem]">6 Mo.</span>
-                                    <span class="block text-[0.6rem] text-zinc-500 mt-0.5">{{ number_format($plan->getPriceForDuration(6) / 6, 2, ',', '.') }} €</span>
-                                </div>
-                                <div class="duration-option bg-transparent text-zinc-600 hover:text-zinc-900 flex-1 py-1.5 px-0.5 rounded-md cursor-pointer text-center transition-all duration-200" 
-                                     data-months="12" 
-                                     onclick="selectDuration(this, {{ $plan->id }}, {{ $plan->getPriceForDuration(12) }}, {{ $plan->getPriceForDuration(12) / 12 }}, 12)">
-                                    <span class="block font-bold text-[0.7rem]">12 Mo.</span>
-                                    <span class="block text-[0.6rem] text-zinc-500 mt-0.5">{{ number_format($plan->getPriceForDuration(12) / 12, 2, ',', '.') }} €</span>
-                                </div>
+
+                                @if ($plan->features)
+                                    <ul class="space-y-2 mb-6 border-t border-zinc-100 pt-4 flex-grow">
+                                        @foreach ((array) $plan->features as $feature)
+                                            <li class="flex items-start text-xs text-zinc-600 leading-normal">
+                                                <svg class="h-4 w-4 text-emerald-600 shrink-0 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                </svg>
+                                                <span>{{ $feature }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
                             </div>
-                            <button type="button"
-                                    onclick="openPaymentModal({{ $plan->id }}, 'plan', getSelectedDuration({{ $plan->id }}))"
-                                    class="w-full text-center py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 border-2 border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md cursor-pointer">
-                                Jetzt kaufen
-                            </button>
-                        @endif
-                    @else
-                        <a href="{{ route('register') }}" class="w-full text-center py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 border-2 border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md block no-underline cursor-pointer">Konto erstellen</a>
-                    @endauth
-                </article>
+
+                            @auth
+                                <button type="button"
+                                        onclick="openPaymentModal({{ $plan->id }}, 'plan', {{ $months }})"
+                                        class="w-full text-center py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 border-2 border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md cursor-pointer">
+                                    Jetzt kaufen
+                                </button>
+                            @else
+                                <a href="{{ route('register') }}" class="w-full text-center py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 border-2 border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md block no-underline cursor-pointer">Konto erstellen</a>
+                            @endauth
+                        </article>
+                    @endforeach
+                @endif
             @empty
                 <div class="bg-white border border-zinc-200 rounded-2xl p-12 text-center col-span-full shadow-md">
                     <p class="text-zinc-500 font-medium">Aktuell sind keine Preispläne verfügbar.</p>
@@ -172,9 +185,12 @@
                     <strong class="text-sm text-zinc-900">Mit PayPal bezahlen</strong>
                     <span class="text-xs text-[#d8232a] font-bold">Weiter →</span>
                 </a>
-                <button type="button" onclick="initRevolutPay()" class="flex items-center justify-between border-2 border-zinc-200 hover:border-zinc-950 p-4 rounded-xl bg-zinc-50 hover:bg-white transition-all duration-200 text-left box-border font-inherit text-inherit">
-                    <strong class="text-sm text-zinc-900">Mit Kreditkarte (Revolut) zahlen</strong>
-                    <span class="text-xs text-[#d8232a] font-bold">Jetzt bezahlen →</span>
+                <button type="button" disabled class="flex items-center justify-between border-2 border-zinc-200 p-4 rounded-xl bg-zinc-50 opacity-50 cursor-not-allowed pointer-events-none text-left box-border font-inherit text-inherit w-full">
+                    <div>
+                        <strong class="text-sm text-zinc-400">Mit Kreditkarte (Revolut) zahlen</strong>
+                        <span class="text-xs text-zinc-400 block font-medium">Coming soon</span>
+                    </div>
+                    <span class="text-xs text-zinc-400 font-bold">Demnächst</span>
                 </button>
             </div>
 

@@ -180,7 +180,7 @@ class VoiceInput extends Component
         $systemPrompt .= "- Speak entirely in clear, natural German suited for the designated exam tier ({$this->selectedLevel}).\n";
         $systemPrompt .= "- Maintain a formal, professional, and encouraging tone, matching the cadence of an official German language examiner.\n";
         $systemPrompt .= "- Adaptive Questioning: If the user provides an excellent answer, dynamically shift your next question to be slightly more complex. If they struggle, gently scale back the grammatical complexity of your next prompt.\n";
-        $systemPrompt .= "- Do not output any meta-text, markers or formatting other than plain German speech (and [EXAM_COMPLETE] when the exam is finished).";
+        $systemPrompt .= '- Do not output any meta-text, markers or formatting other than plain German speech (and [EXAM_COMPLETE] when the exam is finished).';
 
         $chat = Gemini::generativeModel(model: 'gemini-2.5-flash')
             ->withSystemInstruction(Content::parse($systemPrompt))
@@ -575,7 +575,7 @@ Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt vo
         $systemPrompt .= "- Speak entirely in clear, natural German suited for the designated exam tier ({$this->selectedLevel}).\n";
         $systemPrompt .= "- Maintain a formal, professional, and encouraging tone, matching the cadence of an official German language examiner.\n";
         $systemPrompt .= "- Adaptive Questioning: If the user provides an excellent answer, dynamically shift your next question to be slightly more complex. If they struggle, gently scale back the grammatical complexity of your next prompt.\n";
-        $systemPrompt .= "- Do not output any meta-text, markers or formatting other than plain German speech (and [EXAM_COMPLETE] when the exam is finished).";
+        $systemPrompt .= '- Do not output any meta-text, markers or formatting other than plain German speech (and [EXAM_COMPLETE] when the exam is finished).';
 
         $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
             ->withSystemInstruction(Content::parse($systemPrompt));
