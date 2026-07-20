@@ -13,10 +13,21 @@
         </div>
     @endif
     <style>
+        .premium-document-shell {
+            position: relative;
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
         /* Premium C1 Lined Paper Styles */
         .premium-document {
             max-width: 800px;
-            margin: 2rem auto;
+            width: 100%;
+            margin: 2rem 0;
             background: #ffffff;
             border: 1px solid #d9dde5;
             position: relative;
@@ -250,6 +261,7 @@
 
         .writing-textarea-lined {
             width: 100%;
+            box-sizing: border-box;
             min-height: 400px;
             padding: 1.5rem;
             font-family: inherit;
@@ -263,6 +275,21 @@
             resize: vertical;
             transition: all 0.3s ease;
             outline: none;
+        }
+
+        .writing-textarea-lined textarea {
+            width: 100%;
+            height: 100%;
+            min-height: 380px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            color: inherit;
+            outline: none;
+            resize: vertical;
+            box-sizing: border-box;
         }
 
         /* Lined inputs for HV3 */
@@ -308,18 +335,19 @@
         .doc-timer-bar {
             position: sticky;
             top: 2rem;
-            right: 1.5rem;
-            width: 140px;
+            margin-top: 2rem;
+            width: 180px;
             background: #ffffff;
             border: 2px solid #1a1a1a;
-            border-radius: 6px;
-            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            padding: 1rem;
             z-index: 1000;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             align-items: center;
+            flex-shrink: 0;
         }
 
         .doc-timer-text {
@@ -332,7 +360,12 @@
         }
 
         /* Responsive Mobile Styles */
-        @media (max-width: 768px) {
+        @media (max-width: 1080px) {
+            .premium-document-shell {
+                flex-direction: column;
+                align-items: center;
+            }
+
             .premium-document {
                 margin: 1rem auto;
                 padding: 3rem 1.5rem 6rem 1.5rem;
@@ -569,9 +602,11 @@
 
         {{-- Premium Document Layout for Paid C1 / B1 / B2 --}}
         @if ($isPaidExam && in_array($template['level'] ?? '', ['B1', 'B2', 'C1', 'C2'], true))
-            <div class="premium-document" wire:poll.1s="tick">
-                @include('partials.premium.header')
-                @include('partials.exam-levels.' . strtolower($template['level']))
+            <div class="premium-document-shell" wire:poll.1s="tick">
+                <div class="premium-document">
+                    @include('partials.premium.header')
+                    @include('partials.exam-levels.' . strtolower($template['level']))
+                </div>
                 @include('partials.premium.timer')
             </div>
         @else

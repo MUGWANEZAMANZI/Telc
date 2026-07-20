@@ -90,7 +90,7 @@
             <p style="color: #666666; font-size: 1.05rem; margin-top: 0.5rem;">Live-Gespräch mit KI-Prüfer im exakten Prüfungsformat</p>
         </div>
         @if($examStarted && !$examFinished)
-            <button type="button" wire:click="repeatExam" class="tab-btn" style="border-color: #ef4444; color: #ef4444; font-weight: 600;">
+            <button type="button" @click="if ('speechSynthesis' in window) window.speechSynthesis.cancel();" wire:click="repeatExam" class="tab-btn" style="border-color: #ef4444; color: #ef4444; font-weight: 600;">
                 Prüfung abbrechen
             </button>
         @endif
@@ -358,6 +358,11 @@
                      this.transcript = '';
                  },
                  
+                 destroy() {
+                     this.stopListening();
+                     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                 },
+
                  speakQuestion(text) {
                      if (!('speechSynthesis' in window) || !text) return;
                      this.stopListening();
@@ -392,6 +397,12 @@
              "
              x-on:play-ai-tts.window="
                  speakQuestion($event.detail.text);
+             "
+             x-on:stop-all-speech.window="
+                 stopListening();
+                 if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                 isSpeaking = false;
+                 statusText = 'Prüfung beendet';
              "
         >
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch h-full">

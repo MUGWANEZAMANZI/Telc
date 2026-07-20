@@ -15,7 +15,17 @@
 
         .free-exam-body { min-height: 100vh; background: #f7f7f7; padding: 0 1rem; }
 
-        .doc-timer-bar { position: sticky; top: 1rem; right: 1rem; z-index: 1001; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 200px; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .premium-document-wrapper {
+            position: relative;
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
+        .doc-timer-bar { position: sticky; top: 2rem; margin-top: 2rem; z-index: 1001; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 180px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; font-family: 'Plus Jakarta Sans', sans-serif; }
         .doc-timer-text { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
         .save-indicator { display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #666; }
         .save-pulse { width: 6px; height: 6px; border-radius: 50%; background: #166534; animation: pulse 2s infinite; }
@@ -34,9 +44,34 @@
         .free-result-panel .score-label { font-size: 0.85rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
 
         .premium-document {
-            max-width: 800px; margin: 2rem auto; background: #ffffff; border: 1px solid #d9dde5;
+            max-width: 800px; width: 100%; margin: 2rem 0; background: #ffffff; border: 1px solid #d9dde5;
             position: relative; padding: 4rem 3.5rem 8rem 5.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
             border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; color: #1a1a1a; line-height: 1.85;
+        }
+
+        @media (max-width: 1080px) {
+            .premium-document-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .doc-timer-bar {
+                position: fixed;
+                top: auto;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                margin-top: 0;
+                border-radius: 0;
+                border: none;
+                border-top: 2px solid #1a1a1a;
+                padding: 0.6rem 1rem;
+                flex-direction: row;
+                justify-content: space-between;
+                box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+                box-sizing: border-box;
+            }
         }
         .premium-document::before { content: ''; position: absolute; top: 0; bottom: 0; left: 4.5rem; width: 1px; border-left: 1px solid #cbcbcb; }
         .premium-document::after { content: ''; position: absolute; top: 0; bottom: 0; left: 4.7rem; width: 1px; border-left: 1px solid #cbcbcb; }
@@ -114,7 +149,8 @@
         .inline-gap-pill select { padding: 0.15rem 0.3rem; border: 1px solid #ccc; border-radius: 3px; font-size: 0.9rem; background: #fff; cursor: pointer; }
         .inline-gap-pill.filled select { border-color: #1a1a1a; font-weight: 600; background: #fafafa; }
 
-        .writing-textarea-lined { width: 100%; min-height: 350px; padding: 1rem; font-family: inherit; font-size: 1rem; line-height: 2rem; border: 1px solid #d9dde5; background: transparent; background-image: linear-gradient(transparent, transparent 1.95rem, #cbcbcb 1.95rem, #cbcbcb 2rem); background-size: 100% 2rem; color: #1a1a1a; resize: vertical; outline: none; }
+        .writing-textarea-lined { width: 100%; box-sizing: border-box; min-height: 380px; padding: 1.25rem; font-family: inherit; font-size: 1.05rem; line-height: 2.2rem; border: 1px solid #d9dde5; border-radius: 6px; background: transparent; background-image: linear-gradient(transparent, transparent 2.15rem, #cbcbcb 2.15rem, #cbcbcb 2.2rem); background-size: 100% 2.2rem; color: #1a1a1a; resize: vertical; outline: none; }
+        .writing-textarea-lined textarea { width: 100%; height: 100%; min-height: 380px; border: none; background: transparent; font-family: inherit; font-size: inherit; line-height: inherit; color: inherit; outline: none; resize: vertical; box-sizing: border-box; }
 
         .free-back-btn { display: inline-flex; align-items: center; gap: 0.35rem; color: #888; font-size: 0.8rem; cursor: pointer; background: none; border: none; font-family: inherit; padding: 0.5rem 0; transition: color 0.15s; }
         .free-back-btn:hover { color: #eab308; }
@@ -287,46 +323,19 @@
         @endphp
 
         <div class="free-exam-body">
-            {{-- Floating timer widget --}}
-            @if ($currentSection && !$result)
-                <div class="doc-timer-bar" wire:poll.1s="tick">
-                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; border-bottom: 1px solid #e5e5e5; padding-bottom: 0.25rem; width: 100%; text-align: center;">
-                        {{ $currentSection['title'] }}
+            <div class="premium-document-wrapper">
+                {{-- Premium document column --}}
+                @if ($sectionLocked && !$result)
+                    <div class="premium-document">
+                        <div style="text-align: center; padding: 3rem 1rem; color: #888;">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="width: 48px; height: 48px; margin: 0 auto 1rem; color: #555;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 0.5rem;">Section completed</h3>
+                            <p style="color: #666; font-size: 0.9rem;">This section cannot be retaken.</p>
+                        </div>
                     </div>
-                    <div class="doc-timer-text">
-                        <svg style="color: #d8232a;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <span>Restzeit:</span>
-                        <strong style="color: #d8232a;">{{ sprintf('%02d:%02d', $minutes, $seconds) }} Min.</strong>
-                    </div>
-                    <div class="save-indicator">
-                        <span class="save-pulse"></span>
-                        <span>Auto-Safe aktiv</span>
-                    </div>
-                    <button type="button" wire:click="backToChapters" style="background: none; border: none; color: #666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">Menü verlassen</button>
-                    <button type="button" wire:click="submit" class="submit-button">Prüfung abgeben</button>
-                </div>
-            @elseif ($currentSection && $result)
-                <div class="doc-timer-bar">
-                    <button type="button" wire:click="backToChapters" style="background: none; border: none; color: #666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">← Zurück</button>
-                </div>
-            @endif
-
-            {{-- Premium document column --}}
-            @if ($sectionLocked && !$result)
-                <div class="premium-document">
-                    <div style="text-align: center; padding: 3rem 1rem; color: #888;">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="width: 48px; height: 48px; margin: 0 auto 1rem; color: #555;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        <h3 style="font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 0.5rem;">Section completed</h3>
-                        <p style="color: #666; font-size: 0.9rem;">This section cannot be retaken.</p>
-                    </div>
-                </div>
-
-            @elseif ($currentSection)
+                @elseif ($currentSection)
                 <div class="premium-document">
                     <div class="c1-badge">{{ $template['level'] ?? '' }}</div>
                     <div class="section-label">{{ $currentSection['title'] }}</div>
@@ -575,9 +584,7 @@
                             @php $writeDetail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null; @endphp
                             <div class="writing-section @if($result) marked @endif" style="margin-top: 2rem;">
                                 <label class="writing-label" style="font-weight: 700; display: block; margin-bottom: 0.5rem;">{{ $element['label'] ?? $element['instruction'] ?? 'Schreiben' }}</label>
-                                <div class="writing-textarea-lined">
-                                    <textarea wire:model.live="answers.{{ $element['id'] }}" placeholder="Ihre Antwort..." @disabled($result) rows="6"></textarea>
-                                </div>
+                                <textarea class="writing-textarea-lined" wire:model.live="answers.{{ $element['id'] }}" placeholder="Ihre Antwort..." @disabled($result)></textarea>
                                 @if ($writeDetail)
                                     <span class="writing-score">{{ $writeDetail['points'] }} / {{ $writeDetail['max_points'] }} Punkte</span>
                                     @if ($writeDetail['feedback'] ?? '')
@@ -652,12 +659,33 @@
                             @endif
                         </div>
                     @endif
-                </div>
-            @else
-                <div class="premium-document">
-                    <h2>Section not found.</h2>
-                </div>
-            @endif
+                {{-- Floating timer widget outside paper on the right --}}
+                @if ($currentSection && !$result)
+                    <div class="doc-timer-bar" wire:poll.1s="tick">
+                        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; border-bottom: 1px solid #e5e5e5; padding-bottom: 0.25rem; width: 100%; text-align: center;">
+                            {{ $currentSection['title'] }}
+                        </div>
+                        <div class="doc-timer-text">
+                            <svg style="color: #d8232a;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>Restzeit:</span>
+                            <strong style="color: #d8232a;">{{ sprintf('%02d:%02d', $minutes, $seconds) }} Min.</strong>
+                        </div>
+                        <div class="save-indicator">
+                            <span class="save-pulse"></span>
+                            <span>Auto-Safe aktiv</span>
+                        </div>
+                        <button type="button" @click="if ('speechSynthesis' in window) window.speechSynthesis.cancel();" wire:click="backToChapters" style="background: none; border: none; color: #666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">Menü verlassen</button>
+                        <button type="button" wire:click="submit" class="submit-button">Prüfung abgeben</button>
+                    </div>
+                @elseif ($currentSection && $result)
+                    <div class="doc-timer-bar">
+                        <button type="button" @click="if ('speechSynthesis' in window) window.speechSynthesis.cancel();" wire:click="backToChapters" style="background: none; border: none; color: #666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">← Zurück</button>
+                    </div>
+                @endif
+            </div>
         </div>
 
         {{-- Next-section popup --}}

@@ -616,6 +616,7 @@ class StudentExam extends Component
 
     public function exitExam(): void
     {
+        $this->dispatch('stop-all-speech');
         $this->selectedTemplateId = null;
         $this->template = [];
         $this->answers = [];
@@ -1302,16 +1303,26 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             $historyContext .= "{$roleLabel}: {$turn['text']}\n";
         }
 
+        $userTurnCount = collect($this->speakingHistory[$elementId])->where('role', 'user')->count();
+        $timerEnded = ($this->remainingSeconds !== null && $this->remainingSeconds <= 0);
+        $isLastTurn = $timerEnded || $userTurnCount >= 3;
+
+        if ($isLastTurn) {
+            $generationPrompt = "Aufgabenstellung/Thema: {$prompt}\n\n"
+                ."Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
+                ."WICHTIG: Die Zeit für die Diskussion (Teil 2) ist abgelaufen bzw. die maximale Rundenanzahl ist erreicht. Generiere als Prüfer eine kurze, höfliche Verabschiedung zur Diskussion (z.B. 'Vielen Dank für das Gespräch, damit beenden wir die Diskussion.') und gib am Ende die finale Gesamtbewertung ab im Format 'SCORE: X/{$maxPoints}'. Stelle KEINE weiteren Fragen mehr!";
+        } else {
+            $generationPrompt = "Aufgabenstellung/Thema: {$prompt}\n\n"
+                ."Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
+                .'Generiere die nächste Antwort des Prüfers:';
+        }
+
         try {
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
                 ->withSystemInstruction(
                     Content::parse($systemInstruction."\n\n".$criteriaPrompt)
                 )
-                ->generateContent(
-                    "Aufgabenstellung/Thema: {$prompt}\n\n"
-                    ."Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
-                    .'Generiere die nächste Antwort des Prüfers:'
-                );
+                ->generateContent($generationPrompt);
 
             $assistantReply = $result->text();
 
@@ -1322,6 +1333,9 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
 
             $this->speakingFeedback[$elementId] = $assistantReply;
             $this->answers[$elementId] = $transcribedText;
+            if ($isLastTurn || str_contains($assistantReply, 'SCORE:')) {
+                $this->dispatch('stop-all-speech');
+            }
             $this->saveProgress();
         } catch (\Throwable $e) {
             array_pop($this->speakingHistory[$elementId]);

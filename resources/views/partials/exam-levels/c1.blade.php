@@ -1084,7 +1084,7 @@
 
                                 @php
                                     $discTurnsCount = collect($speakingHistory['C1-SP-2'] ?? [])->where('role', 'user')->count();
-                                    $isDiscCompleted = $discTurnsCount >= 3;
+                                    $isDiscCompleted = $discTurnsCount >= 3 || str_contains($speakingFeedback['C1-SP-2'] ?? '', 'SCORE:') || (isset($this->remainingSeconds) && $this->remainingSeconds <= 0);
                                 @endphp
 
                                 @if (!$isDiscCompleted)

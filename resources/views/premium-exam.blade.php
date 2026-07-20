@@ -91,6 +91,12 @@
             text-transform: uppercase;
         }
 
+        @media (max-width: 640px) {
+            .brand-name {
+                display: none;
+            }
+        }
+
         .nav-links {
             display: flex;
             gap: 2rem;

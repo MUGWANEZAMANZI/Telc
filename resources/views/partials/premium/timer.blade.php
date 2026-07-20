@@ -20,7 +20,7 @@
                              <span class="save-pulse"></span>
                              <span>Auto-Safe aktiv</span>
                          </div>
-                         <button type="button" wire:click="exitExam" style="background: none; border: none; color: #666666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">Menü verlassen</button>
+                         <button type="button" @click="if ('speechSynthesis' in window) window.speechSynthesis.cancel();" wire:click="exitExam" style="background: none; border: none; color: #666666; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; text-decoration: underline;">Menü verlassen</button>
                      </div>
 
                      @if (!$result)

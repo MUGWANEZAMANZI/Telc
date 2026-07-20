@@ -219,7 +219,7 @@ class VoiceInput extends Component
     public function sendMessage(): void
     {
         $text = trim($this->userInput);
-        if ($text === '' || $this->aiResponding || $this->examComplete) {
+        if ($text === '' || $this->aiResponding || $this->examComplete || $this->examFinished || ($this->examTimer <= 0 && $this->currentTeil >= count($this->teilTimings))) {
             return;
         }
 
@@ -238,10 +238,13 @@ class VoiceInput extends Component
             $this->detectTeilTransition($aiText);
             $this->checkExamComplete($aiText);
 
-            $this->dispatch('playAiTts', text: $cleanText);
+            if (! $this->examComplete && ! $this->examFinished) {
+                $this->dispatch('playAiTts', text: $cleanText);
+            }
 
             if ($this->examComplete) {
                 $this->timerRunning = false;
+                $this->dispatch('stop-all-speech');
                 $this->gradeExam();
             }
         } catch (\Throwable $e) {
@@ -284,11 +287,30 @@ class VoiceInput extends Component
             $this->timerRunning = false;
 
             if ($this->examComplete) {
+                $this->dispatch('stop-all-speech');
                 $this->gradeExam();
             } elseif ($this->currentTeil < count($this->teilTimings)) {
+                $prevTeil = $this->currentTeil;
                 $this->advanceTeil();
+                $this->dispatch('stop-all-speech');
+
+                $transitionNotice = "--- Zeit für Teil {$prevTeil} ist abgelaufen. Beginn von {$this->currentTeilLabel}. ---";
+                $this->chatHistory[] = ['role' => 'model', 'text' => $transitionNotice];
+
+                try {
+                    $chat = $this->rebuildChatSession();
+                    $response = $chat->sendMessage("Die Zeit für Teil {$prevTeil} ist abgelaufen. Bitte beende Teil {$prevTeil} kurz und leite direkt den nächsten Teil ({$this->currentTeilLabel}) ein.");
+                    $aiText = $response->text();
+                    $cleanText = $this->stripExamCompleteMarker($aiText);
+                    $this->chatHistory[] = ['role' => 'model', 'text' => $cleanText];
+                    $this->checkExamComplete($aiText);
+                    $this->dispatch('playAiTts', text: $cleanText);
+                } catch (\Throwable $e) {
+                    // Fallback if AI transition prompt fails
+                }
             } else {
                 $this->examComplete = true;
+                $this->dispatch('stop-all-speech');
                 $this->gradeExam();
             }
         }
@@ -592,6 +614,7 @@ Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt vo
 
     public function repeatExam(): void
     {
+        $this->dispatch('stop-all-speech');
         $this->examStarted = false;
         $this->examFinished = false;
         $this->examComplete = false;

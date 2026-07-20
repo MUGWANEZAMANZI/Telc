@@ -201,11 +201,15 @@
                                             @if ($element['type'] === 'audio')
                                                 <label>Audio file</label>
                                                 <div class="telc-audio-upload">
-                                                    <input type="file" wire:model.live="audioUpload" accept="audio/*">
-                                                    <button type="button" wire:click="uploadAudio({{ $sectionIndex }}, {{ $elementIndex }})" wire:loading.attr="disabled" class="telc-button primary">
-                                                        <span wire:loading.remove>Upload</span>
-                                                        <span wire:loading>Uploading...</span>
+                                                    <input type="file" wire:model="audioUpload" accept="audio/*">
+                                                    <button type="button" wire:click="uploadAudio({{ $sectionIndex }}, {{ $elementIndex }})" wire:loading.attr="disabled" wire:target="audioUpload, uploadAudio" class="telc-button primary">
+                                                        <span wire:loading.remove wire:target="audioUpload, uploadAudio">Upload</span>
+                                                        <span wire:loading wire:target="audioUpload">Wird geladen...</span>
+                                                        <span wire:loading wire:target="uploadAudio">Wird gespeichert...</span>
                                                     </button>
+                                                    <div wire:loading wire:target="audioUpload" style="font-size:0.8rem;color:#d8232a;font-weight:600;margin-top:0.25rem;">
+                                                        ⏳ Audio-Datei wird geladen... Klicken Sie nach dem Laden auf Upload.
+                                                    </div>
                                                     @error('audioUpload') <span class="telc-error">{{ $message }}</span> @enderror
                                                     @if (! empty($element['content']))
                                                         <audio controls src="{{ $element['content'] }}" class="telc-audio-preview"></audio>

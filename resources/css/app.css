@@ -47,6 +47,12 @@
     }
 }
 
+@media (max-width: 639px) {
+    [data-flux-brand] > *:not([data-flux-logo]):not(img) {
+        display: none !important;
+    }
+}
+
 [data-flux-field]:not(ui-radio, ui-checkbox) {
     @apply grid gap-2;
 }

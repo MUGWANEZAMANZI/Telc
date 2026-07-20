@@ -298,15 +298,18 @@ class ExamDashboard extends Component
     public function uploadAudio(int $sectionIndex, int $elementIndex): void
     {
         $this->validate([
-            'audioUpload' => ['required', 'file', 'mimes:mp3,wav,ogg,m4a', 'max:102400'],
+            'audioUpload' => ['required', 'file', 'mimes:mp3,wav,ogg,m4a,aac,flac,mpga', 'max:102400'],
         ], [
             'audioUpload.required' => 'Bitte wählen Sie zuerst eine Audio-Datei aus.',
+            'audioUpload.mimes' => 'Ungültiges Audio-Format. Erlaubt sind MP3, WAV, OGG, M4A, AAC, FLAC.',
+            'audioUpload.max' => 'Die Audio-Datei darf maximal 100 MB groß sein.',
         ]);
 
         $path = $this->audioUpload->store('', 'exam-audio');
 
         $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['content'] = route('exam.audio', ['path' => $path]);
         $this->audioUpload = null;
+        $this->save();
     }
 
     public function syncGapIds(int $sectionIndex, int $elementIndex): void
@@ -658,6 +661,20 @@ class ExamDashboard extends Component
             $historyContext .= "{$roleLabel}: {$turn['text']}\n";
         }
 
+        $userTurnCount = collect($this->speakingHistory[$elementId])->where('role', 'user')->count();
+        $timerEnded = ($this->remainingSeconds !== null && $this->remainingSeconds <= 0);
+        $isLastTurn = $timerEnded || $userTurnCount >= 3;
+
+        if ($isLastTurn) {
+            $generationPrompt = "Aufgabenstellung/Thema: {$prompt}\n\n"
+                ."Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
+                ."WICHTIG: Die Zeit für die Diskussion (Teil 2) ist abgelaufen bzw. die maximale Rundenanzahl ist erreicht. Generiere als Prüfer eine kurze, höfliche Verabschiedung zur Diskussion (z.B. 'Vielen Dank für das Gespräch, damit beenden wir die Diskussion.') und gib am Ende die finale Gesamtbewertung ab im Format 'SCORE: X/{$maxPoints}'. Stelle KEINE weiteren Fragen mehr!";
+        } else {
+            $generationPrompt = "Aufgabenstellung/Thema: {$prompt}\n\n"
+                ."Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
+                .'Generiere die nächste Antwort des Prüfers:';
+        }
+
         try {
             $levelLabel = "TELC-{$level}";
             $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
@@ -665,18 +682,10 @@ class ExamDashboard extends Component
                     Content::parse(
                         "Du bist ein {$levelLabel}-Prüfer für die mündliche Prüfung. "
                         .'Unterhalte dich interaktiv mit dem Lernenden über das gewählte Thema. '
-                        .'Lies den Gesprächsverlauf. Reagiere auf die letzte Antwort des Lernenden, '
-                        .'stelle eine kurze, logische Anschlussfrage oder führe das Gespräch fort. '
-                        .'WICHTIG: Wenn dies der 3. oder 4. Redebeitrag des Lernenden ist, '
-                        .'beende das Gespräch höflich und bewerte die Leistung. '
                         .$criteriaPrompt
                     )
                 )
-                ->generateContent(
-                    "Aufgabenstellung/Thema: {$prompt}\n\n"
-                    ."Bisheriger Gesprächsverlauf:\n{$historyContext}\n"
-                    .'Generiere die nächste Antwort des Prüfers:'
-                );
+                ->generateContent($generationPrompt);
 
             $assistantReply = $result->text();
 
@@ -687,6 +696,9 @@ class ExamDashboard extends Component
 
             $this->speakingFeedback[$elementId] = $assistantReply;
             $this->answers[$elementId] = $transcribedText;
+            if ($isLastTurn || str_contains($assistantReply, 'SCORE:')) {
+                $this->dispatch('stop-all-speech');
+            }
             $this->saveProgress();
         } catch (\Throwable $e) {
             array_pop($this->speakingHistory[$elementId]);
@@ -864,6 +876,7 @@ class ExamDashboard extends Component
 
     public function exitExam(): void
     {
+        $this->dispatch('stop-all-speech');
         $this->started = false;
         $this->result = null;
         $this->answers = [];

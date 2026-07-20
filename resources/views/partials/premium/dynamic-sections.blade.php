@@ -103,9 +103,7 @@
                     @endphp
                     <div style="margin-bottom:2rem;">
                         <label style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;display:block;margin-bottom:0.5rem;">{{ $element['instruction'] ?? 'Schreiben Sie einen Text' }} (max. {{ $writingDetail['max_points'] ?? '—' }} Punkte)</label>
-                        <div class="writing-textarea-lined">
-                            <textarea wire:model.debounce.500ms="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} rows="6" placeholder="Ihre Antwort..."></textarea>
-                        </div>
+                        <textarea class="writing-textarea-lined" wire:model.debounce.500ms="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} placeholder="Ihre Antwort..."></textarea>
                         @if ($result && ($writingDetail['feedback'] ?? ''))
                             <div style="margin-top:0.75rem;padding:0.75rem;background:#f9f9f9;border-left:3px solid #d8232a;border-radius:4px;font-size:0.85rem;">
                                 <strong>Feedback:</strong> {{ $writingDetail['feedback'] }}

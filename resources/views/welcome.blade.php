@@ -57,7 +57,7 @@
         <header class="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between z-10 shrink-0">
             <a href="/" class="flex items-center gap-3 no-underline">
                 <img src="logo.jpeg" class="h-10 w-auto rounded border border-stone-200" alt="GERMAN SUCCESS Logo" />
-                <span class="text-xl font-extrabold tracking-wider text-stone-900 uppercase md:text-sm">GERMAN SUCCESS</span>
+                <span class="hidden sm:inline text-xl font-extrabold tracking-wider text-stone-900 uppercase md:text-sm">GERMAN SUCCESS</span>
             </a>
             @if (Route::has('login'))
                 <nav class="flex items-center gap-4">

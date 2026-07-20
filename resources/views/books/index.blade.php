@@ -19,7 +19,7 @@
         <header class="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between shrink-0">
             <a href="{{ route('home') }}" class="flex items-center gap-3">
                 <img src="/logo.jpeg" class="h-10 w-auto rounded border border-stone-200" alt="GERMAN SUCCESS Logo" />
-                <span class="text-xl font-extrabold tracking-wider text-stone-900 uppercase">GERMAN SUCCESS</span>
+                <span class="hidden sm:inline text-xl font-extrabold tracking-wider text-stone-900 uppercase">GERMAN SUCCESS</span>
             </a>
             <nav class="flex items-center gap-4">
                 <a href="{{ route('home') }}" class="text-stone-600 hover:text-stone-900 text-sm font-bold transition-colors">Startseite</a>

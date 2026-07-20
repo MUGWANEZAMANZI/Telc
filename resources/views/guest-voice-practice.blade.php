@@ -17,7 +17,7 @@
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <img src="/logo.jpeg" class="h-8 w-auto rounded" alt="GERMAN SUCCESS" />
-                <span class="text-lg font-extrabold tracking-wider text-stone-900 uppercase">GERMAN SUCCESS</span>
+                <span class="hidden sm:inline text-lg font-extrabold tracking-wider text-stone-900 uppercase">GERMAN SUCCESS</span>
             </div>
             <div class="flex items-center gap-4">
                 <a href="{{ route('login') }}" class="text-stone-600 hover:text-stone-900 text-sm font-bold">Einloggen</a>

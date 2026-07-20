@@ -51,7 +51,8 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 
-<div class="speaking-flow-container" style="margin-bottom:2rem;">
+<div class="speaking-flow-container" style="margin-bottom:2rem;"
+     x-on:stop-all-speech.window="if ('speechSynthesis' in window) window.speechSynthesis.cancel();">
 
     {{-- TRANSITION ANNOUNCEMENT --}}
     @if ($transitionMessage)
@@ -474,26 +475,37 @@
                     </div>
                 @endif
 
-                <div class="sf-phase-banner speak">
-                    <span class="sf-icon">🎤</span>
-                    <span><strong>Ihre Reihen:</strong> Diskutieren Sie mit dem KI-Prüfer. Sprechen Sie oder tippen Sie Ihr Argument.</span>
-                </div>
-                <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
-                    <button type="button" @click="toggleRecording" class="speaking-record-btn"
-                        :style="isRecording ? 'background:#1a1a1a;' : 'background:#d8232a;'"
-                        style="color:#fff;border:none;padding:0.85rem 1.5rem;border-radius:4px;font-weight:600;cursor:pointer;">
-                        <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Diskutieren'"></span>
-                    </button>
-                    <canvas x-ref="freqCanvas2" class="sf-freq-canvas" x-show="isRecording" width="120" height="32" style="flex-shrink:0;"></canvas>
-                    <input type="text" x-model="transcript" placeholder="Ihr Argument eingeben..."
-                        style="flex:1;min-width:150px;border:1px solid #ccc;padding:0.85rem 1rem;border-radius:4px;font-size:0.9rem;"
-                        @keydown.enter.prevent="sendReply">
-                    <button type="button" @click="sendReply" class="telc-button primary"
-                        :disabled="$wire.speakingProcessing['{{ $sp2Id }}'] || !transcript.trim()"
-                        style="padding:0.85rem 1.5rem;white-space:nowrap;">
-                        Senden
-                    </button>
-                </div>
+                @php
+                    $sp2Completed = str_contains($speakingFeedback[$sp2Id] ?? '', 'SCORE:') || (isset($this->remainingSeconds) && $this->remainingSeconds <= 0);
+                @endphp
+
+                @if (!$sp2Completed)
+                    <div class="sf-phase-banner speak">
+                        <span class="sf-icon">🎤</span>
+                        <span><strong>Ihre Reihen:</strong> Diskutieren Sie mit dem KI-Prüfer. Sprechen Sie oder tippen Sie Ihr Argument.</span>
+                    </div>
+                    <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+                        <button type="button" @click="toggleRecording" class="speaking-record-btn"
+                            :style="isRecording ? 'background:#1a1a1a;' : 'background:#d8232a;'"
+                            style="color:#fff;border:none;padding:0.85rem 1.5rem;border-radius:4px;font-weight:600;cursor:pointer;">
+                            <span x-text="isRecording ? '⏹ Stoppen' : '🎤 Diskutieren'"></span>
+                        </button>
+                        <canvas x-ref="freqCanvas2" class="sf-freq-canvas" x-show="isRecording" width="120" height="32" style="flex-shrink:0;"></canvas>
+                        <input type="text" x-model="transcript" placeholder="Ihr Argument eingeben..."
+                            style="flex:1;min-width:150px;border:1px solid #ccc;padding:0.85rem 1rem;border-radius:4px;font-size:0.9rem;"
+                            @keydown.enter.prevent="sendReply">
+                        <button type="button" @click="sendReply" class="telc-button primary"
+                            :disabled="$wire.speakingProcessing['{{ $sp2Id }}'] || !transcript.trim()"
+                            style="padding:0.85rem 1.5rem;white-space:nowrap;">
+                            Senden
+                        </button>
+                    </div>
+                @else
+                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:0.75rem 1rem;border-radius:4px;font-size:0.9rem;color:#15803d;font-weight:600;text-align:left;margin-top:1rem;"
+                         x-init="if ('speechSynthesis' in window) window.speechSynthesis.cancel();">
+                        ✓ Teil 2 (Diskussion) abgeschlossen.
+                    </div>
+                @endif
 
                 @if (!empty($speakingFeedback[$sp2Id] ?? ''))
                     @if (str_starts_with($speakingFeedback[$sp2Id], 'Fehler'))

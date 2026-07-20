@@ -40,7 +40,7 @@
                                 <button type="button" wire:click="repeat" style="background-color: #137333; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em;">
                                     Prüfung wiederholen
                                 </button>
-                                <button type="button" wire:click="exitExam" style="background-color: #1a1a1a; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em;">
+                                <button type="button" @click="if ('speechSynthesis' in window) window.speechSynthesis.cancel();" wire:click="exitExam" style="background-color: #1a1a1a; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em;">
                                     Zurück zur Übersicht
                                 </button>
                             </div>
