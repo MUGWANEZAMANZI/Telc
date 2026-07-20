@@ -662,7 +662,7 @@ class ExamDashboard extends Component
         }
 
         $userTurnCount = collect($this->speakingHistory[$elementId])->where('role', 'user')->count();
-        $timerEnded = ($this->remainingSeconds !== null && $this->remainingSeconds <= 0);
+        $timerEnded = $this->remainingSeconds <= 0;
         $isLastTurn = $timerEnded || $userTurnCount >= 3;
 
         if ($isLastTurn) {

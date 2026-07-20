@@ -659,6 +659,7 @@
                             @endif
                         </div>
                     @endif
+                @endif
                 {{-- Floating timer widget outside paper on the right --}}
                 @if ($currentSection && !$result)
                     <div class="doc-timer-bar" wire:poll.1s="tick">

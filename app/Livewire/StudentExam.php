@@ -1304,7 +1304,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
         }
 
         $userTurnCount = collect($this->speakingHistory[$elementId])->where('role', 'user')->count();
-        $timerEnded = ($this->remainingSeconds !== null && $this->remainingSeconds <= 0);
+        $timerEnded = $this->remainingSeconds <= 0;
         $isLastTurn = $timerEnded || $userTurnCount >= 3;
 
         if ($isLastTurn) {

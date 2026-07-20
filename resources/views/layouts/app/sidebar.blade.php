@@ -17,7 +17,7 @@
                         {{ __('Schreiben & Hören') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="microphone" :href="route('voice.practice')" :current="request()->routeIs('voice.practice')" wire:navigate>
-                        {{ __('Speaking Exam UI') }}
+                        {{ __('Speaking Exam') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="credit-card" :href="route('billing')" :current="request()->routeIs('billing')" wire:navigate>
                         {{ __('Billing') }}
