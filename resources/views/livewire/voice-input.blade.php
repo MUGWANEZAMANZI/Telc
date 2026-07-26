@@ -1,4 +1,206 @@
-<div class="mx-auto max-w-7xl space-y-6 p-6">
+<div class="mx-auto max-w-7xl space-y-6 p-6"
+     x-data="{
+         isListening: false,
+         isSpeaking: false,
+         statusText: 'ERFOLG wird initialisiert...',
+         silenceTimer: null,
+         lastSpeechTime: 0,
+         recognition: null,
+         transcript: '',
+         
+         scrollToBottom() {
+             this.$nextTick(() => {
+                 const chatArea = document.getElementById('chatArea');
+                 if (chatArea) {
+                     chatArea.scrollTop = chatArea.scrollHeight;
+                 }
+             });
+         },
+
+         initRecognition() {
+             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+             if (!SR) {
+                 alert('Spracherkennung wird in diesem Browser nicht unterstützt. Bitte nutzen Sie Chrome oder Edge.');
+                 return;
+             }
+             this.recognition = new SR();
+             this.recognition.lang = 'de-DE';
+             this.recognition.continuous = true;
+             this.recognition.interimResults = true;
+             
+             this.recognition.onstart = () => {
+                 this.isListening = true;
+                 this.statusText = 'ERFOLG hört zu... Sprechen Sie jetzt';
+                 this.lastSpeechTime = Date.now();
+             };
+             
+             this.recognition.onresult = (e) => {
+                 let t = '';
+                 let lastChunk = null;
+                 for (let i = 0; i < e.results.length; i++) {
+                     let chunk = e.results[i][0].transcript.trim();
+                     if (chunk === '') continue;
+                     if (chunk === lastChunk) {
+                         continue;
+                     }
+                     lastChunk = chunk;
+                     t += e.results[i][0].transcript + ' ';
+                 }
+                 this.transcript = t.trim();
+                 this.lastSpeechTime = Date.now();
+                 this.scrollToBottom();
+             };
+             
+             this.recognition.onerror = (e) => {
+                 console.error('Speech recognition error:', e);
+                 this.stopListening();
+             };
+             
+             this.recognition.onend = () => {
+                 if (this.isListening && !$wire.waitingForTopicSelection) {
+                     try { this.recognition.start(); } catch (err) {}
+                 }
+             };
+         },
+         
+         startListening() {
+             if ($wire.waitingForTopicSelection) {
+                 this.stopListening();
+                 return;
+             }
+             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+             this.isSpeaking = false;
+             $wire.set('isAiSpeaking', false);
+             this.transcript = '';
+             if (!this.recognition) this.initRecognition();
+             if (!this.recognition) return;
+             
+             this.isListening = true;
+             try {
+                 this.recognition.start();
+             } catch (e) {
+                 // Already started
+             }
+             
+             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+             const silenceLimit = isMobile ? 5000 : 2500;
+
+             if (this.silenceTimer) clearInterval(this.silenceTimer);
+             this.silenceTimer = setInterval(() => {
+                 if (this.isListening && this.transcript.trim() !== '') {
+                     const idleTime = Date.now() - this.lastSpeechTime;
+                     if (idleTime > silenceLimit) {
+                         this.submitAnswer();
+                     }
+                 }
+             }, 100);
+         },
+         
+         stopListening() {
+             this.isListening = false;
+             if (this.silenceTimer) {
+                 clearInterval(this.silenceTimer);
+                 this.silenceTimer = null;
+             }
+             if (this.recognition) {
+                 try { this.recognition.stop(); } catch (e) {}
+             }
+         },
+         
+         submitAnswer() {
+             const text = this.transcript.trim();
+             this.stopListening();
+             if (text) {
+                 this.statusText = 'Verarbeitung...';
+                 $wire.sendVoiceInput(text);
+             }
+             this.transcript = '';
+         },
+         
+         destroy() {
+             this.stopListening();
+             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+         },
+
+         speakQuestion(text) {
+             if (!('speechSynthesis' in window) || !text) return;
+             this.stopListening();
+             window.speechSynthesis.cancel();
+             
+             this.isSpeaking = true;
+             $wire.set('isAiSpeaking', true);
+             this.statusText = 'ERFOLG spricht...';
+             
+             let cleanText = text
+                 .replace(/[*#_~`]/g, '')
+                 .replace(/(?:^|\n)\s*[-+*]\s+/g, ' ')
+                 .replace(/\[EXAM_COMPLETE\]/gi, '')
+                 .trim();
+
+             const u = new SpeechSynthesisUtterance(cleanText);
+             u.lang = 'de-DE';
+             u.rate = 0.95;
+             
+             u.onend = () => {
+                 this.isSpeaking = false;
+                 $wire.set('isAiSpeaking', false);
+                 this.startListening();
+             };
+             
+             u.onerror = () => {
+                 this.isSpeaking = false;
+                 $wire.set('isAiSpeaking', false);
+                 this.startListening();
+             };
+             
+             window.speechSynthesis.speak(u);
+         },
+
+         startExamAction() {
+             if ('speechSynthesis' in window) {
+                 try {
+                     let dummy = new SpeechSynthesisUtterance('');
+                     window.speechSynthesis.speak(dummy);
+                 } catch(e){}
+             }
+             if (!this.recognition) {
+                 this.initRecognition();
+             }
+             try {
+                 this.recognition.start();
+                 setTimeout(() => {
+                     try { this.recognition.stop(); } catch(e){}
+                 }, 50);
+             } catch(e){}
+             $wire.startExam();
+         }
+     }"
+     x-init="
+         $watch('$wire.waitingForTopicSelection', (val) => {
+             if (val) {
+                 stopListening();
+             }
+         });
+         $watch('$wire.chatHistory', () => {
+             scrollToBottom();
+         });
+         $nextTick(() => {
+             @if(count($chatHistory) > 0 && end($chatHistory)['role'] === 'model')
+                 speakQuestion({!! \Illuminate\Support\Js::from(end($chatHistory)['text']) !!});
+             @endif
+             scrollToBottom();
+         });
+     "
+     x-on:play-ai-tts.window="
+         speakQuestion($event.detail.text);
+     "
+     x-on:stop-all-speech.window="
+         stopListening();
+         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+         isSpeaking = false;
+         statusText = 'Prüfung beendet';
+     "
+>
     <style>
         .voice-card {
             background: #ffffff;
@@ -194,27 +396,7 @@
 
             <div style="border-top: 1px solid #cbcbcb; padding-top: 1.5rem; text-align: right;">
                 <button type="button" 
-                    @click="
-                        if ('speechSynthesis' in window) {
-                            try {
-                                let dummy = new SpeechSynthesisUtterance('');
-                                window.speechSynthesis.speak(dummy);
-                            } catch(e){}
-                        }
-                        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                            navigator.mediaDevices.getUserMedia({ audio: true })
-                            .then(stream => {
-                                stream.getTracks().forEach(track => track.stop());
-                                $wire.startExam();
-                            })
-                            .catch(err => {
-                                console.error('Microphone permission denied:', err);
-                                alert('Mikrofonberechtigung ist erforderlich, um die Prüfung zu starten.');
-                            });
-                        } else {
-                            $wire.startExam();
-                        }
-                    "
+                    @click="startExamAction()"
                     class="tab-btn active" 
                     style="padding: 0.8rem 2.5rem; font-size: 1rem;"
                     @if(!$activeVoiceTopicId && !$this->hasPresentationInTeil2()) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
@@ -292,7 +474,7 @@
     {{-- ═══ ZOHO/MICRO1 ACTIVE EXAM SCREEN ═══ --}}
     @else
          <div wire:poll.1s="tick" class="min-h-[550px] bg-zinc-950 text-white rounded-2xl p-8 border border-zinc-800 shadow-2xl relative"
-             x-data="{
+             x-data-unused="{
                  isListening: false,
                  isSpeaking: false,
                  statusText: 'ERFOLG wird initialisiert...',
@@ -449,7 +631,7 @@
                      window.speechSynthesis.speak(u);
                  }
              }"
-             x-init="
+             x-init-unused="
                  this.$watch('$wire.waitingForTopicSelection', (val) => {
                      if (val) {
                          this.stopListening();
@@ -465,10 +647,10 @@
                      this.scrollToBottom();
                  });
              "
-             x-on:play-ai-tts.window="
+             x-on-unused-1="
                  speakQuestion($event.detail.text);
              "
-             x-on:stop-all-speech.window="
+             x-on-unused-2="
                  stopListening();
                  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
                  isSpeaking = false;
