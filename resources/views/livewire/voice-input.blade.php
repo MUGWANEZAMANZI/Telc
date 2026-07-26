@@ -164,7 +164,11 @@
                 </div>
             @endif
 
-            @if($filteredTopics->isNotEmpty())
+            @if($this->hasPresentationInTeil2())
+                <div style="margin-bottom: 1.5rem; background: #fafafa; border: 1px dashed #d9dde5; border-radius: 8px; padding: 2rem; text-align: center; color: #666;" class="dark:bg-zinc-900 dark:border-zinc-800">
+                    💡 Das Thema für Ihre Präsentation wird nach Teil 1 ausgewählt.
+                </div>
+            @elseif($filteredTopics->isNotEmpty())
                 <div style="margin-bottom: 1.5rem;">
                     <label style="font-size: 0.85rem; color: #666; font-weight: 700; display: block; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Wählen Sie ein Thema</label>
                     <div>
@@ -189,8 +193,31 @@
             @endif
 
             <div style="border-top: 1px solid #cbcbcb; padding-top: 1.5rem; text-align: right;">
-                <button type="button" wire:click="startExam" class="tab-btn active" style="padding: 0.8rem 2.5rem; font-size: 1rem;"
-                    @unless($activeVoiceTopicId) disabled style="opacity: 0.5; cursor: not-allowed;" @endunless>
+                <button type="button" 
+                    @click="
+                        if ('speechSynthesis' in window) {
+                            try {
+                                let dummy = new SpeechSynthesisUtterance('');
+                                window.speechSynthesis.speak(dummy);
+                            } catch(e){}
+                        }
+                        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                            navigator.mediaDevices.getUserMedia({ audio: true })
+                            .then(stream => {
+                                stream.getTracks().forEach(track => track.stop());
+                                $wire.startExam();
+                            })
+                            .catch(err => {
+                                console.error('Microphone permission denied:', err);
+                                alert('Mikrofonberechtigung ist erforderlich, um die Prüfung zu starten.');
+                            });
+                        } else {
+                            $wire.startExam();
+                        }
+                    "
+                    class="tab-btn active" 
+                    style="padding: 0.8rem 2.5rem; font-size: 1rem;"
+                    @if(!$activeVoiceTopicId && !$this->hasPresentationInTeil2()) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
                     Sprechprüfung starten →
                 </button>
             </div>
@@ -264,7 +291,7 @@
 
     {{-- ═══ ZOHO/MICRO1 ACTIVE EXAM SCREEN ═══ --}}
     @else
-        <div wire:poll.1s="tick" class="min-h-[550px] bg-zinc-950 text-white rounded-2xl p-8 border border-zinc-800 shadow-2xl relative"
+         <div wire:poll.1s="tick" class="min-h-[550px] bg-zinc-950 text-white rounded-2xl p-8 border border-zinc-800 shadow-2xl relative"
              x-data="{
                  isListening: false,
                  isSpeaking: false,
@@ -274,6 +301,15 @@
                  recognition: null,
                  transcript: '',
                  
+                 scrollToBottom() {
+                     this.$nextTick(() => {
+                         const chatArea = document.getElementById('chatArea');
+                         if (chatArea) {
+                             chatArea.scrollTop = chatArea.scrollHeight;
+                         }
+                     });
+                 },
+
                  initRecognition() {
                      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
                      if (!SR) {
@@ -293,11 +329,19 @@
                      
                      this.recognition.onresult = (e) => {
                          let t = '';
+                         let lastChunk = null;
                          for (let i = 0; i < e.results.length; i++) {
-                             t += e.results[i][0].transcript;
+                             let chunk = e.results[i][0].transcript.trim();
+                             if (chunk === '') continue;
+                             if (chunk === lastChunk) {
+                                 continue;
+                             }
+                             lastChunk = chunk;
+                             t += e.results[i][0].transcript + ' ';
                          }
-                         this.transcript = t;
+                         this.transcript = t.trim();
                          this.lastSpeechTime = Date.now();
+                         this.scrollToBottom();
                      };
                      
                      this.recognition.onerror = (e) => {
@@ -306,15 +350,20 @@
                      };
                      
                      this.recognition.onend = () => {
-                         if (this.isListening) {
+                         if (this.isListening && !$wire.waitingForTopicSelection) {
                              try { this.recognition.start(); } catch (err) {}
                          }
                      };
                  },
                  
                  startListening() {
+                     if ($wire.waitingForTopicSelection) {
+                         this.stopListening();
+                         return;
+                     }
                      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
                      this.isSpeaking = false;
+                     $wire.set('isAiSpeaking', false);
                      this.transcript = '';
                      if (!this.recognition) this.initRecognition();
                      if (!this.recognition) return;
@@ -326,11 +375,14 @@
                          // Already started
                      }
                      
+                     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                     const silenceLimit = isMobile ? 5000 : 2500;
+
                      if (this.silenceTimer) clearInterval(this.silenceTimer);
                      this.silenceTimer = setInterval(() => {
                          if (this.isListening && this.transcript.trim() !== '') {
                              const idleTime = Date.now() - this.lastSpeechTime;
-                             if (idleTime > 2500) {
+                             if (idleTime > silenceLimit) {
                                  this.submitAnswer();
                              }
                          }
@@ -369,19 +421,28 @@
                      window.speechSynthesis.cancel();
                      
                      this.isSpeaking = true;
+                     $wire.set('isAiSpeaking', true);
                      this.statusText = 'ERFOLG spricht...';
                      
-                     const u = new SpeechSynthesisUtterance(text);
+                     let cleanText = text
+                         .replace(/[*#_~`]/g, '')
+                         .replace(/(?:^|\n)\s*[-+*]\s+/g, ' ')
+                         .replace(/\[EXAM_COMPLETE\]/gi, '')
+                         .trim();
+
+                     const u = new SpeechSynthesisUtterance(cleanText);
                      u.lang = 'de-DE';
                      u.rate = 0.95;
                      
                      u.onend = () => {
                          this.isSpeaking = false;
+                         $wire.set('isAiSpeaking', false);
                          this.startListening();
                      };
                      
                      u.onerror = () => {
                          this.isSpeaking = false;
+                         $wire.set('isAiSpeaking', false);
                          this.startListening();
                      };
                      
@@ -389,10 +450,19 @@
                  }
              }"
              x-init="
+                 this.$watch('$wire.waitingForTopicSelection', (val) => {
+                     if (val) {
+                         this.stopListening();
+                     }
+                 });
+                 this.$watch('$wire.chatHistory', () => {
+                     this.scrollToBottom();
+                 });
                  $nextTick(() => {
                      @if(count($chatHistory) > 0 && end($chatHistory)['role'] === 'model')
                          speakQuestion({!! \Illuminate\Support\Js::from(end($chatHistory)['text']) !!});
                      @endif
+                     this.scrollToBottom();
                  });
              "
              x-on:play-ai-tts.window="
@@ -500,8 +570,21 @@
                         @endforeach
                     </div>
 
+                    <!-- Mid-exam topic selection list -->
+                    <div x-show="$wire.waitingForTopicSelection" class="bg-zinc-950 border border-yellow-500/30 p-6 rounded-xl space-y-4 mb-4">
+                        <span class="text-xs font-bold text-yellow-400 uppercase tracking-widest block">Wählen Sie ein Präsentationsthema:</span>
+                        <div class="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                            @foreach($filteredTopics as $topic)
+                                <button type="button" wire:click="selectTransitionTopic({{ $topic->id }})" 
+                                        class="w-full text-left bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 hover:border-yellow-500/50 p-3 rounded-lg text-sm text-zinc-100 transition-all font-medium">
+                                    {{ $topic->title }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
                     <!-- Live status / interim results -->
-                    <div class="space-y-4">
+                    <div class="space-y-4" x-show="!$wire.waitingForTopicSelection">
                         <div class="flex items-center justify-between">
                             <div class="inline-flex items-center gap-2 bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300"
                                  :class="isListening ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' : (isSpeaking ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' : 'text-zinc-500')">

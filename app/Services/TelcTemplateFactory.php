@@ -10,10 +10,14 @@ class TelcTemplateFactory
     public static function presets(): array
     {
         return [
+            'A1' => self::a1() + ['exam_provider' => 'telc'],
+            'A2' => self::a2() + ['exam_provider' => 'telc'],
             'B1' => self::b1() + ['exam_provider' => 'telc'],
             'B2' => self::b2() + ['exam_provider' => 'telc'],
             'C1' => self::c1() + ['exam_provider' => 'telc'],
             'C2' => self::c2() + ['exam_provider' => 'telc'],
+            'Goethe-A1' => self::a1() + ['title' => 'Goethe Zertifikat A1', 'level' => 'A1', 'exam_provider' => 'goethe'],
+            'Goethe-A2' => self::a2() + ['title' => 'Goethe Zertifikat A2', 'level' => 'A2', 'exam_provider' => 'goethe'],
             'Goethe-B1' => self::b1() + ['title' => 'Goethe Zertifikat B1', 'level' => 'B1', 'exam_provider' => 'goethe'],
             'Goethe-C1' => self::c1() + ['title' => 'Goethe Zertifikat C1', 'level' => 'C1', 'exam_provider' => 'goethe'],
         ];
@@ -25,6 +29,81 @@ class TelcTemplateFactory
     public static function forLevel(string $level): array
     {
         return self::presets()[$level] ?? self::c1();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function a1(): array
+    {
+        return [
+            'title' => 'telc Deutsch A1 (Start Deutsch 1)',
+            'level' => 'A1',
+            'source_pdf' => null,
+            'theme' => self::theme('#f59e0b', '#202020', 'Instrument Sans'),
+            'timings' => [
+                ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 25],
+                ['label' => 'Hoerverstehen', 'minutes' => 20],
+                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 20],
+                ['label' => 'Muendliche Pruefung', 'minutes' => 15],
+            ],
+            'sections' => [
+                self::section('a1-reading-language', 'Leseverstehen und Sprachbausteine', 25, [
+                    self::text('A1-LV1-text', 'Leseverstehen Teil 1', "Lesen Sie die Texte und entscheiden Sie: Ist die Aussage Richtig (+) oder Falsch (-)?"),
+                    ...self::answerElements('A1-LV1-', 1, ['+', '-', '+', '-', '+'], 'true_false', 2, '+,-'),
+                ], self::pages(1, 3)),
+                self::section('a1-listening', 'Hörverstehen', 20, [
+                    self::audio('A1-audio', 'Hörverstehen Audio', ''),
+                    self::text('A1-HV1-text', 'Hörverstehen Teil 1', 'Sie hören fünf kurze Gespräche. Wählen Sie die richtige Antwort (a, b oder c).'),
+                    ...self::answerElements('A1-HV1-', 6, ['a', 'c', 'b', 'a', 'b'], 'multiple_choice', 2, 'a,b,c'),
+                ], self::pages(4, 5)),
+                self::section('a1-writing', 'Schriftlicher Ausdruck', 20, [
+                    self::input('A1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 15),
+                ], self::pages(6, 6)),
+                self::section('a1-speaking', 'Mündliche Prüfung', 15, [
+                    self::speakingElement('A1-SP-1', 'Teil 1: Sich vorstellen', 'Stellen Sie sich vor (Name, Alter, Land, Wohnort, Sprachen, Beruf, Hobby) sowie Buchstabieren & Zahlen.', 5),
+                    self::speakingElement('A1-SP-2', 'Teil 2: Um Informationen bitten', 'Formulieren Sie Fragen zu einem Thema/Wort und antworten Sie darauf.', 5),
+                    self::speakingElement('A1-SP-3', 'Teil 3: Bitten formulieren', 'Formulieren Sie eine Bitte anhand einer Bildkarte und reagieren Sie auf eine Bitte.', 5),
+                ], self::pages(7, 8)),
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function a2(): array
+    {
+        return [
+            'title' => 'telc Deutsch A2',
+            'level' => 'A2',
+            'source_pdf' => null,
+            'theme' => self::theme('#3b82f6', '#202020', 'Instrument Sans'),
+            'timings' => [
+                ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 40],
+                ['label' => 'Hoerverstehen', 'minutes' => 20],
+                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 30],
+                ['label' => 'Muendliche Pruefung', 'minutes' => 15],
+            ],
+            'sections' => [
+                self::section('a2-reading-language', 'Leseverstehen und Sprachbausteine', 40, [
+                    self::text('A2-LV1-text', 'Leseverstehen Teil 1', 'Lesen Sie die Texte und ordnen Sie zu.'),
+                    ...self::answerElements('A2-LV1-', 1, ['a', 'b', 'c', 'a', 'b'], 'multiple_choice', 2, 'a,b,c'),
+                ], self::pages(1, 4)),
+                self::section('a2-listening', 'Hörverstehen', 20, [
+                    self::audio('A2-audio', 'Hörverstehen Audio', ''),
+                    ...self::answerElements('A2-HV1-', 6, ['a', 'b', 'c', 'a', 'b'], 'multiple_choice', 2, 'a,b,c'),
+                ], self::pages(5, 6)),
+                self::section('a2-writing', 'Schriftlicher Ausdruck', 30, [
+                    self::input('A2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 15),
+                ], self::pages(7, 7)),
+                self::section('a2-speaking', 'Mündliche Prüfung', 15, [
+                    self::speakingElement('A2-SP-1', 'Teil 1: Präsentation', 'Sprechen Sie über ein gewähltes Thema.', 5),
+                    self::speakingElement('A2-SP-2', 'Teil 2: Ein Gespräch führen', 'Führen Sie ein alltägliches Gespräch über ein Thema.', 5),
+                    self::speakingElement('A2-SP-3', 'Teil 3: Etwas aushandeln', 'Planen Sie eine gemeinsame Aktivität mit dem KI-Partner.', 5),
+                ], self::pages(8, 9)),
+            ],
+        ];
     }
 
     /**

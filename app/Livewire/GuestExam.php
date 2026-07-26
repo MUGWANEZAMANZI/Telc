@@ -97,20 +97,6 @@ class GuestExam extends Component
             return;
         }
 
-        $this->loadExamCountFromCookie();
-        $this->loadCompletedFromCookie();
-        $this->loadNoRetryFromCookie();
-
-        if ($this->freeExamsCompleted >= 2) {
-            $this->isBlocked = true;
-            $this->hasReachedLimit = true;
-            $this->remainingSections = 0;
-
-            return;
-        }
-
-        $this->applyTierLimit();
-
         if ($templateId) {
             $record = ExamTemplate::query()
                 ->where('is_published', true)
@@ -126,24 +112,37 @@ class GuestExam extends Component
                 }
                 $this->selectedLevel = $record->level;
                 $this->loadTemplate($record);
-
-                return;
             }
         }
 
-        $level = request()->query('level', '');
-        if (in_array($level, ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'], true)) {
-            $this->selectedLevel = $level;
+        if (empty($this->template)) {
+            $level = request()->query('level', '');
+            if (in_array($level, ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'], true)) {
+                $this->selectedLevel = $level;
+            }
+            $this->loadTemplateForLevel();
         }
 
-        $this->loadTemplateForLevel();
+        $this->loadExamCountFromCookie();
+        $this->loadCompletedFromCookie();
+        $this->loadNoRetryFromCookie();
+
+        if ($this->freeExamsCompleted >= 2) {
+            $this->isBlocked = true;
+            $this->hasReachedLimit = true;
+            $this->remainingSections = 0;
+
+            return;
+        }
+
+        $this->applyTierLimit();
         $this->recalculateRemaining();
     }
 
     public function loadTemplate(ExamTemplate $record): void
     {
         $this->selectedTemplateId = $record->id;
-        $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections']);
+        $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'exam_provider']);
         $sections = [];
         foreach ($data['sections'] as $section) {
             $hasSpeaking = false;
@@ -158,8 +157,19 @@ class GuestExam extends Component
             }
         }
         $data['sections'] = $sections;
+        $data['exam_provider'] = $record->exam_provider ?? 'telc';
         $this->template = $data;
-        $this->recalculateRemaining();
+
+        $this->loadExamCountFromCookie();
+
+        if ($this->freeExamsCompleted >= 2) {
+            $this->isBlocked = true;
+            $this->hasReachedLimit = true;
+            $this->remainingSections = 0;
+        } else {
+            $this->isBlocked = false;
+            $this->recalculateRemaining();
+        }
         $this->loadSpeakingTopics();
     }
 
@@ -197,7 +207,8 @@ class GuestExam extends Component
 
     public function loadExamCountFromCookie(): void
     {
-        $raw = request()->cookie('free_exams_completed');
+        $provider = strtolower($this->template['exam_provider'] ?? 'telc');
+        $raw = request()->cookie("free_exams_completed_{$provider}");
         if (is_string($raw) && $raw !== '') {
             $decoded = json_decode($raw, true);
             $this->freeExamsCompleted = is_int($decoded) ? $decoded : 0;
@@ -208,7 +219,8 @@ class GuestExam extends Component
 
     public function saveExamCountToCookie(): void
     {
-        Cookie::queue('free_exams_completed', $this->freeExamsCompleted, 60 * 24 * 365);
+        $provider = strtolower($this->template['exam_provider'] ?? 'telc');
+        Cookie::queue("free_exams_completed_{$provider}", $this->freeExamsCompleted, 60 * 24 * 365);
     }
 
     public function incrementExamCount(): void
@@ -482,6 +494,61 @@ class GuestExam extends Component
                 $this->result = app(ExamGrader::class)->grade($sections, $this->answers);
                 $this->enrichExplanations();
 
+                $writingDetails = [];
+                $allWritingElements = collect($sections)->pluck('elements')->flatten(1)->where('type', 'writing');
+                foreach ($allWritingElements as $element) {
+                    $elId = $element['id'];
+                    $maxPoints = (int) ($element['points'] ?? 48);
+                    $passMark = (int) ceil($maxPoints * 0.6);
+                    $content = (string) ($this->answers[$elId] ?? '');
+                    $feedback = 'Keine Abgabe für den schriftlichen Ausdruck.';
+                    $score = 0;
+
+                    if (! empty(trim($content))) {
+                        try {
+                            $lvl = $this->template['level'] ?? 'C1';
+                            $provider = $this->template['exam_provider'] ?? 'telc';
+                            $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                                ->withSystemInstruction(
+                                    Content::parse(
+                                        "Du bist ein offizieller {$provider} {$lvl} Prüfer für die schriftliche Prüfung. "
+                                        ."Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis {$maxPoints} Punkten zurück."
+                                    )
+                                );
+                            $resp = $model->generateContent(
+                                "Aufsatz:\n{$content}\n\n"
+                                ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                            );
+                            $feedback = $resp->text();
+                            preg_match('/SCORE:\s*(\d+)/i', $feedback, $matches);
+                            if (isset($matches[1])) {
+                                $score = (int) $matches[1];
+                            }
+                        } catch (\Throwable $e) {
+                            $score = (int) ($maxPoints / 2);
+                            $feedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
+                        }
+                    }
+
+                    $writingDetails[] = [
+                        'id' => $elId,
+                        'label' => 'Schriftlicher Ausdruck',
+                        'given' => $content,
+                        'expected' => 'Gemini AI Graded',
+                        'points' => $score,
+                        'max_points' => $maxPoints,
+                        'correct' => $score >= $passMark,
+                        'explanation' => $feedback,
+                    ];
+                }
+
+                if (!empty($writingDetails)) {
+                    $this->result['details'] = array_merge($this->result['details'], $writingDetails);
+                    $this->result['earned'] += array_sum(array_column($writingDetails, 'points'));
+                    $this->result['possible'] += array_sum(array_column($writingDetails, 'max_points'));
+                    $this->result['percentage'] = $this->result['possible'] > 0 ? round(($this->result['earned'] / $this->result['possible']) * 100, 2) : 0;
+                }
+
                 $this->completedSectionIds = [];
                 $this->noRetrySectionIds = [];
                 $this->saveCompletedToCookie();
@@ -557,6 +624,61 @@ class GuestExam extends Component
         );
 
         $this->enrichExplanations();
+
+        $writingDetails = [];
+        $writingElements = collect((array) ($currentSection['elements'] ?? []))->where('type', 'writing');
+        foreach ($writingElements as $element) {
+            $elId = $element['id'];
+            $maxPoints = (int) ($element['points'] ?? 48);
+            $passMark = (int) ceil($maxPoints * 0.6);
+            $content = (string) ($this->answers[$elId] ?? '');
+            $feedback = 'Keine Abgabe für den schriftlichen Ausdruck.';
+            $score = 0;
+
+            if (! empty(trim($content))) {
+                try {
+                    $lvl = $this->template['level'] ?? 'C1';
+                    $provider = $this->template['exam_provider'] ?? 'telc';
+                    $model = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                        ->withSystemInstruction(
+                            Content::parse(
+                                "Du bist ein offizieller {$provider} {$lvl} Prüfer für die schriftliche Prüfung. "
+                                ."Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis {$maxPoints} Punkten zurück."
+                            )
+                        );
+                    $resp = $model->generateContent(
+                        "Aufsatz:\n{$content}\n\n"
+                        ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                    );
+                    $feedback = $resp->text();
+                    preg_match('/SCORE:\s*(\d+)/i', $feedback, $matches);
+                    if (isset($matches[1])) {
+                        $score = (int) $matches[1];
+                    }
+                } catch (\Throwable $e) {
+                    $score = (int) ($maxPoints / 2);
+                    $feedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
+                }
+            }
+
+            $writingDetails[] = [
+                'id' => $elId,
+                'label' => 'Schriftlicher Ausdruck',
+                'given' => $content,
+                'expected' => 'Gemini AI Graded',
+                'points' => $score,
+                'max_points' => $maxPoints,
+                'correct' => $score >= $passMark,
+                'explanation' => $feedback,
+            ];
+        }
+
+        if (!empty($writingDetails)) {
+            $this->result['details'] = array_merge($this->result['details'], $writingDetails);
+            $this->result['earned'] += array_sum(array_column($writingDetails, 'points'));
+            $this->result['possible'] += array_sum(array_column($writingDetails, 'max_points'));
+            $this->result['percentage'] = $this->result['possible'] > 0 ? round(($this->result['earned'] / $this->result['possible']) * 100, 2) : 0;
+        }
 
         if ($isFirstCompletion) {
             $this->completedSectionIds[] = $sectionId;

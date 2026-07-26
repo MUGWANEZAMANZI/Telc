@@ -65,6 +65,10 @@ class VoiceInput extends Component
 
     public string $tierPromptMessage = '';
 
+    public bool $isAiSpeaking = false;
+
+    public bool $waitingForTopicSelection = false;
+
     public function mount(): void
     {
         $this->isGuest = ! auth()->check();
@@ -166,7 +170,7 @@ class VoiceInput extends Component
             }
         }
 
-        if (! $this->activeVoiceTopicId) {
+        if (! $this->hasPresentationInTeil2() && ! $this->activeVoiceTopicId) {
             $this->addError('exam', 'Bitte wählen Sie zuerst ein Thema aus.');
 
             return;
@@ -277,7 +281,7 @@ class VoiceInput extends Component
 
     public function tick(): void
     {
-        if (! $this->timerRunning || $this->examTimer <= 0) {
+        if ($this->isAiSpeaking || ! $this->timerRunning || $this->examTimer <= 0) {
             return;
         }
 
@@ -316,6 +320,12 @@ class VoiceInput extends Component
         }
     }
 
+    public function hasPresentationInTeil2(): bool
+    {
+        return ($this->selectedProvider === 'telc' && $this->selectedLevel === 'B1') ||
+               ($this->selectedProvider === 'goethe' && $this->selectedLevel === 'B1');
+    }
+
     public function advanceTeil(): void
     {
         if ($this->currentTeil < count($this->teilTimings)) {
@@ -323,7 +333,45 @@ class VoiceInput extends Component
             $teil = $this->teilTimings[$this->currentTeil - 1];
             $this->currentTeilLabel = $teil['label'];
             $this->examTimer = $teil['seconds'];
-            $this->timerRunning = true;
+            
+            if ($this->currentTeil === 2 && $this->hasPresentationInTeil2() && !$this->activeVoiceTopicId) {
+                $this->waitingForTopicSelection = true;
+                $this->timerRunning = false;
+            } else {
+                $this->timerRunning = true;
+            }
+        }
+    }
+
+    public function selectTransitionTopic(int $topicId): void
+    {
+        $topic = VoiceTopic::findOrFail($topicId);
+        $this->activeVoiceTopicId = $topic->id;
+        $this->waitingForTopicSelection = false;
+        $this->timerRunning = true;
+
+        $text = "Ich habe mich für das Thema \"{$topic->title}\" entschieden.";
+        $this->chatHistory[] = ['role' => 'user', 'text' => $text];
+        $this->aiResponding = true;
+
+        try {
+            $chat = $this->rebuildChatSession();
+            $response = $chat->sendMessage($text);
+            $aiText = $response->text();
+
+            $cleanText = $this->stripExamCompleteMarker($aiText);
+            $this->chatHistory[] = ['role' => 'model', 'text' => $cleanText];
+
+            $this->detectTeilTransition($aiText);
+            $this->checkExamComplete($aiText);
+
+            if (! $this->examComplete && ! $this->examFinished) {
+                $this->dispatch('playAiTts', text: $cleanText);
+            }
+        } catch (\Throwable $e) {
+            $this->chatHistory[] = ['role' => 'model', 'text' => 'Fehler bei der Themenauswahl: '.$e->getMessage()];
+        } finally {
+            $this->aiResponding = false;
         }
     }
 
@@ -523,8 +571,8 @@ Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt vo
                 ['teil' => 3, 'label' => 'Teil 3 — Etwas aushandeln', 'seconds' => 180],
             ],
             $this->selectedProvider === 'telc' && $this->selectedLevel === 'B1' => [
-                ['teil' => 1, 'label' => 'Teil 1 — Präsentation', 'seconds' => 180],
-                ['teil' => 2, 'label' => 'Teil 2 — Diskussion', 'seconds' => 300],
+                ['teil' => 1, 'label' => 'Teil 1 — Kontaktaufnahme', 'seconds' => 180],
+                ['teil' => 2, 'label' => 'Teil 2 — Gespräch über ein Thema (Präsentation)', 'seconds' => 300],
                 ['teil' => 3, 'label' => 'Teil 3 — Gemeinsam planen', 'seconds' => 300],
             ],
             $this->selectedProvider === 'telc' && $this->selectedLevel === 'B2' => [
