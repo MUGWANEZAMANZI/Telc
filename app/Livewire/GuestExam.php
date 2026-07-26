@@ -495,7 +495,14 @@ class GuestExam extends Component
                 $this->enrichExplanations();
 
                 $writingDetails = [];
-                $allWritingElements = collect($sections)->pluck('elements')->flatten(1)->where('type', 'writing');
+                $allWritingElements = [];
+                foreach ($sections as $section) {
+                    foreach ($section['elements'] ?? [] as $element) {
+                        if (($element['type'] ?? '') === 'writing') {
+                            $allWritingElements[] = $element;
+                        }
+                    }
+                }
                 foreach ($allWritingElements as $element) {
                     $elId = $element['id'];
                     $maxPoints = (int) ($element['points'] ?? 48);
@@ -542,7 +549,7 @@ class GuestExam extends Component
                     ];
                 }
 
-                if (!empty($writingDetails)) {
+                if (! empty($writingDetails)) {
                     $this->result['details'] = array_merge($this->result['details'], $writingDetails);
                     $this->result['earned'] += array_sum(array_column($writingDetails, 'points'));
                     $this->result['possible'] += array_sum(array_column($writingDetails, 'max_points'));
@@ -626,7 +633,12 @@ class GuestExam extends Component
         $this->enrichExplanations();
 
         $writingDetails = [];
-        $writingElements = collect((array) ($currentSection['elements'] ?? []))->where('type', 'writing');
+        $writingElements = [];
+        foreach ($currentSection['elements'] ?? [] as $element) {
+            if (($element['type'] ?? '') === 'writing') {
+                $writingElements[] = $element;
+            }
+        }
         foreach ($writingElements as $element) {
             $elId = $element['id'];
             $maxPoints = (int) ($element['points'] ?? 48);
@@ -673,7 +685,7 @@ class GuestExam extends Component
             ];
         }
 
-        if (!empty($writingDetails)) {
+        if (! empty($writingDetails)) {
             $this->result['details'] = array_merge($this->result['details'], $writingDetails);
             $this->result['earned'] += array_sum(array_column($writingDetails, 'points'));
             $this->result['possible'] += array_sum(array_column($writingDetails, 'max_points'));

@@ -49,7 +49,7 @@ class TelcTemplateFactory
             ],
             'sections' => [
                 self::section('a1-reading-language', 'Leseverstehen und Sprachbausteine', 25, [
-                    self::text('A1-LV1-text', 'Leseverstehen Teil 1', "Lesen Sie die Texte und entscheiden Sie: Ist die Aussage Richtig (+) oder Falsch (-)?"),
+                    self::text('A1-LV1-text', 'Leseverstehen Teil 1', 'Lesen Sie die Texte und entscheiden Sie: Ist die Aussage Richtig (+) oder Falsch (-)?'),
                     ...self::answerElements('A1-LV1-', 1, ['+', '-', '+', '-', '+'], 'true_false', 2, '+,-'),
                 ], self::pages(1, 3)),
                 self::section('a1-listening', 'Hörverstehen', 20, [

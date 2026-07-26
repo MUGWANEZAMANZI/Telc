@@ -333,8 +333,8 @@ class VoiceInput extends Component
             $teil = $this->teilTimings[$this->currentTeil - 1];
             $this->currentTeilLabel = $teil['label'];
             $this->examTimer = $teil['seconds'];
-            
-            if ($this->currentTeil === 2 && $this->hasPresentationInTeil2() && !$this->activeVoiceTopicId) {
+
+            if ($this->currentTeil === 2 && $this->hasPresentationInTeil2() && ! $this->activeVoiceTopicId) {
                 $this->waitingForTopicSelection = true;
                 $this->timerRunning = false;
             } else {
