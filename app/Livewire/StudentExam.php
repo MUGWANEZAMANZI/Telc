@@ -1749,6 +1749,10 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             return;
         }
 
+        if (ExamTemplate::query()->count() >= count(TelcTemplateFactory::presets())) {
+            return;
+        }
+
         foreach (TelcTemplateFactory::presets() as $preset) {
             ExamTemplate::updateOrCreate(
                 ['title' => $preset['title']],

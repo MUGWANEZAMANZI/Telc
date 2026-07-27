@@ -744,6 +744,14 @@ class ExamDashboard extends Component
 
     private function ensurePresets(): void
     {
+        if (app()->runningUnitTests()) {
+            return;
+        }
+
+        if (ExamTemplate::query()->count() >= count(TelcTemplateFactory::presets())) {
+            return;
+        }
+
         foreach (TelcTemplateFactory::presets() as $preset) {
             ExamTemplate::updateOrCreate(
                 ['title' => $preset['title']],

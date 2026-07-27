@@ -28,7 +28,10 @@ class ScheduledEmailMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('info@germansuccess.com', 'GERMAN SUCCESS'),
+            from: new Address(
+                config('mail.mailers.zoho_info.username') ?? config('mail.from.address'),
+                config('mail.from.name') ?? 'GERMAN SUCCESS'
+            ),
             subject: $this->scheduledEmail->subject,
         );
     }

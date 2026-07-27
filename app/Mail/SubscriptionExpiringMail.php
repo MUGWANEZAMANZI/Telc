@@ -35,7 +35,10 @@ class SubscriptionExpiringMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('sales@germansuccess.com', 'GERMAN SUCCESS'),
+            from: new Address(
+                config('mail.mailers.zoho_sales.username') ?? config('mail.from.address'),
+                config('mail.from.name') ?? 'GERMAN SUCCESS'
+            ),
             subject: "Ihr GERMAN SUCCESS Abo läuft in {$this->daysRemaining} Tagen ab!",
         );
     }

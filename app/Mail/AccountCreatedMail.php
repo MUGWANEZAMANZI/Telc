@@ -24,7 +24,10 @@ class AccountCreatedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('info@germansuccess.com', 'GERMAN SUCCESS'),
+            from: new Address(
+                config('mail.mailers.zoho_info.username') ?? config('mail.from.address'),
+                config('mail.from.name') ?? 'GERMAN SUCCESS'
+            ),
             subject: 'Willkommen bei GERMAN SUCCESS - Ihr Account wurde erstellt',
         );
     }
