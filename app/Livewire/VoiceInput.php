@@ -186,7 +186,7 @@ class VoiceInput extends Component
         $systemPrompt .= "- Adaptive Questioning: If the user provides an excellent answer, dynamically shift your next question to be slightly more complex. If they struggle, gently scale back the grammatical complexity of your next prompt.\n";
         $systemPrompt .= '- Do not output any meta-text, markers or formatting other than plain German speech (and [EXAM_COMPLETE] when the exam is finished).';
 
-        $chat = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+        $chat = Gemini::generativeModel(model: 'gemini-3.5-flash')
             ->withSystemInstruction(Content::parse($systemPrompt))
             ->startChat();
 
@@ -263,7 +263,7 @@ class VoiceInput extends Component
         $transcript = trim($transcript);
         if ($transcript !== '') {
             try {
-                $response = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+                $response = Gemini::generativeModel(model: 'gemini-3.5-flash')
                     ->generateContent("Füge dem folgenden gesprochenen deutschen Text korrekte Satzzeichen (Punkt, Komma, Fragezeichen, etc.) hinzu. Antworte NUR mit dem korrigierten Text, ändere keine Wörter oder Bedeutungen. Text: \"{$transcript}\"");
                 $punctuated = trim($response->text());
                 $punctuated = trim($punctuated, '"\'');
@@ -425,7 +425,7 @@ Gib das Ergebnis EXAKT im folgenden JSON-Format zurück (KEIN Markdown, KEIN Cod
 
 Bewerte jeden Teil einzeln. Gib Muster-Sätze für Korrekturen. Das Ergebnis muss valides JSON sein.";
 
-            $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+            $result = Gemini::generativeModel(model: 'gemini-3.5-flash')
                 ->withSystemInstruction(
                     Content::parse('Du bist ein präziser deutscher Prüfer. Antworte NUR mit validem JSON. Keine Erklärungen vor oder nach dem JSON.')
                 )
@@ -487,7 +487,7 @@ Protokoll:
 
 Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt von der Bewertung.";
 
-            $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+            $result = Gemini::generativeModel(model: 'gemini-3.5-flash')
                 ->generateContent($fallbackPrompt);
 
             $text = $result->text();
@@ -647,7 +647,7 @@ Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt vo
         $systemPrompt .= "- Adaptive Questioning: If the user provides an excellent answer, dynamically shift your next question to be slightly more complex. If they struggle, gently scale back the grammatical complexity of your next prompt.\n";
         $systemPrompt .= '- Do not output any meta-text, markers or formatting other than plain German speech (and [EXAM_COMPLETE] when the exam is finished).';
 
-        $model = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+        $model = Gemini::generativeModel(model: 'gemini-3.5-flash')
             ->withSystemInstruction(Content::parse($systemPrompt));
 
         /** @var array<Content> $history */
