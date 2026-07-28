@@ -401,7 +401,30 @@
             }
 
             .doc-timer-bar .save-indicator {
-                display: none !important; /* Hide save logs on small timer bar */
+            - Verified that the dashboard endpoint (`/dashboard`) compiles and loads successfully with no syntax errors.
+
+---
+
+## Student Preview Layout & Model Configuration Updates
+
+### 1. Undefined Variable `$attempts` Resolution
+* **Diagnosis**: When included statically inside the admin dashboard, variables compiled in `StudentExam.php`'s custom `render()` method (like `$attempts`) are not set, causing an `Undefined variable` error.
+* **Fix**: Added a safety check `isset($attempts)` to the conditional block in [student-exam.blade.php](file:///c:/Users/USER%201/Desktop/Proposals/Telc/Telc/resources/views/livewire/student-exam.blade.php) around line 749.
+
+### 2. Student Preview Layout Refactoring
+* **Diagnosis**: The student view preview inside the admin panel dashboard was cluttered, rendering administrative metrics cards, the system guide banner, and the manual PayPal approvals table at the bottom of the page.
+* **Fix**: Wrapped the banner, metrics cards, and payments table in `exam-dashboard.blade.php` with `@if ($mode !== 'student')` conditions to hide them in preview mode and keep the view clean.
+
+### 3. Dynamic Template Layout Fallback
+* **Diagnosis**: Non-premium levels (like A1) or templates without a PDF (`source_pdf => null`) were forced to load the split-pane layout (`paper-exam-shell`) which requires a PDF. This left the view blank/empty with no questions rendered.
+* **Fix**:
+  * Modified the condition in `student-exam.blade.php` to use the premium document layout if the template has no source PDF (`empty($template['source_pdf'])`).
+  * Added an `exists()` check to fallback to the generic dynamic sections layout (`partials.premium.dynamic-sections`) if the specific level blade file does not exist.
+
+### 4. Gemini Model Migration to `gemini-3.5-flash-lite`
+* **Diagnosis**: The legacy model `gemini-2.5-flash` was deprecated and no longer available to new users, and `gemini-3.5-flash` experienced high-demand quota limits.
+* **Fix**: Updated all 31 model references across the PHP classes to `gemini-3.5-flash-lite` to ensure maximum stability and cost efficiency.
+ */
             }
 
             .doc-timer-bar .submit-button {
@@ -531,6 +554,12 @@
                     @foreach (['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as $lvl)
                         <button type="button" wire:click="selectLevel('{{ $lvl }}')" style="border: none; padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background-color: {{ $selectedLevel === $lvl ? '#eab308' : '#f3f4f6' }}; color: {{ $selectedLevel === $lvl ? '#09090b' : '#4b5563' }};">{{ $lvl }}</button>
                     @endforeach
+                </div>
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;">
+                    <strong style="font-size: 0.8rem; text-transform: uppercase; color: #666666; letter-spacing: 0.05em; margin-right: 0.5rem;">Anbieter filtern:</strong>
+                    <button type="button" wire:click="selectProvider('')" style="border: none; padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background-color: {{ $selectedProvider === '' ? '#1a1a1a' : '#f3f4f6' }}; color: {{ $selectedProvider === '' ? '#ffffff' : '#4b5563' }};">Alle</button>
+                    <button type="button" wire:click="selectProvider('telc')" style="border: none; padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background-color: {{ $selectedProvider === 'telc' ? '#eab308' : '#f3f4f6' }}; color: {{ $selectedProvider === 'telc' ? '#09090b' : '#4b5563' }};">telc</button>
+                    <button type="button" wire:click="selectProvider('goethe')" style="border: none; padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background-color: {{ $selectedProvider === 'goethe' ? '#eab308' : '#f3f4f6' }}; color: {{ $selectedProvider === 'goethe' ? '#09090b' : '#4b5563' }};">Goethe</button>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <strong style="font-size: 0.8rem; text-transform: uppercase; color: #666666; letter-spacing: 0.05em; margin-right: 0.5rem;">Sortieren nach:</strong>

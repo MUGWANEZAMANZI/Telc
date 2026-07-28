@@ -70,6 +70,8 @@ class StudentExam extends Component
 
     public bool $filterFree = false;
 
+    public string $selectedProvider = '';
+
     /** @var array<int, string> */
     public array $aiGeneratedTopics = [];
 
@@ -84,6 +86,11 @@ class StudentExam extends Component
     public function selectSort(string $sort): void
     {
         $this->sortBy = $sort;
+    }
+
+    public function selectProvider(string $provider): void
+    {
+        $this->selectedProvider = $provider;
     }
 
     public function startEnroll(int $id): void
@@ -375,6 +382,10 @@ class StudentExam extends Component
 
         if ($this->selectedLevel !== '') {
             $query->where('level', $this->selectedLevel);
+        }
+
+        if ($this->selectedProvider !== '') {
+            $query->where('exam_provider', $this->selectedProvider);
         }
 
         if ($this->sortBy === 'title_asc') {
