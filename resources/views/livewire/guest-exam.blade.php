@@ -162,6 +162,60 @@
         .speaking-locked svg { width: 48px; height: 48px; margin: 0 auto 1rem; color: #555; }
 
         @keyframes slideUp { from { opacity:0;transform:translateY(1rem); } to { opacity:1;transform:translateY(0); } }
+
+        /* Vertical sidebar tab on the document */
+        .document-section-tab {
+            position: absolute;
+            right: -3.2rem;
+            top: 5rem;
+            background: #e5e7eb;
+            border: 1px solid #d1d5db;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            padding: 1.25rem 0.45rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            user-select: none;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.04);
+            z-index: 10;
+        }
+
+        .document-section-tab .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 6px);
+            gap: 2px;
+            opacity: 0.6;
+        }
+
+        .document-section-tab .icon-grid div {
+            width: 6px;
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 1px;
+        }
+
+        .document-section-tab .icon-grid div:nth-child(4) {
+            background: transparent;
+        }
+
+        .document-section-tab .tab-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #374151;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        @media (max-width: 1024px) {
+            .document-section-tab {
+                display: none !important;
+            }
+        }
     </style>
 
     {{-- Free sections notification (always visible during exam) --}}
@@ -350,14 +404,48 @@
 
                     {{-- Section content --}}
                     @foreach ($currentSection['elements'] as $element)
-                        @php $elId = $element['id'] ?? ('el_' . $loop->index); @endphp
+                        @php
+                            $elId = $element['id'] ?? ('el_' . $loop->index);
+                            $elementLabel = $element['label'] ?? '';
+                            $tabLabel = '';
+                            if (str_contains(strtolower($elementLabel), 'leseverstehen')) {
+                                $tabLabel = 'Leseverstehen';
+                            } elseif (str_contains(strtolower($elementLabel), 'sprachbausteine')) {
+                                $tabLabel = 'Sprachbausteine';
+                            } elseif (str_contains(strtolower($elementLabel), 'hörverstehen') || str_contains(strtolower($elementLabel), 'hoerverstehen')) {
+                                $tabLabel = 'Hörverstehen';
+                            } elseif (str_contains(strtolower($elementLabel), 'schriftlicher') || str_contains(strtolower($elementLabel), 'schreiben')) {
+                                $tabLabel = 'Schreiben';
+                            } elseif (str_contains(strtolower($elementLabel), 'mündliche') || str_contains(strtolower($elementLabel), 'sprechen')) {
+                                $tabLabel = 'Sprechen';
+                            }
+                            $isTaskInput = preg_match('/^Aufgabe\s+\d+/i', $elementLabel);
+                        @endphp
+
+                        @if ($elementLabel && !$isTaskInput)
+                            <div style="position: relative; margin-top: 2rem; margin-bottom: 1.5rem;">
+                                @if ($tabLabel)
+                                    <div class="document-section-tab" style="top: 0.5rem;">
+                                        <div class="icon-grid">
+                                            <div></div><div></div>
+                                            <div></div><div></div>
+                                        </div>
+                                        <div class="tab-text">{{ $tabLabel }}</div>
+                                    </div>
+                                @endif
+
+                                <h3 class="section-heading" style="margin-bottom: 0.5rem; font-family: var(--font-serif); font-size: 1.6rem; font-weight: 600; color: #1a1a1a;">{{ $elementLabel }}</h3>
+                                @if ($element['instruction'] ?? null)
+                                    <div class="c1-instructions" style="margin-bottom: 1.5rem; font-style: italic; color: #555; background: #fafafa; border-left: 3px solid #1a1a1a; padding: 0.75rem 1rem; font-size: 0.9rem; line-height: 1.6;">
+                                        {!! nl2br(e($element['instruction'])) !!}
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
 
                         {{-- TEXT --}}
                         @if (($element['type'] ?? '') === 'text')
-                            @if ($element['label'] ?? null)
-                                <h4 style="font-weight:700;margin-bottom:0.5rem;">{{ $element['label'] }}</h4>
-                            @endif
-                            <article class="c1-passage">{!! nl2br(e($element['content'] ?? '')) !!}</article>
+                            <article class="c1-passage" style="background: #fdfdfd; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">{!! nl2br(e($element['content'] ?? '')) !!}</article>
 
                         {{-- IMAGE --}}
                         @elseif (($element['type'] ?? '') === 'image')
@@ -369,10 +457,7 @@
                                 $gaps = $this->gapsFor($element);
                                 $parts = preg_split('/--(\d+)--/', $element['content'] ?? '', -1, PREG_SPLIT_DELIM_CAPTURE);
                             @endphp
-                            @if ($element['label'] ?? null)
-                                <h4 style="font-weight:700;margin-bottom:0.5rem;">{{ $element['label'] }}</h4>
-                            @endif
-                            <div class="inline-gap-text">
+                            <div class="inline-gap-text" style="background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 1.5rem; margin-bottom: 1.5rem; line-height: 2.2;">
                                 @foreach ($parts as $i => $part)
                                     @if ($i % 2 === 0)
                                         <span>{!! nl2br(e($part)) !!}</span>

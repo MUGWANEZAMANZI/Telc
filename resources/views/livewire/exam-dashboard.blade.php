@@ -25,39 +25,41 @@
 
     <div class="telc-status" x-show="saved" x-cloak>Template saved.</div>
 
-    {{-- Rich System Guide Banner for Admins & Owners --}}
-    <div class="telc-banner no-print" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; color: #f8fafc; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: 'Plus Jakarta Sans', sans-serif; text-align: left;">
-        <div style="display: flex; align-items: center; gap: 1.25rem;">
-            <div style="background: rgba(216, 35, 42, 0.15); border: 1.5px solid #d8232a; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #d8232a; flex-shrink: 0;">🛠️</div>
-            <div>
-                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #f8fafc;">System-Benutzerhandbuch</h3>
-                <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Erhalten Sie detaillierte Anleitungen zur Erstellung von Prüfungen, Upload-Limits (bis zu 100MB Audio), PayPal/Revolut Abrechnungsprozessen und Lückentext-Syntaktik.</p>
+    @if ($mode !== 'student')
+        {{-- Rich System Guide Banner for Admins & Owners --}}
+        <div class="telc-banner no-print" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; color: #f8fafc; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: 'Plus Jakarta Sans', sans-serif; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                <div style="background: rgba(216, 35, 42, 0.15); border: 1.5px solid #d8232a; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #d8232a; flex-shrink: 0;">🛠️</div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #f8fafc;">System-Benutzerhandbuch</h3>
+                    <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Erhalten Sie detaillierte Anleitungen zur Erstellung von Prüfungen, Upload-Limits (bis zu 100MB Audio), PayPal/Revolut Abrechnungsprozessen und Lückentext-Syntaktik.</p>
+                </div>
             </div>
+            <a href="{{ route('admin.guide') }}" class="telc-button" style="background: #d8232a; border-color: #d8232a; color: #ffffff; text-decoration: none; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 700; border-radius: 6px; flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 4px 10px rgba(216, 35, 42, 0.25);">
+                <span>Handbuch öffnen</span>
+                <span>→</span>
+            </a>
         </div>
-        <a href="{{ route('admin.guide') }}" class="telc-button" style="background: #d8232a; border-color: #d8232a; color: #ffffff; text-decoration: none; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 700; border-radius: 6px; flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 4px 10px rgba(216, 35, 42, 0.25);">
-            <span>Handbuch öffnen</span>
-            <span>→</span>
-        </a>
-    </div>
 
-    <section class="admin-metrics">
-        <article>
-            <span>Registered Students</span>
-            <strong>{{ $metrics['students'] }}</strong>
-        </article>
-        <article>
-            <span>Logged In Today</span>
-            <strong>{{ $metrics['daily_logged_in'] }}</strong>
-        </article>
-        <article>
-            <span>Total Attempts</span>
-            <strong>{{ $metrics['attempts'] }}</strong>
-        </article>
-        <article>
-            <span>Average Score</span>
-            <strong>{{ $metrics['average_score'] }}%</strong>
-        </article>
-    </section>
+        <section class="admin-metrics">
+            <article>
+                <span>Registered Students</span>
+                <strong>{{ $metrics['students'] }}</strong>
+            </article>
+            <article>
+                <span>Logged In Today</span>
+                <strong>{{ $metrics['daily_logged_in'] }}</strong>
+            </article>
+            <article>
+                <span>Total Attempts</span>
+                <strong>{{ $metrics['attempts'] }}</strong>
+            </article>
+            <article>
+                <span>Average Score</span>
+                <strong>{{ $metrics['average_score'] }}%</strong>
+            </article>
+        </section>
+    @endif
 
     @if ($mode === 'builder')
         <div class="telc-admin-grid">
@@ -496,67 +498,69 @@
         </div>
     @endif
 
-    {{-- Manual Payment Approvals List --}}
-    <div class="telc-panel" style="margin-top: 2rem; background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 1.5rem;">
-        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1.25rem; color: #1a1a1a;">Freizugebende PayPal-Zahlungen</h3>
-        
-        @if (session()->has('payment_message'))
-            <div style="background: #e6f4ea; color: #137333; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; margin-bottom: 1rem; font-size: 0.85rem;">
-                {{ session('payment_message') }}
-            </div>
-        @endif
+    @if ($mode !== 'student')
+        {{-- Manual Payment Approvals List --}}
+        <div class="telc-panel" style="margin-top: 2rem; background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 1.5rem;">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1.25rem; color: #1a1a1a;">Freizugebende PayPal-Zahlungen</h3>
+            
+            @if (session()->has('payment_message'))
+                <div style="background: #e6f4ea; color: #137333; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; margin-bottom: 1rem; font-size: 0.85rem;">
+                    {{ session('payment_message') }}
+                </div>
+            @endif
 
-        <div class="admin-table-wrap">
-            <table class="admin-table">
-                <thead>
-                    <tr style="text-align: left; background: #fafafa; border-bottom: 2px solid #edf0f4;">
-                        <th style="padding: 0.75rem;">Teilnehmer</th>
-                        <th style="padding: 0.75rem;">Prüfung</th>
-                        <th style="padding: 0.75rem;">Transaktions-ID</th>
-                        <th style="padding: 0.75rem;">Beleg</th>
-                        <th style="padding: 0.75rem; text-align: right;">Aktionen</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($pendingPayments as $payment)
-                        <tr style="border-bottom: 1px solid #edf0f4;">
-                            <td style="padding: 0.75rem;">
-                                <strong>{{ $payment->user->name }}</strong><br>
-                                <small style="color: #666666;">{{ $payment->user->email }}</small>
-                            </td>
-                            <td style="padding: 0.75rem;">
-                                {{ $payment->examTemplate->title ?? 'TELC' }} ({{ $payment->examTemplate->level }})
-                            </td>
-                            <td style="padding: 0.75rem;">
-                                <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px;">{{ $payment->transaction_id }}</code>
-                            </td>
-                            <td style="padding: 0.75rem;">
-                                @if ($payment->receipt_path)
-                                    <a href="{{ Storage::url($payment->receipt_path) }}" target="_blank" style="color: #d8232a; font-weight: 700; text-decoration: underline;">
-                                        Beleg öffnen
-                                    </a>
-                                @else
-                                    <span style="color: #666666; font-style: italic;">Kein Bild</span>
-                                @endif
-                            </td>
-                            <td style="padding: 0.75rem; text-align: right;">
-                                <button type="button" wire:click="approvePayment({{ $payment->id }})" class="telc-button primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; margin-right: 0.25rem;">
-                                    Freigeben
-                                </button>
-                                <button type="button" wire:click="rejectPayment({{ $payment->id }})" class="telc-button" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; border-color: #d8232a; color: #d8232a;">
-                                    Ablehnen
-                                </button>
-                            </td>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr style="text-align: left; background: #fafafa; border-bottom: 2px solid #edf0f4;">
+                            <th style="padding: 0.75rem;">Teilnehmer</th>
+                            <th style="padding: 0.75rem;">Prüfung</th>
+                            <th style="padding: 0.75rem;">Transaktions-ID</th>
+                            <th style="padding: 0.75rem;">Beleg</th>
+                            <th style="padding: 0.75rem; text-align: right;">Aktionen</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" style="padding: 1.5rem; text-align: center; color: #666666; font-style: italic;">
-                                Keine ausstehenden Freigabeanträge gefunden.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse ($pendingPayments as $payment)
+                            <tr style="border-bottom: 1px solid #edf0f4;">
+                                <td style="padding: 0.75rem;">
+                                    <strong>{{ $payment->user->name }}</strong><br>
+                                    <small style="color: #666666;">{{ $payment->user->email }}</small>
+                                </td>
+                                <td style="padding: 0.75rem;">
+                                    {{ $payment->examTemplate->title ?? 'TELC' }} ({{ $payment->examTemplate->level }})
+                                </td>
+                                <td style="padding: 0.75rem;">
+                                    <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px;">{{ $payment->transaction_id }}</code>
+                                </td>
+                                <td style="padding: 0.75rem;">
+                                    @if ($payment->receipt_path)
+                                        <a href="{{ Storage::url($payment->receipt_path) }}" target="_blank" style="color: #d8232a; font-weight: 700; text-decoration: underline;">
+                                            Beleg öffnen
+                                        </a>
+                                    @else
+                                        <span style="color: #666666; font-style: italic;">Kein Bild</span>
+                                    @endif
+                                </td>
+                                <td style="padding: 0.75rem; text-align: right;">
+                                    <button type="button" wire:click="approvePayment({{ $payment->id }})" class="telc-button primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; margin-right: 0.25rem;">
+                                        Freigeben
+                                    </button>
+                                    <button type="button" wire:click="rejectPayment({{ $payment->id }})" class="telc-button" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; border-color: #d8232a; color: #d8232a;">
+                                        Ablehnen
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="padding: 1.5rem; text-align: center; color: #666666; font-style: italic;">
+                                    Keine ausstehenden Freigabeanträge gefunden.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    @endif
 </div>

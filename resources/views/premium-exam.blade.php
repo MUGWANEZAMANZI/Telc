@@ -527,6 +527,60 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(216, 35, 42, 0.25);
         }
+
+        /* Vertical sidebar tab on the document */
+        .document-section-tab {
+            position: absolute;
+            right: -3.2rem;
+            top: 5rem;
+            background: #e5e7eb;
+            border: 1px solid #d1d5db;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            padding: 1.25rem 0.45rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            user-select: none;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.04);
+            z-index: 10;
+        }
+
+        .document-section-tab .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 6px);
+            gap: 2px;
+            opacity: 0.6;
+        }
+
+        .document-section-tab .icon-grid div {
+            width: 6px;
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 1px;
+        }
+
+        .document-section-tab .icon-grid div:nth-child(4) {
+            background: transparent;
+        }
+
+        .document-section-tab .tab-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #374151;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        @media (max-width: 1024px) {
+            .document-section-tab {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>

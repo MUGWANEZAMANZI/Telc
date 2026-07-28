@@ -19,7 +19,7 @@ class AnswerExplainer
         }
 
         try {
-            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+            $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
                 ->withSystemInstruction(
                     Content::parse(
                         'Du bist ein TELC-Prüfungsvorbereitungs-Tutor für Deutsch. '
@@ -80,7 +80,7 @@ class AnswerExplainer
             .json_encode($items, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
         try {
-            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+            $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
                 ->withSystemInstruction(
                     Content::parse(
                         'Du bist ein TELC-Prüfungsvorbereitungs-Tutor für Deutsch. '

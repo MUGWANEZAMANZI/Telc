@@ -49,7 +49,14 @@
 </style>
 
                 {{-- ==================== LESEVERSTEHEN TEIL 1 ==================== --}}
-                <section class="exam-section">
+                <section class="exam-section" style="position: relative;">
+                    <div class="document-section-tab" style="top: 2rem;">
+                        <div class="icon-grid">
+                            <div></div><div></div>
+                            <div></div><div></div>
+                        </div>
+                        <div class="tab-text">Leseverstehen</div>
+                    </div>
                     <div class="section-label">Leseverstehen, Teil 1</div>
                     <h2 class="section-heading">Textrekonstruktion</h2>
                     <div class="c1-instructions">
@@ -176,7 +183,14 @@
                 <hr class="c1-divider">
 
                 {{-- ==================== LESEVERSTEHEN TEIL 2 ==================== --}}
-                <section class="exam-section">
+                <section class="exam-section" style="position: relative;">
+                    <div class="document-section-tab" style="top: 2rem;">
+                        <div class="icon-grid">
+                            <div></div><div></div>
+                            <div></div><div></div>
+                        </div>
+                        <div class="tab-text">Leseverstehen</div>
+                    </div>
                     <div class="section-label">Leseverstehen, Teil 2</div>
                     <h2 class="section-heading">Selektives Verstehen</h2>
                     <div class="c1-instructions">
@@ -223,7 +237,14 @@
                 <hr class="c1-divider">
 
                 {{-- ==================== LESEVERSTEHEN TEIL 3 ==================== --}}
-                <section class="exam-section">
+                <section class="exam-section" style="position: relative;">
+                    <div class="document-section-tab" style="top: 2rem;">
+                        <div class="icon-grid">
+                            <div></div><div></div>
+                            <div></div><div></div>
+                        </div>
+                        <div class="tab-text">Leseverstehen</div>
+                    </div>
                     <div class="section-label">Leseverstehen, Teil 3</div>
                     <h2 class="section-heading">Detailverstehen</h2>
                     <div class="c1-instructions">
@@ -306,7 +327,14 @@
                 <hr class="c1-divider">
 
                 {{-- ==================== SPRACHBAUSTEINE ==================== --}}
-                <section class="exam-section">
+                <section class="exam-section" style="position: relative;">
+                    <div class="document-section-tab" style="top: 2rem;">
+                        <div class="icon-grid">
+                            <div></div><div></div>
+                            <div></div><div></div>
+                        </div>
+                        <div class="tab-text">Sprachbausteine</div>
+                    </div>
                     <div class="section-label">Sprachbausteine</div>
                     <h2 class="section-heading">Grammatik und Lexik</h2>
                     <div class="c1-instructions">
@@ -435,7 +463,14 @@
                 <hr class="c1-divider">
 
                 {{-- ==================== HÖRVERSTEHEN ==================== --}}
-                <section class="exam-section">
+                <section class="exam-section" style="position: relative;">
+                    <div class="document-section-tab" style="top: 2rem;">
+                        <div class="icon-grid">
+                            <div></div><div></div>
+                            <div></div><div></div>
+                        </div>
+                        <div class="tab-text">Hörverstehen</div>
+                    </div>
                     <div class="section-label">Hörverstehen</div>
                     <h2 class="section-heading">Audio-Auswertung</h2>
                     <div class="c1-instructions">
@@ -553,7 +588,14 @@
                 <hr class="c1-divider">
 
                 {{-- ==================== SCHRIFTLICHER AUSDRUCK ==================== --}}
-                <section class="exam-section" x-data="{ thema: 1 }">
+                <section class="exam-section" style="position: relative;">
+                    <div class="document-section-tab" style="top: 2rem;">
+                        <div class="icon-grid">
+                            <div></div><div></div>
+                            <div></div><div></div>
+                        </div>
+                        <div class="tab-text">Schreiben</div>
+                    </div>
                     <div class="section-label">Schriftlicher Ausdruck</div>
                     <h2 class="section-heading">Stellungnahme</h2>
                     <div class="c1-instructions">
@@ -594,7 +636,14 @@
                     @endif
                 </section>
 
-                <section class="exam-section">
+                <section class="exam-section" style="position: relative;">
+                    <div class="document-section-tab" style="top: 2rem;">
+                        <div class="icon-grid">
+                            <div></div><div></div>
+                            <div></div><div></div>
+                        </div>
+                        <div class="tab-text">Sprechen</div>
+                    </div>
                     <div class="section-label">Mündliche Prüfung</div>
                     <h2 class="section-heading">Mündlicher Ausdruck — Interaktive Prüfungssimulation (48 Punkte)</h2>
                     <div class="c1-instructions">

@@ -509,7 +509,7 @@ class ExamDashboard extends Component
 
             $prompt = "Schreibe einen gut strukturierten Vortrag (Einleitung, Hauptteil, Eigene Meinung, Schluss/Fazit) zum Thema: \"{$unchosenTopic}\". Der Vortrag soll klar und verständlich sein, mit einer deutlichen Argumentationslinie.";
 
-            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+            $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
                 ->withSystemInstruction(Content::parse('Du bist ein TELC-Prüfungskandidat, der einen Vortrag hält. Sprich den Lernenden direkt an.'))
                 ->generateContent($prompt);
 
@@ -567,7 +567,7 @@ class ExamDashboard extends Component
         if (str_ends_with($elementId, '-SP-1a')) {
             try {
                 $levelLabel = "TELC-{$level}";
-                $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
                     ->withSystemInstruction(
                         Content::parse(
                             "Du bist ein offizieller {$levelLabel}-Prüfer. "
@@ -618,7 +618,7 @@ class ExamDashboard extends Component
         if (str_ends_with($elementId, '-SP-1b')) {
             try {
                 $levelLabel = "TELC-{$level}";
-                $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
                     ->withSystemInstruction(
                         Content::parse(
                             "Du bist ein offizieller {$levelLabel}-Prüfer. "
@@ -677,7 +677,7 @@ class ExamDashboard extends Component
 
         try {
             $levelLabel = "TELC-{$level}";
-            $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+            $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
                 ->withSystemInstruction(
                     Content::parse(
                         "Du bist ein {$levelLabel}-Prüfer für die mündliche Prüfung. "
@@ -745,10 +745,6 @@ class ExamDashboard extends Component
     private function ensurePresets(): void
     {
         if (app()->runningUnitTests()) {
-            return;
-        }
-
-        if (ExamTemplate::query()->count() >= count(TelcTemplateFactory::presets())) {
             return;
         }
 
@@ -840,7 +836,7 @@ class ExamDashboard extends Component
             $level = $this->template['level'] ?? 'C1';
             $provider = $this->template['exam_provider'] ?? 'telc';
             try {
-                $result = Gemini::generativeModel(model: 'gemini-2.5-flash')
+                $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
                     ->generateContent(
                         "Generiere zwei verschiedene, niveauangemessene und typische Sprechthemen für eine mündliche {$provider} {$level} Prüfung.\n"
                         ."Antworte NUR im folgenden JSON-Format:\n"

@@ -23,12 +23,50 @@
     @elseif ($isSpeaking)
         @include('partials.premium.speaking-flow')
     @else
-        <section class="c1-section" data-section-idx="{{ $sectionIdx }}">
+        <section class="c1-section" data-section-idx="{{ $sectionIdx }}" style="position: relative;">
             <div class="section-label">{{ $section['title'] ?? ('Teil ' . ($sectionIdx + 1)) }}</div>
             @foreach ($section['elements'] ?? [] as $element)
-                @php $elId = $element['id'] ?? ('el_' . $sectionIdx . '_' . $loop->index); @endphp
+                @php
+                    $elId = $element['id'] ?? ('el_' . $sectionIdx . '_' . $loop->index);
+                    $elementLabel = $element['label'] ?? '';
+                    $tabLabel = '';
+                    if (str_contains(strtolower($elementLabel), 'leseverstehen')) {
+                        $tabLabel = 'Leseverstehen';
+                    } elseif (str_contains(strtolower($elementLabel), 'sprachbausteine')) {
+                        $tabLabel = 'Sprachbausteine';
+                    } elseif (str_contains(strtolower($elementLabel), 'hörverstehen') || str_contains(strtolower($elementLabel), 'hoerverstehen')) {
+                        $tabLabel = 'Hörverstehen';
+                    } elseif (str_contains(strtolower($elementLabel), 'schriftlicher') || str_contains(strtolower($elementLabel), 'schreiben')) {
+                        $tabLabel = 'Schreiben';
+                    } elseif (str_contains(strtolower($elementLabel), 'mündliche') || str_contains(strtolower($elementLabel), 'sprechen')) {
+                        $tabLabel = 'Sprechen';
+                    }
+                    $isTaskInput = preg_match('/^Aufgabe\s+\d+/i', $elementLabel);
+                @endphp
+
+                @if ($elementLabel && !$isTaskInput)
+                    <div style="position: relative; margin-top: 2rem; margin-bottom: 1.5rem;">
+                        @if ($tabLabel)
+                            <div class="document-section-tab" style="top: 0.5rem;">
+                                <div class="icon-grid">
+                                    <div></div><div></div>
+                                    <div></div><div></div>
+                                </div>
+                                <div class="tab-text">{{ $tabLabel }}</div>
+                            </div>
+                        @endif
+
+                        <h3 class="section-heading" style="margin-bottom: 0.5rem; font-family: var(--font-serif); font-size: 1.6rem; font-weight: 600; color: #1a1a1a;">{{ $elementLabel }}</h3>
+                        @if ($element['instruction'] ?? null)
+                            <div class="c1-instructions" style="margin-bottom: 1.5rem; font-style: italic; color: #555; background: #fafafa; border-left: 3px solid #1a1a1a; padding: 0.75rem 1rem; font-size: 0.9rem; line-height: 1.6;">
+                                {!! nl2br(e($element['instruction'])) !!}
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
                 @if (($element['type'] ?? '') === 'text')
-                    <article class="c1-passage">
+                    <article class="c1-passage" style="background: #fdfdfd; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">
                         {!! nl2br(e($element['content'] ?? '')) !!}
                     </article>
                 @elseif (in_array($element['type'] ?? '', ['inline_gap', 'fill_blank']))
@@ -39,7 +77,7 @@
                         @php $gapCount = count($gapMatches[0]); @endphp
                         @php $parts = preg_split('/--\d+--/', $element['content'] ?? ''); @endphp
                         @if (count($parts) > 0)
-                            <p class="cloze-text">
+                            <p class="cloze-text" style="background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 1.5rem; margin-bottom: 1.5rem; line-height: 2.2;">
                                 @foreach ($parts as $partIdx => $part)
                                     {!! nl2br(e($part)) !!}
                                     @if ($partIdx < $gapCount)

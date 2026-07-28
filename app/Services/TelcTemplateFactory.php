@@ -124,26 +124,26 @@ class TelcTemplateFactory
             ],
             'sections' => [
                 self::section('b1-reading-language', 'Leseverstehen und Sprachbausteine', 90, [
-                    self::text('B1-LV1-text', 'Leseverstehen Teil 1 — Zuordnung', "Lesen Sie die folgenden Situationen. Für jede Person (Aufgaben 1–5) gibt es drei Angebote (a, b, c). Wählen Sie das passende Angebot.\n\nPerson 1: Frau Meier ist 45 Jahre alt und arbeitet als Sekretärin. Sie möchte sich beruflich verändern und sucht einen Kurs, in dem sie neue Computerkenntnisse lernen kann.\n\nPerson 2: Herr Schmidt, 28 Jahre, ist Student und sucht einen Nebenjob für die Semesterferien. Er hat Erfahrung in der Gastronomie.\n\nPerson 3: Familie Wagner sucht eine geeignete Wohnung in der Stadtmitte. Die Wohnung soll drei Zimmer haben und nicht mehr als 800 Euro kosten.\n\nPerson 4: Die 19-jährige Lisa sucht ein günstiges Fitnessstudio in ihrer Nähe. Sie möchte am liebsten Kurse besuchen.\n\nPerson 5: Herr Braun, 60 Jahre, geht bald in Rente und sucht ein Hobby. Er interessiert sich für Kunst und Kultur."),
+                    self::text('B1-LV1-text', 'Leseverstehen Teil 1', "Person 1: Frau Meier ist 45 Jahre alt und arbeitet als Sekretärin. Sie möchte sich beruflich verändern und sucht einen Kurs, in dem sie neue Computerkenntnisse lernen kann.\n\nPerson 2: Herr Schmidt, 28 Jahre, ist Student und sucht einen Nebenjob für die Semesterferien. Er hat Erfahrung in der Gastronomie.\n\nPerson 3: Familie Wagner sucht eine geeignete Wohnung in der Stadtmitte. Die Wohnung soll drei Zimmer haben und nicht mehr als 800 Euro kosten.\n\nPerson 4: Die 19-jährige Lisa sucht ein günstiges Fitnessstudio in ihrer Nähe. Sie möchte am liebsten Kurse besuchen.\n\nPerson 5: Herr Braun, 60 Jahre, geht bald in Rente und sucht ein Hobby. Er interessiert sich für Kunst und Kultur.", "Lesen Sie die Überschriften a–j und die Texte 1–5. Finden Sie für jeden Text die passende Überschrift. Sie können jede Überschrift nur einmal benutzen. Markieren Sie Ihre Lösungen für die Aufgaben 1–5 auf dem Antwortbogen."),
                     ...self::answerElements('B1-LV1-', 1, ['a', 'b', 'b', 'a', 'a'], 'matching', 2, 'a,b,c'),
-                    self::text('B1-LV2-text', 'Leseverstehen Teil 2 — Multiple Choice', "Lesen Sie den folgenden Text und beantworten Sie die Fragen (Aufgaben 6–10).\n\nImmer mehr Menschen in Deutschland entscheiden sich für ein Leben ohne Auto. Besonders in großen Städten wie Berlin, München oder Hamburg steigt die Zahl der Haushalte, die bewusst auf ein eigenes Auto verzichten. Die Gründe dafür sind vielfältig: Hohe Parkgebühren, Staus im Berufsverkehr und nicht zuletzt der Wunsch, einen Beitrag zum Umweltschutz zu leisten. Viele Menschen nutzen stattdessen öffentliche Verkehrsmittel, Fahrräder oder Carsharing-Angebote. Eine aktuelle Studie zeigt, dass fast 30 Prozent der Stadtbewohner ihr Auto höchstens einmal pro Woche nutzen. Besonders junge Menschen zwischen 18 und 35 Jahren sehen das Auto nicht mehr als Statussymbol an. Für sie ist es wichtiger, flexibel und umweltbewusst zu sein."),
+                    self::text('B1-LV2-text', 'Leseverstehen Teil 2', "Immer mehr Menschen in Deutschland entscheiden sich für ein Leben ohne Auto. Besonders in großen Städten wie Berlin, München oder Hamburg steigt die Zahl der Haushalte, die bewusst auf ein eigenes Auto verzichten. Die Gründe dafür sind vielfältig: Hohe Parkgebühren, Staus im Berufsverkehr und nicht zuletzt der Wunsch, einen Beitrag zum Umweltschutz zu leisten. Viele Menschen nutzen stattdessen öffentliche Verkehrsmittel, Fahrräder oder Carsharing-Angebote. Eine aktuelle Studie zeigt, dass fast 30 Prozent der Stadtbewohner ihr Auto höchstens einmal pro Woche nutzen. Besonders junge Menschen zwischen 18 und 35 Jahren sehen das Auto nicht mehr als Statussymbol an. Für sie ist es wichtiger, flexibel und umweltbewusst zu sein.", "Lesen Sie den Text und die Aufgaben 6–10. Welche Lösung (a, b oder c) ist jeweils richtig? Markieren Sie Ihre Lösungen für die Aufgaben 6–10 auf dem Antwortbogen."),
                     ...self::answerElements('B1-LV2-', 6, ['b', 'c', 'a', 'b', 'c'], 'multiple_choice', 2, 'a,b,c'),
-                    self::text('B1-LV3-text', 'Leseverstehen Teil 3 — Richtig / Falsch', "Lesen Sie die Aussagen (Aufgaben 11–20) zum Thema »Gesundes Essen«. Markieren Sie: + (richtig), – (falsch) oder x (nicht im Text).\n\nImmer mehr Menschen in Deutschland achten auf gesunde Ernährung. Sie kaufen Bioprodukte und verzichten auf Fertiggerichte. In vielen Kantinen gibt es inzwischen auch vegetarische Gerichte. Eine Studie zeigt, dass junge Menschen mehr Obst essen als früher.\n\nAussage 11: Die meisten Menschen essen jeden Tag Bio-Produkte.\nAussage 12: In Kantinen gibt es auch vegetarische Gerichte.\nAussage 13: Fertiggerichte sind billiger als frische Produkte.\nAussage 14: Die Deutschen essen mehr Fleisch als früher.\nAussage 15: Eine Studie zeigt, dass junge Leute mehr Obst essen.\nAussage 16: In vielen Supermärkten gibt es eine Biotheke.\nAussage 17: Restaurants bieten spezielle Diätgerichte an.\nAussage 18: Gemüse ist teurer als Fleisch.\nAussage 19: Viele Menschen kaufen auf dem Wochenmarkt ein.\nAussage 20: Schulkinder bekommen kostenloses Obst."),
+                    self::text('B1-LV3-text', 'Leseverstehen Teil 3', "Immer mehr Menschen in Deutschland achten auf gesunde Ernährung. Sie kaufen Bioprodukte und verzichten auf Fertiggerichte. In vielen Kantinen gibt es inzwischen auch vegetarische Gerichte. Eine Studie zeigt, dass junge Menschen mehr Obst essen als früher.\n\nAussage 11: Die meisten Menschen essen jeden Tag Bio-Produkte.\nAussage 12: In Kantinen gibt es auch vegetarische Gerichte.\nAussage 13: Fertiggerichte sind billiger als frische Produkte.\nAussage 14: Die Deutschen essen mehr Fleisch als früher.\nAussage 15: Eine Studie zeigt, dass junge Leute mehr Obst essen.\nAussage 16: In vielen Supermärkten gibt es eine Biotheke.\nAussage 17: Restaurants bieten spezielle Diätgerichte an.\nAussage 18: Gemüse ist teurer als Fleisch.\nAussage 19: Viele Menschen kaufen auf dem Wochenmarkt ein.\nAussage 20: Schulkinder bekommen kostenloses Obst.", "Lesen Sie die Aussagen (Aufgaben 11–20) zum Thema »Gesundes Essen«. Markieren Sie: + (richtig), – (falsch) oder x (nicht im Text)."),
                     ...self::answerElements('B1-LV3-', 11, ['x', '+', 'x', '-', '+', 'x', 'x', '-', 'x', 'x'], 'true_false', 2, '+,-,x'),
                     self::input('B1-LV3-21', 'Aufgabe 21 — Zusammenfassung', 'multiple_choice', 'b', 2, 'a,b,c'),
-                    self::inlineGap('B1-SB-inline', 'Sprachbausteine (Lückentext)', "Sehr geehrter Herr Meyer,\nich schreibe Ihnen, weil --0-- am letzten Donnerstag mein Arbeitsvertrag verlängert wurde. Ich möchte mich herzlich für das --1-- Vertrauen bedanken. Für die Zukunft --2-- ich mir eine weiterhin gute Zusammenarbeit.\nMit freundlichen Grüßen\nMax Mustermann", [
+                    self::inlineGap('B1-SB-inline', 'Sprachbausteine Teil 1', "Sehr geehrter Herr Meyer,\nich schreibe Ihnen, weil --0-- am letzten Donnerstag mein Arbeitsvertrag verlängert wurde. Ich möchte mich herzlich für das --1-- Vertrauen bedanken. Für die Zukunft --2-- ich mir eine weiterhin gute Zusammenarbeit.\nMit freundlichen Grüßen\nMax Mustermann", [
                         ['options' => 'a|ich,b|mir,c|mich', 'answer' => 'a'],
                         ['options' => 'a|gezeigte,b|gezeigtem,c|gezeigten', 'answer' => 'a'],
                         ['options' => 'a|wünsche,b|hoffe,c|denke', 'answer' => 'a'],
-                    ], 1),
+                    ], 1, "Lesen Sie den Text und schließen Sie die Lücken 21–30. Welche Lösung (a, b oder c) ist jeweils richtig? Markieren Sie Ihre Lösungen für die Aufgaben 21–30 auf dem Antwortbogen."),
                 ], self::pages(1, 5)),
-                self::section('b1-listening', 'Hoerverstehen', 30, [
-                    self::audio('B1-audio', 'Hoerverstehen Audio', ''),
-                    self::text('B1-HV1-text', 'Hoerverstehen Teil 1 — Zuordnung', 'Sie hören sechs kurze Texte. Ordnen Sie jeden Text einer Aussage (a–h) zu. Sie hören jeden Text zweimal.'),
+                self::section('b1-listening', 'Hörverstehen', 30, [
+                    self::audio('B1-audio', 'Hörverstehen Audio', ''),
+                    self::text('B1-HV1-text', 'Hörverstehen Teil 1', 'Sie hören sechs kurze Texte. Ordnen Sie jeden Text einer Aussage (a–h) zu. Sie hören jeden Text zweimal.', 'Sie hören nun fünf kurze Texte. Dazu sollen Sie fünf Aufgaben lösen. Sie hören diese Texte nur einmal. Entscheiden Sie beim Hören, ob die Aussagen 41-45 richtig oder falsch sind. Markieren Sie Ihre Lösungen auf dem Antwortbogen bei den Aufgaben 41-45. Markieren Sie PLUS (+) gleich richtig und MINUS (–) gleich falsch auf dem Antwortbogen.'),
                     ...self::answerElements('B1-HV1-', 22, ['c', 'e', 'a', 'h', 'f', 'b'], 'matching', 1, 'a,b,c,d,e,f,g,h'),
-                    self::text('B1-HV2-text', 'Hoerverstehen Teil 2 — Multiple Choice', 'Sie hören ein Gespräch. Wählen Sie die richtige Antwort (a, b oder c). Sie hören den Text zweimal.'),
+                    self::text('B1-HV2-text', 'Hörverstehen Teil 2', 'Sie hören ein Gespräch. Wählen Sie die richtige Antwort (a, b oder c). Sie hören den Text zweimal.', 'Sie hören nun ein Gespräch. Dazu sollen Sie zehn Aufgaben lösen. Sie hören das Gespräch zweimal. Entscheiden Sie beim Hören, ob die Aussagen 46-55 richtig oder falsch sind.'),
                     ...self::answerElements('B1-HV2-', 28, ['a', 'c', 'b', 'a', 'c', 'b', 'a', 'c'], 'multiple_choice', 2, 'a,b,c'),
-                    self::text('B1-HV3-text', 'Hoerverstehen Teil 3 — Notizen ergänzen', 'Sie hören eine Durchsage. Ergänzen Sie die fehlenden Informationen. Sie hören den Text zweimal.'),
+                    self::text('B1-HV3-text', 'Hörverstehen Teil 3', 'Sie hören eine Durchsage. Ergänzen Sie die fehlenden Informationen. Sie hören den Text zweimal.', 'Sie hören eine Ankündigung. Ergänzen Sie die fehlenden Informationen.'),
                     ...self::answerElements('B1-HV3-', 36, ['Montag', '9 Uhr', 'Bücherei', 'Mappe', 'Formular', 'Passfoto', 'Unterschrift', 'bar'], 'fill_blank', 2),
                 ], self::pages(6, 8)),
                 self::section('b1-writing', 'Schriftlicher Ausdruck', 30, [
@@ -228,21 +228,21 @@ class TelcTemplateFactory
             'theme' => self::theme('#d8232a', '#202020', 'Instrument Sans'),
             'timings' => [
                 ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 90],
-                ['label' => 'Hoerverstehen', 'minutes' => 30],
+                ['label' => 'Hörverstehen', 'minutes' => 30],
                 ['label' => 'Schriftlicher Ausdruck', 'minutes' => 30],
-                ['label' => 'Vorbereitungszeit Muendliche Pruefung', 'minutes' => 20],
-                ['label' => 'Muendlicher Ausdruck', 'minutes' => 16],
+                ['label' => 'Vorbereitungszeit Mündliche Prüfung', 'minutes' => 20],
+                ['label' => 'Mündlicher Ausdruck', 'minutes' => 16],
             ],
             'sections' => [
                 self::section('b2-reading-language', 'Leseverstehen und Sprachbausteine', 90, [
-                    self::text('B2-LV1-text', 'Leseverstehen Teil 1 — Zuordnung', "Lesen Sie die Situationen. Für jede Person (Aufgaben 1–5) gibt es mehrere Angebote (a–j). Wählen Sie das passende Angebot.\n\nPerson 1: Susanne Klein ist gelernte Krankenschwester und möchte nach ihrer Elternzeit wieder in den Beruf einsteigen. Sie sucht eine Teilzeitstelle mit flexiblen Arbeitszeiten.\n\nPerson 2: Peter Neumann studiert Maschinenbau im 5. Semester. Er sucht ein Praktikum bei einem internationalen Unternehmen, um praktische Erfahrungen zu sammeln.\n\nPerson 3: Die Rentnerin Renate Wolf sucht eine seniorengerechte Wohnung in ruhiger Lage. Die Miete sollte nicht über 600 Euro liegen.\n\nPerson 4: Markus Becker ist IT-Spezialist und sucht eine neue berufliche Herausforderung als Projektleiter in der Softwareentwicklung.\n\nPerson 5: Julia und Tom Sommer erwarten ihr erstes Kind und suchen einen geeigneten Geburtsvorbereitungskurs in ihrer Stadt."),
+                    self::text('B2-LV1-text', 'Leseverstehen Teil 1', "Person 1: Susanne Klein ist gelernte Krankenschwester und möchte nach ihrer Elternzeit wieder in den Beruf einsteigen. Sie sucht eine Teilzeitstelle mit flexiblen Arbeitszeiten.\n\nPerson 2: Peter Neumann studiert Maschinenbau im 5. Semester. Er sucht ein Praktikum bei einem internationalen Unternehmen, um praktische Erfahrungen zu sammeln.\n\nPerson 3: Die Rentnerin Renate Wolf sucht eine seniorengerechte Wohnung in ruhiger Lage. Die Miete sollte nicht über 600 Euro liegen.\n\nPerson 4: Markus Becker ist IT-Spezialist und sucht eine neue berufliche Herausforderung als Projektleiter in der Softwareentwicklung.\n\nPerson 5: Julia und Tom Sommer erwarten ihr erstes Kind und suchen einen geeigneten Geburtsvorbereitungskurs in ihrer Stadt.", "Lesen Sie die Situationen. Für jede Person (Aufgaben 1–5) gibt es mehrere Angebote (a–j). Wählen Sie das passende Angebot."),
                     ...self::answerElements('B2-LV1-', 1, ['h', 'a', 'f', 'd', 'i'], 'matching', 2, 'a,b,c,d,e,f,g,h,i,j'),
-                    self::text('B2-LV2-text', 'Leseverstehen Teil 2 — Multiple Choice', "Lesen Sie den folgenden Text und beantworten Sie die Fragen (Aufgaben 6–10).\n\nHomeoffice wird in Deutschland immer beliebter. Während vor der Pandemie nur wenige Unternehmen ihren Mitarbeitern die Arbeit von zu Hause aus ermöglichten, hat sich dies in den letzten Jahren grundlegend geändert. Eine repräsentative Umfrage des Instituts für Arbeitsmarkt und Berufsforschung zeigt: Mehr als 60 Prozent der Beschäftigten in Deutschland wünschen sich mindestens zwei Tage pro Woche im Homeoffice. Die Vorteile liegen auf der Hand: Lange Anfahrtszeiten entfallen, die Vereinbarkeit von Familie und Beruf verbessert sich, und viele Arbeitnehmer berichten von einer höheren Produktivität. Allerdings gibt es auch Nachteile: Die Grenzen zwischen Arbeit und Freizeit verschwimmen, der Austausch mit Kollegen wird schwieriger, und nicht jeder hat zu Hause geeignete Arbeitsbedingungen. Experten empfehlen daher eine Mischung aus Präsenz- und Homeoffice-Tagen, die sowohl die Bedürfnisse der Unternehmen als auch der Mitarbeiter berücksichtigt."),
+                    self::text('B2-LV2-text', 'Leseverstehen Teil 2', "Homeoffice wird in Deutschland immer beliebter. Während vor der Pandemie nur wenige Unternehmen ihren Mitarbeitern die Arbeit von zu Hause aus ermöglichten, hat sich dies in den letzten Jahren grundlegend geändert. Eine repräsentative Umfrage des Instituts für Arbeitsmarkt und Berufsforschung zeigt: Mehr als 60 Prozent der Beschäftigten in Deutschland wünschen sich mindestens zwei Tage pro Woche im Homeoffice. Die Vorteile liegen auf der Hand: Lange Anfahrtszeiten entfallen, die Vereinbarkeit von Familie und Beruf verbessert sich, und viele Arbeitnehmer berichten von einer höheren Produktivität. Allerdings gibt es auch Nachteile: Die Grenzen zwischen Arbeit und Freizeit verschwimmen, der Austausch mit Kollegen wird schwieriger, und nicht jeder hat zu Hause geeignete Arbeitsbedingungen. Experten empfehlen daher eine Mischung aus Präsenz- und Homeoffice-Tagen, die sowohl die Bedürfnisse der Unternehmen als auch der Mitarbeiter berücksichtigt.", "Lesen Sie den folgenden Text und beantworten Sie die Fragen (Aufgaben 6–10)."),
                     ...self::answerElements('B2-LV2-', 6, ['a', 'a', 'c', 'c', 'c'], 'multiple_choice', 2, 'a,b,c'),
-                    self::text('B2-LV3-text', 'Leseverstehen Teil 3 — Richtig/Falsch', "Lesen Sie die Aussagen (Aufgaben 11–22) und markieren Sie: + (richtig), – (falsch) oder x (nicht im Text).\n\na) Modernes Einfamilienhaus mit Garten in ruhiger Wohnlage zu vermieten. 120 qm, 4 Zimmer, Einbauküche. Kaltmiete: 1.200 Euro.\n\nb) Japanisch-Sprachkurs für Anfänger. Start: 1. März. 10 Termine, jeweils dienstags von 18–20 Uhr. Kosten: 180 Euro.\n\nc) Suche zuverlässige Studentin für Nachhilfe in Mathematik und Englisch, Klassen 5–8. Zweimal pro Woche. 20 Euro pro Stunde.\n\nd) Gebrauchtes E-Bike der Marke Kalkhoff, 2 Jahre alt, wenig gefahren, Neupreis 2.400 Euro, jetzt 1.400 Euro. Nur Selbstabholer.\n\ne) Yoga am Morgen! Steigern Sie Ihr Wohlbefinden mit sanften Übungen. Kurs läuft über 8 Wochen, immer montags und mittwochs um 7 Uhr.\n\nf) Reisebüro sucht erfahrene Reiseverkehrskauffrau/-mann in Vollzeit. Schichtdienst möglich. Bewerbung mit Lebenslauf an bewerbung@reisebuero.de.\n\ng) 3-Zimmer-Wohnung in zentraler Lage zu verkaufen. 78 qm, Balkon, Kellerabteil. Provisionsfrei. Besichtigung nach Vereinbarung.\n\nh) Französisch-Konversationskurs für Fortgeschrittene. Diskutieren Sie aktuelle Themen auf Französisch. Jeden Donnerstagabend.\n\ni) Studentisches Wohnen: Schönes WG-Zimmer in beliebter Lage, 18 qm, 450 Euro warm. WG mit zwei netten Mitbewohnern. Einzug ab 1. April.\n\nj) Intensiv-Spanischkurs für den Beruf. Kompakte 4-Wochen-Kurse, die speziell auf geschäftliche Kommunikation vorbereiten. Inklusive Zertifikat.\n\nk) Regionaler Bio-Hofladen sucht Verstärkung: Verkäufer/in in Teilzeit (20 Std./Woche). Arbeitsbeginn ab sofort. Freude an Lebensmitteln erwünscht.\n\nl) Tanzkurse für Paare: Walzer, Foxtrott, Tango. Anfänger willkommen. Probestunde kostenlos! Jeden Samstagabend im Tanzstudio Lindner."),
+                    self::text('B2-LV3-text', 'Leseverstehen Teil 3', "a) Modernes Einfamilienhaus mit Garten in ruhiger Wohnlage zu vermieten. 120 qm, 4 Zimmer, Einbauküche. Kaltmiete: 1.200 Euro.\n\nb) Japanisch-Sprachkurs für Anfänger. Start: 1. März. 10 Termine, jeweils dienstags von 18–20 Uhr. Kosten: 180 Euro.\n\nc) Suche zuverlässige Studentin für Nachhilfe in Mathematik und Englisch, Klassen 5–8. Zweimal pro Woche. 20 Euro pro Stunde.\n\nd) Gebrauchtes E-Bike der Marke Kalkhoff, 2 Jahre alt, wenig gefahren, Neupreis 2.400 Euro, jetzt 1.400 Euro. Nur Selbstabholer.\n\ne) Yoga am Morgen! Steigern Sie Ihr Wohlbefinden mit sanften Übungen. Kurs läuft über 8 Wochen, immer montags und mittwochs um 7 Uhr.\n\nf) Reisebüro sucht erfahrene Reiseverkehrskauffrau/-mann in Vollzeit. Schichtdienst möglich. Bewerbung mit Lebenslauf an bewerbung@reisebuero.de.\n\ng) 3-Zimmer-Wohnung in zentraler Lage zu verkaufen. 78 qm, Balkon, Kellerabteil. Provisionsfrei. Besichtigung nach Vereinbarung.\n\nh) Französisch-Konversationskurs für Fortgeschrittene. Diskutieren Sie aktuelle Themen auf Französisch. Jeden Donnerstagabend.\n\ni) Studentisches Wohnen: Schönes WG-Zimmer in beliebter Lage, 18 qm, 450 Euro warm. WG mit zwei netten Mitbewohnern. Einzug ab 1. April.\n\nj) Intensiv-Spanischkurs für den Beruf. Kompakte 4-Wochen-Kurse, die speziell auf geschäftliche Kommunikation vorbereiten. Inklusive Zertifikat.\n\nk) Regionaler Bio-Hofladen sucht Verstärkung: Verkäufer/in in Teilzeit (20 Std./Woche). Arbeitsbeginn ab sofort. Freude an Lebensmitteln erwünscht.\n\nl) Tanzkurse für Paare: Walzer, Foxtrott, Tango. Anfänger willkommen. Probestunde kostenlos! Jeden Samstagabend im Tanzstudio Lindner.", "Lesen Sie die Aussagen (Aufgaben 11–22) und markieren Sie: + (richtig), – (falsch) oder x (nicht im Text)."),
                     ...self::answerElements('B2-LV3-', 11, ['+', 'x', '-', 'x', '+', '+', 'x', '-', 'x', '+', 'x', '-'], 'true_false', 2, '+,-,x'),
                     self::input('B2-LV3-23', 'Aufgabe 23 — Zusammenfassung', 'multiple_choice', 'c', 2, 'a,b,c'),
-                    self::inlineGap('B2-SB-inline', 'Sprachbausteine (Lückentext)', "Liebe Daniela,\nich habe schon ein ganz schlechtes Gewissen, denn --0-- wollte ich dir schon vor zwei Monaten schreiben. Aber du weißt ja, wie das ist: Wenn man sich auf eine Prüfung vorbereitet, hat --1-- überhaupt keine Zeit mehr für seine Hobbys – alles dreht sich nur noch ums Lernen.\nNun habe ich es aber geschafft: Gestern war die Prüfung und ich bin zuversichtlich, dass ich sie bestanden habe. Mein Freund, mit --2-- Hilfe es mir überhaupt nur möglich war, diese ganze Zeit zu --3--, hat mich für heute Abend in ein tolles Restaurant eingeladen. Danach gehen wir auch noch tanzen.\nIn deinem letzten Brief hast du mich gefragt, --4-- ich Lust hätte, mit dir zusammen ein Wochenende in London zu verbringen. Natürlich habe ich Lust! Nach dem ganzen Stress der letzten Wochen fände ich es super, mal ein paar Tage lang mit einer Freundin etwas Tolles zu --5--. London ist eine wunderbare Stadt, ich habe schon viele Berichte darüber gelesen. Ich würde mich --6-- besonders --7-- die Tate Gallery und das Filmmuseum interessieren.\nMach --8-- einfach ein paar Vorschläge, wann du Zeit hast. Ich bin sicher, dass wir --9-- auf ein Wochenende einigen können. In der Zwischenzeit drucke ich schon mal ein paar Angebote aus dem Internet aus: preiswerte Flüge, ein schönes und günstiges Hotel für uns usw. Ich freue mich schon auf deinen nächsten Brief.\nHerzliche Grüße\nAndrea", [
+                    self::inlineGap('B2-SB-inline', 'Sprachbausteine Teil 1', "Liebe Daniela,\nich habe schon ein ganz schlechtes Gewissen, denn --0-- wollte ich dir schon vor zwei Monaten schreiben. Aber du weißt ja, wie das ist: Wenn man sich auf eine Prüfung vorbereitet, hat --1-- überhaupt keine Zeit mehr für seine Hobbys – alles dreht sich nur noch ums Lernen.\nNun habe ich es aber geschafft: Gestern war die Prüfung und ich bin zuversichtlich, dass ich sie bestanden habe. Mein Freund, mit --2-- Hilfe es mir überhaupt nur möglich war, diese ganze Zeit zu --3--, hat mich für heute Abend in ein tolles Restaurant eingeladen. Danach gehen wir auch noch tanzen.\nIn deinem letzten Brief hast du mich gefragt, --4-- ich Lust hätte, mit dir zusammen ein Wochenende in London zu verbringen. Natürlich habe ich Lust! Nach dem ganzen Stress der letzten Wochen fände ich es super, mal ein paar Tage lang mit einer Freundin etwas Tolles zu --5--. London ist eine wunderbare Stadt, ich habe schon viele Berichte darüber gelesen. Ich würde mich --6-- besonders --7-- die Tate Gallery und das Filmmuseum interessieren.\nMach --8-- einfach ein paar Vorschläge, wann du Zeit hast. Ich bin sicher, dass wir --9-- auf ein Wochenende einigen können. In der Zwischenzeit drucke ich schon mal ein paar Angebote aus dem Internet aus: preiswerte Flüge, ein schönes und günstiges Hotel für uns usw. Ich freue mich schon auf deinen nächsten Brief.\nHerzliche Grüße\nAndrea", [
                         ['options' => 'a|außerdem,b|eigentlich,c|überhaupt', 'answer' => 'b'],
                         ['options' => 'a|er,b|es,c|man', 'answer' => 'c'],
                         ['options' => 'a|der,b|dessen,c|seiner', 'answer' => 'b'],
@@ -253,15 +253,15 @@ class TelcTemplateFactory
                         ['options' => 'a|auf,b|für,c|in', 'answer' => 'b'],
                         ['options' => 'a|bestimmt,b|doch,c|sicher', 'answer' => 'b'],
                         ['options' => 'a|euch,b|sich,c|uns', 'answer' => 'c'],
-                    ], 1),
+                    ], 1, "Lesen Sie den folgenden Text und entscheiden Sie, welches Wort (a, b oder c) in die jeweilige Lücke passt. Markieren Sie Ihre Lösungen auf dem Antwortbogen bei den Aufgaben 21–30."),
                 ], self::pages(6, 12)),
-                self::section('b2-listening', 'Hoerverstehen', 30, [
-                    self::audio('B2-audio', 'Hoerverstehen Audio', ''),
-                    self::text('B2-HV1-text', 'Hoerverstehen Teil 1 — Zuordnung', 'Sie hören acht kurze Texte. Ordnen Sie jeden Text einer Aussage (a–j) zu. Sie hören jeden Text zweimal.'),
+                self::section('b2-listening', 'Hörverstehen', 30, [
+                    self::audio('B2-audio', 'Hörverstehen Audio', ''),
+                    self::text('B2-HV1-text', 'Hörverstehen Teil 1', 'Sie hören acht kurze Texte. Ordnen Sie jeden Text einer Aussage (a–j) zu. Sie hören jeden Text zweimal.', 'Sie hören acht kurze Texte. Ordnen Sie jeden Text einer Aussage (a–j) zu. Sie hören jeden Text zweimal.'),
                     ...self::answerElements('B2-HV1-', 24, ['f', 'h', 'a', 'j', 'c', 'e', 'i', 'b'], 'matching', 1, 'a,b,c,d,e,f,g,h,i,j'),
-                    self::text('B2-HV2-text', 'Hoerverstehen Teil 2 — Multiple Choice', 'Sie hören ein längeres Gespräch. Wählen Sie die richtige Antwort (a, b oder c). Sie hören den Text zweimal.'),
+                    self::text('B2-HV2-text', 'Hörverstehen Teil 2', 'Sie hören ein längeres Gespräch. Wählen Sie die richtige Antwort (a, b oder c). Sie hören den Text zweimal.', 'Sie hören ein längeres Gespräch. Wählen Sie die richtige Antwort (a, b oder c). Sie hören den Text zweimal.'),
                     ...self::answerElements('B2-HV2-', 32, ['c', 'a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c'], 'multiple_choice', 2, 'a,b,c'),
-                    self::text('B2-HV3-text', 'Hoerverstehen Teil 3 — Notizen ergänzen', 'Sie hören eine Ankündigung. Ergänzen Sie die fehlenden Informationen in ganzen Worten. Sie hören den Text zweimal.'),
+                    self::text('B2-HV3-text', 'Hörverstehen Teil 3', 'Sie hören eine Ankündigung. Ergänzen Sie die fehlenden Informationen in ganzen Worten. Sie hören den Text zweimal.', 'Sie hören eine Ankündigung. Ergänzen Sie die fehlenden Informationen in ganzen Worten. Sie hören den Text zweimal.'),
                     ...self::answerElements('B2-HV3-', 42, ['Vortragssaal', '19.30', 'Professor Dr. Wagner', 'Klimawandel', 'Eintritt frei', 'Anmeldung', 'Handout', 'Diskussion'], 'fill_blank', 2),
                 ], self::pages(13, 15)),
                 self::section('b2-writing', 'Schriftlicher Ausdruck', 30, [
@@ -280,13 +280,14 @@ class TelcTemplateFactory
     /**
      * @return array<string, mixed>
      */
-    private static function text(string $id, string $label, string $content): array
+    private static function text(string $id, string $label, string $content, ?string $instruction = null): array
     {
         return [
             'id' => $id,
             'type' => 'text',
             'label' => $label,
             'content' => $content,
+            'instruction' => $instruction,
             'answer' => '',
             'points' => 0,
             'options' => '',
@@ -297,7 +298,7 @@ class TelcTemplateFactory
      * @param  array<int, array<string, mixed>>  $gaps
      * @return array<string, mixed>
      */
-    private static function inlineGap(string $id, string $label, string $content, array $gaps, int $points = 1): array
+    private static function inlineGap(string $id, string $label, string $content, array $gaps, int $points = 1, ?string $instruction = null): array
     {
         return [
             'id' => $id,
@@ -305,6 +306,7 @@ class TelcTemplateFactory
             'label' => $label,
             'content' => $content,
             'options' => json_encode($gaps),
+            'instruction' => $instruction,
             'answer' => '',
             'points' => $points,
         ];
@@ -399,7 +401,7 @@ class TelcTemplateFactory
     /**
      * @return array<string, mixed>
      */
-    private static function input(string $id, string $label, string $type, string $answer, int $points = 1, ?string $options = null): array
+    private static function input(string $id, string $label, string $type, string $answer, int $points = 1, ?string $options = null, ?string $instruction = null): array
     {
         $options ??= match ($type) {
             'multiple_choice' => 'a,b,c,d',
@@ -407,7 +409,7 @@ class TelcTemplateFactory
             default => '',
         };
 
-        return compact('id', 'label', 'type', 'answer', 'points', 'options') + ['content' => ''];
+        return compact('id', 'label', 'type', 'answer', 'points', 'options') + ['content' => '', 'instruction' => $instruction];
     }
 
     /**
@@ -426,7 +428,7 @@ class TelcTemplateFactory
     /**
      * @return array<string, mixed>
      */
-    private static function speakingElement(string $id, string $label, string $prompt, int $points = 25): array
+    private static function speakingElement(string $id, string $label, string $prompt, int $points = 25, ?string $instruction = null): array
     {
         return [
             'id' => $id,
@@ -436,6 +438,7 @@ class TelcTemplateFactory
             'options' => '',
             'answer' => '',
             'points' => $points,
+            'instruction' => $instruction,
         ];
     }
 
