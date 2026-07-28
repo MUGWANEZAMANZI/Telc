@@ -400,32 +400,6 @@
                 box-sizing: border-box;
             }
 
-            .doc-timer-bar .save-indicator {
-            - Verified that the dashboard endpoint (`/dashboard`) compiles and loads successfully with no syntax errors.
-
----
-
-## Student Preview Layout & Model Configuration Updates
-
-### 1. Undefined Variable `$attempts` Resolution
-* **Diagnosis**: When included statically inside the admin dashboard, variables compiled in `StudentExam.php`'s custom `render()` method (like `$attempts`) are not set, causing an `Undefined variable` error.
-* **Fix**: Added a safety check `isset($attempts)` to the conditional block in [student-exam.blade.php](file:///c:/Users/USER%201/Desktop/Proposals/Telc/Telc/resources/views/livewire/student-exam.blade.php) around line 749.
-
-### 2. Student Preview Layout Refactoring
-* **Diagnosis**: The student view preview inside the admin panel dashboard was cluttered, rendering administrative metrics cards, the system guide banner, and the manual PayPal approvals table at the bottom of the page.
-* **Fix**: Wrapped the banner, metrics cards, and payments table in `exam-dashboard.blade.php` with `@if ($mode !== 'student')` conditions to hide them in preview mode and keep the view clean.
-
-### 3. Dynamic Template Layout Fallback
-* **Diagnosis**: Non-premium levels (like A1) or templates without a PDF (`source_pdf => null`) were forced to load the split-pane layout (`paper-exam-shell`) which requires a PDF. This left the view blank/empty with no questions rendered.
-* **Fix**:
-  * Modified the condition in `student-exam.blade.php` to use the premium document layout if the template has no source PDF (`empty($template['source_pdf'])`).
-  * Added an `exists()` check to fallback to the generic dynamic sections layout (`partials.premium.dynamic-sections`) if the specific level blade file does not exist.
-
-### 4. Gemini Model Migration to `gemini-3.5-flash-lite`
-* **Diagnosis**: The legacy model `gemini-2.5-flash` was deprecated and no longer available to new users, and `gemini-3.5-flash` experienced high-demand quota limits.
-* **Fix**: Updated all 31 model references across the PHP classes to `gemini-3.5-flash-lite` to ensure maximum stability and cost efficiency.
- */
-            }
 
             .doc-timer-bar .submit-button {
                 width: auto !important;
