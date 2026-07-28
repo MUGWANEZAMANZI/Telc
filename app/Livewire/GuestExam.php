@@ -524,7 +524,7 @@ class GuestExam extends Component
                         try {
                             $lvl = $this->template['level'] ?? 'C1';
                             $provider = $this->template['exam_provider'] ?? 'telc';
-                            $model = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+                            $model = Gemini::generativeModel(model: config('gemini.model'))
                                 ->withSystemInstruction(
                                     Content::parse(
                                         "Du bist ein offizieller {$provider} {$lvl} Prüfer für die schriftliche Prüfung. "
@@ -660,7 +660,7 @@ class GuestExam extends Component
                 try {
                     $lvl = $this->template['level'] ?? 'C1';
                     $provider = $this->template['exam_provider'] ?? 'telc';
-                    $model = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+                    $model = Gemini::generativeModel(model: config('gemini.model'))
                         ->withSystemInstruction(
                             Content::parse(
                                 "Du bist ein offizieller {$provider} {$lvl} Prüfer für die schriftliche Prüfung. "
@@ -838,7 +838,7 @@ class GuestExam extends Component
             $level = $this->template['level'] ?? 'C1';
             $provider = 'telc'; // default guest provider
             try {
-                $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+                $result = Gemini::generativeModel(model: config('gemini.model'))
                     ->generateContent(
                         "Generiere zwei verschiedene, niveauangemessene und typische Sprechthemen für eine mündliche {$provider} {$level} Prüfung.\n"
                         ."Antworte NUR im folgenden JSON-Format:\n"
@@ -923,7 +923,7 @@ class GuestExam extends Component
 
             $prompt = "Schreibe einen gut strukturierten Vortrag (Einleitung, Hauptteil, Eigene Meinung, Schluss/Fazit) zum Thema: \"{$unchosenTopic}\". Der Vortrag soll klar und verständlich sein, mit einer deutlichen Argumentationslinie.";
 
-            $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+            $result = Gemini::generativeModel(model: config('gemini.model'))
                 ->withSystemInstruction(Content::parse('Du bist ein TELC-Prüfungskandidat, der einen Vortrag hält. Sprich den Lernenden direkt an.'))
                 ->generateContent($prompt);
 
@@ -983,7 +983,7 @@ class GuestExam extends Component
         // SP-1a: student's initial presentation on chosen topic
         if (str_ends_with($elementId, '-SP-1a')) {
             try {
-                $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+                $result = Gemini::generativeModel(model: config('gemini.model'))
                     ->withSystemInstruction(
                         Content::parse($systemInstruction."\n\n".$criteriaPrompt)
                     )
@@ -1029,7 +1029,7 @@ class GuestExam extends Component
         // SP-1b: student's reaction/summary of the AI presentation
         if (str_ends_with($elementId, '-SP-1b')) {
             try {
-                $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+                $result = Gemini::generativeModel(model: config('gemini.model'))
                     ->withSystemInstruction(
                         Content::parse($systemInstruction."\n\n".$criteriaPrompt)
                     )
@@ -1082,7 +1082,7 @@ class GuestExam extends Component
         }
 
         try {
-            $result = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
+            $result = Gemini::generativeModel(model: config('gemini.model'))
                 ->withSystemInstruction(
                     Content::parse($systemInstruction."\n\n".$criteriaPrompt)
                 )
