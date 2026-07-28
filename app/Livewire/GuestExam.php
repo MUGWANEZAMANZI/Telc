@@ -85,7 +85,7 @@ class GuestExam extends Component
     /** @var array<string, array<int, array<string, string>>> */
     public array $speakingHistory = [];
 
-    public function mount($templateId = null): void
+    public function mount(string|int|null $templateId = null): void
     {
         if (auth()->check()) {
             if ($templateId) {
@@ -101,7 +101,7 @@ class GuestExam extends Component
             if (is_numeric($templateId)) {
                 $record = ExamTemplate::query()
                     ->where('is_published', true)
-                    ->find((int)$templateId);
+                    ->find((int) $templateId);
             } else {
                 $level = strtoupper($templateId);
                 $record = ExamTemplate::query()
