@@ -1,4 +1,4 @@
-<x-layouts::app :title="__('System-Handbuch & Benutzeranleitung')">
+<x-layouts::app :title="__('System-Handbuch & Administrator-Anleitung')">
     <div class="user-guide-shell no-print-padding">
         {{-- Header Controls (Not visible in printed PDF) --}}
         <div class="guide-controls no-print">
@@ -15,105 +15,96 @@
                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
                     <rect x="6" y="14" width="12" height="8"></rect>
                 </svg>
-                Als PDF exportieren / Drucken
+                Handbuch drucken / PDF exportieren
             </button>
         </div>
 
         {{-- Handbook Main Title --}}
         <div class="handbook-title-block">
-            <span class="handbook-eyebrow">GERMAN SUCCESS DEUTSCHLERN- & PRÜFUNGSSYSTEM</span>
-            <h1 class="handbook-main-title">Offizielles System-Handbuch</h1>
-            <p class="handbook-subtitle">Umfassende Dokumentation für Eigentümer, Administratoren und Kursteilnehmer</p>
+            <span class="handbook-eyebrow">GERMAN SUCCESS SYSTEM-ADMINISTRATION</span>
+            <h1 class="handbook-main-title">Administratoren- & Schulungshandbuch</h1>
+            <p class="handbook-subtitle">Komplette Anleitung zur Prüfungsverwaltung, Inhaltspflege und Systemdiagnostik</p>
         </div>
 
-        {{-- SECTION 1: EIGENTÜMER-HANDBUCH (OWNER) --}}
-        @if (auth()->user()?->isAdmin() || auth()->user()?->isOwner())
-            <section class="handbook-section">
-                <div class="section-badge owner-color">OWNER ROLE</div>
-                <h2 class="section-title">1. Leitfaden für System-Eigentümer (Owner)</h2>
-                <div class="section-intro">
-                    Eigentümer besitzen die höchste administrative Kontrolle über die Finanzen, Tarifmodelle und die allgemeine Auslastung der Plattform.
-                </div>
-                
-                <div class="guide-sub-grid">
-                    <div class="guide-item-card">
-                        <h3>Tarifstrukturen & Preisgestaltung</h3>
-                        <p>Über das <strong>Pricing-Panel</strong> auf dem Dashboard können Sie die Abonnementpläne definieren und Preise anpassen. Sie können Einmalkäufe für spezifische Prüfungen (z. B. 5,00 €) oder wiederkehrende Monatsabonnements (z. B. 19,00 €) anbieten.</p>
-                    </div>
-                    <div class="guide-item-card">
-                        <h3>Finanzübersicht & Zahlungsströme</h3>
-                        <p>Im Bereich <strong>Finanzen</strong> sehen Sie die Gesamteinnahmen, die Verteilung auf PayPal und Kreditkartenzahlungen sowie die Anzahl der aktiven Abonnements. Ein monatliches Säulendiagramm zeigt die finanzielle Entwicklung der letzten 12 Monate.</p>
-                    </div>
-                    <div class="guide-item-card">
-                        <h3>Umsatzkontrolle auf Produktion</h3>
-                        <p>Die Berechnungen laufen datenbankgestützt und sind vollständig mit MySQL/MariaDB kompatibel. Alle getätigten Umsätze werden in Echtzeit aggregiert, sobald eine Zahlung freigegeben wird.</p>
-                    </div>
-                </div>
-            </section>
-
-            <div class="page-break"></div>
-        @endif
-
-        {{-- SECTION 2: ADMINISTRATOREN-HANDBUCH (ADMIN) --}}
-        @if (auth()->user()?->isAdmin())
-            <section class="handbook-section">
-                <div class="section-badge admin-color">ADMIN ROLE</div>
-                <h2 class="section-title">2. Leitfaden für Administratoren (Admin)</h2>
-                <div class="section-intro">
-                    Administratoren verwalten die Lerninhalte, laden Übungstests hoch, steuern Freigaben und überwachen die Ergebnisse der Kursteilnehmer.
-                </div>
-
-                <div class="guide-sub-grid">
-                    <div class="guide-item-card">
-                        <h3>Prüfungsvorlagen (Templates) erstellen</h3>
-                        <p>Mit dem <strong>Visual Template Builder</strong> können Sie neue Prüfungen von Grund auf erstellen oder fertige Presets laden. Tragen Sie Titel, Niveau (B1, B2, C1, C2) und Prüfungsanbieter (telc / Goethe) ein. Setzen Sie die Prüfung auf "Published", damit sie im Kurskatalog erscheint.</p>
-                    </div>
-                    <div class="guide-item-card">
-                        <h3>Audio-Ressourcen für Hörverstehen</h3>
-                        <p>Im Builder können Sie direkt MP3- oder WAV-Audiodateien bis zu einer Dateigröße von 100MB hochladen. Die Datei wird sicher auf dem Server abgelegt und über eine geschützte Route (<code>/exam-audio/...</code>) ausschließlich für angemeldete und verifizierte Studenten bereitgestellt.</p>
-                    </div>
-                    <div class="guide-item-card">
-                        <h3>Lückentexte (Inline Gaps & Dropdowns)</h3>
-                        <p>Fügen Sie dem Prüfungsteil ein <strong>Inline-Gap</strong> hinzu. Im Fließtext markieren Sie die Lücken mit <code>--0--</code>, <code>--1--</code> etc. Im rechten Optionsfeld tragen Sie die Antwortkombinationen getrennt mit Kommas und Pipes ein (z. B. <code>a|ich,b|mir,c|mich</code>) und definieren die richtige Lösung.</p>
-                    </div>
-                    <div class="guide-item-card">
-                        <h3>Zahlungsfreigabe (Automatisch)</h3>
-                        <p>Die Freischaltung von erworbenen Prüfungen oder abgeschlossenen Abonnements erfolgt vollautomatisch über die Revolut- und PayPal-APIs.</p>
-                    </div>
-                    <div class="guide-item-card">
-                        <h3>Überwachung der Studentenleistung</h3>
-                        <p>Auf der Seite <strong>Studenten-Leistung</strong> haben Sie Einblick in alle Prüfungsversuche. Sie sehen die genaue prozentuale Verteilung, das erreichte KI-Feedback und können auch Gast-Versuche nachverfolgen.</p>
-                    </div>
-                </div>
-            </section>
-
-            <div class="page-break"></div>
-        @endif
-
-        {{-- SECTION 3: STUDENTEN-HANDBUCH (STUDENT) --}}
+        {{-- SECTION 1: SYSTEM STACK & PRESETS --}}
         <section class="handbook-section">
-            <div class="section-badge student-color">STUDENT ROLE</div>
-            <h2 class="section-title">3. Leitfaden für Studenten (Kursteilnehmer)</h2>
+            <div class="section-badge owner-color">Architektur & Presets</div>
+            <h2 class="section-title">1. System-Grundlagen & Presets</h2>
             <div class="section-intro">
-                Kursteilnehmer nutzen das System zur Prüfungsvorbereitung, zum Schreiben von Aufsätzen und zum interaktiven Üben des mündlichen Ausdrucks.
+                Übersicht über die Prüfungsvorlagen und das Zusammenspiel zwischen Backend-Seeding und Admin-Builder.
+            </div>
+            
+            <div class="guide-sub-grid">
+                <div class="guide-item-card">
+                    <h3>Prüfungsdaten-Seeding</h3>
+                    <p>Standardprüfungen werden über <code>TelcTemplateFactory.php</code> geladen und mit dem Seeder in die SQLite-Datenbank übertragen. Admins können jederzeit benutzerdefinierte Kopien dieser Prüfungen erstellen oder bestehende ändern.</p>
+                </div>
+                <div class="guide-item-card">
+                    <h3>Theme-Anpassungen</h3>
+                    <p>Jeder Modellsatz kann über eigene Farbwerte (Primär-/Hintergrundfarben) und Schriftarten (z. B. <i>Instrument Sans</i>, <i>Plus Jakarta Sans</i>) verfügen. Diese können direkt im Dashboard angepasst und live geschaltet werden.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+
+        {{-- SECTION 2: EXAM BUILDER SCHULUNG --}}
+        <section class="handbook-section">
+            <div class="section-badge admin-color">Visual Exam Builder</div>
+            <h2 class="section-title">2. Schritt-für-Schritt Schulung: Prüfungen erstellen & pflegen</h2>
+            <div class="section-intro">
+                So steuern Sie Abschnitte, laden Audiodateien hoch und verknüpfen Frageelemente nahtlos mit dem Antwortbogen der Studenten.
+            </div>
+
+            <div class="guide-sub-grid" style="grid-template-columns: 1fr;">
+                <div class="guide-item-card" style="margin-bottom: 1.5rem;">
+                    <h3>2.1 Einen neuen Prüfungsteil (Section) hinzufügen</h3>
+                    <p>Klicken Sie ganz unten im Editor auf <strong>"Neuer Prüfungsteil"</strong>. Legen Sie den Titel des Abschnitts (z. B. <i>Leseverstehen und Sprachbausteine</i>) und die Bearbeitungszeit in Minuten fest. Der Timer im Studentensystem rechnet diese Minuten automatisch in Sekunden um und schließt den Abschnitt bei Ablauf.</p>
+                </div>
+
+                <div class="guide-item-card" style="margin-bottom: 1.5rem;">
+                    <h3>2.2 Elemente hinzufügen und konfigurieren</h3>
+                    <p>Innerhalb eines Prüfungsteils können Sie beliebig viele Elemente erstellen. Wählen Sie den passenden Elementtyp:</p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0; font-size: 0.92rem; color: #4a5568;">
+                        <li><strong>Text / Lesetext:</strong> Nimmt den Haupt-Lesetext auf. Verwenden Sie Zeilenumbrüche, Trennlinien und übersichtliche Gliederungen.</li>
+                        <li><strong>Audioquelle:</strong> Erlaubt Uploads bis 100MB. Wählen Sie die MP3/WAV-Datei aus und klicken Sie auf "Upload". Der Pfad wird verschlüsselt hinterlegt.</li>
+                        <li><strong>Zuordnung (Matching):</strong> Wird für Übungen wie <i>Leseverstehen Teil 1 & Teil 3</i> genutzt. Setzen Sie als Optionen z. B. <code>a,b,c,d,e,f,g,h,i,j,x</code>.</li>
+                        <li><strong>Multiple Choice & Richtig/Falsch:</strong> Radio-Buttons für A/B/C oder +/-/X Optionen.</li>
+                        <li><strong>Lückentext (Inline):</strong> Verwenden Sie <code>[[gap:0]]</code>, <code>[[gap:1]]</code> im Text. Konfigurieren Sie unten die Dropdown-Werte (z. B. <code>a|Option A,b|Option B</code>).</li>
+                    </ul>
+                </div>
+
+                <div class="guide-item-card" style="margin-bottom: 1.5rem;">
+                    <h3>2.3 Die goldene Regel: Bindung von Label und Frage-Texten</h3>
+                    <p>Damit das System die Aufgaben korrekt nummeriert und anzeigt, befolgen Sie diese Richtlinien:</p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0; font-size: 0.92rem; color: #4a5568;">
+                        <li><strong>Label (z. B. "Aufgabe 11"):</strong> Tragen Sie immer die offizielle Aufgabennummer ein. Das System filtert alle Ziffern heraus (z. B. "11") und verwendet diese Nummer als Index auf dem Antwortbogen sowie in der Punkteauswertung.</li>
+                        <li><strong>Instruction / Question Text:</strong> Tragen Sie hier den konkreten Aufgabentext ein (z. B. <i>"Statement 11: Most people eat organic products every day."</i>). Dieser Text wird im Studenten-Dashboard direkt über den Auswahloptionen gerendert.</li>
+                        <li><strong>Correct Answer:</strong> Die richtige Lösung (z. B. <code>a</code>, <code>b</code>, <code>+</code>, <code>x</code>) muss immer kleingeschrieben eingetragen werden.</li>
+                        <li><strong>Explanation (KI-Erläuterung):</strong> Tragen Sie eine kurze Erklärung ein, warum diese Antwort richtig ist. Klicken Sie auf 🤖 <i>"Mit KI generieren"</i>, um automatisch über Gemini eine präzise, pädagogische Erklärung erstellen zu lassen.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="page-break"></div>
+
+        {{-- SECTION 3: RECHNUNGEN & FREIGABEN --}}
+        <section class="handbook-section">
+            <div class="section-badge owner-color">Zahlungsprüfung & Finanzen</div>
+            <h2 class="section-title">3. Zahlungsfreigabe & Benutzerverwaltung</h2>
+            <div class="section-intro">
+                Freischalten von Kursen und Überprüfung manueller Bankbelege.
             </div>
 
             <div class="guide-sub-grid">
                 <div class="guide-item-card">
-                    <h3>Prüfungssimulationen durchführen</h3>
-                    <p>Die Prüfungsschnittstelle im lizenzierten linierten Design vermittelt echte Prüfungsatmosphäre. Ein Timer läuft rückwärts. Wählen Sie Antworten bei Lückentexten und Multiple-Choice-Fragen direkt auf der Seite und tippen Sie Ihre Stellungnahme in das linierte Schreibfeld.</p>
+                    <h3>Manuelle Freigaben</h3>
+                    <p>Unter <strong>"Zahlungen ausstehend"</strong> listet das Dashboard alle Studenten, die einen Bankbeleg oder Screenshot hochgeladen haben. Klicken Sie auf das Beleg-Symbol, um den Upload zu prüfen. Mit einem Klick auf <strong>"Freigeben"</strong> wird die Prüfung für den Studenten sofort aktiv geschaltet.</p>
                 </div>
                 <div class="guide-item-card">
-                    <h3>Kostenlose Prüfungs-Limits (Free Exam)</h3>
-                    <p>Nicht registrierte Gäste können eine kostenlose Probesitzung starten. Es gilt ein Limit von maximal <strong>3 Abschnitten</strong>. Nach Erreichen des Limits wird der Zugriff gesperrt und der Student aufgefordert, sich zu registrieren oder ein Abonnement abzuschließen.</p>
-                </div>
-                <div class="guide-item-card">
-                    <h3>KI-Sprechübungs-Labor (Voice Practice)</h3>
-                    <p>Das Sprechübungs-Labor erlaubt es Ihnen, freies Sprechen interaktiv zu trainieren. Nach Auswahl eines Themas sprechen Sie in Ihr Mikrofon. Die KI transkribiert Ihre Worte und antwortet Ihnen. Es findet eine Unterhaltung über 3 bis 4 Runden statt.</p>
-                </div>
-                <div class="guide-item-card">
-                    <h3>Automatische KI-Bewertung & Notenschlüssel</h3>
-                    <p>Nach Abgabe einer Prüfung analysiert die Gemini-KI Ihren schriftlichen Aufsatz und Ihre gesprochene Leistung. Sie erhalten detailliertes Feedback und Punkte. Die Gesamtbewertung der sprachlichen Angemessenheit (max. 32 Punkte) bewertet Wortschatz, Grammatik, Aussprache und Flüssigkeit über das gesamte Gespräch hinweg.</p>
+                    <h3>Studentenergebnisse</h3>
+                    <p>Im Reiter <strong>"Teilnehmer & Ergebnisse"</strong> sehen Sie tabellarisch, welcher Benutzer wann einen Test absolviert hat, wie viele Punkte erzielt wurden und wie hoch das KI-Feedback für das Schreiben/Sprechen ausgefallen ist.</p>
                 </div>
             </div>
         </section>
@@ -123,9 +114,9 @@
         {{-- SECTION 4: FEHLERBEHEBUNG (TROUBLESHOOTING) --}}
         <section class="handbook-section">
             <div class="section-badge troubleshooting-color">SYSTEM DIAGNOSTIC</div>
-            <h2 class="section-title">4. Fehlerbehebung (Troubleshooting)</h2>
+            <h2 class="section-title">4. Fehlerbehebung & Diagnostik (Troubleshooting)</h2>
             <div class="section-intro">
-                Lösungen für häufig auftretende technische Probleme bei Benutzern und Administratoren.
+                Häufige Systemfragen und administrative Diagnoseschritte.
             </div>
 
             <table class="trouble-table">
@@ -138,43 +129,24 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Mikrofon wird nicht erkannt / Spracherkennung startet nicht</strong></td>
-                        <td>Browser blockiert den Zugriff auf das Mikrofon oder unterstützt die Web Speech API nicht.</td>
-                        <td>Nutzen Sie Google Chrome oder Microsoft Edge. Stellen Sie sicher, dass in den Browsereinstellungen der Zugriff auf das Mikrofon für diese Domain freigegeben ist.</td>
+                        <td><strong>Fehlermeldung: "Ungültiges Audio-Format"</strong></td>
+                        <td>Die Audiodatei entspricht nicht den unterstützten Formaten oder hat eine falsche Dateiendung.</td>
+                        <td>Das System unterstützt MP3, WAV, OGG, M4A und AAC. Konvertieren Sie die Datei vor dem Upload in eine Standard-MP3-Datei (max. 100MB).</td>
                     </tr>
                     <tr>
-                        <td><strong>PDF-Lernmaterialien laden nicht</strong></td>
-                        <td>
-                            @if(auth()->user()?->isAdmin())
-                                Fehlender oder fehlerhafter symbolischer Link (storage symlink) auf dem Produktionsserver oder Datei fehlt.
-                            @else
-                                Verbindungsproblem oder temporärer Ladefehler des Dokuments.
-                            @endif
-                        </td>
-                        <td>
-                            @if(auth()->user()?->isAdmin())
-                                Die PDF-Datei wird direkt über Laravel ausgeliefert (Serving-Route <code>/books-pdf/...</code>). Ein Symlink ist nicht mehr erforderlich. Falls der Fehler fortbesteht, prüfen Sie, ob die Datei unter <code>storage/app/public/books/</code> existiert.
-                            @else
-                                Laden Sie die Seite neu oder versuchen Sie, das Dokument erneut zu öffnen. Sollte das Problem bestehen bleiben, wenden Sie sich bitte an den Support.
-                            @endif
-                        </td>
-                    </tr>
-                    @if (auth()->user()?->isAdmin())
-                        <tr>
-                            <td><strong>Audio-Upload schlägt fehl / Validierungsfehler im Dashboard</strong></td>
-                            <td>Audiodatei ist zu groß (standardmäßig über 20MB) oder besitzt ein ungültiges Format.</td>
-                            <td>Die Upload-Grenze wurde auf <strong>100MB</strong> angehoben. Unterstützt werden die Dateiformate MP3, WAV, OGG und M4A. Verringern Sie ggf. die Samplerate der MP3-Datei.</td>
-                        </tr>
-                    @endif
-                    <tr>
-                        <td><strong>Banned / Sitzung abgelaufen (Sicherheitshinweis)</strong></td>
-                        <td>Ein anderer Benutzer hat sich mit denselben Zugangsdaten angemeldet (Schutz vor Account-Sharing).</td>
-                        <td>Teilen Sie Ihre Zugangsdaten nicht. Bei einer Neuanmeldung auf einem anderen Gerät wird die alte Sitzung zur Sicherheit sofort ungültig. Melden Sie sich erneut an.</td>
+                        <td><strong>Änderungen im Builder werden nicht gespeichert</strong></td>
+                        <td>Die Validierung ist fehlgeschlagen (z. B. leere Titel, fehlende Level-Angabe oder ungültiges JSON).</td>
+                        <td>Prüfen Sie die Fehlermeldungen oben rechts. Stellen Sie sicher, dass "Title" und "Level" ausgefüllt sind, bevor Sie speichern.</td>
                     </tr>
                     <tr>
-                        <td><strong>Zahlung getätigt, aber Prüfung bleibt gesperrt</strong></td>
-                        <td>Die PayPal-Zahlungsbestätigung wurde noch nicht vom Administrator freigegeben.</td>
-                        <td>Laden Sie Ihren Transaktionsbeleg im Portal hoch. Der Administrator sieht Ihren Beleg im Dashboard und schaltet die Prüfung mit einem Klick manuell für Sie frei.</td>
+                        <td><strong>Doppelte Einträge nach Datenbank-Seeding</strong></td>
+                        <td>Der Seeder sucht nach dem exakten Titel. Wird der Titel im Code geändert, entsteht ein neuer Tabelleneintrag.</td>
+                        <td>Löschen Sie alte Testeinträge per Laravel Tinker über die Konsole: <code>App\Models\ExamTemplate::where('title', 'alter_titel')->delete();</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KI-Erklärungsgenerierung schlägt fehl</strong></td>
+                        <td>Der Gemini-API-Key in der <code>.env</code> Datei fehlt oder das Limit der API-Aufrufe wurde überschritten.</td>
+                        <td>Überprüfen Sie <code>GEMINI_API_KEY</code>. Stellen Sie sicher, dass eine aktive Internetverbindung besteht und das API-Dashboard keine Abrechnungsfehler aufweist.</td>
                     </tr>
                 </tbody>
             </table>
@@ -184,7 +156,6 @@
     {{-- Custom Page Styles --}}
     @push('styles')
         <style>
-            /* General Styles */
             .user-guide-shell {
                 max-width: 1000px;
                 margin: 0 auto;
@@ -240,7 +211,6 @@
                 transform: translateY(-1px);
             }
 
-            /* Title Block */
             .handbook-title-block {
                 text-align: center;
                 margin-bottom: 4rem;
@@ -258,7 +228,7 @@
 
             .handbook-main-title {
                 font-family: 'Playfair Display', Georgia, serif;
-                font-size: 3.2rem;
+                font-size: 2.8rem;
                 font-weight: 700;
                 color: #1a202c;
                 line-height: 1.15;
@@ -272,7 +242,6 @@
                 margin: 1rem auto 0;
             }
 
-            /* Sections */
             .handbook-section {
                 margin-bottom: 4rem;
                 position: relative;
@@ -309,7 +278,6 @@
                 font-style: italic;
             }
 
-            /* Cards Layout */
             .guide-sub-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -342,15 +310,6 @@
                 line-height: 1.6;
             }
 
-            .guide-item-card code {
-                background-color: #edf2f7;
-                padding: 0.15rem 0.35rem;
-                border-radius: 4px;
-                font-size: 0.85rem;
-                font-weight: 700;
-            }
-
-            /* Troubleshooting Table */
             .trouble-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -374,23 +333,10 @@
                 letter-spacing: 0.05em;
             }
 
-            .trouble-table td strong {
-                color: #1a202c;
-            }
-
-            .trouble-table td code {
-                background-color: #edf2f7;
-                padding: 0.15rem 0.35rem;
-                border-radius: 4px;
-                font-size: 0.85rem;
-                font-weight: 700;
-            }
-
             .page-break {
                 display: none;
             }
 
-            /* PDF Print Specific Optimization Styles */
             @media print {
                 body {
                     background-color: #ffffff;
@@ -449,12 +395,6 @@
                 .trouble-table tr {
                     page-break-inside: avoid;
                     page-break-after: auto;
-                }
-
-                .section-badge {
-                    border: 1px solid #4a5568 !important;
-                    color: #4a5568 !important;
-                    background: transparent !important;
                 }
             }
         </style>

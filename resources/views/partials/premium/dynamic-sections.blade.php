@@ -109,31 +109,61 @@
                     @endif
                 @elseif (in_array($element['type'] ?? '', ['matching']))
                     @php $matchOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? '')); @endphp
-                    @foreach ($element['pairs'] ?? [] as $pair)
-                        <div style="display:flex;flex-direction:row;align-items:center;gap:1rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif;">
-                            <span style="min-width:150px;font-weight:600;">{{ $pair['left'] ?? '' }}</span>
-                            <select class="cloze-select" wire:model.change="answers.{{ $elId }}.{{ $loop->index }}" {{ $result ? 'disabled' : '' }}>
+                    @if (isset($element['pairs']) && count($element['pairs']) > 0)
+                        @foreach ($element['pairs'] as $pair)
+                            <div style="display:flex;flex-direction:row;align-items:center;gap:1rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                                <span style="min-width:150px;font-weight:600;">{{ $pair['left'] ?? '' }}</span>
+                                <select class="cloze-select" wire:model.change="answers.{{ $elId }}.{{ $loop->index }}" {{ $result ? 'disabled' : '' }}>
+                                    <option value="">---</option>
+                                    @foreach ($matchOptions as $opt)
+                                        <option value="{{ $opt }}">{{ $opt }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endforeach
+                    @else
+                        <div style="display:flex;flex-direction:row;align-items:center;gap:1.5rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif; background: #fafafa; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid #e5e5e5;">
+                            <span style="font-weight:600; color: #1a1a1a; min-width: 100px;">{{ $element['label'] ?? '' }}</span>
+                            <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #ffffff;">
                                 <option value="">---</option>
                                 @foreach ($matchOptions as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
                             </select>
+                            @if ($result)
+                                @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
+                                @if ($detail)
+                                    <span style="margin-left: auto; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }}; font-size: 0.85rem;">
+                                        {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
+                                    </span>
+                                @endif
+                            @endif
                         </div>
-                    @endforeach
+                    @endif
                 @elseif (in_array($element['type'] ?? '', ['multiple_choice', 'true_false']))
                     @php
                         $rawOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? ''));
                     @endphp
-                    <fieldset style="border:none;padding:0;margin:0 0 1rem 0;">
-                        <legend style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:0.5rem;">{{ $element['instruction'] ?? '' }}</legend>
-                        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                    <fieldset style="border:none;padding:0;margin:0 0 1.25rem 0; font-family:'Plus Jakarta Sans',sans-serif; background:#fafafa; border:1px solid #e5e5e5; padding: 0.75rem 1rem; border-radius: 6px;">
+                        <legend style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:0.5rem; color:#1a1a1a; padding: 0 0.5rem;">
+                            {{ $element['label'] ?? 'Aufgabe' }}@if(!empty($element['instruction'])): {{ $element['instruction'] }}@endif
+                        </legend>
+                        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
                             @foreach ($rawOptions as $opt)
-                                <label class="mc-option-item">
+                                <label class="mc-option-item" style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
                                     <input type="radio" name="{{ $elId }}" value="{{ $opt }}" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }}>
-                                    <span>{{ $opt }}</span>
+                                    <span style="font-weight: 500; text-transform: uppercase;">{{ $opt }}</span>
                                 </label>
                             @endforeach
                         </div>
+                        @if ($result)
+                            @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
+                            @if ($detail)
+                                <div style="margin-top:0.5rem; font-size:0.85rem; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }};">
+                                    {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
+                                </div>
+                            @endif
+                        @endif
                     </fieldset>
                 @elseif (($element['type'] ?? '') === 'writing')
                     @php

@@ -200,6 +200,9 @@
                                             <label>Label</label>
                                             <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.label" class="telc-input">
 
+                                            <label>Instruction / Question Text</label>
+                                            <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.instruction" class="telc-input" placeholder="e.g. Question text or section instruction">
+
                                             @if ($element['type'] === 'audio')
                                                 <label>Audio file</label>
                                                 <div class="telc-audio-upload">
