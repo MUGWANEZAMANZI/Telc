@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\AdminFinance;
 use App\Livewire\StudentExam;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
@@ -130,4 +131,80 @@ test('non-subscribed users can access free exams but non-free exams require paym
     $status2 = Livewire::test(StudentExam::class)->instance()->getTemplateFreeStatus($paidTemplate);
     expect($status2['is_free'])->toBeFalse();
     expect($status2['free_sections'])->toBe(0);
+});
+
+test('admin can create a 30-day manual free trial for a user', function () {
+    $plan = Plan::create([
+        'name' => 'Trial Target Plan',
+        'price' => 19.99,
+        'currency' => 'eur',
+        'interval' => 'month',
+        'features' => [],
+        'is_active' => true,
+    ]);
+
+    $student = User::factory()->create(['role' => 'student']);
+    $owner = User::factory()->create(['role' => 'owner']); // Owner acts as admin
+
+    $this->actingAs($owner);
+
+    // Create an old active subscription to verify it gets deactivated
+    $oldSub = Subscription::create([
+        'user_id' => $student->id,
+        'plan_id' => $plan->id,
+        'provider' => 'paypal',
+        'provider_order_id' => 'old_sub_123',
+        'status' => 'active',
+        'duration_months' => 1,
+        'starts_at' => now()->subDays(10),
+        'ends_at' => now()->addDays(20),
+    ]);
+
+    Livewire::test(AdminFinance::class)
+        ->set('selectedUserForTrial', $student->id)
+        ->set('selectedPlanForTrial', $plan->id)
+        ->call('createFreeTrial')
+        ->assertHasNoErrors()
+        ->assertSet('successMessage', "30-tägiges kostenloses Probeabo (Trial Target Plan) für {$student->name} wurde erfolgreich aktiviert.");
+
+    // Assert new subscription was created with 30 days duration
+    $newSub = Subscription::where('user_id', $student->id)
+        ->where('provider', 'manual_admin')
+        ->first();
+
+    expect($newSub)->not->toBeNull();
+    expect($newSub->status)->toBe('active');
+    expect((int) abs($newSub->ends_at->diffInDays($newSub->starts_at)))->toBe(30);
+
+    // Assert old subscription status is cancelled
+    $oldSub->refresh();
+    expect($oldSub->status)->toBe('cancelled');
+});
+
+test('investor can view finance statistics but cannot perform write operations', function () {
+    $plan = Plan::create([
+        'name' => 'Target Plan',
+        'price' => 19.99,
+        'currency' => 'eur',
+        'interval' => 'month',
+        'features' => [],
+        'is_active' => true,
+    ]);
+
+    $student = User::factory()->create(['role' => 'student', 'login_count' => 5]);
+    $investor = User::factory()->create(['role' => 'investor']);
+
+    $this->actingAs($investor);
+
+    // Assert access is authorized and variables are set correctly
+    Livewire::test(AdminFinance::class)
+        ->assertViewHas('totalVisits', 5)
+        ->assertViewHas('totalPaymentsCount', 0)
+        ->assertViewHas('totalTrialsCount', 0)
+        ->assertViewHas('paidUsersCount', 0)
+        ->assertDontSee('30 Tage kostenloses Probeabo einrichten')
+        ->set('selectedUserForTrial', $student->id)
+        ->set('selectedPlanForTrial', $plan->id)
+        ->call('createFreeTrial')
+        ->assertStatus(403);
 });

@@ -1,3 +1,196 @@
+@php
+if (!function_exists('renderPremiumPassage')) {
+    function renderPremiumPassage(string $content): string {
+        $lines = explode("\n", $content);
+        $outputHtml = '';
+        $inOptionsList = false;
+        
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            if ($trimmed === '') {
+                if ($inOptionsList) {
+                    $outputHtml .= "</div>";
+                    $inOptionsList = false;
+                }
+                $outputHtml .= "<div style='margin-bottom:0.5rem;'></div>";
+                continue;
+            }
+            
+            // Match separator lines like ---
+            if (preg_match('/^[-=*_]{3,}$/', $trimmed)) {
+                if ($inOptionsList) {
+                    $outputHtml .= "</div>";
+                    $inOptionsList = false;
+                }
+                $outputHtml .= "<hr style='border:0; border-top:1px solid #e2e8f0; margin:1.5rem 0;' />";
+                continue;
+            }
+            
+            // Match option header like "Überschriften:" or "Info-Texte:" or "Angebote:"
+            if (preg_match('/^(Überschriften|Info-Texte|Angebote|Situationen|Personen):$/iu', $trimmed)) {
+                if ($inOptionsList) {
+                    $outputHtml .= "</div>";
+                    $inOptionsList = false;
+                }
+                $outputHtml .= "<h4 style='font-size:1.1rem; font-weight:700; color:#1a1a1a; margin-top:1.5rem; margin-bottom:0.75rem; text-transform:uppercase; letter-spacing:0.05em;'>" . e($trimmed) . "</h4>";
+                continue;
+            }
+            
+            // Match option letters: "a  text" or "a) text" or "a: text"
+            if (preg_match('/^([a-l])(\s{2,}|\s*[\)::-]\s*)(.+)$/iu', $trimmed, $matches)) {
+                if (!$inOptionsList) {
+                    $outputHtml .= "<div class='options-list-container' style='display:flex; flex-direction:column; gap:0.55rem; margin-bottom:1.5rem;'>";
+                    $inOptionsList = true;
+                }
+                $letter = strtolower($matches[1]);
+                $text = trim($matches[3]);
+                $outputHtml .= "
+                    <div class='option-strip-item' style='display:flex; align-items:center; gap:1rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:0.6rem 1rem; font-family:var(--font-sans); box-shadow:0 1px 2px rgba(0,0,0,0.02);'>
+                        <span style='background:#e2e8f0; color:#1e293b; font-weight:800; font-size:0.95rem; width:1.75rem; height:1.75rem; display:flex; align-items:center; justify-content:center; border-radius:4px; text-transform:uppercase;'>{$letter}</span>
+                        <span style='color:#334155; font-weight:600; font-size:0.95rem;'>{$text}</span>
+                    </div>";
+                continue;
+            }
+            
+            // Match single letter headers: e.g. line is just "a"
+            if (preg_match('/^([a-l])$/i', $trimmed, $matches)) {
+                if ($inOptionsList) {
+                    $outputHtml .= "</div>";
+                    $inOptionsList = false;
+                }
+                $letter = strtolower($matches[1]);
+                $outputHtml .= "<div style='display:flex; align-items:center; gap:0.75rem; margin-top:1.5rem; margin-bottom:0.5rem;'>
+                    <span style='background:#1e293b; color:#ffffff; font-weight:800; font-size:1rem; width:2rem; height:2rem; display:flex; align-items:center; justify-content:center; border-radius:4px; text-transform:uppercase;'>{$letter}</span>
+                </div>";
+                continue;
+            }
+            
+            // Match single number headers: "1", "2", "3" etc. on their own line
+            if (preg_match('/^([1-9]|1[0-9]|20)$/', $trimmed, $matches)) {
+                if ($inOptionsList) {
+                    $outputHtml .= "</div>";
+                    $inOptionsList = false;
+                }
+                $num = $matches[1];
+                $outputHtml .= "<div style='display:flex; align-items:center; gap:0.75rem; margin-top:1.5rem; margin-bottom:0.5rem;'>
+                    <span style='background:#d8232a; color:#ffffff; font-weight:800; font-size:1.05rem; width:2.2rem; height:2.2rem; display:flex; align-items:center; justify-content:center; border-radius:50%;'>{$num}</span>
+                </div>";
+                continue;
+            }
+            
+            // Match numbered inline text / situations: "1  text" or "Person 1: text" or "Situation 1: text"
+            if (preg_match('/^(Person|Situation|Aufgabe)?\s*([1-9]|1[0-9]|20)(\s*[\s::.-]\s*)(.+)$/iu', $trimmed, $matches)) {
+                if ($inOptionsList) {
+                    $outputHtml .= "</div>";
+                    $inOptionsList = false;
+                }
+                $prefix = trim($matches[1]);
+                $num = $matches[2];
+                $text = trim($matches[4]);
+                $badgeText = $prefix ? "{$prefix} {$num}" : $num;
+                $outputHtml .= "
+                    <div class='paragraph-styled-block' style='display:flex; gap:1.25rem; margin-top:1.25rem; margin-bottom:1.25rem;'>
+                        <div style='flex-shrink:0;'>
+                            <span style='background:#d8232a; color:#ffffff; font-weight:800; font-size:0.9rem; padding:0.35rem 0.75rem; border-radius:4px; display:inline-block; min-width:2.5rem; text-align:center;'>{$badgeText}</span>
+                        </div>
+                        <div style='color:#1a1a1a; line-height:1.75; font-size:0.95rem; font-weight:450;'>{$text}</div>
+                    </div>";
+                continue;
+            }
+            
+            // Otherwise, render normal paragraph line
+            if ($inOptionsList) {
+                $outputHtml .= "</div>";
+                $inOptionsList = false;
+            }
+            $outputHtml .= "<p style='color:#1a1a1a; line-height:1.75; font-size:0.95rem; margin-bottom:1rem; font-weight:450;'>" . e($trimmed) . "</p>";
+        }
+        
+        if ($inOptionsList) {
+            $outputHtml .= "</div>";
+        }
+        
+        return $outputHtml;
+    }
+}
+
+if (!function_exists('parseTeilContent')) {
+    function parseTeilContent(string $content): array {
+        $lines = explode("\n", $content);
+        $instruction = '';
+        $options = [];
+        $texts = [];
+        
+        $currentTextNum = null;
+        $currentTextContent = '';
+        
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            if ($trimmed === '') {
+                if ($currentTextNum !== null) {
+                    $currentTextContent .= "\n";
+                }
+                continue;
+            }
+            
+            if (preg_match('/^[-=*_]{3,}$/', $trimmed)) {
+                continue;
+            }
+            
+            if (preg_match('/^(Überschriften|Situationen|Angebote|Info-Texte|Texte|Personen):$/iu', $trimmed)) {
+                continue;
+            }
+            
+            if (preg_match('/^([a-l])(\s{2,}|\s*[\)::-]\s*)(.+)$/iu', $trimmed, $matches)) {
+                if ($currentTextNum !== null) {
+                    $texts[$currentTextNum] = trim($currentTextContent);
+                    $currentTextNum = null;
+                    $currentTextContent = '';
+                }
+                $options[strtolower($matches[1])] = trim($matches[3]);
+                continue;
+            }
+            
+            if (preg_match('/^([1-9]|1[0-9]|20)$/', $trimmed, $matches)) {
+                if ($currentTextNum !== null) {
+                    $texts[$currentTextNum] = trim($currentTextContent);
+                }
+                $currentTextNum = (int)$matches[1];
+                $currentTextContent = '';
+                continue;
+            }
+            
+            if (preg_match('/^(Person|Situation|Aufgabe)?\s*([1-9]|1[0-9]|20)(\s*[\s::.-]\s*)(.+)$/iu', $trimmed, $matches)) {
+                if ($currentTextNum !== null) {
+                    $texts[$currentTextNum] = trim($currentTextContent);
+                }
+                $currentTextNum = (int)$matches[2];
+                $currentTextContent = $matches[4];
+                continue;
+            }
+            
+            if ($currentTextNum !== null) {
+                $currentTextContent .= ($currentTextContent === '' ? '' : "\n") . $trimmed;
+            } else {
+                if (empty($options) && empty($texts)) {
+                    $instruction .= ($instruction === '' ? '' : "\n") . $trimmed;
+                }
+            }
+        }
+        
+        if ($currentTextNum !== null && trim($currentTextContent) !== '') {
+            $texts[$currentTextNum] = trim($currentTextContent);
+        }
+        
+        return [
+            'instruction' => trim($instruction),
+            'options' => $options,
+            'texts' => $texts,
+        ];
+    }
+}
+@endphp
+
 {{-- Dynamic section/element loop for templated levels (B1, B2, C2, etc.) --}}
 @foreach ($template['sections'] as $sectionIdx => $section)
     @php
@@ -23,163 +216,12 @@
     @elseif ($isSpeaking)
         @include('partials.premium.speaking-flow')
     @else
-        <section class="c1-section" data-section-idx="{{ $sectionIdx }}" style="position: relative;">
-            <div class="section-label">{{ $section['title'] ?? ('Teil ' . ($sectionIdx + 1)) }}</div>
-            @foreach ($section['elements'] ?? [] as $element)
-                @php
-                    $elId = $element['id'] ?? ('el_' . $sectionIdx . '_' . $loop->index);
-                    $elementLabel = $element['label'] ?? '';
-                    $tabLabel = '';
-                    if (str_contains(strtolower($elementLabel), 'leseverstehen')) {
-                        $tabLabel = 'Leseverstehen';
-                    } elseif (str_contains(strtolower($elementLabel), 'sprachbausteine')) {
-                        $tabLabel = 'Sprachbausteine';
-                    } elseif (str_contains(strtolower($elementLabel), 'hörverstehen') || str_contains(strtolower($elementLabel), 'hoerverstehen')) {
-                        $tabLabel = 'Hörverstehen';
-                    } elseif (str_contains(strtolower($elementLabel), 'schriftlicher') || str_contains(strtolower($elementLabel), 'schreiben')) {
-                        $tabLabel = 'Schreiben';
-                    } elseif (str_contains(strtolower($elementLabel), 'mündliche') || str_contains(strtolower($elementLabel), 'sprechen')) {
-                        $tabLabel = 'Sprechen';
-                    }
-                    $isTaskInput = preg_match('/^Aufgabe\s+\d+/i', $elementLabel);
-                @endphp
-
-                @if ($elementLabel && !$isTaskInput)
-                    <div style="position: relative; margin-top: 2rem; margin-bottom: 1.5rem;">
-                        @if ($tabLabel)
-                            <div class="document-section-tab" style="top: 0.5rem;">
-                                <div class="icon-grid">
-                                    <div></div><div></div>
-                                    <div></div><div></div>
-                                </div>
-                                <div class="tab-text">{{ $tabLabel }}</div>
-                            </div>
-                        @endif
-
-                        <h3 class="section-heading" style="margin-bottom: 0.5rem; font-family: var(--font-serif); font-size: 1.6rem; font-weight: 600; color: #1a1a1a;">{{ $elementLabel }}</h3>
-                        @if ($element['instruction'] ?? null)
-                            <div class="c1-instructions" style="margin-bottom: 1.5rem; font-style: italic; color: #555; background: #fafafa; border-left: 3px solid #1a1a1a; padding: 0.75rem 1rem; font-size: 0.9rem; line-height: 1.6;">
-                                {!! nl2br(e($element['instruction'])) !!}
-                            </div>
-                        @endif
-                    </div>
-                @endif
-
-                @if (($element['type'] ?? '') === 'text')
-                    <article class="c1-passage" style="background: #fdfdfd; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">
-                        {!! nl2br(e($element['content'] ?? '')) !!}
-                    </article>
-                @elseif (in_array($element['type'] ?? '', ['inline_gap', 'fill_blank']))
-                    @php
-                        $gaps = method_exists($this, 'gapsFor') ? $this->gapsFor($element) : (json_decode($element['options'] ?? '[]', true) ?: []);
-                    @endphp
-                    @if (preg_match_all('/--(\d+)--/', $element['content'] ?? '', $gapMatches))
-                        @php $gapCount = count($gapMatches[0]); @endphp
-                        @php $parts = preg_split('/--\d+--/', $element['content'] ?? ''); @endphp
-                        @if (count($parts) > 0)
-                            <p class="cloze-text" style="background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 1.5rem; margin-bottom: 1.5rem; line-height: 2.2;">
-                                @foreach ($parts as $partIdx => $part)
-                                    {!! nl2br(e($part)) !!}
-                                    @if ($partIdx < $gapCount)
-                                        @php
-                                            $gapIdx = (int)($gapMatches[1][$partIdx] ?? 0);
-                                            $gapDef = $gaps[$gapIdx] ?? null;
-                                            $gapOptionList = [];
-                                            if ($gapDef) {
-                                                $parts2 = array_map('trim', explode(',', $gapDef['options'] ?? ''));
-                                                foreach ($parts2 as $p) {
-                                                    $kv = explode('|', $p, 2);
-                                                    $gapOptionList[] = ['key' => trim($kv[0]), 'text' => trim($kv[1] ?? $kv[0])];
-                                                }
-                                            }
-                                        @endphp
-                                        <span class="cloze-select-wrapper">
-                                            <span class="cloze-gap-num">{{ $gapIdx }}</span>
-                                            <select class="cloze-select" wire:model.change="answers.{{ $elId }}.{{ $gapIdx }}" {{ $result ? 'disabled' : '' }}>
-                                                <option value="">---</option>
-                                                @foreach ($gapOptionList as $opt)
-                                                    <option value="{{ $opt['key'] }}">{{ $opt['text'] }}</option>
-                                                @endforeach
-                                            </select>
-                                        </span>
-                                    @endif
-                                @endforeach
-                            </p>
-                        @endif
-                    @endif
-                @elseif (in_array($element['type'] ?? '', ['matching']))
-                    @php $matchOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? '')); @endphp
-                    @if (isset($element['pairs']) && count($element['pairs']) > 0)
-                        @foreach ($element['pairs'] as $pair)
-                            <div style="display:flex;flex-direction:row;align-items:center;gap:1rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif;">
-                                <span style="min-width:150px;font-weight:600;">{{ $pair['left'] ?? '' }}</span>
-                                <select class="cloze-select" wire:model.change="answers.{{ $elId }}.{{ $loop->index }}" {{ $result ? 'disabled' : '' }}>
-                                    <option value="">---</option>
-                                    @foreach ($matchOptions as $opt)
-                                        <option value="{{ $opt }}">{{ $opt }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        @endforeach
-                    @else
-                        <div style="display:flex;flex-direction:row;align-items:center;gap:1.5rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif; background: #fafafa; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid #e5e5e5;">
-                            <span style="font-weight:600; color: #1a1a1a; min-width: 100px;">{{ $element['label'] ?? '' }}</span>
-                            <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #ffffff;">
-                                <option value="">---</option>
-                                @foreach ($matchOptions as $opt)
-                                    <option value="{{ $opt }}">{{ $opt }}</option>
-                                @endforeach
-                            </select>
-                            @if ($result)
-                                @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
-                                @if ($detail)
-                                    <span style="margin-left: auto; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }}; font-size: 0.85rem;">
-                                        {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
-                                    </span>
-                                @endif
-                            @endif
-                        </div>
-                    @endif
-                @elseif (in_array($element['type'] ?? '', ['multiple_choice', 'true_false']))
-                    @php
-                        $rawOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? ''));
-                    @endphp
-                    <fieldset style="border:none;padding:0;margin:0 0 1.25rem 0; font-family:'Plus Jakarta Sans',sans-serif; background:#fafafa; border:1px solid #e5e5e5; padding: 0.75rem 1rem; border-radius: 6px;">
-                        <legend style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:0.5rem; color:#1a1a1a; padding: 0 0.5rem;">
-                            {{ $element['label'] ?? 'Aufgabe' }}@if(!empty($element['instruction'])): {{ $element['instruction'] }}@endif
-                        </legend>
-                        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
-                            @foreach ($rawOptions as $opt)
-                                <label class="mc-option-item" style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
-                                    <input type="radio" name="{{ $elId }}" value="{{ $opt }}" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }}>
-                                    <span style="font-weight: 500; text-transform: uppercase;">{{ $opt }}</span>
-                                </label>
-                            @endforeach
-                        </div>
-                        @if ($result)
-                            @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
-                            @if ($detail)
-                                <div style="margin-top:0.5rem; font-size:0.85rem; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }};">
-                                    {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
-                                </div>
-                            @endif
-                        @endif
-                    </fieldset>
-                @elseif (($element['type'] ?? '') === 'writing')
-                    @php
-                        $writingDetail = $result['details'][$elId] ?? [];
-                    @endphp
-                    <div style="margin-bottom:2rem;">
-                        <label style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;display:block;margin-bottom:0.5rem;">{{ $element['instruction'] ?? 'Schreiben Sie einen Text' }} (max. {{ $writingDetail['max_points'] ?? '—' }} Punkte)</label>
-                        <textarea class="writing-textarea-lined" wire:model.debounce.500ms="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} placeholder="Ihre Antwort..."></textarea>
-                        @if ($result && ($writingDetail['feedback'] ?? ''))
-                            <div style="margin-top:0.75rem;padding:0.75rem;background:#f9f9f9;border-left:3px solid #d8232a;border-radius:4px;font-size:0.85rem;">
-                                <strong>Feedback:</strong> {{ $writingDetail['feedback'] }}
-                            </div>
-                        @endif
-                    </div>
-                @endif
-            @endforeach
-        </section>
+        @include('partials.premium.single-section', [
+            'section' => $section,
+            'sectionIdx' => $sectionIdx,
+            'result' => $result,
+            'answers' => $answers,
+            'isGuest' => false
+        ])
     @endif
 @endforeach

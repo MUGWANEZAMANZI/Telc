@@ -29,6 +29,63 @@
         </div>
     </div>
 
+    {{-- Investor Performance & Activity Statistics --}}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
+        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.75rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); border-top: 3px solid #2563eb;">
+            <div style="font-size: 0.85rem; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Gesamtbesuche (Logins)</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: #2563eb;">{{ number_format($totalVisits) }}</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.75rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); border-top: 3px solid #16a34a;">
+            <div style="font-size: 0.85rem; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Zahlungen Gesamt</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: #16a34a;">{{ number_format($totalPaymentsCount) }}</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.75rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); border-top: 3px solid #ea580c;">
+            <div style="font-size: 0.85rem; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Probeabos Gesamt</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: #ea580c;">{{ number_format($totalTrialsCount) }}</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.75rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); border-top: 3px solid #7c3aed;">
+            <div style="font-size: 0.85rem; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Zahlende Nutzer</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: #7c3aed;">{{ number_format($paidUsersCount) }}</div>
+        </div>
+    </div>
+
+    @if (!Auth::user()?->isInvestor())
+    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 2.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 2.5rem;">
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 0 0 0.25rem; color: #111827;">30 Tage kostenloses Probeabo einrichten</h3>
+        <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem;">Wählen Sie einen Teilnehmer und ein Abonnement aus, um eine 30-tägige kostenlose Testversion zu aktivieren. Der Teilnehmer erhält automatische Erinnerungsmails vor Ablauf.</p>
+
+        <form wire:submit.prevent="createFreeTrial" style="display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: flex-end;">
+            <div style="flex: 1; min-width: 250px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #374151; margin-bottom: 0.5rem;">Teilnehmer</label>
+                <select wire:model="selectedUserForTrial" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff; font-size: 0.95rem;">
+                    <option value="">-- Teilnehmer auswählen --</option>
+                    @foreach ($allUsers as $u)
+                        <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->email }})</option>
+                    @endforeach
+                </select>
+                @error('selectedUserForTrial') <span style="color: #dc2626; font-size: 0.85rem;">{{ $message }}</span> @enderror
+            </div>
+
+            <div style="flex: 1; min-width: 250px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #374151; margin-bottom: 0.5rem;">Abonnement-Modell</label>
+                <select wire:model="selectedPlanForTrial" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff; font-size: 0.95rem;">
+                    <option value="">-- Abo-Modell auswählen --</option>
+                    @foreach ($allPlans as $p)
+                        <option value="{{ $p->id }}">{{ $p->name }} ({{ number_format($p->price, 2) }} € / {{ $p->interval }})</option>
+                    @endforeach
+                </select>
+                @error('selectedPlanForTrial') <span style="color: #dc2626; font-size: 0.85rem;">{{ $message }}</span> @enderror
+            </div>
+
+            <div style="flex-shrink: 0;">
+                <button type="submit" style="background: #111827; color: #ffffff; border: none; padding: 0.65rem 1.75rem; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: background 0.2s;">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                    Aktivieren
+                </button>
+            </div>
+        </form>
+    @endif
+
     <div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 5px solid #d8232a; border-radius: 12px; padding: 2.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 2.5rem;">
         <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 0 0 0.25rem; color: #111827;">Ausstehende Zahlungen ({{ $pendingPayments->count() }})</h3>
         <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem;">Ausstehende Zahlungen (Legacy PayPal-Einzahlungen / manuelle Freigabe).</p>
@@ -63,8 +120,12 @@
                                 @endif
                             </td>
                             <td style="padding: 0.75rem;">
-                                <button wire:click="approvePayment({{ $payment->id }})" style="background: #137333; color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer; margin-right: 0.5rem;">Freigeben</button>
-                                <button wire:click="rejectPayment({{ $payment->id }})" style="background: #d8232a; color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer;">Ablehnen</button>
+                                @if (Auth::user()?->isInvestor())
+                                    <span style="color: #666666; font-style: italic;">Nur Lesezugriff</span>
+                                @else
+                                    <button wire:click="approvePayment({{ $payment->id }})" style="background: #137333; color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer; margin-right: 0.5rem;">Freigeben</button>
+                                    <button wire:click="rejectPayment({{ $payment->id }})" style="background: #d8232a; color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer;">Ablehnen</button>
+                                @endif
                             </td>
                         </tr>
                     @empty

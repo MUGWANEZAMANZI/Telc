@@ -240,6 +240,7 @@ class ExamDashboard extends Component
             'title' => 'Neuer Prüfungsteil',
             'minutes' => 0,
             'elements' => [],
+            'layout_style' => 'default',
         ];
     }
 

@@ -45,4 +45,9 @@ return [
         'sandbox' => env('REVOLUT_SANDBOX', true),
     ],
 
+    'google_forms' => [
+        'visa_consultancy' => env('GOOGLE_FORM_VISA_CONSULTANCY', 'https://docs.google.com/forms/d/e/1FAIpQLSdpJmU0RkK5yB3K_VISA_CONSULTANCY/viewform'),
+        'feedback' => env('GOOGLE_FORM_FEEDBACK', 'https://docs.google.com/forms/d/e/1FAIpQLSdpJmU0RkK5yB3K_FEEDBACK/viewform'),
+    ],
+
 ];

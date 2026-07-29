@@ -1,1 +1,4 @@
 Admin panel adding pdf files and thumbnail image fail
+
+Allow investor to access billiing statistics so that they know how website is performing let 
+him access number of visits and payments and trials, pay users statistics

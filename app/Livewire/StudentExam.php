@@ -388,6 +388,8 @@ class StudentExam extends Component
             $query->where('exam_provider', $this->selectedProvider);
         }
 
+        $query->orderBy('is_free', 'desc');
+
         if ($this->sortBy === 'title_asc') {
             $query->orderBy('title', 'asc');
         } elseif ($this->sortBy === 'title_desc') {

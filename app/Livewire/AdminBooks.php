@@ -65,6 +65,7 @@ class AdminBooks extends Component
             'sort_order' => $this->sortOrder,
         ]);
 
+        session()->flash('books_message', 'Buch erfolgreich erstellt!');
         $this->resetForm();
         $this->dispatch('books-saved');
     }
@@ -87,7 +88,7 @@ class AdminBooks extends Component
     {
         $this->validate([
             'title' => ['required', 'string', 'max:255'],
-            'pdf' => ['nullable', 'file', 'mimes:pdf', 'max:51200'],
+            'pdf' => ['nullable', 'file', 'mimes:pdf', 'max:512000'],
             'cover' => ['nullable', 'image', 'max:2048'],
         ]);
 
@@ -114,6 +115,7 @@ class AdminBooks extends Component
         }
 
         $book->update($data);
+        session()->flash('books_message', 'Buch erfolgreich aktualisiert!');
         $this->cancelEdit();
         $this->dispatch('books-saved');
     }

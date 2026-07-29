@@ -65,6 +65,11 @@ class User extends Authenticatable
         return $this->role === 'owner';
     }
 
+    public function isInvestor(): bool
+    {
+        return $this->role === 'investor';
+    }
+
     /** @return HasMany<ExamAttempt, $this> */
     public function attempts(): HasMany
     {

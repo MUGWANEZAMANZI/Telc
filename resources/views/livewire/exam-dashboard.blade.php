@@ -170,7 +170,13 @@
                                 <button type="button" wire:click="moveSection({{ $sectionIndex }}, {{ max($sectionIndex - 1, 0) }})" class="telc-icon-button" title="Move up">↑</button>
                                 <button type="button" wire:click="moveSection({{ $sectionIndex }}, {{ min($sectionIndex + 1, count($template['sections']) - 1) }})" class="telc-icon-button" title="Move down">↓</button>
                                 <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.title" class="telc-input title">
-                                <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.minutes" class="telc-input minutes">
+                                <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.minutes" class="telc-input minutes" style="max-width: 80px;" placeholder="Min">
+                                <select wire:model.live="template.sections.{{ $sectionIndex }}.layout_style" class="telc-select" style="max-width: 250px; font-size: 0.85rem; padding: 0.25rem 0.5rem; height: 36px; margin: 0 0.5rem;">
+                                    <option value="default">Layout: Automatisch</option>
+                                    <option value="teil1">Teil 1: Überschriften oben, Texte unten</option>
+                                    <option value="teil2">Teil 2: Artikel oben, MC unten</option>
+                                    <option value="teil3">Teil 3: Situationen oben, Info-Texte unten (Grid)</option>
+                                </select>
                                 <button type="button" wire:click="removeSection({{ $sectionIndex }})" class="telc-icon-button danger" title="Remove">×</button>
                             </div>
 
