@@ -36,6 +36,14 @@ class AdminPricing extends Component
 
     public string $freeSectionLimit = '3';
 
+    public bool $freeTrialPublished = false;
+
+    public string $freeTrialDays = '7';
+
+    public string $visaConsultancyUrl = '';
+
+    public string $feedbackUrl = '';
+
     public ?int $editingPlanId = null;
 
     public ?int $editingDiscountId = null;
@@ -44,6 +52,10 @@ class AdminPricing extends Component
     {
         abort_unless(Auth::user()?->isOwner(), 403);
         $this->freeSectionLimit = (string) Setting::value('free_section_limit', '3');
+        $this->freeTrialPublished = (bool) Setting::value('free_trial_published', false);
+        $this->freeTrialDays = (string) Setting::value('free_trial_days', '7');
+        $this->visaConsultancyUrl = (string) Setting::value('visa_consultancy_url', config('services.google_forms.visa_consultancy'));
+        $this->feedbackUrl = (string) Setting::value('feedback_url', config('services.google_forms.feedback'));
     }
 
     public function render(): View
@@ -132,9 +144,36 @@ class AdminPricing extends Component
 
     public function saveSettings(): void
     {
+        $this->validate([
+            'freeTrialDays' => ['required', 'integer', 'min:1'],
+            'freeSectionLimit' => ['required', 'integer', 'min:0'],
+            'visaConsultancyUrl' => ['nullable', 'url', 'max:2048'],
+            'feedbackUrl' => ['nullable', 'url', 'max:2048'],
+        ]);
+
         Setting::query()->updateOrCreate(
             ['key' => 'free_section_limit'],
             ['value' => $this->freeSectionLimit],
+        );
+
+        Setting::query()->updateOrCreate(
+            ['key' => 'free_trial_published'],
+            ['value' => $this->freeTrialPublished ? '1' : '0'],
+        );
+
+        Setting::query()->updateOrCreate(
+            ['key' => 'free_trial_days'],
+            ['value' => $this->freeTrialDays],
+        );
+
+        Setting::query()->updateOrCreate(
+            ['key' => 'visa_consultancy_url'],
+            ['value' => $this->visaConsultancyUrl],
+        );
+
+        Setting::query()->updateOrCreate(
+            ['key' => 'feedback_url'],
+            ['value' => $this->feedbackUrl],
         );
 
         $this->dispatch('pricing-saved');

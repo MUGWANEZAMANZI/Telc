@@ -17,21 +17,21 @@
                         {{ __('Schreiben & Hören') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="microphone" :href="route('voice.practice')" :current="request()->routeIs('voice.practice')" wire:navigate>
-                        {{ __('Speaking Exam') }}
+                        {{ __('Mündliche Prüfung') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="credit-card" :href="route('billing')" :current="request()->routeIs('billing')" wire:navigate>
-                        {{ __('Billing') }}
+                        {{ __('Abrechnung') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="book-open" :href="route('books.index')" :current="request()->routeIs('books.*')" wire:navigate>
                         {{ __('Studien') }}
                     </flux:sidebar.item>
                     @unless (auth()->user()?->isAdmin())
                         <flux:sidebar.item icon="play-circle" :href="route('dashboard') . '?filter=free'" :current="request()->routeIs('dashboard') && request()->query('filter') === 'free'" wire:navigate>
-                            {{ __('Free') }}
+                            {{ __('Kostenlos') }}
                         </flux:sidebar.item>
                     @endunless
                     <flux:sidebar.item icon="book-open" :href="route('user.guide')" :current="request()->routeIs('user.guide')" wire:navigate>
-                        {{ __('User Guide') }}
+                        {{ __('Benutzerhandbuch') }}
                     </flux:sidebar.item>
                     @if (auth()->user()?->isAdmin())
                         <flux:sidebar.item icon="academic-cap" :href="route('admin.guide')" :current="request()->routeIs('admin.guide')" wire:navigate>

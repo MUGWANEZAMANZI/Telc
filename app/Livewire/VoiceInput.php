@@ -131,13 +131,7 @@ class VoiceInput extends Component
             return false;
         }
 
-        return Subscription::query()
-            ->where('user_id', auth()->id())
-            ->where('status', 'active')
-            ->where(function ($q) {
-                $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
-            })
-            ->exists();
+        return auth()->user()->hasActiveSubscription();
     }
 
     public function chooseTopic(int $topicId): void

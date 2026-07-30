@@ -208,3 +208,51 @@ test('investor can view finance statistics but cannot perform write operations',
         ->call('createFreeTrial')
         ->assertStatus(403);
 });
+
+test('admin can customize and publish global free trial and users are granted access', function () {
+    $owner = User::factory()->create(['role' => 'owner']);
+    $this->actingAs($owner);
+
+    // 1. Save settings in AdminPricing component
+    Livewire::test(AdminPricing::class)
+        ->set('tab', 'settings')
+        ->set('freeTrialPublished', true)
+        ->set('freeTrialDays', 14)
+        ->call('saveSettings')
+        ->assertHasNoErrors();
+
+    // Verify settings updated in database
+    expect(\App\Models\Setting::value('free_trial_published'))->toBe('1');
+    expect(\App\Models\Setting::value('free_trial_days'))->toBe('14');
+
+    // 2. Test users access level
+    $newStudent = User::factory()->create(['role' => 'student', 'created_at' => now()]);
+    $oldStudent = User::factory()->create(['role' => 'student', 'created_at' => now()->subDays(15)]);
+
+    expect($newStudent->hasActiveSubscription())->toBeTrue();
+    expect($oldStudent->hasActiveSubscription())->toBeFalse();
+
+    // 3. Turn off trial
+    Livewire::test(AdminPricing::class)
+        ->set('tab', 'settings')
+        ->set('freeTrialPublished', false)
+        ->call('saveSettings');
+
+    expect($newStudent->fresh()->hasActiveSubscription())->toBeFalse();
+});
+
+test('admin can customize VISA and Feedback form URLs in settings', function () {
+    $owner = User::factory()->create(['role' => 'owner']);
+    $this->actingAs($owner);
+
+    Livewire::test(AdminPricing::class)
+        ->set('tab', 'settings')
+        ->set('visaConsultancyUrl', 'https://docs.google.com/forms/d/visa-test/viewform')
+        ->set('feedbackUrl', 'https://docs.google.com/forms/d/feedback-test/viewform')
+        ->call('saveSettings')
+        ->assertHasNoErrors();
+
+    // Verify settings updated in database
+    expect(\App\Models\Setting::value('visa_consultancy_url'))->toBe('https://docs.google.com/forms/d/visa-test/viewform');
+    expect(\App\Models\Setting::value('feedback_url'))->toBe('https://docs.google.com/forms/d/feedback-test/viewform');
+});

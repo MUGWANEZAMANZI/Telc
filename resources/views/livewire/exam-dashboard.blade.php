@@ -2,30 +2,51 @@
     <div class="telc-topbar">
         <div>
             <p class="telc-eyebrow">TELC Germany</p>
-            <h1>TELC Exam Builder</h1>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                @if ($mode !== 'overview')
+                    <button type="button" wire:click="switchMode('overview')" class="telc-button font-bold text-sm" style="min-height: auto; padding: 0.35rem 0.75rem; border-color: #cbd5e1; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        ← Overview
+                    </button>
+                @endif
+                <h1>TELC Exam Builder</h1>
+            </div>
         </div>
 
-        <div class="telc-actions">
-            <div class="telc-segment">
-                <button type="button" wire:click="switchMode('builder')" @class(['active' => $mode === 'builder'])>Builder</button>
-                <button type="button" wire:click="switchMode('student')" @class(['active' => $mode === 'student'])>Student</button>
-                <button type="button" wire:click="switchMode('topics')" @class(['active' => $mode === 'topics'])>Topics</button>
-                <button type="button" wire:click="switchMode('contacts')" @class(['active' => $mode === 'contacts'])>Contacts</button>
-                <button type="button" wire:click="switchMode('blog')" @class(['active' => $mode === 'blog'])>Blog</button>
-                @if (auth()->user()?->isOwner())
-                    <button type="button" wire:click="switchMode('pricing')" @class(['active' => $mode === 'pricing'])>Pricing</button>
+        @if ($mode !== 'overview')
+            <div class="telc-actions">
+                <div class="telc-segment">
+                    <button type="button" wire:click="switchMode('builder')" @class(['active' => $mode === 'builder'])>Builder</button>
+                    <button type="button" wire:click="switchMode('student')" @class(['active' => $mode === 'student'])>Student</button>
+                    <button type="button" wire:click="switchMode('topics')" @class(['active' => $mode === 'topics'])>Topics</button>
+                    <button type="button" wire:click="switchMode('contacts')" @class(['active' => $mode === 'contacts'])>Contacts</button>
+                    <button type="button" wire:click="switchMode('blog')" @class(['active' => $mode === 'blog'])>Blog</button>
+                    @if (auth()->user()?->isOwner())
+                        <button type="button" wire:click="switchMode('pricing')" @class(['active' => $mode === 'pricing'])>Pricing</button>
+                    @endif
+                </div>
+
+                @if ($mode !== 'blog')
+                    <button type="button" wire:click="save" class="telc-button primary">Save</button>
                 @endif
             </div>
-
-            @if ($mode !== 'blog')
-                <button type="button" wire:click="save" class="telc-button primary">Save</button>
-            @endif
-        </div>
+        @else
+            <div class="telc-actions">
+                <button type="button" wire:click="createNewExam" class="telc-button primary" style="font-weight: 750;">
+                    + Create New Exam
+                </button>
+            </div>
+        @endif
     </div>
+
+    @if (session()->has('dashboard_message'))
+        <div style="background: #e6f4ea; border: 1px solid #a7f3d0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; color: #137333; font-weight: 600;">
+            {{ session('dashboard_message') }}
+        </div>
+    @endif
 
     <div class="telc-status" x-show="saved" x-cloak>Template saved.</div>
 
-    @if ($mode !== 'student')
+    @if ($mode === 'overview')
         {{-- Rich System Guide Banner for Admins & Owners --}}
         <div class="telc-banner no-print" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; color: #f8fafc; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: 'Plus Jakarta Sans', sans-serif; text-align: left;">
             <div style="display: flex; align-items: center; gap: 1.25rem;">
@@ -59,7 +80,93 @@
                 <strong>{{ $metrics['average_score'] }}%</strong>
             </article>
         </section>
-    @endif
+
+        {{-- Grid of Cards --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style="margin-top: 1.5rem; display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+            @forelse ($cards as $card)
+                <div class="telc-panel" style="display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid {{ strtolower($card['provider']) === 'telc' ? '#d8232a' : '#1e3a8a' }}; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.5rem; background: #fff; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.05)'">
+                    <div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                            <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 9999px; background: {{ strtolower($card['provider']) === 'telc' ? 'rgba(216, 35, 42, 0.1)' : 'rgba(30, 58, 138, 0.1)' }}; color: {{ strtolower($card['provider']) === 'telc' ? '#d8232a' : '#1e3a8a' }};">
+                                {{ strtoupper($card['provider']) }} Folder
+                            </span>
+                            <span style="font-size: 1.25rem; font-weight: 800; color: #111827;">{{ strtoupper($card['level']) }}</span>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1.25rem; background: #f8fafc; padding: 0.75rem; border-radius: 8px; border: 1px solid #edf2f7;">
+                            <div style="flex: 1; text-align: center;">
+                                <span style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 600;">Published</span>
+                                <strong style="font-size: 1.25rem; color: #10b981; font-weight: 800;">{{ $card['published_count'] }}</strong>
+                            </div>
+                            <div style="flex: 1; text-align: center; border-left: 1px solid #e2e8f0;">
+                                <span style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 600;">Draft</span>
+                                <strong style="font-size: 1.25rem; color: #64748b; font-weight: 800;">{{ $card['draft_count'] }}</strong>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem;">
+                            <h4 style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Exams in this level</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                                @foreach ($card['exams'] as $exam)
+                                    <li style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #fdfdfd; border: 1px solid #f1f5f9; border-radius: 6px; font-size: 0.85rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%;">
+                                            <span style="width: 6px; height: 6px; border-radius: 50%; background: {{ $exam->is_published ? '#10b981' : '#cbd5e1' }}; flex-shrink: 0;" title="{{ $exam->is_published ? 'Published' : 'Draft' }}"></span>
+                                            <span style="color: #334155; font-weight: 600; text-overflow: ellipsis; overflow: hidden;" title="{{ $exam->title }}">{{ $exam->title }}</span>
+                                        </div>
+                                        <button type="button" wire:click="editExam({{ $exam->id }})" class="telc-button" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; min-height: auto; border-color: #cbd5e1; background: #fff; color: #1e293b; font-weight: 700; transition: all 0.2s;">
+                                            Edit
+                                        </button>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="telc-panel" style="text-align: center; padding: 3rem; border-radius: 12px; margin-top: 1.5rem; grid-column: 1 / -1;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">📁</div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">No Exams Found</h3>
+                    <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1.5rem;">There are currently no exams in the database. You can start by creating one.</p>
+                    <button type="button" wire:click="createNewExam" class="telc-button primary">
+                        Create Exam from Presets
+                    </button>
+                </div>
+            @endforelse
+        </div>
+    @else
+        {{-- Rich System Guide Banner for Admins & Owners --}}
+        <div class="telc-banner no-print" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; color: #f8fafc; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: 'Plus Jakarta Sans', sans-serif; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                <div style="background: rgba(216, 35, 42, 0.15); border: 1.5px solid #d8232a; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #d8232a; flex-shrink: 0;">🛠️</div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #f8fafc;">System-Benutzerhandbuch</h3>
+                    <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #94a3b8; line-height: 1.45;">Erhalten Sie detaillierte Anleitungen zur Erstellung von Prüfungen, Upload-Limits (bis zu 100MB Audio), PayPal/Revolut Abrechnungsprozessen und Lückentext-Syntaktik.</p>
+                </div>
+            </div>
+            <a href="{{ route('admin.guide') }}" class="telc-button" style="background: #d8232a; border-color: #d8232a; color: #ffffff; text-decoration: none; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 700; border-radius: 6px; flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 4px 10px rgba(216, 35, 42, 0.25);">
+                <span>Handbuch öffnen</span>
+                <span>→</span>
+            </a>
+        </div>
+
+        <section class="admin-metrics">
+            <article>
+                <span>Registered Students</span>
+                <strong>{{ $metrics['students'] }}</strong>
+            </article>
+            <article>
+                <span>Logged In Today</span>
+                <strong>{{ $metrics['daily_logged_in'] }}</strong>
+            </article>
+            <article>
+                <span>Total Attempts</span>
+                <strong>{{ $metrics['attempts'] }}</strong>
+            </article>
+            <article>
+                <span>Average Score</span>
+                <strong>{{ $metrics['average_score'] }}%</strong>
+            </article>
+        </section>
 
     @if ($mode === 'builder')
         <div class="telc-admin-grid">
@@ -111,11 +218,20 @@
                     </div>
                 </div>
 
-                <div class="telc-row" style="margin-top: 1rem;">
-                    <button type="button" wire:click="togglePublished" class="telc-button">
+                <div class="telc-row" style="margin-top: 1rem; gap: 0.5rem; width: 100%;">
+                    <button type="button" wire:click="togglePublished" class="telc-button" style="flex: 1;">
                         {{ $template['is_published'] ?? false ? 'Unpublish' : 'Publish' }}
                     </button>
-                    <span @class(['telc-pill', 'green' => ($template['is_published'] ?? false)])>
+                    <button type="button"
+                            wire:click="deleteExam"
+                            wire:confirm="Are you sure you want to permanently delete this exam and all its attempts?"
+                            class="telc-button"
+                            style="border-color: #d8232a; color: #d8232a; font-weight: 750; flex: 1;">
+                        Delete
+                    </button>
+                </div>
+                <div style="margin-top: 0.5rem; text-align: center;">
+                    <span @class(['telc-pill', 'green' => ($template['is_published'] ?? false)]) style="width: 100%; display: block; text-align: center;">
                         {{ $template['is_published'] ?? false ? 'Published' : 'Draft' }}
                     </span>
                 </div>
@@ -571,5 +687,6 @@
                 </table>
             </div>
         </div>
+    @endif
     @endif
 </div>

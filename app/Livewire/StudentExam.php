@@ -362,13 +362,7 @@ class StudentExam extends Component
             return false;
         }
 
-        return Subscription::query()
-            ->where('user_id', Auth::id())
-            ->where('status', 'active')
-            ->where(function ($q) {
-                $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
-            })
-            ->exists();
+        return Auth::user()->hasActiveSubscription();
     }
 
     public function render(): View

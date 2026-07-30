@@ -136,11 +136,43 @@
         <div class="telc-panel" style="max-width:480px">
             <h2>Platform Settings</h2>
 
-            <label>Free section completions limit</label>
-            <input type="number" wire:model.live="freeSectionLimit" class="telc-input" min="0">
-            <p style="color:#667085;font-size:.78rem;margin:0 0 1rem">Number of free section completions a user gets before needing to subscribe. Set to 0 to disable free access.</p>
+            <div style="margin-bottom: 1.5rem;">
+                <label>Free section completions limit</label>
+                <input type="number" wire:model.live="freeSectionLimit" class="telc-input" min="0">
+                <p style="color:#667085;font-size:.78rem;margin:0.25rem 0 0">Number of free section completions a user gets before needing to subscribe. Set to 0 to disable free access.</p>
+                @error('freeSectionLimit') <span style="color:#dc2626; font-size:0.8rem; display:block; margin-top:0.25rem;">{{ $message }}</span> @enderror
+            </div>
 
-            <button type="button" wire:click="saveSettings" class="telc-button primary">Save Settings</button>
+            <div style="margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #edf2f7;">
+                <h3 style="font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 1rem;">Global Free Trial Settings</h3>
+
+                <label class="telc-checkbox-label" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <input type="checkbox" wire:model.live="freeTrialPublished">
+                    <span>Publish Global Free Trial</span>
+                </label>
+                <p style="color:#667085;font-size:.78rem;margin:-0.5rem 0 1rem 1.5rem">When enabled, all users are granted free trial access starting from their registration date.</p>
+
+                <label>Free Trial Duration (days)</label>
+                <input type="number" wire:model.live="freeTrialDays" class="telc-input" min="1">
+                <p style="color:#667085;font-size:.78rem;margin:0.25rem 0 0">Number of days the free trial remains valid for users after registration.</p>
+                @error('freeTrialDays') <span style="color:#dc2626; font-size:0.8rem; display:block; margin-top:0.25rem;">{{ $message }}</span> @enderror
+            </div>
+
+            <div style="margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #edf2f7;">
+                <h3 style="font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 1rem;">Google Form Integrations</h3>
+
+                <label>VISA-Beratung Google Form URL</label>
+                <input type="url" wire:model.live="visaConsultancyUrl" class="telc-input" placeholder="https://docs.google.com/forms/d/...">
+                <p style="color:#667085;font-size:.78rem;margin:0.25rem 0 0">Google Form URL used for help with Visa applications.</p>
+                @error('visaConsultancyUrl') <span style="color:#dc2626; font-size:0.8rem; display:block; margin-top:0.25rem;">{{ $message }}</span> @enderror
+
+                <label style="margin-top: 1rem; display: block;">Feedback Google Form URL</label>
+                <input type="url" wire:model.live="feedbackUrl" class="telc-input" placeholder="https://docs.google.com/forms/d/...">
+                <p style="color:#667085;font-size:.78rem;margin:0.25rem 0 0">Google Form URL used for user feedback submissions.</p>
+                @error('feedbackUrl') <span style="color:#dc2626; font-size:0.8rem; display:block; margin-top:0.25rem;">{{ $message }}</span> @enderror
+            </div>
+
+            <button type="button" wire:click="saveSettings" class="telc-button primary" style="width: 100%;">Save Settings</button>
         </div>
     @endif
 </div>

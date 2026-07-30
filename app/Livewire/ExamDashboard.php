@@ -30,7 +30,7 @@ class ExamDashboard extends Component
 
     public ?int $selectedTemplateId = null;
 
-    public string $mode = 'builder';
+    public string $mode = 'overview';
 
     /** @var array<string, mixed> */
     public array $template = [];
@@ -94,10 +94,9 @@ class ExamDashboard extends Component
         $this->ensurePresets();
         $this->googleFormUrl = Setting::value('google_form_url', '');
 
-        $template = ExamTemplate::query()->where('exam_provider', $this->providerFilter)->orderBy('level')->first();
-        if ($template) {
-            $this->loadTemplate($template->id);
-        }
+        $this->mode = 'overview';
+        $this->selectedTemplateId = null;
+        $this->template = [];
     }
 
     public function render(): View
@@ -109,6 +108,37 @@ class ExamDashboard extends Component
                 ->orderByDesc('is_free')
                 ->orderBy('level')
                 ->get();
+        }
+
+        $cards = [];
+        if ($this->mode === 'overview') {
+            $grouped = ExamTemplate::query()->get()->groupBy(function ($item) {
+                $provider = $item->exam_provider ?: 'telc';
+                $level = $item->level ?: 'B1';
+                return $provider . '|' . $level;
+            });
+
+            foreach ($grouped as $key => $items) {
+                [$provider, $level] = explode('|', $key);
+                $publishedCount = $items->where('is_published', true)->count();
+                $draftCount = $items->where('is_published', false)->count();
+
+                $cards[] = [
+                    'provider' => $provider,
+                    'level' => $level,
+                    'published_count' => $publishedCount,
+                    'draft_count' => $draftCount,
+                    'exams' => $items,
+                ];
+            }
+
+            usort($cards, function ($a, $b) {
+                $providerCompare = strcasecmp($a['provider'], $b['provider']);
+                if ($providerCompare !== 0) {
+                    return $providerCompare;
+                }
+                return strcasecmp($a['level'], $b['level']);
+            });
         }
 
         $participants = collect();
@@ -127,6 +157,7 @@ class ExamDashboard extends Component
 
         return view('livewire.exam-dashboard', [
             'templates' => $templates,
+            'cards' => $cards,
             'presets' => array_keys(TelcTemplateFactory::presets()),
             'elementTypes' => $this->elementTypes(),
             'metrics' => $this->metrics(),
@@ -188,6 +219,37 @@ class ExamDashboard extends Component
         $this->answers = [];
         $this->result = null;
         $this->resetTimer();
+
+        if ($this->mode === 'overview') {
+            $this->mode = 'builder';
+        }
+    }
+
+    public function editExam(int $id): void
+    {
+        $this->loadTemplate($id);
+        $this->mode = 'builder';
+    }
+
+    public function createNewExam(): void
+    {
+        $this->selectedTemplateId = null;
+        $this->template = [];
+        $this->mode = 'builder';
+    }
+
+    public function deleteExam(): void
+    {
+        if ($this->selectedTemplateId) {
+            $exam = ExamTemplate::find($this->selectedTemplateId);
+            if ($exam) {
+                $exam->delete();
+                session()->flash('dashboard_message', "Exam '{$exam->title}' was deleted successfully.");
+            }
+            $this->selectedTemplateId = null;
+            $this->template = [];
+            $this->mode = 'overview';
+        }
     }
 
     public function createFromPreset(string $level): void

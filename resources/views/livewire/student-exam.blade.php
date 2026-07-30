@@ -527,10 +527,10 @@
                         <h4 style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.35rem; font-weight: 700; margin: 0 0 0.5rem; color: #1a1a1a;">Benötigen Sie Hilfe bei Ihrem VISA-Antrag?</h4>
                         <p style="color: #4a5568; font-size: 0.95rem; margin: 0 0 1rem; line-height: 1.6;">Für Unterstützung bei Bewerbungen, Visa-Fragen oder Behördengängen füllen Sie einfach unser Google-Formular aus. Wenn Sie uns Feedback senden möchten, können Sie auch das entsprechende Formular nutzen.</p>
                         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <a href="{{ config('services.google_forms.visa_consultancy') }}" target="_blank" class="telc-button primary" style="text-decoration: none; padding: 0.55rem 1.25rem; font-size: 0.85rem; background-color: #1a1a1a; color: #ffffff; border-radius: 6px;">
+                            <a href="{{ \App\Models\Setting::value('visa_consultancy_url', config('services.google_forms.visa_consultancy')) }}" target="_blank" class="telc-button primary" style="text-decoration: none; padding: 0.55rem 1.25rem; font-size: 0.85rem; background-color: #1a1a1a; color: #ffffff; border-radius: 6px;">
                                 VISA-Beratung anfordern (Google Formular)
                             </a>
-                            <a href="{{ config('services.google_forms.feedback') }}" target="_blank" class="telc-button" style="text-decoration: none; padding: 0.55rem 1.25rem; font-size: 0.85rem; border: 1.5px solid #4a5568; color: #4a5568; border-radius: 6px;">
+                            <a href="{{ \App\Models\Setting::value('feedback_url', config('services.google_forms.feedback')) }}" target="_blank" class="telc-button" style="text-decoration: none; padding: 0.55rem 1.25rem; font-size: 0.85rem; border: 1.5px solid #4a5568; color: #4a5568; border-radius: 6px;">
                                 Feedback geben (Google Formular)
                             </a>
                         </div>

@@ -157,7 +157,7 @@
                     <h3>VISA-Beratung (VISA Consultancy)</h3>
                     <p>Wenn Sie Unterstützung bei der Beantragung Ihres deutschen Visums, Behördenangelegenheiten oder Dokumenten benötigen, helfen wir Ihnen gerne weiter.</p>
                     <div style="margin-top: 1.25rem;">
-                        <a href="{{ config('services.google_forms.visa_consultancy') }}" target="_blank" class="print-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 100%;">
+                        <a href="{{ \App\Models\Setting::value('visa_consultancy_url', config('services.google_forms.visa_consultancy')) }}" target="_blank" class="print-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 100%;">
                             Formular ausfüllen
                         </a>
                     </div>
@@ -166,7 +166,7 @@
                     <h3>Feedback & Support</h3>
                     <p>Ihre Meinung ist uns wichtig! Teilen Sie uns Ihre Anregungen, Lob oder technische Fehlerberichte mit, damit wir German Success kontinuierlich verbessern können.</p>
                     <div style="margin-top: 1.25rem;">
-                        <a href="{{ config('services.google_forms.feedback') }}" target="_blank" class="print-btn" style="background-color: #4a5568; box-shadow: 0 4px 12px rgba(74, 85, 104, 0.15); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 100%;">
+                        <a href="{{ \App\Models\Setting::value('feedback_url', config('services.google_forms.feedback')) }}" target="_blank" class="print-btn" style="background-color: #4a5568; box-shadow: 0 4px 12px rgba(74, 85, 104, 0.15); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 100%;">
                             Feedback senden
                         </a>
                     </div>

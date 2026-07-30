@@ -88,9 +88,6 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
-    /**
-     * Get the user's initials
-     */
     public function initials(): string
     {
         return Str::of($this->name)
@@ -98,5 +95,28 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /**
+     * Check if the user has an active subscription or is in their active global free trial window.
+     */
+    public function hasActiveSubscription(): bool
+    {
+        // 1. Check if the global free trial is enabled
+        $freeTrialEnabled = (bool) Setting::value('free_trial_published', false);
+        if ($freeTrialEnabled) {
+            $freeTrialDays = (int) Setting::value('free_trial_days', 7);
+            if ($this->created_at && now()->lessThanOrEqualTo($this->created_at->addDays($freeTrialDays))) {
+                return true;
+            }
+        }
+
+        // 2. Otherwise check normal active subscriptions
+        return $this->subscriptions()
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
+            })
+            ->exists();
     }
 }
