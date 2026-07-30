@@ -115,7 +115,8 @@ class ExamDashboard extends Component
             $grouped = ExamTemplate::query()->get()->groupBy(function ($item) {
                 $provider = $item->exam_provider ?: 'telc';
                 $level = $item->level ?: 'B1';
-                return $provider . '|' . $level;
+
+                return $provider.'|'.$level;
             });
 
             foreach ($grouped as $key => $items) {
@@ -137,6 +138,7 @@ class ExamDashboard extends Component
                 if ($providerCompare !== 0) {
                     return $providerCompare;
                 }
+
                 return strcasecmp($a['level'], $b['level']);
             });
         }

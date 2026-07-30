@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\ExamAttempt;
 use App\Models\ExamTemplate;
-use App\Models\Subscription;
 use App\Models\VoiceTopic;
 use App\Services\SpeakingPromptService;
 use Gemini\Data\Content;

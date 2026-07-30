@@ -5,6 +5,7 @@ use App\Livewire\StudentExam;
 use App\Models\ExamEnrollment;
 use App\Models\ExamTemplate;
 use App\Models\Plan;
+use App\Models\Setting;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\SpeakingPromptService;
@@ -222,8 +223,8 @@ test('admin can customize and publish global free trial and users are granted ac
         ->assertHasNoErrors();
 
     // Verify settings updated in database
-    expect(\App\Models\Setting::value('free_trial_published'))->toBe('1');
-    expect(\App\Models\Setting::value('free_trial_days'))->toBe('14');
+    expect(Setting::value('free_trial_published'))->toBe('1');
+    expect(Setting::value('free_trial_days'))->toBe('14');
 
     // 2. Test users access level
     $newStudent = User::factory()->create(['role' => 'student', 'created_at' => now()]);
@@ -253,6 +254,6 @@ test('admin can customize VISA and Feedback form URLs in settings', function () 
         ->assertHasNoErrors();
 
     // Verify settings updated in database
-    expect(\App\Models\Setting::value('visa_consultancy_url'))->toBe('https://docs.google.com/forms/d/visa-test/viewform');
-    expect(\App\Models\Setting::value('feedback_url'))->toBe('https://docs.google.com/forms/d/feedback-test/viewform');
+    expect(Setting::value('visa_consultancy_url'))->toBe('https://docs.google.com/forms/d/visa-test/viewform');
+    expect(Setting::value('feedback_url'))->toBe('https://docs.google.com/forms/d/feedback-test/viewform');
 });

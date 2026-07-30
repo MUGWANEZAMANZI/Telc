@@ -150,4 +150,3 @@ test('admin dashboard defaults to overview, can edit and delete exams', function
     // Assert exam was deleted from database
     $this->assertDatabaseMissing('exam_templates', ['id' => $template->id]);
 });
-
