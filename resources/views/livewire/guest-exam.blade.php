@@ -526,39 +526,62 @@
 
             window.examResultDetails.forEach(detail => {
                 const elId = detail.id;
-
-                let targetEl = document.querySelector(`[wire\\:model\\.live="answers.${elId}"], [wire\\:model="answers.${elId}"], [name="${elId}"], [wire\\:model\\.change="answers.${elId}"]`);
-
-                if (!targetEl) {
-                    const allInputs = document.querySelectorAll('input, select, textarea');
-                    for (let input of allInputs) {
-                        const wireModel = input.getAttribute('wire:model') || input.getAttribute('wire:model.live') || input.getAttribute('wire:model.change');
-                        if (wireModel && (wireModel === `answers.${elId}` || wireModel.startsWith(`answers.${elId}.`))) {
-                            targetEl = input;
-                            break;
-                        }
-                    }
+                let selectors = [
+                    `[wire\\:model\\.live="answers.${elId}"]`,
+                    `[wire\\:model="answers.${elId}"]`,
+                    `[name="${elId}"]`,
+                    `[wire\\:model\\.change="answers.${elId}"]`,
+                    `[wire\\:model\\.live\\.change="answers.${elId}"]`
+                ];
+                if (elId.includes('.gap.')) {
+                    let normalizedId = elId.replace('.gap.', '.');
+                    selectors.push(`[wire\\:model\\.live="answers.${normalizedId}"]`);
+                    selectors.push(`[wire\\:model="answers.${normalizedId}"]`);
+                    selectors.push(`[wire\\:model\\.change="answers.${normalizedId}"]`);
+                    selectors.push(`[wire\\:model\\.live\\.change="answers.${normalizedId}"]`);
                 }
-
+                let targetEl = document.querySelector(selectors.join(', '));
+                
                 if (targetEl) {
                     let wrapper = targetEl.closest('.cloze-select-wrapper') || targetEl.closest('.mc-option-item') || targetEl.closest('.mc-question-row') || targetEl.closest('tr') || targetEl.parentElement;
 
                     if (wrapper && !wrapper.dataset.explanationAttached) {
                         wrapper.dataset.explanationAttached = "true";
                         wrapper.style.cursor = "pointer";
-
                         wrapper.classList.add('hover:bg-yellow-50/50', 'transition-colors');
+
+                        if (wrapper.classList.contains('cloze-select-wrapper')) {
+                            wrapper.style.display = 'inline-flex';
+                            wrapper.style.flexWrap = 'wrap';
+                            wrapper.style.alignItems = 'center';
+                            wrapper.style.gap = '0.25rem';
+                        } else {
+                            const style = window.getComputedStyle(wrapper);
+                            if (style.display === 'flex' || style.display === 'inline-flex') {
+                                wrapper.style.flexWrap = 'wrap';
+                            }
+                        }
 
                         const explDiv = document.createElement('div');
                         explDiv.className = 'explanation-box mt-2 p-3 bg-yellow-50 border-l-4 border-yellow-500 text-xs text-stone-750 rounded shadow-sm hidden text-left';
                         explDiv.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+                        explDiv.style.width = '100%';
 
                         let explanationText = detail.explanation || '';
                         if (!explanationText) {
                             explanationText = detail.correct ? 'Richtig! Gut gemacht.' : 'Leider falsch.';
                         }
 
+                        let questionHtml = '';
+                        if (detail.question && detail.question.trim() !== '') {
+                            questionHtml = `
+                                <div class="font-bold text-slate-800 mb-1" style="font-weight: 700; color: #1e293b; font-family: 'Plus Jakarta Sans', sans-serif;">Frage / Aufgabe:</div>
+                                <p class="text-slate-600 mb-3" style="margin: 0 0 0.75rem 0; color: #475569; font-family: 'Plus Jakarta Sans', sans-serif; white-space: pre-wrap;">${detail.question}</p>
+                            `;
+                        }
+
                         explDiv.innerHTML = `
+                            ${questionHtml}
                             <div class="font-bold text-yellow-800 mb-1" style="font-weight: 700; color: #854d0e;">Erklärung & Feedback:</div>
                             <p class="leading-relaxed" style="margin: 0; color: #451a03;">${explanationText}</p>
                             ${!detail.correct && detail.expected ? `<div class="mt-1 text-green-700 font-bold" style="margin-top: 0.25rem; color: #15803d; font-weight: 700;">Richtige Antwort: ${detail.expected}</div>` : ''}
@@ -573,11 +596,7 @@
                             newTr.appendChild(newTd);
 
                             wrapper.after(newTr);
-                            explDiv.classList.remove('hidden');
-
-                            wrapper.addEventListener('click', () => {
-                                newTr.classList.toggle('hidden');
-                            });
+                            wrapper.addEventListener('click', () => newTr.classList.toggle('hidden'));
                         } else {
                             wrapper.appendChild(explDiv);
                             wrapper.addEventListener('click', (e) => {

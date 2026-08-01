@@ -598,9 +598,15 @@ if (!function_exists('parseTeilContent')) {
                         <textarea class="writing-textarea-lined" wire:model.live="answers.{{ $element['id'] }}" placeholder="Ihre Antwort..." @disabled($result)></textarea>
                         @if ($writeDetail)
                             <span class="writing-score">{{ $writeDetail['points'] }} / {{ $writeDetail['max_points'] }} Punkte</span>
-                            @if ($writeDetail['feedback'] ?? '')
+                            @if (($writeDetail['explanation'] ?? $writeDetail['feedback'] ?? '') !== '')
                                 <div style="margin-top:0.75rem;padding:0.75rem;background:#f9f9f9;border-left:3px solid #d8232a;border-radius:4px;font-size:0.85rem;">
-                                    <strong>Feedback:</strong> {{ $writeDetail['feedback'] }}
+                                    <strong>Feedback:</strong> {{ $writeDetail['explanation'] ?? $writeDetail['feedback'] }}
+                                </div>
+                            @endif
+                            @if (!empty($element['answer']))
+                                <div style="margin-top: 1rem; padding: 1rem; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 4px;">
+                                    <strong style="color: #14532d; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">Musterlösung / AI-Musterlösung:</strong>
+                                    <div style="font-size: 0.95rem; line-height: 1.6; color: #166534; white-space: pre-wrap;">{{ $element['answer'] }}</div>
                                 </div>
                             @endif
                         @endif
@@ -759,9 +765,15 @@ if (!function_exists('parseTeilContent')) {
                     <div style="margin-bottom:2rem;">
                         <label style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;display:block;margin-bottom:0.5rem;">{{ $element['instruction'] ?? 'Schreiben Sie einen Text' }} (max. {{ $writingDetail['max_points'] ?? '—' }} Punkte)</label>
                         <textarea class="writing-textarea-lined" wire:model.debounce.500ms="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} placeholder="Ihre Antwort..."></textarea>
-                        @if ($result && ($writingDetail['feedback'] ?? ''))
+                        @if ($result && (($writingDetail['explanation'] ?? $writingDetail['feedback'] ?? '') !== ''))
                             <div style="margin-top:0.75rem;padding:0.75rem;background:#f9f9f9;border-left:3px solid #d8232a;border-radius:4px;font-size:0.85rem;">
-                                <strong>Feedback:</strong> {{ $writingDetail['feedback'] }}
+                                <strong>Feedback:</strong> {{ $writingDetail['explanation'] ?? $writingDetail['feedback'] }}
+                            </div>
+                        @endif
+                        @if ($result && !empty($element['answer']))
+                            <div style="margin-top: 1rem; padding: 1rem; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 4px;">
+                                <strong style="color: #14532d; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">Musterlösung / AI-Musterlösung:</strong>
+                                <div style="font-size: 0.95rem; line-height: 1.6; color: #166534; white-space: pre-wrap;">{{ $element['answer'] }}</div>
                             </div>
                         @endif
                     </div>

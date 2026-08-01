@@ -80,7 +80,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-LV1-1'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         Indem man genug Treibhausgase in seine Atmosphäre bläst. Ein großer Teil des Kohlendioxids (CO2), das den Roten Planeten früher wärmte, ist wohl noch vorhanden – gebunden in den Eiskappen der Pole und im Boden. Gefrorenes Wasser wurde ebenfalls nachgewiesen. Technisch ist es also machbar, dort wieder Pflanzen wachsen zu lassen.<br><br>
@@ -96,7 +98,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-LV1-2'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         .“ Um den Prozess in Gang zu setzen, kann man aus der Marsoberfläche Perfluorkohlenstoffe (PFC) gewinnen. PFC sind wirksame Treibhausgase. Sobald sich die Atmosphäre aufheizt, wird gefrorenes CO2 aus den Böden frei. Ein sich verstärkender Treibhauseffekt entsteht. Der Luftdruck steigt, und irgendwann fließt wieder Wasser. Menschliche Pioniere können die Felsen mit Bakterien und Flechten „impfen“, die auf der Erde gedeihen. Später bringt man Moose aus, dann Bäume. Die Pflanzen reichern die Atmosphäre mit Sauerstoff an, doch bis wir sie atmen können, werden viele tausend Jahre vergehen.<br><br>
@@ -112,7 +116,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-LV1-3'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         „Wir werden auf dem Mars leben wie die Forscher heute in der Antarktis“ – in kleinen Stationen also, ohne viel Komfort. Doch aus den Erfahrungen bei der Umgestaltung des Mars könnten wir viel lernen, um künftig die Erde besser zu bewahren, meint er. Das sind freilich noch Gedankenspiele. Zunächst will die Nasa wieder auf dem Mond landen oder auf einem Asteroiden. 
@@ -126,7 +132,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-LV1-4'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         . Was es kosten würde, den Roten Planeten zu begrünen, ist noch nicht einmal geschätzt.<br><br>
@@ -142,7 +150,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-LV1-5'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         . Nach seinem sechs Monate dauernden Flug zum Mars installiert zunächst jedes Team eine kleine Wohneinheit und legt damit den Grundstein für die Besiedlung. 
@@ -159,7 +169,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-LV1-6'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         1000 Jahre: Marsbewohner können nur mit Atemgeräten ins Freie, weil der Sauerstoffgehalt der Luft sehr langsam steigt. Langfristig wird der Mars seine Atmosphäre auch wieder verlieren und erneut abkühlen.
@@ -226,7 +238,9 @@
                                     </select>
                                     @if ($result)
                                         @php $det = collect($result['details'])->firstWhere('id', 'C1-LV2-' . $qNum); @endphp
-                                        <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . strtoupper($det['expected'] ?? '') }}</span>
+                                        <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                            {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                        </span>
                                     @endif
                                 </div>
                             </div>
@@ -295,7 +309,9 @@
                                         @endforeach
                                         @if ($result)
                                             @php $det = collect($result['details'])->firstWhere('id', 'C1-LV3-' . $idx); @endphp
-                                            <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                            <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                                {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . ($det['expected'] ?? '') . ')' }}
+                                            </span>
                                         @endif
                                     </td>
                                 </tr>
@@ -321,6 +337,16 @@
                                 </label>
                             @endforeach
                         </div>
+                        @if ($result)
+                            @php $det = collect($result['details'])->firstWhere('id', 'C1-LV3-24'); @endphp
+                            @if ($det)
+                                <div style="margin-top: 1rem;">
+                                    <span class="feedback-badge {{ $det['correct'] ? 'ok' : 'fail' }}">
+                                        {{ $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected']) . ')' }}
+                                    </span>
+                                </div>
+                            @endif
+                        @endif
                     </div>
                 </section>
 
@@ -379,7 +405,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-25'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         die Worte aus Ihrem Mund klingen 
@@ -391,7 +419,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-26'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>. 
                         Dann könnte es sich um eine 
@@ -403,7 +433,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-27'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         seltene neurologische Störung handeln: das „Foreign Accent Syndrome“, zu Deutsch Fremdsprachenakzentsyndrom.<br><br>
@@ -417,7 +449,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-28'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         regionalen oder ausländischen Akzent. Meist geht die veränderte Sprechweise auf Hirnschäden 
@@ -429,7 +463,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-29'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         eines Schlaganfalls oder einer Verletzung 
@@ -441,7 +477,9 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-30'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>. 
                         Die Erkrankung beeinflusst die Sprachmelodie, wobei die 
@@ -453,10 +491,226 @@
                             </select>
                             @if ($result)
                                 @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-31'); @endphp
-                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">{{ $det && $det['correct'] ? '✓' : '✗ ' . ($det['expected'] ?? '') }}</span>
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
                             @endif
                         </span>
                         Lautbildung und Betonung fälschlicherweise den Eindruck erweckt, der Betroffene sei kein Muttersprachler.
+                        
+                        Ein in der Fachwelt bekanntes Beispiel ist der Fall von Sabine Kindschuh. Hätte die Patientin ein paar hundert Jahre früher gelebt, 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">32</span>
+                            <select wire:model.live="answers.C1-SB-32" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[32] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-32'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        sie eine Kandidatin für den Scheiterhaufen gewesen. Ihr Heimatdorf Oberalba in Thüringen war im 17. Jahrhundert Schauplatz mehrerer Hexenprozesse, und was mit der 57-Jährigen 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">33</span>
+                            <select wire:model.live="answers.C1-SB-33" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[33] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-33'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        , hätte man einst wohl übernatürlichen Mächten 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">34</span>
+                            <select wire:model.live="answers.C1-SB-34" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[34] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-34'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        : Sie sprach nach einem Schlaganfall plötzlich mit einem Tonfall, der an den Schweizer Dialekt erinnerte. 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">35</span>
+                            <select wire:model.live="answers.C1-SB-35" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[35] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-35'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        sie auch versuchte, wieder normal zu sprechen, es gelang ihr einfach nicht.<br><br>
+
+                        Die 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">36</span>
+                            <select wire:model.live="answers.C1-SB-36" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[36] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-36'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        Ärzte vermuteten psychische Ursachen dahinter, 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">37</span>
+                            <select wire:model.live="answers.C1-SB-37" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[37] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-37'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        eine regionale Tageszeitung berichtete. Erst ein Sprachtherapeut erkannte: Es handelte sich um das „Foreign Accent Syndrome“, eine neurologische Erkrankung, die 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">38</span>
+                            <select wire:model.live="answers.C1-SB-38" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[38] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-38'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        selten ist, dass ein durchschnittlicher Mediziner in seinem gesamten Leben keinen einzigen Betroffenen 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">39</span>
+                            <select wire:model.live="answers.C1-SB-39" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[39] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-39'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        bekommt. Experten sprechen von weltweit rund 60, maximal 100 Fällen, die überhaupt jemals 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">40</span>
+                            <select wire:model.live="answers.C1-SB-40" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[40] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-40'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>.<br><br>
+
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">41</span>
+                            <select wire:model.live="answers.C1-SB-41" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[41] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-41'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        beschrieb der französische Neurologe Pierre Marie 1907: Eine Pariserin, die einen Schlaganfall erlitten hatte und danach rechtsseitig gelähmt war, begann 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">42</span>
+                            <select wire:model.live="answers.C1-SB-42" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[42] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-42'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        mit einem elsässisch klingenden Akzent zu sprechen. Mehr Details sind von einer anderen historischen Patientin überliefert: Der Experte 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">43</span>
+                            <select wire:model.live="answers.C1-SB-43" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[43] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-43'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        Sprachstörungen Georg Herman Monrad-Krohn dokumentierte 1943 die Geschichte der Norwegerin Astrid L., die bei einem Unfall am linken Stirnhirn verletzt wurde. Sie 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">44</span>
+                            <select wire:model.live="answers.C1-SB-44" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[44] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-44'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        mehrere Tage bewusstlos und danach rechtsseitig gelähmt gewesen sein. Zunächst hatte sie enorme Schwierigkeiten, einfache Gegenstände wie eine Streichholzschachtel 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">45</span>
+                            <select wire:model.live="answers.C1-SB-45" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[45] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-45'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        , und machte zahlreiche Grammatikfehler. Mit der Zeit lernte sie zwar wieder, korrekt und flüssig zu sprechen, allerdings mit einem Tonfall, der ihre Landsleute offenbar 
+                        <span class="cloze-select-wrapper">
+                            <span class="cloze-gap-num">46</span>
+                            <select wire:model.live="answers.C1-SB-46" class="cloze-select" @disabled($result)>
+                                <option value="">—</option>
+                                @foreach ($sbOptions[46] as $k => $o) <option value="{{ $k }}">{{ $o }}</option> @endforeach
+                            </select>
+                            @if ($result)
+                                @php $det = collect($result['details'])->firstWhere('id', 'C1-SB-46'); @endphp
+                                <span class="feedback-badge {{ $det && $det['correct'] ? 'ok' : 'fail' }}">
+                                    {{ $det && $det['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($det['expected'] ?? '') . ')' }}
+                                </span>
+                            @endif
+                        </span>
+                        deutschen Akzent erinnerte.
                     </article>
                 </section>
 
@@ -625,12 +879,22 @@
                     @if ($result)
                         @php
                             $writingDetail = collect($result['details'])->firstWhere('id', 'C1-WRITE-1');
+                            $writingElement = collect($template['sections'] ?? [])
+                                ->pluck('elements')
+                                ->flatten(1)
+                                ->firstWhere('id', 'C1-WRITE-1');
                         @endphp
                         @if ($writingDetail)
                             <div style="margin-top: 1.5rem; background-color: #f7f9fa; border: 1px solid #d9dde5; border-left: 4px solid #d8232a; padding: 1.5rem; border-radius: 4px; text-align: left;">
                                 <h5 style="font-weight: 700; font-size: 0.95rem; text-transform: uppercase; color: #d8232a; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif;">AI-Bewertung: Schriftlicher Ausdruck</h5>
                                 <strong style="font-size: 1.1rem; color: #1a1a1a; display: block; margin-bottom: 0.5rem;">Erreichte Punkte: {{ $writingDetail['points'] }} / 48</strong>
                                 <p style="font-size: 0.95rem; line-height: 1.5; color: #4a4a4a; white-space: pre-wrap;">{{ $writingDetail['explanation'] ?? 'Keine ausführliche Begründung verfügbar.' }}</p>
+                            </div>
+                        @endif
+                        @if ($writingElement && !empty($writingElement['answer']))
+                            <div style="margin-top: 1rem; padding: 1rem; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 4px; text-align: left;">
+                                <strong style="color: #14532d; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">Musterlösung / AI-Musterlösung:</strong>
+                                <div style="font-size: 0.95rem; line-height: 1.6; color: #166534; white-space: pre-wrap;">{{ $writingElement['answer'] }}</div>
                             </div>
                         @endif
                     @endif

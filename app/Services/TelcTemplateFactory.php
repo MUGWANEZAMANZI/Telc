@@ -58,7 +58,7 @@ class TelcTemplateFactory
                     ...self::answerElements('A1-HV1-', 6, ['a', 'c', 'b', 'a', 'b'], 'multiple_choice', 2, 'a,b,c'),
                 ], self::pages(4, 5)),
                 self::section('a1-writing', 'Schriftlicher Ausdruck', 20, [
-                    self::input('A1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 15),
+                    self::input('A1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Betreff: Einladung zu meiner Geburtstagsparty\n\nHallo Sarah,\nich lade dich herzlich zu meiner Geburtstagsparty ein. Die Party findet am nächsten Samstag um 18:00 Uhr bei mir zu Hause statt. Ich würde mich freuen, wenn du kommen kannst. Bitte gib mir bis Donnerstag Bescheid, ob du Zeit hast.\n\nViele Grüße\nMax", 15),
                 ], self::pages(6, 6)),
                 self::section('a1-speaking', 'Mündliche Prüfung', 15, [
                     self::speakingElement('A1-SP-1', 'Teil 1: Sich vorstellen', 'Stellen Sie sich vor (Name, Alter, Land, Wohnort, Sprachen, Beruf, Hobby) sowie Buchstabieren & Zahlen.', 5),
@@ -95,7 +95,7 @@ class TelcTemplateFactory
                     ...self::answerElements('A2-HV1-', 6, ['a', 'b', 'c', 'a', 'b'], 'multiple_choice', 2, 'a,b,c'),
                 ], self::pages(5, 6)),
                 self::section('a2-writing', 'Schriftlicher Ausdruck', 30, [
-                    self::input('A2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 15),
+                    self::input('A2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Betreff: Entschuldigung für das Verpassen des Termins\n\nSehr geehrte Frau Müller,\nich möchte mich aufrichtig dafür entschuldigen, dass ich unseren Termin am Donnerstag verpasst habe. Ich war krank und konnte nicht kommen. Wäre es möglich, einen neuen Termin für nächste Woche zu vereinbaren? Ich bin von Montag bis Mittwoch flexibel.\n\nMit freundlichen Grüßen\nMax Mustermann", 15),
                 ], self::pages(7, 7)),
                 self::section('a2-speaking', 'Mündliche Prüfung', 15, [
                     self::speakingElement('A2-SP-1', 'Teil 1: Präsentation', 'Sprechen Sie über ein gewähltes Thema.', 5),
@@ -147,7 +147,7 @@ class TelcTemplateFactory
                     ...self::answerElements('B1-HV3-', 36, ['Montag', '9 Uhr', 'Bücherei', 'Mappe', 'Formular', 'Passfoto', 'Unterschrift', 'bar'], 'fill_blank', 2),
                 ], self::pages(6, 8)),
                 self::section('b1-writing', 'Schriftlicher Ausdruck', 30, [
-                    self::input('B1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 48),
+                    self::input('B1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Sehr geehrte Damen und Herren,\nich schreibe Ihnen, um mich über den Laptop zu beschweren, den ich letzte Woche in Ihrem Online-Shop gekauft habe. Leider funktioniert der Bildschirm nicht richtig und flackert ständig. Da ich das Gerät dringend für meine Arbeit benötige, bitte ich Sie um einen schnellen Umtausch oder eine Rückerstattung des Kaufpreises.\nIch erwarte Ihre baldige Rückmeldung.\n\nMit freundlichen Grüßen\nJohannes Schmidt", 48),
                 ], self::pages(9, 9)),
                 self::section('b1-speaking', 'Mündliche Prüfung', 15, [
                     self::speakingElement('B1-SP-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie ein Thema: 1. Mein Lieblingshobby / 2. Meine letzte Reise', 6),
@@ -204,7 +204,7 @@ class TelcTemplateFactory
                     ...self::answerElements('C2-HV3-', 50, ['Urban Gardening', 'CO2-neutral', 'Schwammstadt', 'Dachbegrünung', 'Photovoltaik', 'Wärmepumpe', 'Carsharing', 'Nahverkehr', 'Bürgerbeteiligung', 'Leitbild'], 'fill_blank', 2),
                 ], self::pages(9, 12)),
                 self::section('c2-writing', 'Schriftlicher Ausdruck', 80, [
-                    self::input('C2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 48),
+                    self::input('C2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Kritische Reflexion der Digitalisierung im Bildungssystem\n\nDie Digitalisierung des Schulwesens schreitet unaufhaltsam voran. Während Befürworter eine Demokratisierung des Wissenszugangs und die Förderung digitaler Kompetenzen betonen, warnen Kritiker vor einer zunehmenden sozialen Disparität und dem Verlust grundlegender kognitiver Fertigkeiten.\nEine differenzierte Betrachtung offenbart, dass die bloße Bereitstellung digitaler Endgeräte noch keinen pädagogischen Mehrwert generiert. Vielmehr bedarf es didaktisch fundierter Konzepte und einer kontinuierlichen Fortbildung des Lehrpersonals, um Medienkompetenz zielführend zu vermitteln. Andernfalls droht eine oberflächliche Beschäftigung mit Lerninhalten zu Lasten von Tiefenverständnis und Konzentrationsfähigkeit.\nSchlussfolgernd ist haftzuhalten, dass digitale Medien als Ergänzung, nicht jedoch als Ersatz für den analogen, zwischenmenschlichen Diskurs im Klassenzimmer fungieren sollten.", 48),
                 ], self::pages(13, 13)),
                 self::section('c2-speaking', 'Mündliche Prüfung', 15, [
                     self::speakingElement('C2-SP-1a', '1a: Präsentation', 'Präsentation (ca. 4 Minuten). Wählen Sie ein Thema: 1. Die Globalisierung und ihre Auswirkungen auf kulturelle Identität / 2. Wissenschaftlicher Fortschritt und ethische Verantwortung', 6),
@@ -389,7 +389,7 @@ class TelcTemplateFactory
                     ...self::answerElements('B2-HV3-', 42, ['Vortragssaal', '19.30', 'Professor Dr. Wagner', 'Klimawandel', 'Eintritt frei', 'Anmeldung', 'Handout', 'Diskussion'], 'fill_blank', 2),
                 ], self::pages(13, 15)),
                 self::section('b2-writing', 'Schriftlicher Ausdruck', 30, [
-                    self::input('B2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 48),
+                    self::input('B2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Sehr geehrte Damen und Herren,\nmit großem Interesse habe ich Ihre Anzeige für den Deutsch-Intensivkurs im Sommer gelesen. Da ich meine Sprachkenntnisse für mein bevorstehendes Studium verbessern möchte, interessiere ich mich sehr für eine Teilnahme.\nKönnten Sie mir bitte weitere Informationen bezüglich der Kursgebühren, der genauen Unterrichtszeiten und der maximalen Teilnehmerzahl zusenden? Gibt es zudem Unterkünfte, die Sie für ausländische Studenten empfehlen können?\nIch bedanke mich im Voraus für Ihre Bemühungen und freue mich auf Ihre Antwort.\n\nMit freundlichen Grüßen\nMaria Lopez", 48),
                 ], self::pages(16, 16)),
                 self::section('b2-speaking', 'Mündliche Prüfung', 16, [
                     self::speakingElement('B2-SP-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie ein Thema: 1. Die Bedeutung von Social Media für junge Menschen / 2. Mein Traumberuf und wie ich ihn erreichen will', 6),
@@ -469,7 +469,7 @@ class TelcTemplateFactory
                     ...self::answerElements('C1-HV3-', 65, ['fließenden Übergang', 'mehr als 9 Millionen', 'Emotionen nicht an', 'Off-White', 'Dimensionen', 'kräftigen Farben', 'Kontrast', 'kurz aufhalten', 'Beleuchtungen', 'steril'], 'fill_blank', 2),
                 ], self::pages(17, 19)),
                 self::section('c1-writing', 'Schriftlicher Ausdruck', 70, [
-                    self::input('C1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', '', 48),
+                    self::input('C1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Stellungnahme zum Thema: Soll man Geld spenden?\n\nDie Frage, ob private Geldspenden eine sinnvolle Möglichkeit zur Hilfeleistung darstellen oder ob Gelder primär in bürokratischen Strukturen versickern, wird kontrovers diskutiert. \nEinerseits ermöglichen Spenden die Finanzierung von Hilfsprojekten weltweit, die ohne private Mittel nicht existieren könnten. Insbesondere bei Naturkatastrophen ist schnelle finanzielle Hilfe überlebenswichtig. \nAndererseits ist die Kritik an den hohen Verwaltungskosten großer Organisationen nicht unberechtigt. Dennoch überwiegt der Nutzen, da seriöse Organisationen durch Transparenzberichte nachweisen, dass der Großteil der Gelder die Betroffenen erreicht. \nZusammenfassend lässt sich sagen, dass gezieltes und informiertes Spenden an zertifizierte Organisationen einen unverzichtbaren Beitrag zur globalen Solidarität leistet.", 48),
                 ], self::pages(20, 20)),
                 self::section('c1-speaking', 'Mündliche Prüfung', 16, [
                     self::speakingElement('C1-SP-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie eines der Themen: 1. Was ist der Nationalsport in Ihrem Land und welche Bedeutung hat er für die Gesellschaft? oder 2. Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit?', 6),
