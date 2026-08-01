@@ -385,7 +385,7 @@
 
                                                      <div>
                                                          @php
-                                                             $gapData = json_decode($element['options'] ?? '[]', true) ?: [];
+                                                             $gapData = is_string($element['options'] ?? null) ? (json_decode($element['options'], true) ?: []) : ($element['options'] ?? []);
                                                              // Match gaps count in the text
                                                              preg_match_all('/--(\d+)--/', $element['content'] ?? '', $matches);
                                                              $gKeys = array_unique($matches[1]);

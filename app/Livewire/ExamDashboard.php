@@ -103,6 +103,7 @@ class ExamDashboard extends Component
         $templates = collect();
         if (in_array($this->mode, ['builder', 'student'], true)) {
             $templates = ExamTemplate::query()
+                ->where('is_template', true)
                 ->where('exam_provider', $this->providerFilter)
                 ->orderByDesc('is_free')
                 ->orderBy('level')
@@ -111,12 +112,15 @@ class ExamDashboard extends Component
 
         $cards = [];
         if ($this->mode === 'overview') {
-            $grouped = ExamTemplate::query()->get()->groupBy(function ($item) {
-                $provider = $item->exam_provider ?: 'telc';
-                $level = $item->level ?: 'B1';
+            $grouped = ExamTemplate::query()
+                ->where('is_template', false)
+                ->get()
+                ->groupBy(function ($item) {
+                    $provider = $item->exam_provider ?: 'telc';
+                    $level = $item->level ?: 'B1';
 
-                return $provider.'|'.$level;
-            });
+                    return $provider.'|'.$level;
+                });
 
             foreach ($grouped as $key => $items) {
                 [$provider, $level] = explode('|', $key);
@@ -258,6 +262,7 @@ class ExamDashboard extends Component
         $preset = TelcTemplateFactory::forLevel($level);
         $preset['title'] .= ' Custom';
         $preset['is_published'] = false;
+        $preset['is_template'] = false;
         $preset['exam_provider'] = $this->providerFilter;
 
         $record = ExamTemplate::create($preset);

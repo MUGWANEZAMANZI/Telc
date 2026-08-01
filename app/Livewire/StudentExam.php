@@ -366,7 +366,8 @@ class StudentExam extends Component
     public function render(): View
     {
         $query = ExamTemplate::query()
-            ->where('is_published', true);
+            ->where('is_published', true)
+            ->where('is_template', false);
 
         if ($this->filterFree) {
             $query->where('is_free', true);

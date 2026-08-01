@@ -62,6 +62,7 @@ class LandingExamCatalog extends Component
         $order = ['A1' => 0, 'A2' => 1, 'B1' => 2, 'B2' => 3, 'C1' => 4, 'C2' => 5];
 
         return array_values(ExamTemplate::where('is_published', true)
+            ->where('is_template', false)
             ->where('exam_provider', $this->selectedProvider)
             ->whereIn('level', ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'])
             ->pluck('level')
@@ -73,6 +74,7 @@ class LandingExamCatalog extends Component
     public function render(): View
     {
         $allExams = ExamTemplate::where('is_published', true)
+            ->where('is_template', false)
             ->where('exam_provider', $this->selectedProvider)
             ->where('level', $this->selectedLevel)
             ->orderBy('id')

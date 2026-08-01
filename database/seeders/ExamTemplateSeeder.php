@@ -63,6 +63,7 @@ class ExamTemplateSeeder extends Seeder
                 array_merge($preset, [
                     'sections' => $sections,
                     'is_published' => true,
+                    'is_template' => true,
                 ])
             );
         }
