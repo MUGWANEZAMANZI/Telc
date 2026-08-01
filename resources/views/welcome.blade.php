@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>GERMAN SUCCESS - KI-gestütztes C1 Deutschzertifikat-Portal</title>
+        <script defer src="https://analytics.germansuccess.com/script.js" data-website-id="9365fe70-e29e-4370-bc7f-f3b96ee73200"></script>
 
         <link rel="icon" href="/logo.jpeg" sizes="any">
         <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
