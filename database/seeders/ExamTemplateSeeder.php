@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\ExamTemplate;
 use App\Services\TelcTemplateFactory;
-use Illuminate\Database\Seeder;
-use Gemini\Laravel\Facades\Gemini;
 use Gemini\Data\Content;
+use Gemini\Laravel\Facades\Gemini;
+use Illuminate\Database\Seeder;
 
 class ExamTemplateSeeder extends Seeder
 {
@@ -22,20 +22,34 @@ class ExamTemplateSeeder extends Seeder
 
             if ($existing) {
                 $existingSections = $existing->sections ?? [];
-                
+
                 foreach ($sections as $sIdx => $section) {
-                    $existingSection = collect($existingSections)->firstWhere('id', $section['id']);
+                    $existingSection = null;
+                    foreach ($existingSections as $es) {
+                        if (($es['id'] ?? '') === $section['id']) {
+                            $existingSection = $es;
+                            break;
+                        }
+                    }
+
                     if ($existingSection) {
                         foreach ($section['elements'] as $elIdx => $el) {
-                            $existingEl = collect($existingSection['elements'] ?? [])->firstWhere('id', $el['id']);
+                            $existingEl = null;
+                            foreach ($existingSection['elements'] ?? [] as $ee) {
+                                if (($ee['id'] ?? '') === $el['id']) {
+                                    $existingEl = $ee;
+                                    break;
+                                }
+                            }
+
                             if ($existingEl) {
-                                if (!empty($existingEl['question'])) {
+                                if (! empty($existingEl['question'])) {
                                     $sections[$sIdx]['elements'][$elIdx]['question'] = $existingEl['question'];
                                 }
-                                if (!empty($existingEl['explanation'])) {
+                                if (! empty($existingEl['explanation'])) {
                                     $sections[$sIdx]['elements'][$elIdx]['explanation'] = $existingEl['explanation'];
                                 }
-                                if ($el['type'] === 'inline_gap' && !empty($existingEl['options'])) {
+                                if ($el['type'] === 'inline_gap' && ! empty($existingEl['options'])) {
                                     $sections[$sIdx]['elements'][$elIdx]['options'] = $existingEl['options'];
                                 }
                             }
@@ -61,7 +75,7 @@ class ExamTemplateSeeder extends Seeder
             foreach ($sections as $sIdx => $section) {
                 $elements = $section['elements'] ?? [];
                 $originalElements = $elements;
-                $this->enrichSectionElements($elements, $section['title'] ?? ('Teil ' . ($sIdx + 1)));
+                $this->enrichSectionElements($elements, $section['title'] ?? ('Teil '.($sIdx + 1)));
                 if ($elements !== $originalElements) {
                     $sections[$sIdx]['elements'] = $elements;
                     $changed = true;
@@ -76,14 +90,16 @@ class ExamTemplateSeeder extends Seeder
 
     /**
      * Enrich elements of a section using Gemini API.
+     *
+     * @param  array<int, array<string, mixed>>  $elements
      */
     private function enrichSectionElements(array &$elements, string $sectionTitle): void
     {
         // 1. Gather all context text from text elements in this section
         $contextText = '';
         foreach ($elements as $el) {
-            if (($el['type'] ?? '') === 'text' && !empty($el['content'])) {
-                $contextText .= "\n\n=== " . ($el['label'] ?? '') . " ===\n" . $el['content'];
+            if (($el['type'] ?? '') === 'text' && ! empty($el['content'])) {
+                $contextText .= "\n\n=== ".($el['label'] ?? '')." ===\n".$el['content'];
             }
         }
 
@@ -97,18 +113,19 @@ class ExamTemplateSeeder extends Seeder
                 $raw = is_string($el['options'] ?? null) ? json_decode($el['options'], true) : ($el['options'] ?? []);
                 if (is_array($raw)) {
                     foreach ($raw as $gIdx => $gap) {
-                        if (!empty($gap['question']) && !empty($gap['explanation'])) {
+                        if (! empty($gap['question']) && ! empty($gap['explanation'])) {
                             continue;
                         }
                         $itemsToEnrich[] = [
-                            'id' => $id . '.gap.' . $gIdx,
-                            'label' => ($el['label'] ?? $id) . ' — Lücke ' . ($gIdx + 1),
+                            'id' => $id.'.gap.'.$gIdx,
+                            'label' => ($el['label'] ?? $id).' — Lücke '.($gIdx + 1),
                             'correct_answer' => $gap['answer'] ?? '',
                             'element_idx' => $idx,
                             'gap_index' => $gIdx,
                         ];
                     }
                 }
+
                 continue;
             }
 
@@ -116,8 +133,8 @@ class ExamTemplateSeeder extends Seeder
                 continue;
             }
 
-            if (!empty($el['answer']) && in_array($type, ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true)) {
-                if (!empty($el['question']) && !empty($el['explanation'])) {
+            if (! empty($el['answer']) && in_array($type, ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true)) {
+                if (! empty($el['question']) && ! empty($el['explanation'])) {
                     continue;
                 }
 
@@ -136,20 +153,20 @@ class ExamTemplateSeeder extends Seeder
 
         // 3. Request Gemini to generate the specific question context and explanation
         $prompt = "Hier ist der Kontext (Text/Transkript) für den Prüfungsteil '{$sectionTitle}':\n"
-            . $contextText . "\n\n"
-            . "Hier sind die Aufgaben, die gelöst werden sollen:\n"
-            . json_encode($itemsToEnrich, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . "\n\n"
-            . "Bitte generiere für jede Aufgabe:\n"
-            . "1. Den genauen Fragetext bzw. den Satzkontext aus dem obigen Text (z. B. den Satz mit der Lücke oder die Aussage) als 'question'. Wenn kein Text vorhanden ist, verwende den Label.\n"
-            . "2. Eine verständliche Erklärung (2-3 Sätze auf Deutsch), warum diese Antwort korrekt ist, als 'explanation'.\n\n"
-            . "Antworte ausschließlich als gültiges JSON-Objekt im Format:\n"
-            . "{\n"
-            . "  \"AufgabenID\": {\n"
-            . "    \"question\": \"...\",\n"
-            . "    \"explanation\": \"...\"\n"
-            . "  }\n"
-            . "}\n\n"
-            . "Antworte NUR mit dem JSON-Objekt, kein Markdown, kein ```json.";
+            .$contextText."\n\n"
+            ."Hier sind die Aufgaben, die gelöst werden sollen:\n"
+            .json_encode($itemsToEnrich, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."\n\n"
+            ."Bitte generiere für jede Aufgabe:\n"
+            ."1. Den genauen Fragetext bzw. den Satzkontext aus dem obigen Text (z. B. den Satz mit der Lücke oder die Aussage) als 'question'. Wenn kein Text vorhanden ist, verwende den Label.\n"
+            ."2. Eine verständliche Erklärung (2-3 Sätze auf Deutsch), warum diese Antwort korrekt ist, als 'explanation'.\n\n"
+            ."Antworte ausschließlich als gültiges JSON-Objekt im Format:\n"
+            ."{\n"
+            ."  \"AufgabenID\": {\n"
+            ."    \"question\": \"...\",\n"
+            ."    \"explanation\": \"...\"\n"
+            ."  }\n"
+            ."}\n\n"
+            .'Antworte NUR mit dem JSON-Objekt, kein Markdown, kein ```json.';
 
         try {
             $response = Gemini::generativeModel(model: 'gemini-3.5-flash-lite')
@@ -192,7 +209,7 @@ class ExamTemplateSeeder extends Seeder
             }
         } catch (\Throwable $e) {
             // Fail silently or dump to logs
-            dump("Fehler beim Generieren der Fragen für '{$sectionTitle}': " . $e->getMessage());
+            dump("Fehler beim Generieren der Fragen für '{$sectionTitle}': ".$e->getMessage());
         }
     }
 }

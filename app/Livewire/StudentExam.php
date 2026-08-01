@@ -1005,25 +1005,27 @@ class StudentExam extends Component
             if ($gapIndex !== null) {
                 $gaps = json_decode((string) ($element['options'] ?? '[]'), true);
                 $gap = $gaps[$gapIndex] ?? null;
-                
+
                 if ($gap) {
-                    $this->result['details'][$key]['question'] = $gap['question'] ?? ("Lücke " . ($gapIndex + 1));
+                    $this->result['details'][$key]['question'] = $gap['question'] ?? ('Lücke '.($gapIndex + 1));
                     if (! empty($gap['explanation'])) {
                         $this->result['details'][$key]['explanation'] = $gap['explanation'];
+
                         continue;
                     }
                 }
-                
+
                 $gapOptionsStr = $gap['options'] ?? '';
-                $question = "Lücke " . ($gapIndex + 1) . " in folgendem Text:\n" . ($element['content'] ?? '') . "\nOptionen: " . $gapOptionsStr;
+                $question = 'Lücke '.($gapIndex + 1)." in folgendem Text:\n".($element['content'] ?? '')."\nOptionen: ".$gapOptionsStr;
                 $correctAnswer = $gap['answer'] ?? '';
             } else {
                 $this->result['details'][$key]['question'] = $element['question'] ?? $element['label'] ?? '';
                 if (! empty($element['explanation'])) {
                     $this->result['details'][$key]['explanation'] = $element['explanation'];
+
                     continue;
                 }
-                
+
                 $question = $element['question'] ?? $element['label'] ?? '';
                 $content = $element['content'] ?? '';
                 if ($content !== '' && empty($element['question'])) {

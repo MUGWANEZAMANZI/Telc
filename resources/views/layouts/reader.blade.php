@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? '' }} — GERMAN SUCCESS</title>
+    <script defer src="https://analytics.germansuccess.com/script.js" data-website-id="9365fe70-e29e-4370-bc7f-f3b96ee73200"></script>
     <link rel="icon" href="/logo.jpeg" sizes="any">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
