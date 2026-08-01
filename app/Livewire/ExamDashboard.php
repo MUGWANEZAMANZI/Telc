@@ -91,7 +91,6 @@ class ExamDashboard extends Component
     {
         abort_unless(Auth::user()?->isAdmin(), 403);
 
-        $this->ensurePresets();
         $this->googleFormUrl = Setting::value('google_form_url', '');
 
         $this->mode = 'overview';
@@ -274,10 +273,13 @@ class ExamDashboard extends Component
             'template.sections' => ['required', 'array', 'min:1'],
         ]);
 
-        ExamTemplate::updateOrCreate(
+        $record = ExamTemplate::updateOrCreate(
             ['id' => $this->selectedTemplateId],
             $this->template,
         );
+
+        $this->selectedTemplateId = $record->id;
+        $this->template['id'] = $record->id;
 
         $this->dispatch('exam-saved');
     }
@@ -805,20 +807,6 @@ class ExamDashboard extends Component
     public function saveProgress(): void
     {
         // No-op for admin preview dashboard
-    }
-
-    private function ensurePresets(): void
-    {
-        if (app()->runningUnitTests()) {
-            return;
-        }
-
-        foreach (TelcTemplateFactory::presets() as $preset) {
-            ExamTemplate::updateOrCreate(
-                ['title' => $preset['title']],
-                $preset + ['is_published' => true]
-            );
-        }
     }
 
     /**

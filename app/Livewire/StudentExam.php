@@ -9,7 +9,6 @@ use App\Models\Subscription;
 use App\Services\AnswerExplainer;
 use App\Services\ExamGrader;
 use App\Services\SpeakingPromptService;
-use App\Services\TelcTemplateFactory;
 use Gemini\Data\Content;
 use Gemini\Laravel\Facades\Gemini;
 use Illuminate\Support\Facades\Auth;
@@ -122,7 +121,6 @@ class StudentExam extends Component
 
     public function mount(): void
     {
-        $this->ensurePresets();
 
         if (session()->has('guest_pending_attempt')) {
             $pending = session()->pull('guest_pending_attempt');
@@ -1775,19 +1773,5 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             $data['sections'] = $sections;
         }
         $this->template = $data;
-    }
-
-    private function ensurePresets(): void
-    {
-        if (app()->runningUnitTests()) {
-            return;
-        }
-
-        foreach (TelcTemplateFactory::presets() as $preset) {
-            ExamTemplate::updateOrCreate(
-                ['title' => $preset['title']],
-                $preset + ['is_published' => true]
-            );
-        }
     }
 }

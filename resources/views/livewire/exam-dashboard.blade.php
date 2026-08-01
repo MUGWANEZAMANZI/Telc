@@ -8,7 +8,7 @@
                         ← Overview
                     </button>
                 @endif
-                <h1>TELC Exam Builder</h1>
+                <h1>TELC Exam Template Builder</h1>
             </div>
         </div>
 
@@ -32,7 +32,7 @@
         @else
             <div class="telc-actions">
                 <button type="button" wire:click="createNewExam" class="telc-button primary" style="font-weight: 750;">
-                    + Create New Exam
+                    + Create New Exam Template
                 </button>
             </div>
         @endif
@@ -105,7 +105,7 @@
                         </div>
 
                         <div style="margin-top: 1rem;">
-                            <h4 style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Exams in this level</h4>
+                            <h4 style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Templates in this level</h4>
                             <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
                                 @foreach ($card['exams'] as $exam)
                                     <li style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #fdfdfd; border: 1px solid #f1f5f9; border-radius: 6px; font-size: 0.85rem;">
@@ -125,10 +125,10 @@
             @empty
                 <div class="telc-panel" style="text-align: center; padding: 3rem; border-radius: 12px; margin-top: 1.5rem; grid-column: 1 / -1;">
                     <div style="font-size: 2.5rem; margin-bottom: 1rem;">📁</div>
-                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">No Exams Found</h3>
-                    <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1.5rem;">There are currently no exams in the database. You can start by creating one.</p>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">No Exam Templates Found</h3>
+                    <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1.5rem;">There are currently no exam templates in the database. You can start by creating one.</p>
                     <button type="button" wire:click="createNewExam" class="telc-button primary">
-                        Create Exam from Presets
+                        Create Template from Presets
                     </button>
                 </div>
             @endforelse
@@ -172,16 +172,16 @@
         <div class="telc-admin-grid">
             <aside class="telc-panel">
                 <div style="margin-bottom: 1.5rem;">
-                    <label>Exam Category Directory</label>
+                    <label>Template Category Directory</label>
                     <div class="telc-segment" style="margin-top: 0.5rem; width: 100%;">
                         <button type="button" wire:click="changeProvider('telc')" @class(['active' => $providerFilter === 'telc']) style="flex: 1;">TELC Folder</button>
                         <button type="button" wire:click="changeProvider('goethe')" @class(['active' => $providerFilter === 'goethe']) style="flex: 1;">Goethe Folder</button>
                     </div>
                 </div>
 
-                <label>Active Category Exam</label>
+                <label>Active Category Template</label>
                 <select wire:change="loadTemplate($event.target.value)" class="telc-select" style="margin-bottom: 1.5rem; width: 100%;">
-                    <option value="">— Select Exam —</option>
+                    <option value="">— Select Template —</option>
                     @foreach ($templates as $record)
                         <option value="{{ $record->id }}" @selected($selectedTemplateId === $record->id)>
                             {{ $record->level }} - {{ $record->title }}
@@ -189,7 +189,7 @@
                     @endforeach
                 </select>
 
-                <h2>Exam Source Settings</h2>
+                <h2>Template Source Settings</h2>
 
                 <label>Title</label>
                 <input type="text" wire:model.live="template.title" class="telc-input">
@@ -213,7 +213,7 @@
                         Free exam (all sections, no payment required)
                     </label>
                     <div style="margin-top: 0.5rem;">
-                        <label>Exam Price (EUR) — leave 0 for free / subscription only</label>
+                        <label>Template Price (EUR) — leave 0 for free / subscription only</label>
                         <input type="number" step="0.01" wire:model.live="template.price" class="telc-input" placeholder="e.g. 9.99">
                     </div>
                 </div>
@@ -224,7 +224,7 @@
                     </button>
                     <button type="button"
                             wire:click="deleteExam"
-                            wire:confirm="Are you sure you want to permanently delete this exam and all its attempts?"
+                            wire:confirm="Are you sure you want to permanently delete this exam template and all its attempts?"
                             class="telc-button"
                             style="border-color: #d8232a; color: #d8232a; font-weight: 750; flex: 1;">
                         Delete
