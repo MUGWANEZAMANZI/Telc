@@ -1116,17 +1116,12 @@ select:focus[data-flux-control] {
 }
 
 .paper-workbench {
-    align-items: start;
-    display: grid;
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
-    grid-template-columns: minmax(540px, 794px) minmax(300px, 420px);
-    overflow-x: auto;
-}
-
-@media (max-width: 1320px) {
-    .paper-workbench {
-        grid-template-columns: minmax(540px, 794px);
-    }
+    overflow-x: visible;
+    width: 100%;
 }
 
 .pdf-booklet {
@@ -1429,20 +1424,24 @@ select:focus[data-flux-control] {
 /* ===== EXAM LAYOUT (Paper + Answer Sheet Side by Side) ===== */
 .exam-layout {
     display: flex;
+    flex-direction: column;
     gap: 1.5rem;
     height: 100%;
-    min-height: calc(100vh - 12rem);
+    min-height: auto;
+    width: 100%;
 }
 
 .exam-paper-column {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
-    overflow-y: auto;
+    overflow: visible;
+    width: 100%;
 }
 
 .exam-answer-column {
+    flex: 1 1 auto;
     flex-shrink: 0;
-    width: 340px;
+    width: 100%;
 }
 
 /* ===== ANSWER SHEET ===== */

@@ -202,36 +202,38 @@ if (!function_exists('parseTeilContent')) {
 @endphp
 
 {{-- Dynamic section/element loop for templated levels (B1, B2, C2, etc.) --}}
-@foreach ($template['sections'] as $sectionIdx => $section)
-    @php
-        $isSpeaking = collect($section['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
-        $record = \App\Models\ExamTemplate::find($selectedTemplateId);
-        $status = $record ? $this->getTemplateFreeStatus($record) : ['is_free' => false, 'free_sections' => 0];
-        $isSubscribed = $this->hasActiveSubscription();
-        $isFullyEnrolled = $this->isFullyEnrolled($selectedTemplateId);
-        $isLocked = !$isSubscribed && !$isFullyEnrolled && ($sectionIdx >= $status['free_sections']);
-    @endphp
+<div class="telc-section-stack" style="display: flex; flex-direction: column; gap: 2rem; width: 100%; min-width: 0; box-sizing: border-box;">
+    @foreach ($template['sections'] as $sectionIdx => $section)
+        @php
+            $isSpeaking = collect($section['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
+            $record = \App\Models\ExamTemplate::find($selectedTemplateId);
+            $status = $record ? $this->getTemplateFreeStatus($record) : ['is_free' => false, 'free_sections' => 0];
+            $isSubscribed = $this->hasActiveSubscription();
+            $isFullyEnrolled = $this->isFullyEnrolled($selectedTemplateId);
+            $isLocked = !$isSubscribed && !$isFullyEnrolled && ($sectionIdx >= $status['free_sections']);
+        @endphp
 
-    @if ($isLocked)
-        <section class="c1-section" style="background: #ffffff; border: 2px dashed #cbcbcb; border-radius: 8px; padding: 3rem 2rem; margin: 2rem 0; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;">
-            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔒</div>
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 0 0 0.5rem; color: #1a1a1a;">{{ $section['title'] ?? 'Abschnitt gesperrt' }}</h3>
-            <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
-                Dieser Abschnitt ist Teil der Premium-Funktionen. Bitte erwerben Sie ein Abonnement, um vollen Zugang zu allen Abschnitten zu erhalten.
-            </p>
-            <a href="{{ route('pricing') }}" class="telc-button primary" style="display: inline-block; text-decoration: none;">
-                Jetzt Abonnement ansehen
-            </a>
-        </section>
-    @elseif ($isSpeaking)
-        @include('partials.premium.speaking-flow')
-    @else
-        @include('partials.premium.single-section', [
-            'section' => $section,
-            'sectionIdx' => $sectionIdx,
-            'result' => $result,
-            'answers' => $answers,
-            'isGuest' => false
-        ])
-    @endif
-@endforeach
+        @if ($isLocked)
+            <section class="c1-section" style="background: #ffffff; border: 2px dashed #cbcbcb; border-radius: 8px; padding: 3rem 2rem; margin: 2rem 0; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔒</div>
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 0 0 0.5rem; color: #1a1a1a;">{{ $section['title'] ?? 'Abschnitt gesperrt' }}</h3>
+                <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+                    Dieser Abschnitt ist Teil der Premium-Funktionen. Bitte erwerben Sie ein Abonnement, um vollen Zugang zu allen Abschnitten zu erhalten.
+                </p>
+                <a href="{{ route('pricing') }}" class="telc-button primary" style="display: inline-block; text-decoration: none;">
+                    Jetzt Abonnement ansehen
+                </a>
+            </section>
+        @elseif ($isSpeaking)
+            @include('partials.premium.speaking-flow')
+        @else
+            @include('partials.premium.single-section', [
+                'section' => $section,
+                'sectionIdx' => $sectionIdx,
+                'result' => $result,
+                'answers' => $answers,
+                'isGuest' => false
+            ])
+        @endif
+    @endforeach
+</div>

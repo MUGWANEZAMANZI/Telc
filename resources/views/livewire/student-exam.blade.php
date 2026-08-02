@@ -25,6 +25,7 @@
         .premium-document {
             max-width: 800px;
             width: 100%;
+            flex: 0 0 min(100%, 800px);
             margin: 2rem 0;
             background: #ffffff;
             border: 1px solid #d9dde5;
@@ -35,6 +36,75 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: #1a1a1a;
             line-height: 1.85;
+        }
+
+        .premium-document,
+        .premium-document > header,
+        .premium-document .telc-section-stack,
+        .premium-document .telc-section-stack > *,
+        .premium-document .c1-section,
+        .premium-document .speaking-flow-container,
+        .premium-document .c1-passage,
+        .premium-document .cloze-text,
+        .premium-document .c1-answer-sheet,
+        .premium-document .c1-teil3-sentences,
+        .premium-document .c1-teil3-answer-sheet,
+        .premium-document .writing-section,
+        .premium-document fieldset,
+        .premium-document article,
+        .premium-document figure {
+            display: block !important;
+            float: none !important;
+            clear: both !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .premium-document .telc-section-stack {
+            margin-top: 2rem !important;
+        }
+
+        .premium-document .c1-section,
+        .premium-document .speaking-flow-container {
+            position: relative !important;
+            margin: 0 0 3rem 0 !important;
+        }
+
+        .premium-document .c1-section::after,
+        .premium-document .speaking-flow-container::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .premium-document .document-section-tab {
+            position: static !important;
+            right: auto !important;
+            top: auto !important;
+            width: fit-content !important;
+            margin: 0 0 0.75rem 0 !important;
+            padding: 0.5rem 0.75rem !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 6px !important;
+            flex-direction: row !important;
+        }
+
+        .premium-document .document-section-tab .tab-text {
+            writing-mode: horizontal-tb !important;
+            text-orientation: mixed !important;
+        }
+
+        .premium-document .section-label {
+            display: block !important;
+            width: 100% !important;
+            margin: 0 0 1rem 0 !important;
+            color: #d8232a;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
         }
 
         .premium-document::before {
