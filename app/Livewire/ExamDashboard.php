@@ -271,6 +271,7 @@ class ExamDashboard extends Component
 
         if ($template) {
             $this->duplicateTemplate($template, $template->title.' (Neu)');
+
             return;
         }
 
