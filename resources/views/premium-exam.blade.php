@@ -777,7 +777,7 @@
                 Hilfsmittel (z. B. Wörterbücher, Handys/mobile Endgeräte) sind nicht erlaubt.
             </div>
 
-            <audio controls src="/telc-assets/telc_deutsch_c1_uebungstest_1_format_2016.mp3" style="width: 100%; margin-bottom: 2.5rem;"></audio>
+            <audio controls src="/goethe-assets/goethe_zertifikat_c1_uebungstest_1_format_2016.mp3" style="width: 100%; margin-bottom: 2.5rem;"></audio>
 
             <div style="display: flex; flex-direction: column; gap: 2rem;">
                 <div>

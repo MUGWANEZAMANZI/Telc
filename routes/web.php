@@ -114,7 +114,7 @@ Route::middleware(['auth'])->group(function () {
 Route::post('paypal/webhook', [PayPalCheckoutController::class, 'webhook']);
 Route::post('api/webhooks/revolut', [RevolutCheckoutController::class, 'webhook']);
 
-Route::get('/telc-assets/{file}', function (string $file) {
+Route::get('/goethe-assets/{file}', function (string $file) {
     abort_unless(str_ends_with($file, '.mp3'), 404);
 
     $path = base_path('instructions/'.basename($file));
@@ -122,7 +122,7 @@ Route::get('/telc-assets/{file}', function (string $file) {
     abort_unless(file_exists($path), 404);
 
     return response()->file($path, ['Content-Type' => 'audio/mpeg']);
-})->where('file', '.*')->name('telc.assets');
+})->where('file', '.*')->name('goethe.assets');
 
 Route::get('/exam-audio/{path}', function (string $path) {
     $disk = Storage::disk('exam-audio');

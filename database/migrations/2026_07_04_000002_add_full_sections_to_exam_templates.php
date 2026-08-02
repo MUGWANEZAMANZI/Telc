@@ -58,7 +58,7 @@ return new class extends Migration
                 'title' => 'Hörverstehen',
                 'minutes' => 30,
                 'elements' => [
-                    ['id' => 'b1-audio', 'type' => 'audio', 'label' => 'Hörverstehen Audio', 'content' => '/telc-assets/placeholder.mp3', 'answer' => '', 'points' => 0, 'options' => ''],
+                    ['id' => 'b1-audio', 'type' => 'audio', 'label' => 'Hörverstehen Audio', 'content' => '/goethe-assets/placeholder.mp3', 'answer' => '', 'points' => 0, 'options' => ''],
                     ['id' => 'B1-HV1-1', 'type' => 'matching', 'label' => 'Aufgabe 1', 'answer' => 'c', 'points' => 2, 'options' => 'a,b,c,d,e,f,g,h', 'content' => ''],
                     ['id' => 'B1-HV1-2', 'type' => 'matching', 'label' => 'Aufgabe 2', 'answer' => 'a', 'points' => 2, 'options' => 'a,b,c,d,e,f,g,h', 'content' => ''],
                     ['id' => 'B1-HV1-3', 'type' => 'matching', 'label' => 'Aufgabe 3', 'answer' => 'f', 'points' => 2, 'options' => 'a,b,c,d,e,f,g,h', 'content' => ''],
@@ -109,7 +109,7 @@ return new class extends Migration
                 'title' => 'Hörverstehen',
                 'minutes' => 35,
                 'elements' => [
-                    ['id' => 'b2-audio', 'type' => 'audio', 'label' => 'Hörverstehen Audio', 'content' => '/telc-assets/placeholder.mp3', 'answer' => '', 'points' => 0, 'options' => ''],
+                    ['id' => 'b2-audio', 'type' => 'audio', 'label' => 'Hörverstehen Audio', 'content' => '/goethe-assets/placeholder.mp3', 'answer' => '', 'points' => 0, 'options' => ''],
                     ['id' => 'B2-HV1-1', 'type' => 'matching', 'label' => 'Aufgabe 1', 'answer' => 'd', 'points' => 2, 'options' => 'a,b,c,d,e,f,g,h,i,j', 'content' => ''],
                     ['id' => 'B2-HV1-2', 'type' => 'matching', 'label' => 'Aufgabe 2', 'answer' => 'g', 'points' => 2, 'options' => 'a,b,c,d,e,f,g,h,i,j', 'content' => ''],
                     ['id' => 'B2-HV1-3', 'type' => 'matching', 'label' => 'Aufgabe 3', 'answer' => 'a', 'points' => 2, 'options' => 'a,b,c,d,e,f,g,h,i,j', 'content' => ''],
@@ -166,7 +166,7 @@ return new class extends Migration
                 'title' => 'Hörverstehen',
                 'minutes' => 35,
                 'elements' => [
-                    ['id' => 'c2-audio', 'type' => 'audio', 'label' => 'Hörverstehen Audio', 'content' => '/telc-assets/placeholder.mp3', 'answer' => '', 'points' => 0, 'options' => ''],
+                    ['id' => 'c2-audio', 'type' => 'audio', 'label' => 'Hörverstehen Audio', 'content' => '/goethe-assets/placeholder.mp3', 'answer' => '', 'points' => 0, 'options' => ''],
                     ['id' => 'C2-HV1-1', 'type' => 'matching', 'label' => 'Aufgabe 1', 'answer' => 'e', 'points' => 2, 'options' => 'a,b,c,d,e,f,g,h,i,j', 'content' => ''],
                     ['id' => 'C2-HV1-2', 'type' => 'matching', 'label' => 'Aufgabe 2', 'answer' => 'h', 'points' => 2, 'options' => 'a,b,c,d,e,f,g,h,i,j', 'content' => ''],
                     ['id' => 'C2-HV1-3', 'type' => 'matching', 'label' => 'Aufgabe 3', 'answer' => 'b', 'points' => 2, 'options' => 'a,b,c,d,e,f,g,h,i,j', 'content' => ''],

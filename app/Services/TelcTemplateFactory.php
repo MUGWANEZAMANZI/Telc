@@ -12,7 +12,6 @@ class TelcTemplateFactory
         return [
             'B1' => array_merge(self::b1(), ['exam_provider' => 'telc']),
             'B2' => array_merge(self::b2(), ['exam_provider' => 'telc']),
-            'C1' => array_merge(self::c1(), ['exam_provider' => 'telc']),
             'Goethe-B1' => array_merge(self::b1(), ['title' => 'Goethe Zertifikat B1', 'level' => 'B1', 'exam_provider' => 'goethe']),
             'Goethe-B2' => array_merge(self::b2(), ['title' => 'Goethe Zertifikat B2', 'level' => 'B2', 'exam_provider' => 'goethe']),
             'Goethe-C1' => array_merge(self::c1(), ['title' => 'Goethe Zertifikat C1', 'level' => 'C1', 'exam_provider' => 'goethe']),
@@ -271,9 +270,9 @@ class TelcTemplateFactory
     private static function c1(): array
     {
         return [
-            'title' => 'telc Deutsch C1',
+            'title' => 'Goethe Zertifikat C1',
             'level' => 'C1',
-            'source_pdf' => 'telc_deutsch_c1_uebungstest_1_format_2016.pdf',
+            'source_pdf' => 'goethe_zertifikat_c1_uebungstest_1_format_2016.pdf',
             'theme' => self::theme('#8f8f8f', '#202020', 'Instrument Sans'),
             'timings' => [
                 ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 90],
@@ -392,7 +391,7 @@ class TelcTemplateFactory
                     self::text('C1-HV0-intro', 'Kandidatenblätter Hören', "Kandidatenblätter\nHören\ncirca 40 Minuten\n\nDas Modul Hören hat vier Teile.\nSie hören mehrere Texte und lösen Aufgaben dazu.\nLesen Sie jeweils zuerst die Aufgaben\nund hören Sie dann den Text dazu.\nFür jede Aufgabe gibt es nur eine\nrichtige Lösung.\nNach dem Hören haben Sie drei\nMinuten Zeit, Ihre Lösungen auf den\nAntwortbogen zu übertragen.\nEs werden nur die Lösungen und Texte\nauf dem Antwortbogen bewertet.\nBitte schreiben Sie mit einem blauen\noder schwarzen Stift.\nHilfsmittel (z. B. Wörterbücher, Handys/\nmobile Endgeräte) sind nicht erlaubt."),
                 ], self::pages(17, 17)),
                 self::section('c1-listening', 'Hörverstehen', 40, [
-                    self::audio('c1-audio', 'Hörverstehen Audio', '/telc-assets/telc_deutsch_c1_uebungstest_1_format_2016.mp3'),
+                    self::audio('c1-audio', 'Hörverstehen Audio', '/goethe-assets/goethe_zertifikat_c1_uebungstest_1_format_2016.mp3'),
                     self::text('C1-HV1-instruction', 'Hörverstehen Teil 1: Podcasts über neue Bücher', "Sie hören einen Podcast über neue Bücher.\nSie hören den Text einmal. Wählen Sie bei jeder Aufgabe, zu welchem Buch die Aussage passt.\nLesen Sie jetzt die Aufgaben 1 bis 6. Dazu haben Sie 60 Sekunden Zeit.", "Aussagen:\nBeispiel:\n0 Das Buch ist ein fiktionales Werk.\na Buch 1 - Polarsturm\nb Buch 2 - Faszination Meer\nc Buch 3 - Die Natur und das Meer\n\n1 Es werden Analysen über Flora und Fauna angeführt.\n2 Im Buch wird die Erforschung des Klimas vergangener Epochen behandelt.\n3 Man erfährt etwas über Bedrohungen, die uns beschäftigen werden.\n4 Die Veränderungen der Machtverhältnisse auf den Schifffahrtsrouten werden beschrieben.\n5 Die Wechselwirkungen zwischen menschlichem Handeln und dem Zustand der Meere werden gezeigt.\n6 Neben wissenschaftlichen werden auch zwischenmenschliche Fragestellungen behandelt."),
                     ...self::answerElements('C1-HV1-', 1, ['', '', '', '', '', ''], 'matching', 1, 'Buch 1,Buch 2,Buch 3'),
                     self::text('C1-HV2-instruction', 'Hörverstehen Teil 2: Radiointerview mit Tobias Maurer', '', "Sie hören ein Radiointerview mit einer Persönlichkeit aus der Wissenschaft.\nSie hören den Text zweimal. Wählen Sie bei jeder Aufgabe die richtige Lösung.\nLesen Sie jetzt die Aufgaben 7 bis 15. Dazu haben Sie 60 Sekunden Zeit."),
@@ -626,7 +625,7 @@ class TelcTemplateFactory
     private static function pages(int $first, int $last): array
     {
         return array_map(
-            fn (int $page): string => sprintf('/telc/c1/page-%02d.png', $page),
+            fn (int $page): string => sprintf('/goethe/c1/page-%02d.png', $page),
             range($first, $last),
         );
     }
