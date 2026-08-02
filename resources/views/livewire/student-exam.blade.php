@@ -543,7 +543,7 @@
                 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;">
                     <strong style="font-size: 0.8rem; text-transform: uppercase; color: #666666; letter-spacing: 0.05em; margin-right: 0.5rem;">Prüfungsniveau filtern:</strong>
                     <button type="button" wire:click="selectLevel('')" style="border: none; padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background-color: {{ $selectedLevel === '' ? '#1a1a1a' : '#f3f4f6' }}; color: {{ $selectedLevel === '' ? '#ffffff' : '#4b5563' }};">Alle</button>
-                    @foreach (['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as $lvl)
+                    @foreach (['B1', 'B2', 'C1'] as $lvl)
                         <button type="button" wire:click="selectLevel('{{ $lvl }}')" style="border: none; padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; background-color: {{ $selectedLevel === $lvl ? '#eab308' : '#f3f4f6' }}; color: {{ $selectedLevel === $lvl ? '#09090b' : '#4b5563' }};">{{ $lvl }}</button>
                     @endforeach
                 </div>

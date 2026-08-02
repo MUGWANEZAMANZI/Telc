@@ -15,6 +15,10 @@ class ExamTemplateSeeder extends Seeder
      */
     public function run(): void
     {
+        // Delete all templates that are not B1, B2, or C1 (e.g. A1, A2, C2)
+        $validLevels = ['B1', 'B2', 'C1'];
+        ExamTemplate::whereNotIn('level', $validLevels)->delete();
+
         // 1. Seed or update presets first
         foreach (TelcTemplateFactory::presets() as $preset) {
             $existing = ExamTemplate::where('title', $preset['title'])->first();

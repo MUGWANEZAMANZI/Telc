@@ -82,13 +82,13 @@ test('it calculates pricing for different durations with correct discounts', fun
 });
 
 test('it returns correct dynamic speaking prompts based on provider and level', function () {
-    $a1Telc = SpeakingPromptService::getSystemInstruction('telc', 'A1');
+    $b1Telc = SpeakingPromptService::getSystemInstruction('telc', 'B1');
     $b2Goethe = SpeakingPromptService::getSystemInstruction('goethe', 'B2');
     $c1Telc = SpeakingPromptService::getSystemInstruction('telc', 'C1');
 
-    expect($a1Telc)->toContain('conduct the actual exam prompts and responses in simple, clear A1 German');
+    expect($b1Telc)->toContain('conducting the official telc B1 "Sprechen"');
     expect($b2Goethe)->toContain('conducting the official Goethe-Zertifikat B2 "Sprechen" exam');
-    expect($c1Telc)->toContain('Die Ökonomisierung des Gesundheitssystems');
+    expect($c1Telc)->toContain('delivered entirely in natural, precise, and highly sophisticated C1-level German');
 });
 
 test('non-subscribed users can access free exams but non-free exams require payment', function () {

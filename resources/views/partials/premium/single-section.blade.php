@@ -456,7 +456,7 @@ if (!function_exists('parseTeilContent')) {
                                     @endphp
                                     <span class="inline-gap-pill @if($current) filled @endif">
                                         <select wire:model.live="answers.{{ $element['id'] }}.{{ $gapIdx }}" @disabled($result) @class(['cloze-select', 'correct' => $gapCls === 'correct', 'wrong' => $gapCls === 'wrong'])>
-                                            <option value="">--{{ $gapIdx }}--</option>
+                                            <option value="">--{{ $element['id'] === 'C1-LV3-matching' ? ($gapIdx + 16) : $gapIdx }}--</option>
                                             @foreach ($optList as $opt)
                                                 @php $optParts = explode('|', $opt, 2); $optKey = trim($optParts[0]); $optLabel = trim($optParts[1] ?? $optKey); @endphp
                                                 <option value="{{ $optKey }}">{{ $optLabel }}</option>
@@ -469,6 +469,333 @@ if (!function_exists('parseTeilContent')) {
                                 @endif
                             @endif
                         @endforeach
+                    </div>
+
+                    @if ($element['id'] === 'C1-LV1-inline')
+                        <div class="c1-answer-sheet" style="margin-top: 3rem; background: #ffffff; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%;">
+                            <h3 style="font-size: 1.25rem; font-weight: 800; color: #1a1a1a; margin-top: 0; margin-bottom: 0.5rem; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem;">Teil 1</h3>
+                            
+                            <div style="font-weight: 700; font-size: 0.95rem; color: #1a1a1a; margin-bottom: 1.5rem;">Beispiel:</div>
+                            
+                            <style>
+                                .sheet-row {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    gap: 0.75rem;
+                                    padding: 0.8rem 0;
+                                    border-bottom: 1px solid #f1f5f9;
+                                }
+                                .sheet-num {
+                                    font-weight: 800;
+                                    font-size: 1.1rem;
+                                    color: #1a1a1a;
+                                }
+                                .sheet-option {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.75rem;
+                                }
+                                .answer-box {
+                                    width: 24px;
+                                    height: 24px;
+                                    border: 1px solid #cbd5e1;
+                                    display: inline-flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-weight: 700;
+                                    font-size: 0.85rem;
+                                    color: #4b5563;
+                                    border-radius: 2px;
+                                    cursor: pointer;
+                                    position: relative;
+                                    user-select: none;
+                                    transition: all 0.2s;
+                                    background: #ffffff;
+                                }
+                                .answer-box:hover:not(.disabled) {
+                                    border-color: #1a1a1a;
+                                    background-color: #f4f4f5;
+                                }
+                                .answer-box.selected::after {
+                                    content: "";
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: 
+                                        linear-gradient(to top right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%),
+                                        linear-gradient(to bottom right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%);
+                                }
+                                .answer-box.example-selected::after {
+                                    content: "";
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: 
+                                        linear-gradient(to top right, transparent 46%, #71717a 46%, #71717a 54%, transparent 54%),
+                                        linear-gradient(to bottom right, transparent 46%, #71717a 46%, #71717a 54%, transparent 54%);
+                                }
+                                .answer-box.disabled {
+                                    cursor: not-allowed;
+                                }
+                            </style>
+
+                            <div class="sheet-row" style="background: #fafafa; border-radius: 4px; padding: 0.8rem 1rem;">
+                                <span class="sheet-num">0</span>
+                                <div class="sheet-option">
+                                    <span class="answer-box disabled">a</span>
+                                    <span style="color: #71717a; font-size: 0.95rem;">dafür</span>
+                                </div>
+                                <div class="sheet-option">
+                                    <span class="answer-box disabled">b</span>
+                                    <span style="color: #71717a; font-size: 0.95rem;">damit</span>
+                                </div>
+                                <div class="sheet-option">
+                                    <span class="answer-box disabled">c</span>
+                                    <span style="color: #71717a; font-size: 0.95rem;">darum</span>
+                                </div>
+                                <div class="sheet-option">
+                                    <span class="answer-box disabled example-selected">d</span>
+                                    <span style="color: #1a1a1a; font-weight: 700; font-size: 0.95rem;">dazu</span>
+                                </div>
+                            </div>
+
+                            @php
+                                $sheetData = [
+                                    1 => ['options' => ['a' => 'bekommen', 'b' => 'erfahren', 'c' => 'lernen', 'd' => 'wissen']],
+                                    2 => ['options' => ['a' => 'als Anlage zu', 'b' => 'in Einklang mit', 'c' => 'im Einverständnis mit', 'd' => 'mithilfe von']],
+                                    3 => ['options' => ['a' => 'umsonst', 'b' => 'ungefähr', 'c' => 'ungewöhnlich', 'd' => 'umgekehrt']],
+                                    4 => ['options' => ['a' => 'das', 'b' => 'die', 'c' => 'für die', 'd' => 'mit denen']],
+                                    5 => ['options' => ['a' => 'bei', 'b' => 'im', 'c' => 'in', 'd' => 'von']],
+                                    6 => ['options' => ['a' => 'daraus', 'b' => 'davon', 'c' => 'gegenüber', 'd' => 'somit']],
+                                    7 => ['options' => ['a' => 'erfüllen', 'b' => 'ergänzen', 'c' => 'erledigen', 'd' => 'erzeugen']],
+                                    8 => ['options' => ['a' => 'Dennoch', 'b' => 'Entsprechend', 'c' => 'Nachdem', 'd' => 'Zunehmend']],
+                                ];
+                            @endphp
+
+                            @foreach ($sheetData as $rowNum => $data)
+                                @php
+                                    $gapIndex = $rowNum - 1;
+                                    $currentAnswer = $answers[$element['id']][$gapIndex] ?? '';
+                                @endphp
+                                <div class="sheet-row">
+                                    <span class="sheet-num">{{ $rowNum }}</span>
+                                    @foreach ($data['options'] as $key => $text)
+                                        @php
+                                            $isSelected = $currentAnswer === $key;
+                                            $isCorrectAnswer = false;
+                                            $expectedAnswer = '';
+                                            $feedbackClass = '';
+                                            if ($result) {
+                                                $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$gapIndex);
+                                                if ($gapDetail) {
+                                                    $isCorrectAnswer = $gapDetail['correct'] ?? false;
+                                                    $expectedAnswer = $gapDetail['expected'] ?? '';
+                                                    if ($isSelected) {
+                                                        $feedbackClass = $isCorrectAnswer ? 'correct' : 'wrong';
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+                                        <div class="sheet-option">
+                                            <button type="button" 
+                                                @if(!$result) wire:click="$set('answers.{{ $element['id'] }}.{{ $gapIndex }}', '{{ $isSelected ? '' : $key }}')" @endif
+                                                class="answer-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                                                style="
+                                                    @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                    @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
+                                                    @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                "
+                                            >
+                                                {{ $key }}
+                                            </button>
+                                            <span style="
+                                                font-size: 0.95rem;
+                                                @if($isSelected) color: #1a1a1a; font-weight: 700; @else color: #4b5563; @endif
+                                                @if($result && $isSelected && $isCorrectAnswer) color: #15803d; @endif
+                                                @if($result && $isSelected && !$isCorrectAnswer) color: #b91c1c; text-decoration: line-through; @endif
+                                                @if($result && !$isSelected && $expectedAnswer === $key) color: #15803d; font-weight: 700; @endif
+                                            ">
+                                                {{ $text }}
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                    @if (($element['id'] ?? '') === 'C1-LV3-matching')
+                        <div class="c1-teil3-sentences" style="margin-top: 2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                            <h4 style="margin-top: 0; margin-bottom: 1rem; font-weight: 800; color: #1e293b; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">Sätze zur Auswahl</h4>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.95rem; line-height: 1.6;">
+                                <div style="display: flex; gap: 0.75rem; color: #64748b;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right;">0</span>
+                                    <span style="font-weight: 500; font-style: italic;">(Beispiel) Und was genau ist damit gemeint?</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">a</span>
+                                    <span>Heute empfinden die meisten die Anforderungen dieses Wegs als Zumutung.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">b</span>
+                                    <span>So lernen sie nicht, dass sich der Einsatz für ein bestimmtes Ziel lohnt.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">c</span>
+                                    <span>Diese Maßnahmen ebnen zunächst den Weg für den Erfolg.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">d</span>
+                                    <span>Trotz der Lösungsansätze sinkt die Attraktivität dieses Tätigkeitsbereichs.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">e</span>
+                                    <span>Als Folge ihrer Berufstätigkeit leiden sie unter verschiedenen Symptomen.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">f</span>
+                                    <span>Den eigenen Nachwuchs schützen zu wollen, kann sich nachteilig auswirken.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">g</span>
+                                    <span>Ein Managerposten reizt sie nicht, da er keine angemessene Balance von Arbeit und Vergnügen zulässt.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">h</span>
+                                    <span>Sie sind zufrieden mit ihrem Einsatz in den vergangenen Jahrzehnten und träumen von Frührente.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">i</span>
+                                    <span>Das liegt an der essenziellen Funktion, die Managerinnen und Manager für den Betrieb haben.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">j</span>
+                                    <span>Denn wenn wir in den bisherigen Mustern verhaftet bleiben, werden wir scheitern.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c1-teil3-answer-sheet" style="margin-top: 3rem; background: #ffffff; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%;">
+                            <h3 style="font-size: 1.25rem; font-weight: 800; color: #1a1a1a; margin-top: 0; margin-bottom: 0.5rem; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem;">Antwortbogen: Teil 3</h3>
+                            
+                            <style>
+                                .grid-header-row {
+                                    display: none;
+                                }
+                                .grid-row-item {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    gap: 0.5rem;
+                                    text-align: left;
+                                    padding: 0.5rem 0;
+                                    border-bottom: 1px solid #f1f5f9;
+                                }
+                                .grid-num {
+                                    font-weight: 800;
+                                    font-size: 1rem;
+                                    color: #1a1a1a;
+                                    text-align: left;
+                                    padding-left: 0.25rem;
+                                }
+                                .grid-box {
+                                    width: 24px;
+                                    height: 24px;
+                                    border: 1px solid #cbd5e1;
+                                    display: inline-flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-weight: 750;
+                                    font-size: 0.85rem;
+                                    color: #4b5563;
+                                    border-radius: 2px;
+                                    cursor: pointer;
+                                    position: relative;
+                                    user-select: none;
+                                    transition: all 0.15s;
+                                    background: #ffffff;
+                                    margin: 0;
+                                }
+                                .grid-box:hover:not(.disabled) {
+                                    border-color: #1a1a1a;
+                                    background-color: #f4f4f5;
+                                }
+                                .grid-box.selected::after {
+                                    content: "";
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: 
+                                        linear-gradient(to top right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%),
+                                        linear-gradient(to bottom right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%);
+                                }
+                                .grid-box.disabled {
+                                    cursor: not-allowed;
+                                }
+                            </style>
+
+                            <div class="grid-header-row">
+                                <span>Lücke</span>
+                                <span>a</span>
+                                <span>b</span>
+                                <span>c</span>
+                                <span>d</span>
+                                <span>e</span>
+                                <span>f</span>
+                                <span>g</span>
+                                <span>h</span>
+                                <span>i</span>
+                                <span>j</span>
+                                <span>x</span>
+                            </div>
+
+                            @php
+                                $optionsKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'x'];
+                            @endphp
+
+                            @for ($i = 0; $i < 8; $i++)
+                                @php
+                                    $rowNum = $i + 16;
+                                    $currentAnswer = $answers[$element['id']][$i] ?? '';
+                                @endphp
+                                <div class="grid-row-item">
+                                    <span class="grid-num">{{ $rowNum }}</span>
+                                    @foreach ($optionsKeys as $key)
+                                        @php
+                                            $isSelected = $currentAnswer === $key;
+                                            $isCorrectAnswer = false;
+                                            $expectedAnswer = '';
+                                            if ($result) {
+                                                $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$i);
+                                                if ($gapDetail) {
+                                                    $isCorrectAnswer = $gapDetail['correct'] ?? false;
+                                                    $expectedAnswer = $gapDetail['expected'] ?? '';
+                                                }
+                                            }
+                                        @endphp
+                                        <button type="button"
+                                            @if(!$result) wire:click="$set('answers.{{ $element['id'] }}.{{ $i }}', '{{ $isSelected ? '' : $key }}')" @endif
+                                            class="grid-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                                            style="
+                                                @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
+                                                @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                            "
+                                            title="Lücke {{ $rowNum }} - {{ strtoupper($key) }}"
+                                        >
+                                            {{ $key }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endfor
+                        </div>
+                    @endif
                     </div>
 
                 {{-- INTERACTIVE TEXT --}}
@@ -508,44 +835,123 @@ if (!function_exists('parseTeilContent')) {
                     </div>
 
                 {{-- MULTIPLE CHOICE --}}
-                @elseif (in_array($element['type'] ?? '', ['multiple_choice', 'true_false'], true))
-                    @php $rawOptions = $this->optionsFor($element); @endphp
-                    <div class="mc-question-row">
-                        @if ($element['label'] ?? null)
-                            <div class="mc-question-header">{{ $element['label'] }}</div>
-                        @endif
-                        @if ($element['instruction'] ?? null)
-                            <p style="font-size:0.9rem;color:#666;margin-bottom:0.75rem;">{{ $element['instruction'] }}</p>
-                        @endif
-                        <div class="mc-options-list">
-                            @foreach ($rawOptions as $opt)
-                                @php
-                                    $isSelected = ($answers[$element['id']] ?? '') === $opt;
-                                    $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
-                                    $optionCls = 'mc-option-item';
-                                    if ($result && $isSelected) {
-                                        $optionCls .= $detail && $detail['correct'] ? ' selected' : ' selected';
-                                    } elseif ($isSelected) {
-                                        $optionCls .= ' selected';
-                                    }
-                                @endphp
-                                <label class="{{ $optionCls }}">
-                                    <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $opt }}" @disabled($result) class="mc-radio-input">
-                                    <span class="mc-option-bullet"></span>
-                                    <span>{{ $opt }}</span>
-                                    @if ($result)
-                                        @php $det = collect($result['details'])->firstWhere('id', $element['id']); @endphp
-                                        @if ($det && $opt === ($det['expected'] ?? '') && !$det['correct'])
-                                            <span class="feedback-badge fail">Richtige Antwort: {{ $det['expected'] }}</span>
-                                        @endif
-                                        @if ($det && $isSelected && $det['correct'])
-                                            <span class="feedback-badge ok">✓</span>
-                                        @endif
-                                    @endif
-                                </label>
-                            @endforeach
+                 @elseif (in_array($element['type'] ?? '', ['multiple_choice', 'true_false'], true))
+                    @if (str_starts_with($element['id'] ?? '', 'C1-LV2-'))
+                        @php
+                            $decodedOptions = [];
+                            $rawOptions = $element['options'] ?? '[]';
+                            if (is_string($rawOptions)) {
+                                $decodedOptions = json_decode($rawOptions, true) ?: [];
+                            } else {
+                                $decodedOptions = $rawOptions;
+                            }
+                            $currentVal = $answers[$element['id']] ?? '';
+                            $parts = explode('-', $element['id']);
+                            $qNum = end($parts);
+                        @endphp
+                        <div class="c1-lv2-question-row" style="margin-top: 1.5rem; margin-bottom: 2rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                            <div style="font-weight: 800; font-size: 1.05rem; color: #1a1a1a; margin-bottom: 0.75rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+                                <span style="font-size: 1.15rem; font-weight: 900; line-height: 1.2;">{{ $qNum }}</span>
+                                <span style="line-height: 1.25;">{{ $element['instruction'] ?? '' }}</span>
+                            </div>
+
+                            <style>
+                                .lv2-options-container {
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 0.5rem;
+                                    padding-left: 1.75rem;
+                                }
+                                .lv2-option-row {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.75rem;
+                                    cursor: pointer;
+                                    padding: 0.25rem 0;
+                                }
+                            </style>
+
+                            <div class="lv2-options-container">
+                                @foreach ($decodedOptions as $opt)
+                                    @php
+                                        $key = $opt['key'];
+                                        $text = $opt['text'];
+                                        $isSelected = $currentVal === $key;
+                                        $isCorrectAnswer = false;
+                                        $expectedAnswer = '';
+                                        if ($result) {
+                                            $detail = collect($result['details'])->firstWhere('id', $element['id']);
+                                            if ($detail) {
+                                                $isCorrectAnswer = $detail['correct'] ?? false;
+                                                $expectedAnswer = $detail['expected'] ?? '';
+                                            }
+                                        }
+                                    @endphp
+                                    <div class="lv2-option-row"
+                                         @if(!$result) wire:click="$set('answers.{{ $element['id'] }}', '{{ $isSelected ? '' : $key }}')" @endif
+                                    >
+                                        <button type="button" 
+                                            class="answer-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                                            style="
+                                                @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
+                                                @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                            "
+                                        >
+                                            {{ $key }}
+                                        </button>
+                                        <span style="
+                                            font-size: 0.95rem;
+                                            @if($isSelected) color: #1a1a1a; font-weight: 700; @else color: #4b5563; @endif
+                                            @if($result && $isSelected && $isCorrectAnswer) color: #15803d; @endif
+                                            @if($result && $isSelected && !$isCorrectAnswer) color: #b91c1c; text-decoration: line-through; @endif
+                                            @if($result && !$isSelected && $expectedAnswer === $key) color: #15803d; font-weight: 700; @endif
+                                        ">
+                                            {{ $text }}
+                                        </span>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        @php $rawOptions = $this->optionsFor($element); @endphp
+                        <div class="mc-question-row">
+                            @if ($element['label'] ?? null)
+                                <div class="mc-question-header">{{ $element['label'] }}</div>
+                            @endif
+                            @if ($element['instruction'] ?? null)
+                                <p style="font-size:0.9rem;color:#666;margin-bottom:0.75rem;">{{ $element['instruction'] }}</p>
+                            @endif
+                            <div class="mc-options-list">
+                                @foreach ($rawOptions as $opt)
+                                    @php
+                                        $isSelected = ($answers[$element['id']] ?? '') === $opt;
+                                        $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
+                                        $optionCls = 'mc-option-item';
+                                        if ($result && $isSelected) {
+                                            $optionCls .= $detail && $detail['correct'] ? ' selected' : ' selected';
+                                        } elseif ($isSelected) {
+                                            $optionCls .= ' selected';
+                                        }
+                                    @endphp
+                                    <label class="{{ $optionCls }}">
+                                        <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $opt }}" @disabled($result) class="mc-radio-input">
+                                        <span class="mc-option-bullet"></span>
+                                        <span>{{ $opt }}</span>
+                                        @if ($result)
+                                            @php $det = collect($result['details'])->firstWhere('id', $element['id']); @endphp
+                                            @if ($det && $opt === ($det['expected'] ?? '') && !$det['correct'])
+                                                <span class="feedback-badge fail">Richtige Antwort: {{ $det['expected'] }}</span>
+                                            @endif
+                                            @if ($det && $isSelected && $det['correct'])
+                                                <span class="feedback-badge ok">✓</span>
+                                            @endif
+                                        @endif
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
 
                 {{-- MATCHING --}}
                 @elseif (($element['type'] ?? '') === 'matching')
@@ -664,7 +1070,7 @@ if (!function_exists('parseTeilContent')) {
                     </article>
                 @elseif (in_array($element['type'] ?? '', ['inline_gap', 'fill_blank']))
                     @php
-                        $gaps = method_exists($this, 'gapsFor') ? $this->gapsFor($element) : (json_decode($element['options'] ?? '[]', true) ?: []);
+                        $gaps = method_exists($this, 'gapsFor') ? $this->gapsFor($element) : (is_array($element['options'] ?? null) ? $element['options'] : (json_decode($element['options'] ?? '[]', true) ?: []));
                     @endphp
                     @if (preg_match_all('/--(\d+)--/', $element['content'] ?? '', $gapMatches))
                         @php $gapCount = count($gapMatches[0]); @endphp
@@ -682,12 +1088,12 @@ if (!function_exists('parseTeilContent')) {
                                                 $parts2 = array_map('trim', explode(',', $gapDef['options'] ?? ''));
                                                 foreach ($parts2 as $p) {
                                                     $kv = explode('|', $p, 2);
-                                                    $gapOptionList[] = ['key' => trim($kv[0]), 'text' => trim($kv[1] ?? $kv[0])];
+                                            $gapOptionList[] = ['key' => trim($kv[0]), 'text' => trim($kv[1] ?? $kv[0])];
                                                 }
                                             }
                                         @endphp
                                         <span class="cloze-select-wrapper">
-                                            <span class="cloze-gap-num">{{ $gapIdx }}</span>
+                                            <span class="cloze-gap-num">{{ $elId === 'C1-LV3-matching' ? ($gapIdx + 16) : $gapIdx }}</span>
                                             <select class="cloze-select" wire:model.change="answers.{{ $elId }}.{{ $gapIdx }}" {{ $result ? 'disabled' : '' }}>
                                                 <option value="">---</option>
                                                 @foreach ($gapOptionList as $opt)
@@ -700,6 +1106,333 @@ if (!function_exists('parseTeilContent')) {
                             </p>
                         @endif
                     @endif
+
+                    @if (($element['id'] ?? '') === 'C1-LV1-inline')
+                        <div class="c1-answer-sheet" style="margin-top: 3rem; background: #ffffff; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%;">
+                            <h3 style="font-size: 1.25rem; font-weight: 800; color: #1a1a1a; margin-top: 0; margin-bottom: 0.5rem; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem;">Teil 1</h3>
+                            
+                            <div style="font-weight: 700; font-size: 0.95rem; color: #1a1a1a; margin-bottom: 1.5rem;">Beispiel:</div>
+                            
+                            <style>
+                                .sheet-row {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    gap: 0.75rem;
+                                    padding: 0.8rem 0;
+                                    border-bottom: 1px solid #f1f5f9;
+                                }
+                                .sheet-num {
+                                    font-weight: 800;
+                                    font-size: 1.1rem;
+                                    color: #1a1a1a;
+                                }
+                                .sheet-option {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.75rem;
+                                }
+                                .answer-box {
+                                    width: 24px;
+                                    height: 24px;
+                                    border: 1px solid #cbd5e1;
+                                    display: inline-flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-weight: 700;
+                                    font-size: 0.85rem;
+                                    color: #4b5563;
+                                    border-radius: 2px;
+                                    cursor: pointer;
+                                    position: relative;
+                                    user-select: none;
+                                    transition: all 0.2s;
+                                    background: #ffffff;
+                                }
+                                .answer-box:hover:not(.disabled) {
+                                    border-color: #1a1a1a;
+                                    background-color: #f4f4f5;
+                                }
+                                .answer-box.selected::after {
+                                    content: "";
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: 
+                                        linear-gradient(to top right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%),
+                                        linear-gradient(to bottom right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%);
+                                }
+                                .answer-box.example-selected::after {
+                                    content: "";
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: 
+                                        linear-gradient(to top right, transparent 46%, #71717a 46%, #71717a 54%, transparent 54%),
+                                        linear-gradient(to bottom right, transparent 46%, #71717a 46%, #71717a 54%, transparent 54%);
+                                }
+                                .answer-box.disabled {
+                                    cursor: not-allowed;
+                                }
+                            </style>
+
+                            <div class="sheet-row" style="background: #fafafa; border-radius: 4px; padding: 0.8rem 1rem;">
+                                <span class="sheet-num">0</span>
+                                <div class="sheet-option">
+                                    <span class="answer-box disabled">a</span>
+                                    <span style="color: #71717a; font-size: 0.95rem;">dafür</span>
+                                </div>
+                                <div class="sheet-option">
+                                    <span class="answer-box disabled">b</span>
+                                    <span style="color: #71717a; font-size: 0.95rem;">damit</span>
+                                </div>
+                                <div class="sheet-option">
+                                    <span class="answer-box disabled">c</span>
+                                    <span style="color: #71717a; font-size: 0.95rem;">darum</span>
+                                </div>
+                                <div class="sheet-option">
+                                    <span class="answer-box disabled example-selected">d</span>
+                                    <span style="color: #1a1a1a; font-weight: 700; font-size: 0.95rem;">dazu</span>
+                                </div>
+                            </div>
+
+                            @php
+                                $sheetData = [
+                                    1 => ['options' => ['a' => 'bekommen', 'b' => 'erfahren', 'c' => 'lernen', 'd' => 'wissen']],
+                                    2 => ['options' => ['a' => 'als Anlage zu', 'b' => 'in Einklang mit', 'c' => 'im Einverständnis mit', 'd' => 'mithilfe von']],
+                                    3 => ['options' => ['a' => 'umsonst', 'b' => 'ungefähr', 'c' => 'ungewöhnlich', 'd' => 'umgekehrt']],
+                                    4 => ['options' => ['a' => 'das', 'b' => 'die', 'c' => 'für die', 'd' => 'mit denen']],
+                                    5 => ['options' => ['a' => 'bei', 'b' => 'im', 'c' => 'in', 'd' => 'von']],
+                                    6 => ['options' => ['a' => 'daraus', 'b' => 'davon', 'c' => 'gegenüber', 'd' => 'somit']],
+                                    7 => ['options' => ['a' => 'erfüllen', 'b' => 'ergänzen', 'c' => 'erledigen', 'd' => 'erzeugen']],
+                                    8 => ['options' => ['a' => 'Dennoch', 'b' => 'Entsprechend', 'c' => 'Nachdem', 'd' => 'Zunehmend']],
+                                ];
+                            @endphp
+
+                            @foreach ($sheetData as $rowNum => $data)
+                                @php
+                                    $gapIndex = $rowNum - 1;
+                                    $currentAnswer = $answers[$elId][$gapIndex] ?? '';
+                                @endphp
+                                <div class="sheet-row">
+                                    <span class="sheet-num">{{ $rowNum }}</span>
+                                    @foreach ($data['options'] as $key => $text)
+                                        @php
+                                            $isSelected = $currentAnswer === $key;
+                                            $isCorrectAnswer = false;
+                                            $expectedAnswer = '';
+                                            $feedbackClass = '';
+                                            if ($result) {
+                                                $gapDetail = collect($result['details'])->firstWhere('id', $elId.'.gap.'.$gapIndex);
+                                                if ($gapDetail) {
+                                                    $isCorrectAnswer = $gapDetail['correct'] ?? false;
+                                                    $expectedAnswer = $gapDetail['expected'] ?? '';
+                                                    if ($isSelected) {
+                                                        $feedbackClass = $isCorrectAnswer ? 'correct' : 'wrong';
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+                                        <div class="sheet-option">
+                                            <button type="button" 
+                                                @if(!$result) wire:click="$set('answers.{{ $elId }}.{{ $gapIndex }}', '{{ $isSelected ? '' : $key }}')" @endif
+                                                class="answer-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                                                style="
+                                                    @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                    @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
+                                                    @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                "
+                                            >
+                                                {{ $key }}
+                                            </button>
+                                            <span style="
+                                                font-size: 0.95rem;
+                                                @if($isSelected) color: #1a1a1a; font-weight: 700; @else color: #4b5563; @endif
+                                                @if($result && $isSelected && $isCorrectAnswer) color: #15803d; @endif
+                                                @if($result && $isSelected && !$isCorrectAnswer) color: #b91c1c; text-decoration: line-through; @endif
+                                                @if($result && !$isSelected && $expectedAnswer === $key) color: #15803d; font-weight: 700; @endif
+                                            ">
+                                                {{ $text }}
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                    @if (($elId ?? '') === 'C1-LV3-matching')
+                        <div class="c1-teil3-sentences" style="margin-top: 2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                            <h4 style="margin-top: 0; margin-bottom: 1rem; font-weight: 800; color: #1e293b; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">Sätze zur Auswahl</h4>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.95rem; line-height: 1.6;">
+                                <div style="display: flex; gap: 0.75rem; color: #64748b;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right;">0</span>
+                                    <span style="font-weight: 500; font-style: italic;">(Beispiel) Und was genau ist damit gemeint?</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">a</span>
+                                    <span>Heute empfinden die meisten die Anforderungen dieses Wegs als Zumutung.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">b</span>
+                                    <span>So lernen sie nicht, dass sich der Einsatz für ein bestimmtes Ziel lohnt.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">c</span>
+                                    <span>Diese Maßnahmen ebnen zunächst den Weg für den Erfolg.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">d</span>
+                                    <span>Trotz der Lösungsansätze sinkt die Attraktivität dieses Tätigkeitsbereichs.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">e</span>
+                                    <span>Als Folge ihrer Berufstätigkeit leiden sie unter verschiedenen Symptomen.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">f</span>
+                                    <span>Den eigenen Nachwuchs schützen zu wollen, kann sich nachteilig auswirken.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">g</span>
+                                    <span>Ein Managerposten reizt sie nicht, da er keine angemessene Balance von Arbeit und Vergnügen zulässt.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">h</span>
+                                    <span>Sie sind zufrieden mit ihrem Einsatz in den vergangenen Jahrzehnten und träumen von Frührente.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">i</span>
+                                    <span>Das liegt an der essenziellen Funktion, die Managerinnen und Manager für den Betrieb haben.</span>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">j</span>
+                                    <span>Denn wenn wir in den bisherigen Mustern verhaftet bleiben, werden wir scheitern.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c1-teil3-answer-sheet" style="margin-top: 3rem; background: #ffffff; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%;">
+                            <h3 style="font-size: 1.25rem; font-weight: 800; color: #1a1a1a; margin-top: 0; margin-bottom: 0.5rem; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem;">Antwortbogen: Teil 3</h3>
+                            
+                            <style>
+                                .grid-header-row {
+                                    display: none;
+                                }
+                                .grid-row-item {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    gap: 0.5rem;
+                                    text-align: left;
+                                    padding: 0.5rem 0;
+                                    border-bottom: 1px solid #f1f5f9;
+                                }
+                                .grid-num {
+                                    font-weight: 800;
+                                    font-size: 1rem;
+                                    color: #1a1a1a;
+                                    text-align: left;
+                                    padding-left: 0.25rem;
+                                }
+                                .grid-box {
+                                    width: 24px;
+                                    height: 24px;
+                                    border: 1px solid #cbd5e1;
+                                    display: inline-flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-weight: 750;
+                                    font-size: 0.85rem;
+                                    color: #4b5563;
+                                    border-radius: 2px;
+                                    cursor: pointer;
+                                    position: relative;
+                                    user-select: none;
+                                    transition: all 0.15s;
+                                    background: #ffffff;
+                                    margin: 0;
+                                }
+                                .grid-box:hover:not(.disabled) {
+                                    border-color: #1a1a1a;
+                                    background-color: #f4f4f5;
+                                }
+                                .grid-box.selected::after {
+                                    content: "";
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: 
+                                        linear-gradient(to top right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%),
+                                        linear-gradient(to bottom right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%);
+                                }
+                                .grid-box.disabled {
+                                    cursor: not-allowed;
+                                }
+                            </style>
+
+                            <div class="grid-header-row">
+                                <span>Lücke</span>
+                                <span>a</span>
+                                <span>b</span>
+                                <span>c</span>
+                                <span>d</span>
+                                <span>e</span>
+                                <span>f</span>
+                                <span>g</span>
+                                <span>h</span>
+                                <span>i</span>
+                                <span>j</span>
+                                <span>x</span>
+                            </div>
+
+                            @php
+                                $optionsKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'x'];
+                            @endphp
+
+                            @for ($i = 0; $i < 8; $i++)
+                                @php
+                                    $rowNum = $i + 16;
+                                    $currentAnswer = $answers[$elId][$i] ?? '';
+                                @endphp
+                                <div class="grid-row-item">
+                                    <span class="grid-num">{{ $rowNum }}</span>
+                                    @foreach ($optionsKeys as $key)
+                                        @php
+                                            $isSelected = $currentAnswer === $key;
+                                            $isCorrectAnswer = false;
+                                            $expectedAnswer = '';
+                                            if ($result) {
+                                                $gapDetail = collect($result['details'])->firstWhere('id', $elId.'.gap.'.$i);
+                                                if ($gapDetail) {
+                                                    $isCorrectAnswer = $gapDetail['correct'] ?? false;
+                                                    $expectedAnswer = $gapDetail['expected'] ?? '';
+                                                }
+                                            }
+                                        @endphp
+                                        <button type="button"
+                                            @if(!$result) wire:click="$set('answers.{{ $elId }}.{{ $i }}', '{{ $isSelected ? '' : $key }}')" @endif
+                                            class="grid-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                                            style="
+                                                @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
+                                                @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                            "
+                                            title="Lücke {{ $rowNum }} - {{ strtoupper($key) }}"
+                                        >
+                                            {{ $key }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endfor
+                        </div>
+                    @endif
+                    </div>
                 @elseif (in_array($element['type'] ?? '', ['matching']))
                     @php $matchOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? '')); @endphp
                     @if (isset($element['pairs']) && count($element['pairs']) > 0)
@@ -734,30 +1467,109 @@ if (!function_exists('parseTeilContent')) {
                         </div>
                     @endif
                 @elseif (in_array($element['type'] ?? '', ['multiple_choice', 'true_false']))
-                    @php
-                        $rawOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? ''));
-                    @endphp
-                    <fieldset style="border:none;padding:0;margin:0 0 1.25rem 0; font-family:'Plus Jakarta Sans',sans-serif; background:#fafafa; border:1px solid #e5e5e5; padding: 0.75rem 1rem; border-radius: 6px;">
-                        <legend style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:0.5rem; color:#1a1a1a; padding: 0 0.5rem;">
-                            {{ $element['label'] ?? 'Aufgabe' }}@if(!empty($element['instruction'])): {{ $element['instruction'] }}@endif
-                        </legend>
-                        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
-                            @foreach ($rawOptions as $opt)
-                                <label class="mc-option-item" style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
-                                    <input type="radio" name="{{ $elId }}" value="{{ $opt }}" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }}>
-                                    <span style="font-weight: 500; text-transform: uppercase;">{{ $opt }}</span>
-                                </label>
-                            @endforeach
+                    @if (str_starts_with($elId, 'C1-LV2-'))
+                        @php
+                            $decodedOptions = [];
+                            $rawOptions = $element['options'] ?? '[]';
+                            if (is_string($rawOptions)) {
+                                $decodedOptions = json_decode($rawOptions, true) ?: [];
+                            } else {
+                                $decodedOptions = $rawOptions;
+                            }
+                            $currentVal = $answers[$elId] ?? '';
+                            $parts = explode('-', $elId);
+                            $qNum = end($parts);
+                        @endphp
+                        <div class="c1-lv2-question-row" style="margin-top: 1.5rem; margin-bottom: 2rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                            <div style="font-weight: 800; font-size: 1.05rem; color: #1a1a1a; margin-bottom: 0.75rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+                                <span style="font-size: 1.15rem; font-weight: 900; line-height: 1.2;">{{ $qNum }}</span>
+                                <span style="line-height: 1.25;">{{ $element['instruction'] ?? '' }}</span>
+                            </div>
+
+                            <style>
+                                .lv2-options-container {
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 0.5rem;
+                                    padding-left: 1.75rem;
+                                }
+                                .lv2-option-row {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.75rem;
+                                    cursor: pointer;
+                                    padding: 0.25rem 0;
+                                }
+                            </style>
+
+                            <div class="lv2-options-container">
+                                @foreach ($decodedOptions as $opt)
+                                    @php
+                                        $key = $opt['key'];
+                                        $text = $opt['text'];
+                                        $isSelected = $currentVal === $key;
+                                        $isCorrectAnswer = false;
+                                        $expectedAnswer = '';
+                                        if ($result) {
+                                            $detail = collect($result['details'])->firstWhere('id', $elId);
+                                            if ($detail) {
+                                                $isCorrectAnswer = $detail['correct'] ?? false;
+                                                $expectedAnswer = $detail['expected'] ?? '';
+                                            }
+                                        }
+                                    @endphp
+                                    <div class="lv2-option-row"
+                                         @if(!$result) wire:click="$set('answers.{{ $elId }}', '{{ $isSelected ? '' : $key }}')" @endif
+                                    >
+                                        <button type="button" 
+                                            class="answer-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                                            style="
+                                                @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
+                                                @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                            "
+                                        >
+                                            {{ $key }}
+                                        </button>
+                                        <span style="
+                                            font-size: 0.95rem;
+                                            @if($isSelected) color: #1a1a1a; font-weight: 700; @else color: #4b5563; @endif
+                                            @if($result && $isSelected && $isCorrectAnswer) color: #15803d; @endif
+                                            @if($result && $isSelected && !$isCorrectAnswer) color: #b91c1c; text-decoration: line-through; @endif
+                                            @if($result && !$isSelected && $expectedAnswer === $key) color: #15803d; font-weight: 700; @endif
+                                        ">
+                                            {{ $text }}
+                                        </span>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                        @if ($result)
-                            @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
-                            @if ($detail)
-                                <div style="margin-top:0.5rem; font-size:0.85rem; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }};">
-                                    {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
-                                </div>
+                    @else
+                        @php
+                            $rawOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? ''));
+                        @endphp
+                        <fieldset style="border:none;padding:0;margin:0 0 1.25rem 0; font-family:'Plus Jakarta Sans',sans-serif; background:#fafafa; border:1px solid #e5e5e5; padding: 0.75rem 1rem; border-radius: 6px;">
+                            <legend style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:0.5rem; color:#1a1a1a; padding: 0 0.5rem;">
+                                {{ $element['label'] ?? 'Aufgabe' }}@if(!empty($element['instruction'])): {{ $element['instruction'] }}@endif
+                            </legend>
+                            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
+                                @foreach ($rawOptions as $opt)
+                                    <label class="mc-option-item" style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
+                                        <input type="radio" name="{{ $elId }}" value="{{ $opt }}" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }}>
+                                        <span style="font-weight: 500; text-transform: uppercase;">{{ $opt }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @if ($result)
+                                @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
+                                @if ($detail)
+                                    <div style="margin-top:0.5rem; font-size:0.85rem; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }};">
+                                        {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
+                                    </div>
+                                @endif
                             @endif
-                        @endif
-                    </fieldset>
+                        </fieldset>
+                    @endif
                 @elseif (($element['type'] ?? '') === 'writing')
                     @php
                         $writingDetail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;

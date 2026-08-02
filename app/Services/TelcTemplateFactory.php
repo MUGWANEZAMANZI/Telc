@@ -10,16 +10,12 @@ class TelcTemplateFactory
     public static function presets(): array
     {
         return [
-            'A1' => self::a1() + ['exam_provider' => 'telc'],
-            'A2' => self::a2() + ['exam_provider' => 'telc'],
-            'B1' => self::b1() + ['exam_provider' => 'telc'],
-            'B2' => self::b2() + ['exam_provider' => 'telc'],
-            'C1' => self::c1() + ['exam_provider' => 'telc'],
-            'C2' => self::c2() + ['exam_provider' => 'telc'],
-            'Goethe-A1' => self::a1() + ['title' => 'Goethe Zertifikat A1', 'level' => 'A1', 'exam_provider' => 'goethe'],
-            'Goethe-A2' => self::a2() + ['title' => 'Goethe Zertifikat A2', 'level' => 'A2', 'exam_provider' => 'goethe'],
-            'Goethe-B1' => self::b1() + ['title' => 'Goethe Zertifikat B1', 'level' => 'B1', 'exam_provider' => 'goethe'],
-            'Goethe-C1' => self::c1() + ['title' => 'Goethe Zertifikat C1', 'level' => 'C1', 'exam_provider' => 'goethe'],
+            'B1' => array_merge(self::b1(), ['exam_provider' => 'telc']),
+            'B2' => array_merge(self::b2(), ['exam_provider' => 'telc']),
+            'C1' => array_merge(self::c1(), ['exam_provider' => 'telc']),
+            'Goethe-B1' => array_merge(self::b1(), ['title' => 'Goethe Zertifikat B1', 'level' => 'B1', 'exam_provider' => 'goethe']),
+            'Goethe-B2' => array_merge(self::b2(), ['title' => 'Goethe Zertifikat B2', 'level' => 'B2', 'exam_provider' => 'goethe']),
+            'Goethe-C1' => array_merge(self::c1(), ['title' => 'Goethe Zertifikat C1', 'level' => 'C1', 'exam_provider' => 'goethe']),
         ];
     }
 
@@ -31,80 +27,7 @@ class TelcTemplateFactory
         return self::presets()[$level] ?? self::c1();
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private static function a1(): array
-    {
-        return [
-            'title' => 'telc Deutsch A1 (Start Deutsch 1)',
-            'level' => 'A1',
-            'source_pdf' => null,
-            'theme' => self::theme('#f59e0b', '#202020', 'Instrument Sans'),
-            'timings' => [
-                ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 25],
-                ['label' => 'Hoerverstehen', 'minutes' => 20],
-                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 20],
-                ['label' => 'Muendliche Pruefung', 'minutes' => 15],
-            ],
-            'sections' => [
-                self::section('a1-reading-language', 'Leseverstehen und Sprachbausteine', 25, [
-                    self::text('A1-LV1-text', 'Leseverstehen Teil 1', 'Lesen Sie die Texte und entscheiden Sie: Ist die Aussage Richtig (+) oder Falsch (-)?'),
-                    ...self::answerElements('A1-LV1-', 1, ['+', '-', '+', '-', '+'], 'true_false', 2, '+,-'),
-                ], self::pages(1, 3)),
-                self::section('a1-listening', 'Hörverstehen', 20, [
-                    self::audio('A1-audio', 'Hörverstehen Audio', ''),
-                    self::text('A1-HV1-text', 'Hörverstehen Teil 1', 'Sie hören fünf kurze Gespräche. Wählen Sie die richtige Antwort (a, b oder c).'),
-                    ...self::answerElements('A1-HV1-', 6, ['a', 'c', 'b', 'a', 'b'], 'multiple_choice', 2, 'a,b,c'),
-                ], self::pages(4, 5)),
-                self::section('a1-writing', 'Schriftlicher Ausdruck', 20, [
-                    self::input('A1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Betreff: Einladung zu meiner Geburtstagsparty\n\nHallo Sarah,\nich lade dich herzlich zu meiner Geburtstagsparty ein. Die Party findet am nächsten Samstag um 18:00 Uhr bei mir zu Hause statt. Ich würde mich freuen, wenn du kommen kannst. Bitte gib mir bis Donnerstag Bescheid, ob du Zeit hast.\n\nViele Grüße\nMax", 15),
-                ], self::pages(6, 6)),
-                self::section('a1-speaking', 'Mündliche Prüfung', 15, [
-                    self::speakingElement('A1-SP-1', 'Teil 1: Sich vorstellen', 'Stellen Sie sich vor (Name, Alter, Land, Wohnort, Sprachen, Beruf, Hobby) sowie Buchstabieren & Zahlen.', 5),
-                    self::speakingElement('A1-SP-2', 'Teil 2: Um Informationen bitten', 'Formulieren Sie Fragen zu einem Thema/Wort und antworten Sie darauf.', 5),
-                    self::speakingElement('A1-SP-3', 'Teil 3: Bitten formulieren', 'Formulieren Sie eine Bitte anhand einer Bildkarte und reagieren Sie auf eine Bitte.', 5),
-                ], self::pages(7, 8)),
-            ],
-        ];
-    }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private static function a2(): array
-    {
-        return [
-            'title' => 'telc Deutsch A2',
-            'level' => 'A2',
-            'source_pdf' => null,
-            'theme' => self::theme('#3b82f6', '#202020', 'Instrument Sans'),
-            'timings' => [
-                ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 40],
-                ['label' => 'Hoerverstehen', 'minutes' => 20],
-                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 30],
-                ['label' => 'Muendliche Pruefung', 'minutes' => 15],
-            ],
-            'sections' => [
-                self::section('a2-reading-language', 'Leseverstehen und Sprachbausteine', 40, [
-                    self::text('A2-LV1-text', 'Leseverstehen Teil 1', 'Lesen Sie die Texte und ordnen Sie zu.'),
-                    ...self::answerElements('A2-LV1-', 1, ['a', 'b', 'c', 'a', 'b'], 'multiple_choice', 2, 'a,b,c'),
-                ], self::pages(1, 4)),
-                self::section('a2-listening', 'Hörverstehen', 20, [
-                    self::audio('A2-audio', 'Hörverstehen Audio', ''),
-                    ...self::answerElements('A2-HV1-', 6, ['a', 'b', 'c', 'a', 'b'], 'multiple_choice', 2, 'a,b,c'),
-                ], self::pages(5, 6)),
-                self::section('a2-writing', 'Schriftlicher Ausdruck', 30, [
-                    self::input('A2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Betreff: Entschuldigung für das Verpassen des Termins\n\nSehr geehrte Frau Müller,\nich möchte mich aufrichtig dafür entschuldigen, dass ich unseren Termin am Donnerstag verpasst habe. Ich war krank und konnte nicht kommen. Wäre es möglich, einen neuen Termin für nächste Woche zu vereinbaren? Ich bin von Montag bis Mittwoch flexibel.\n\nMit freundlichen Grüßen\nMax Mustermann", 15),
-                ], self::pages(7, 7)),
-                self::section('a2-speaking', 'Mündliche Prüfung', 15, [
-                    self::speakingElement('A2-SP-1', 'Teil 1: Präsentation', 'Sprechen Sie über ein gewähltes Thema.', 5),
-                    self::speakingElement('A2-SP-2', 'Teil 2: Ein Gespräch führen', 'Führen Sie ein alltägliches Gespräch über ein Thema.', 5),
-                    self::speakingElement('A2-SP-3', 'Teil 3: Etwas aushandeln', 'Planen Sie eine gemeinsame Aktivität mit dem KI-Partner.', 5),
-                ], self::pages(8, 9)),
-            ],
-        ];
-    }
 
     /**
      * @return array<string, mixed>
@@ -155,63 +78,6 @@ class TelcTemplateFactory
                     self::speakingElement('B1-SP-2', '2: Diskussion', 'Diskussion (ca. 5 Minuten). Thema: Sollten Kinder in der Schule ein Smartphone benutzen dürfen?', 6),
                     self::speakingElement('B1-SP-GLOBAL', 'Punkte für sprachliche Angemessenheit', 'Gesamtbewertung: Flüssigkeit, Wortschatz, Grammatik, Aussprache', 32),
                 ], self::pages(10, 11)),
-            ],
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private static function c2(): array
-    {
-        return [
-            'title' => 'telc Deutsch C2',
-            'level' => 'C2',
-            'source_pdf' => null,
-            'theme' => self::theme('#000000', '#202020', 'Instrument Sans'),
-            'timings' => [
-                ['label' => 'Leseverstehen', 'minutes' => 80],
-                ['label' => 'Hoerverstehen', 'minutes' => 60],
-                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 80],
-                ['label' => 'Muendliche Pruefung', 'minutes' => 15],
-            ],
-            'sections' => [
-                self::section('c2-reading', 'Leseverstehen', 80, [
-                    self::text('C2-LV1-text', 'Leseverstehen Teil 1 — Multiple Choice', "Lesen Sie den folgenden wissenschaftlichen Text und beantworten Sie die Fragen (Aufgaben 1–8).\n\nDie globale Erwärmung stellt die Menschheit vor beispiellose Herausforderungen. In den letzten Jahrzehnten hat die wissenschaftliche Gemeinschaft unmissverständliche Beweise dafür vorgelegt, dass der anthropogene Klimawandel durch die Emission von Treibhausgasen beschleunigt wird. Besonders besorgniserregend ist die Tatsache, dass die durchschnittlichen globalen Temperaturen seit Beginn der Industrialisierung um etwa 1,2 Grad Celsius gestiegen sind. Die Folgen sind vielfältig und betreffen nahezu alle Ökosysteme der Erde.\n\nEin besonders gravierendes Problem stellt der Anstieg des Meeresspiegels dar. Durch das Abschmelzen der polaren Eismassen und die thermische Ausdehnung der Ozeane drohen Küstenregionen weltweit langfristig unbewohnbar zu werden. Schätzungen zufolge könnten bis zum Jahr 2100 mehr als 200 Millionen Menschen von direkten Folgen des Meeresspiegelanstiegs betroffen sein.\n\nGleichzeitig nimmt die Häufigkeit und Intensität von Extremwetterereignissen zu. Hitzewellen, Dürreperioden und Starkregenereignisse treten immer häufiger auf und verursachen erhebliche wirtschaftliche Schäden. Die Landwirtschaft steht vor der Herausforderung, sich an veränderte klimatische Bedingungen anzupassen. In vielen Regionen der Welt führen langanhaltende Dürren zu Ernteausfällen und Nahrungsmittelknappheit.\n\nDie internationale Staatengemeinschaft hat auf diese Entwicklungen mit einer Reihe von Abkommen reagiert, darunter das Pariser Klimaabkommen von 2015, das die Begrenzung der Erderwärmung auf deutlich unter 2 Grad Celsius zum Ziel hat. Obwohl dieses Abkommen einen wichtigen Meilenstein darstellt, bleibt die Umsetzung der vereinbarten Maßnahmen hinter den Notwendigkeiten zurück. Kritiker bemängeln insbesondere die mangelnde Verbindlichkeit der nationalen Klimaschutzpläne.\n\nEine Schlüsselrolle bei der... (line truncated to 2000 chars)"),
-                    ...self::answerElements('C2-LV1-', 1, ['c', 'd', 'b', 'a', 'd', 'c', 'b', 'a'], 'multiple_choice', 2, 'a,b,c,d'),
-                    self::text('C2-LV2-text', 'Leseverstehen Teil 2 — Zuordnung', 'Lesen Sie die folgenden Kurztexte (Aufgaben 9–14). Ordnen Sie jedem Text die passende Überschrift (a–h) zu. Jede Überschrift kann nur einmal verwendet werden.'),
-                    ...self::answerElements('C2-LV2-', 9, ['e', 'a', 'g', 'c', 'h', 'f'], 'matching', 2, 'a,b,c,d,e,f,g,h'),
-                    self::text('C2-LV3-text', 'Leseverstehen Teil 3 — Richtig/Falsch', 'Lesen Sie die Aussagen (Aufgaben 15–26). Entscheiden Sie, ob die Aussagen + (richtig), – (falsch) oder x (nicht im Text) sind, basierend auf dem Text aus Teil 1.'),
-                    ...self::answerElements('C2-LV3-', 15, ['+', '-', 'x', '+', 'x', '-', '+', '+', 'x', '-', '-', '+'], 'true_false', 2, '+,-,x'),
-                    self::input('C2-LV3-27', 'Aufgabe 27 — Textverständnis', 'multiple_choice', 'b', 2, 'a,b,c,d'),
-                    self::inlineGap('C2-SB-inline', 'Sprachbausteine (Wissenschaftssprache)', 'In der heutigen Debatte um die Nachhaltigkeit --0-- es von entscheidender Bedeutung, alternative Energiequellen umfassend zu erforschen. Zwar existieren bereits zahlreiche Ansätze, doch --1-- viele davon an der mangelnden Skalierbarkeit. Um einen substanziellen Beitrag leisten zu --2--, bedarf es einer verstärkten Kooperation zwischen Wissenschaft und Wirtschaft. Darüber hinaus --3-- die politischen Rahmenbedingungen geschaffen werden, um --4-- Investitionen in grüne Technologien zu fördern. Nur --5-- kann langfristig eine nachhaltige Entwicklung --6-- werden.', [
-                        ['options' => 'a|ist,b|wäre,c|wird', 'answer' => 'a'],
-                        ['options' => 'a|scheitern,b|gelingen,c|verzögern', 'answer' => 'a'],
-                        ['options' => 'a|können,b|dürfen,c|sollen', 'answer' => 'c'],
-                        ['options' => 'a|müssen,b|dürften,c|könnten', 'answer' => 'a'],
-                        ['options' => 'a|gezielte,b|willkürliche,c|spontane', 'answer' => 'a'],
-                        ['options' => 'a|dadurch,b|hierfür,c|hierdurch', 'answer' => 'b'],
-                        ['options' => 'a|gewährleistet,b|verhindert,c|ausgeschlossen', 'answer' => 'a'],
-                    ], 2),
-                ], self::pages(1, 8)),
-                self::section('c2-listening', 'Hoerverstehen', 60, [
-                    self::audio('C2-audio', 'Hoerverstehen Audio', ''),
-                    self::text('C2-HV1-text', 'Hoerverstehen Teil 1 — Zuordnung', 'Sie hören zehn kurze Beiträge von verschiedenen Wissenschaftlern. Ordnen Sie jedem Beitrag das passende Thema (a–l) zu. Sie hören den Text einmal.'),
-                    ...self::answerElements('C2-HV1-', 28, ['j', 'c', 'h', 'a', 'l', 'e', 'g', 'b', 'k', 'd'], 'matching', 1, 'a,b,c,d,e,f,g,h,i,j,k,l'),
-                    self::text('C2-HV2-text', 'Hoerverstehen Teil 2 — Multiple Choice', 'Sie hören eine Diskussionsrunde zum Thema „Künstliche Intelligenz und Arbeitsmarkt". Wählen Sie die richtige Antwort (a, b oder c). Sie hören den Text zweimal.'),
-                    ...self::answerElements('C2-HV2-', 38, ['b', 'c', 'a', 'b', 'c', 'a', 'c', 'b', 'a', 'c', 'b', 'a'], 'multiple_choice', 2, 'a,b,c'),
-                    self::text('C2-HV3-text', 'Hoerverstehen Teil 3 — Notizen ergänzen', 'Sie hören einen Vortrag über nachhaltige Stadtentwicklung. Ergänzen Sie die fehlenden Informationen. Sie hören den Text zweimal.'),
-                    ...self::answerElements('C2-HV3-', 50, ['Urban Gardening', 'CO2-neutral', 'Schwammstadt', 'Dachbegrünung', 'Photovoltaik', 'Wärmepumpe', 'Carsharing', 'Nahverkehr', 'Bürgerbeteiligung', 'Leitbild'], 'fill_blank', 2),
-                ], self::pages(9, 12)),
-                self::section('c2-writing', 'Schriftlicher Ausdruck', 80, [
-                    self::input('C2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Kritische Reflexion der Digitalisierung im Bildungssystem\n\nDie Digitalisierung des Schulwesens schreitet unaufhaltsam voran. Während Befürworter eine Demokratisierung des Wissenszugangs und die Förderung digitaler Kompetenzen betonen, warnen Kritiker vor einer zunehmenden sozialen Disparität und dem Verlust grundlegender kognitiver Fertigkeiten.\nEine differenzierte Betrachtung offenbart, dass die bloße Bereitstellung digitaler Endgeräte noch keinen pädagogischen Mehrwert generiert. Vielmehr bedarf es didaktisch fundierter Konzepte und einer kontinuierlichen Fortbildung des Lehrpersonals, um Medienkompetenz zielführend zu vermitteln. Andernfalls droht eine oberflächliche Beschäftigung mit Lerninhalten zu Lasten von Tiefenverständnis und Konzentrationsfähigkeit.\nSchlussfolgernd ist haftzuhalten, dass digitale Medien als Ergänzung, nicht jedoch als Ersatz für den analogen, zwischenmenschlichen Diskurs im Klassenzimmer fungieren sollten.", 48),
-                ], self::pages(13, 13)),
-                self::section('c2-speaking', 'Mündliche Prüfung', 15, [
-                    self::speakingElement('C2-SP-1a', '1a: Präsentation', 'Präsentation (ca. 4 Minuten). Wählen Sie ein Thema: 1. Die Globalisierung und ihre Auswirkungen auf kulturelle Identität / 2. Wissenschaftlicher Fortschritt und ethische Verantwortung', 6),
-                    self::speakingElement('C2-SP-1b', '1b: Zusammenfassung und Reaktion', 'Hören Sie die KI-Präsentation zum anderen Thema und nehmen Sie dazu Stellung (ca. 2 Minuten).', 4),
-                    self::speakingElement('C2-SP-2', '2: Diskussion', 'Diskussion (ca. 6 Minuten). Thema: Inwieweit sollte die Meinungsfreiheit in demokratischen Gesellschaften eingeschränkt werden dürfen?', 6),
-                    self::speakingElement('C2-SP-GLOBAL', 'Punkte für sprachliche Angemessenheit', 'Gesamtbewertung: Flüssigkeit, Idiomatik, grammatische Korrektheit, Aussprache/Intonation', 32),
-                ], self::pages(14, 15)),
             ],
         ];
     }
@@ -404,6 +270,160 @@ class TelcTemplateFactory
     /**
      * @return array<string, mixed>
      */
+    private static function c1(): array
+    {
+        return [
+            'title' => 'telc Deutsch C1',
+            'level' => 'C1',
+            'source_pdf' => 'telc_deutsch_c1_uebungstest_1_format_2016.pdf',
+            'theme' => self::theme('#8f8f8f', '#202020', 'Instrument Sans'),
+            'timings' => [
+                ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 90],
+                ['label' => 'Pause', 'minutes' => 20],
+                ['label' => 'Hoerverstehen', 'minutes' => 40],
+                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 70],
+                ['label' => 'Vorbereitungszeit Muendliche Pruefung', 'minutes' => 20],
+                ['label' => 'Muendlicher Ausdruck', 'minutes' => 16],
+            ],
+            'sections' => [
+                self::section('c1-reading-language', 'Leseverstehen und Sprachbausteine', 90, [
+                    self::text('C1-LV1-instruction', 'Teil 1 — vorgeschlagene Arbeitszeit: 10 Minuten', 'Sie lesen in einer Zeitschrift einen Artikel über ein Unternehmen in der Tourismusbranche. Wählen Sie für jede Lücke die richtige Lösung.'),
+                    self::inlineGap('C1-LV1-inline', 'JUNGE UNTERNEHMEN DER TOURISMUSBRANCHE: StadtTours', "In Deutschland werden jeden Tag neue Start-ups gegründet. Eines von ihnen wollen wir heute vorstellen: StadtTours.\n\nDer Name ist Programm – das Unternehmen hat sich auf Reisen spezialisiert, für die man nicht lange in die Ferne schweifen muss. 20 Teams in ganz Deutschland zeigen ausgewählte Städte aus ungewohnten, spannenden Perspektiven. Die Reisenden werden **dazu** (Beispiel 0) eingeladen, die besuchte Stadt und ihre Umgebung zu „entziffern“, und kommen darüber ins Gespräch. Auf ihren Entdeckungsreisen besichtigen sie nicht nur touristische Attraktionen, sondern --0-- auch Geschichten aus dem Alltagsleben der jeweiligen Stadt. Die teilnehmenden Besucherinnen und Besucher erhalten Einblicke in kulturelle, politische und wirtschaftliche Zusammenhänge und bekommen so ein facettenreiches Bild von historischen Entwicklungen und Bräuchen der Stadt, die z. B. auch --1-- Fotos oder Anekdoten veranschaulicht werden. Dabei werden die Interessen der Gäste berücksichtigt: Ob nun in Millionenstädten wie Berlin, Hamburg und München oder in einer der anderen 17 Städte – die Programme passen sich den Wünschen der Gäste an, nicht --2--.\n\nDas Start-up hat Standards entwickelt, --3-- in allen angebotenen Städten eine hohe Qualität der Programme gewährleisten sollen. Ob Historiker*innen, Geograf*innen, Journalist*innen, Schauspieler*innen oder Schriftsteller*innen: All diese Expertinnen und Experten bringen nicht nur Fachkompetenz, sondern darüber hinaus auch Erfahrung --4-- Umgang mit Gruppen mit. Von Anfang an praktiziert das junge Unternehmen die Idee des sanften Tourismus. Seine Gründer waren --5-- Wegbereiter für umwelt- und sozialverträgliches Reisen sowie für zeitgemäßen und nachhaltigen Tourismus.\n\nDie Angebote der einzelnen Reise-Teams --6-- städtetouristische Ansprüche mit Niveau: Stadtspaziergänge mit App zum selbstständigen Erkunden, Stadtspiele als Wettbewerbe für größere Gruppen, lebendige Lesungen zur Stadtgeschichte, Rundfahrten mit E-Bikes und E-Rollern oder mit dem „normalen“ Fahrrad – im vielfältigen Angebot ist alles, was Spaß verspricht. Jede Stadt hat ihren ganz eigenen Charme. --7-- hat jedes StadtTours-Team überall einzigartige Programme für seine Besucherinnen und Besucher vorbereitet. Die Reisen eignen sich für Gruppen jeden Alters, besonders jedoch für Schulklassen.", [
+                        ['options' => 'a|bekommen,b|erfahren,c|lernen,d|wissen', 'answer' => 'b'],
+                        ['options' => 'a|als Anlage zu,b|in Einklang mit,c|im Einverständnis mit,d|mithilfe von', 'answer' => 'd'],
+                        ['options' => 'a|umsonst,b|ungefähr,c|ungewöhnlich,d|umgekehrt', 'answer' => 'd'],
+                        ['options' => 'a|das,b|die,c|für die,d|mit denen', 'answer' => 'b'],
+                        ['options' => 'a|bei,b|im,c|in,d|von', 'answer' => 'b'],
+                        ['options' => 'a|daraus,b|davon,c|gegenüber,d|somit', 'answer' => 'd'],
+                        ['options' => 'a|erfüllen,b|ergänzen,c|erledigen,d|erzeugen', 'answer' => 'a'],
+                        ['options' => 'a|Dennoch,b|Entsprechend,c|Nachdem,d|Zunehmend', 'answer' => 'b'],
+                    ], 2, 'Wählen Sie die richtige Option (a, b, c oder d) für jede Lücke aus dem jeweiligen Dropdown-Feld.'),
+                    self::text('C1-LV2-instruction', 'Teil 2 — vorgeschlagene Arbeitszeit: 20 Minuten', 'Sie lesen im Internet einen Artikel über eine Studie zur Handynutzung in Familien. Wählen Sie bei jeder Aufgabe die richtige Lösung.'),
+                    self::text('C1-LV2-text', 'FAMILIEN IM FOKUS: Der elterliche Handykonsum und seine Folgen', 
+                        "<div style=\"font-family: 'Plus Jakarta Sans', sans-serif; text-align: justify; line-height: 1.6;\">\n".
+                        "    <h4 style=\"text-align: center; letter-spacing: 0.1em; color: #64748b; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.25rem; text-transform: uppercase;\">FAMILIEN IM FOKUS</h4>\n".
+                        "    <h2 style=\"text-align: center; color: #1e293b; font-size: 1.6rem; font-weight: 800; margin-top: 0; margin-bottom: 1.5rem;\">Der elterliche Handykonsum und seine Folgen</h2>\n".
+                        "    \n".
+                        "    <p style=\"margin-bottom: 1rem; color: #334155;\">Laut einer jüngst in einer englischsprachigen Zeitschrift veröffentlichten Studie verursacht die häufige, intensive Beschäftigung vieler Eltern mit dem Handy bei ihren Kindern Frust, Wut, Stress sowie Verhaltensauffälligkeiten. Dennoch ist es nach wie vor die Internetnutzung der Sprösslinge, die ihre Zeit am Handy oder Tablet mit Spielen und Serien verbringen, die zu Diskussionen im Familienkreis führt. Wenn Eltern dasselbe tun, scheint ihnen das jedoch meist kein Grund zur Besorgnis zu sein, sondern gilt als Teil ihrer individuellen Freiheit. Als Erwachsene wissen sie schließlich selbst am besten, was sie gerade brauchen, um glücklich und gesund zu bleiben, so argumentieren sie zumindest oft selbst.</p>\n".
+                        "    \n".
+                        "    <p style=\"margin-bottom: 1rem; color: #334155;\">Es besteht allerdings kein Zweifel daran, dass in Familien mit Eltern, die ihr Smartphone nur schwer zur Seite legen können, die Kommunikation unter den Familienmitgliedern leidet: Das Handy wird zum Kommunikationsmittel Nummer eins, der ausführliche Eltern-Kind-Austausch fehlt. Diese ungesunden Auswirkungen auf die sozialen Kontakte in der Familie haben in vielen Fällen eine gestörte Sprachentwicklung der Heranwachsenden zur Folge, die sich auch in schlechteren Noten widerspiegelt. Die Unterstützung bei den Hausaufgaben bleibt notgedrungen unzureichend, wenn die Eltern währenddessen mit dem Handy spielen. Fordern die Kinder dann Beachtung ein, reagieren zahlreiche Eltern eher verärgert oder gereizt.</p>\n".
+                        "    \n".
+                        "    <p style=\"margin-bottom: 1rem; color: #334155;\">Das Forschungsteam der Studie hat in einem Langzeitexperiment untersucht, ob Kinder in Konkurrenz mit den Smartphones ihrer Eltern stehen. Dafür baten die Wissenschaftler 195 Elternpaare mit mindestens einem Kind unter fünf Jahren darum, sechs Monate lang Auskunft über ihre tägliche Smartphone-Nutzung zu geben. Zugleich wurden sie befragt, wie sich das Verhalten der Kinder während des Beobachtungszeitraums entwickelt hat. Lenkten sich Eltern wiederholt mit dem Handy ab, verhielten sich ihre Kinder häufiger auffällig, das heißt, sie quengelten und jammerten viel oder bekamen unverhältnismäßig starke Wutausbrüche. Sobald die Unterfünfjährigen jedoch das Handy selbst als Spielzeug erhielten, wurden sie ruhig und machten einen zufriedenen Eindruck.</p>\n".
+                        "    \n".
+                        "    <p style=\"margin-bottom: 1rem; color: #334155;\">Die Dynamik solcher Situationen gleiche einem Teufelskreis, argumentieren die Autorinnen und Autoren der Studie. Einige an der Untersuchung beteiligte Eltern räumten ein, dass sie sich besonders in Situationen nach dem Smartphone griffen, in denen sie sich von ihren Kindern gestresst fühlten. Das Handy biete ihnen eine Art Flucht aus dem Chaos, in das die Betreuung von Kindern ausarten kann. Sogar die Beschäftigung mit Problemen am Arbeitsplatz wurde in diesem Kontext als entspannende Tätigkeit empfunden.</p>\n".
+                        "    \n".
+                        "    <p style=\"margin-bottom: 1rem; color: #334155;\">Kinder, auch das hat die Studie gezeigt, reagieren sensibel auf den Verlust von Aufmerksamkeit seitens ihrer Eltern. Die Expertinnen und Experten schlussfolgern: Wer sich weniger auf seine Kinder einlässt, bekommt auch schwerer Zugang zu ihnen. Jedes Familienmitglied lebt dann letztendlich in seiner eigenen Welt und nimmt nur noch seine eigene Realität wahr.</p>\n".
+                        "    \n".
+                        "    <p style=\"margin-bottom: 1rem; color: #334155;\">Die Expertinnen und Experten geben Empfehlungen, wie sich wirksam Abhilfe schaffen lässt. Natürlich dürfen sich Eltern auch mal ausklinken, bevor sie sich zwischen den Ansprüchen der Familie zerreiben. Auch Mütter und Väter sind nur Menschen, und das natürliche Bedürfnis nach Zerstreuung verschwindet nicht mit dem Kinderglück. Hier kann das Telefon durchaus helfen. Doch darf nicht vergessen werden, im Familienalltag handyfreie Zeiten und Rituale zu schaffen. Bei gemeinsamen Mahlzeiten, beim Spieleabend oder dem Zubettgehen hat das Handy nichts zu suchen.</p>\n".
+                        "    \n".
+                        "    <p style=\"margin-bottom: 0; color: #334155;\">Aktuell liegt auch das Handy-Fasten im Trend, das sich gemeinsam mit den Kindern anwenden lässt. Auf diese Weise hat die ganze Familie etwas davon: Ob einen Monat, eine Woche oder drei Tage – der freiwillige Verzicht bringt die Menschen wieder ohne digitale Ablenkung an einen Tisch zusammen. Und wo vorher Schweigen war, könnte schon bald ein reger Gedankenaustausch entstehen. Ohne Handy können Eltern auch ihre Freizeit wieder bewusster mit den Kindern verbringen und gemeinsame Unternehmungen planen. Je nach den Vorlieben sollte eine Aktivität gewählt werden, die alle Familienmitglieder einbindet. Falls dennoch Kompromisse notwendig sind, sollte jede und jeder zugestimmt haben. Um eine passende Aktivität zu finden, können auch der Freundes- oder Bekanntenkreis oder entsprechende Portale im Internet befragt werden. Die einen entscheiden sich dann für das Anlegen eines Gemüsebeets im Gemeinschaftsgarten, die anderen für eine Schnitzeljagd durch die Stadt – alles ist erlaubt, Hauptsache, es macht Spaß und das Handy wird nur für Fotos aus der Tasche genommen.</p>\n".
+                        "</div>"
+                    ),
+                    self::input('C1-LV2-9', 'Aufgabe 9', 'multiple_choice', 'a', 2, json_encode([
+                        ['key' => 'a', 'text' => 'ob sich Kinder zu viel online beschäftigen.'],
+                        ['key' => 'b', 'text' => 'wie Kinder gefördert werden können.'],
+                        ['key' => 'c', 'text' => 'wie stressig die Telefonnutzung der Eltern für Kinder ist.']
+                    ]), 'Innerhalb der Familien wird oft thematisiert, ..'),
+                    self::input('C1-LV2-10', 'Aufgabe 10', 'multiple_choice', 'b', 2, json_encode([
+                        ['key' => 'a', 'text' => 'Aggressives Benehmen in der Familie.'],
+                        ['key' => 'b', 'text' => 'Nachlassen der schulischen Leistung.'],
+                        ['key' => 'c', 'text' => 'Unkonzentrierte Erledigung von Hausaufgaben.']
+                    ]), 'Welche Folgen hat der Handykonsum der Eltern bei den Kindern?'),
+                    self::input('C1-LV2-11', 'Aufgabe 11', 'multiple_choice', 'a', 2, json_encode([
+                        ['key' => 'a', 'text' => 'Auswirkungen des Handykonsums von Eltern.'],
+                        ['key' => 'b', 'text' => 'Folgen der regelmäßigen Handynutzung von Kindern.'],
+                        ['key' => 'c', 'text' => 'Verhaltensauffälligkeit bei Kindern.']
+                    ]), 'Was wurde in einem Experiment mit Elternpaaren untersucht?'),
+                    self::input('C1-LV2-12', 'Aufgabe 12', 'multiple_choice', 'a', 2, json_encode([
+                        ['key' => 'a', 'text' => 'Anspannung abzubauen.'],
+                        ['key' => 'b', 'text' => 'chaotischen Zuständen vorzubeugen.'],
+                        ['key' => 'c', 'text' => 'Probleme im Beruf zu lösen.']
+                    ]), 'Laut den Wissenschaftlerinnen und Wissenschaftlern hilft das Handy den Eltern ..'),
+                    self::input('C1-LV2-13', 'Aufgabe 13', 'multiple_choice', 'c', 2, json_encode([
+                        ['key' => 'a', 'text' => 'dem Realitätsverlust der Eltern.'],
+                        ['key' => 'b', 'text' => 'der kindlichen Sensibilität.'],
+                        ['key' => 'c', 'text' => 'verminderter elterlicher Zuneigung.']
+                    ]), 'Die Beziehung zwischen Eltern und Kindern leidet unter ..'),
+                    self::input('C1-LV2-14', 'Aufgabe 14', 'multiple_choice', 'b', 2, json_encode([
+                        ['key' => 'a', 'text' => 'in der Wohnung handyfreie Zonen einzurichten.'],
+                        ['key' => 'b', 'text' => 'die Handynutzung bewusst zu reglementieren.'],
+                        ['key' => 'c', 'text' => 'mit ihren Kindern regelmäßig aufs Handy zu verzichten.']
+                    ]), 'Den Eltern wird empfohlen, ..'),
+                    self::input('C1-LV2-15', 'Aufgabe 15', 'multiple_choice', 'b', 2, json_encode([
+                        ['key' => 'a', 'text' => 'Aktivitäten frühzeitig geplant werden.'],
+                        ['key' => 'b', 'text' => 'alle Mitspracherecht bei der Entscheidung haben.'],
+                        ['key' => 'c', 'text' => 'sie leichter fällt, wenn Freunde daran teilnehmen.']
+                    ]), 'Bei der Freizeitgestaltung muss berücksichtigt werden, dass ..'),
+                    self::inlineGap('C1-LV3-matching', 'Leseverstehen Teil 3', "„Manager-Müdigkeit” - eine bedrohliche Entwicklung in Führungsetagen?\n\nLandauf, landab werden derzeit zahlreiche Unternehmen mit einem neuen Phänomen konfrontiert: „Manager-Müdigkeit”. Das mag recht harmlos klingen, bezeichnet jedoch für viele Unternehmen einen bedenklichen Trend. **[0]** Konkret bedeutet es, dass weniger als 10 % der Beschäftigten auf einer Führungsposition arbeiten möchten.\n\nDas Problem ist weit größer, als erste Umfragen erwarten ließen. In den Chefetagen fehlt nicht nur der Nachwuchs. Zunehmendes Desinteresse an Führungsposten ist auch bei jenen festzustellen, die bereits im Management tätig sind. --0-- Mehr als die Hälfte von ihnen fühlt sich beispielsweise gestresst oder empfindet die Anforderungen der Berufswelt als stetig wachsend. Ein Drittel der Managerinnen und Manager ist von den Aufgaben überfordert und würde es sogar bevorzugen, nicht mehr Teil der Arbeitswelt zu sein.\n\nAbstrahiert man vom Einzelschicksal und stellt sich die Folgen dieser neuen Einstellung für Unternehmen – egal welcher Größe – vor, dann kann man ermessen, was für ein eklatantes Problem da auf unsere Wirtschaft zukommt. Denn ohne Führungskräfte sind Unternehmen im wahrsten Sinne des Wortes „führungslos“. --1-- Wer plant, wer konzipiert, wer übernimmt die Verantwortung? Wenn diese Positionen nicht mehr besetzt werden können, wird nicht nur der Profit der Firma zurückgehen, sondern alle Mitarbeitenden werden unter den Folgen zu leiden haben.\n\nDie interessante Frage lautet: Wo liegen die Ursachen für diese Entwicklung? Früher träumten zahlreiche zielstrebige Jura- oder BWL-Studierende von einer steilen Karriere in Unternehmen. --2-- Sicherlich sind die Ursachen für diese tiefgreifende Veränderung vielschichtig, jedoch war der Prozess kontinuierlich und absehbar. Ein wichtiger Grund könnte der moderne Erziehungsstil sein. Obwohl die Eltern der heutigen Jugendlichen lange nach den entbehrreichen Kriegsjahren aufgewachsen sind, konnten sie der Versuchung nicht widerstehen, ihre Kinder zu verwöhnen. Die Kinder erhalten viel und das meist ohne große Gegenleistung. --3-- Warum sollten sie Tätigkeiten auf sich nehmen, die sie unangenehm oder anstrengend finden? Diese Einstellung der jungen Generation hat großen Einfluss auf ihren beruflichen Werdegang.\n\nIm Berufsleben der Kinder treten Eltern in den Hintergrund. Ganz im Gegensatz dazu steht die Schullaufbahn, in deren Verlauf sie ihre Söhne und Töchter durch zahlreiche Lehrergespräche und die Finanzierung von Hausaufgabenhilfe oder Nachhilfestunden unterstützen können. --4-- Jedoch bleibt die Frage offen, ob die Kinder nicht auch ohne ein solches „Rundum-sorglos-Paket“ erfolgreich den Schulabschluss schaffen und später davon profitieren würden. Übertriebene Förderung in der Schule kann im Arbeitsleben nämlich ebenfalls als Karrierehindernis wirken. So setzen einige der Geförderten andere Prioritäten im Leben. --5-- Denn Freizeit geht für sie vor Arbeitsverpflichtungen – man kümmert sich lieber um sich selbst als um das Firmenwohl.\n\nFür jeden individuell mag dies eine kluge Entscheidung sein, als genereller Trend es jedoch problematisch. Verschärft wird die negative Entwicklung durch die schon ermüdeten Managerinnen und Manager, die aktuell Führungspositionen innehaben. --6-- So äußern sie mehr oder weniger unverhohlen: Sollen doch die Jungen übernehmen und die aktuellen Herausforderungen wie Globalisierung und Digitalisierung meistern! Damit liegen sie jedoch falsch – wir benötigen eine gemeinsame Strategie und den Einsatz aller Altersklassen. Es liegt doch auf der Hand, dass die Probleme des 21. Jahrhunderts mit viel Energie und neuen Methoden gelöst werden müssen. --7-- Da dies keine Option sein kann, benötigen wir auch einen neuen Führungsstil, der wieder Spaß macht – dann findet sich auch das Personal dafür.", [
+                        ['options' => 'a,b,c,d,e,f,g,h,i,j,x', 'answer' => 'e'],
+                        ['options' => 'a,b,c,d,e,f,g,h,i,j,x', 'answer' => 'i'],
+                        ['options' => 'a,b,c,d,e,f,g,h,i,j,x', 'answer' => 'a'],
+                        ['options' => 'a,b,c,d,e,f,g,h,i,j,x', 'answer' => 'b'],
+                        ['options' => 'a,b,c,d,e,f,g,h,i,j,x', 'answer' => 'c'],
+                        ['options' => 'a,b,c,d,e,f,g,h,i,j,x', 'answer' => 'g'],
+                        ['options' => 'a,b,c,d,e,f,g,h,i,j,x', 'answer' => 'h'],
+                        ['options' => 'a,b,c,d,e,f,g,h,i,j,x', 'answer' => 'j'],
+                    ], 2, 'Entscheiden Sie, welcher Satz a–j in die Lücken 16–23 passt. Zwei Sätze passen nicht.'),
+                    self::inlineGap('C1-SB-inline', 'Sprachbausteine', "Ein merkwürdiger Akzent\n\nStellen Sie sich vor, Sie wachen eines Morgens auf und wünschen Ihrem Partner einen guten Morgen – --0-- die Worte aus Ihrem Mund klingen --1--. Dann könnte es sich um eine --2-- seltene neurologische Störung handeln: das „Foreign Accent Syndrome“, zu Deutsch Fremdsprachenakzentsyndrom.\n\nBeim Fremdsprachenakzentsyndrom sprechen Patienten plötzlich ihre Muttersprache mit einem --3-- regionalen oder ausländischen Akzent. Meist geht die veränderte Sprechweise auf Hirnschäden --4-- eines Schlaganfalls oder einer Verletzung --5--. Die Erkrankung beeinflusst die Sprachmelodie, wobei die --6-- Lautbildung und Betonung fälschlicherweise den Eindruck erweckt, der Betroffene sei kein Muttersprachler.\n\nEin in der Fachwelt bekanntes Beispiel ist der Fall von Sabine Kindschuh. Hätte die Patientin ein paar hundert Jahre früher gelebt, --7-- sie eine Kandidatin für den Scheiterhaufen gewesen. Ihr Heimatdorf Oberalba in Thüringen war im 17. Jahrhundert Schauplatz mehrerer Hexenprozesse, und was mit der 57-Jährigen --8--, hätte man einst wohl übernatürlichen Mächten --9--: Sie sprach nach einem Schlaganfall plötzlich mit einem Tonfall, der an den Schweizer Dialekt erinnerte. --10-- sie auch versuchte, wieder normal zu sprechen, es gelang ihr einfach nicht.\n\nDie --11-- Ärzte vermuteten psychische Ursachen dahinter, --12-- eine regionale Tageszeitung berichtete. Erst ein Sprachtherapeut erkannte: Es handelte sich um das „Foreign Accent Syndrome“, eine neurologische Erkrankung, die --13-- selten ist, dass ein durchschnittlicher Mediziner in seinem gesamten Leben keinen einzigen Betroffenen --14-- bekommt. Experten sprechen von weltweit rund 60, maximal 100 Fällen, die überhaupt jemals --15--.\n\n--16-- beschrieb der französische Neurologe Pierre Marie 1907: Eine Pariserin, die einen Schlaganfall erlitten hatte und danach rechtsseitig gelähmt war, begann --17-- mit einem elsässisch klingenden Akzent zu sprechen. Mehr Details sind von einer anderen historischen Patientin überliefert: Der Experte --18-- Sprachstörungen Georg Herman Monrad-Krohn dokumentierte 1943 die Geschichte der Norwegerin Astrid L., die bei einem Unfall am linken Stirnhirn verletzt wurde. Sie --19-- mehrere Tage bewusstlos und danach rechtsseitig gelähmt gewesen sein. Zunächst hatte sie enorme Schwierigkeiten, einfache Gegenstände wie eine Streichholzschachtel --20--, und machte zahlreiche Grammatikfehler. Mit der Zeit lernte sie zwar wieder, korrekt und flüssig zu sprechen, allerdings mit einem Tonfall, der ihre Landsleute offenbar --21-- deutschen Akzent erinnerte.", [
+                        ['options' => 'a|dagegen,b|doch,c|hingegen,d|jedoch', 'answer' => 'b'],
+                        ['options' => 'a|anderweitig,b|artfremd,c|auswärtig,d|fremdartig', 'answer' => 'd'],
+                        ['options' => 'a|durchweg,b|extra,c|gehörig,d|überaus', 'answer' => 'd'],
+                        ['options' => 'a|vermeintlich,b|vermeintliche,c|vermeintlichem,d|vermeintlicher', 'answer' => 'a'],
+                        ['options' => 'a|dank,b|infolge,c|kraft,d|zwecks', 'answer' => 'b'],
+                        ['options' => 'a|hervor,b|hinaus,c|voraus,d|zurück', 'answer' => 'd'],
+                        ['options' => 'a|veränderbare,b|veränderliche,c|verändernde,d|veränderte', 'answer' => 'd'],
+                        ['options' => 'a|sei,b|war,c|wäre,d|würde', 'answer' => 'c'],
+                        ['options' => 'a|für sich hatte,b|mit sich zog,c|von sich gab,d|vor sich ging', 'answer' => 'd'],
+                        ['options' => 'a|angeschrieben,b|gutgeschrieben,c|vorgeschrieben,d|zugeschrieben', 'answer' => 'd'],
+                        ['options' => 'a|Desto,b|So sehr,c|So weit,d|Weit mehr', 'answer' => 'b'],
+                        ['options' => 'a|behandelnde,b|behandelnden,c|behandelte,d|behandelten', 'answer' => 'b'],
+                        ['options' => 'a|als,b|das,c|die,d|wie', 'answer' => 'a'],
+                        ['options' => 'a|der Art,b|Derart,c|derart,d|der-Art', 'answer' => 'c'],
+                        ['options' => 'a|im Blick,b|in Sicht,c|ins Auge,d|zu Gesicht', 'answer' => 'd'],
+                        ['options' => 'a|bekannt gewesen war,b|bekannt geworden,c|bekannt sind,d|bekannt wurden', 'answer' => 'd'],
+                        ['options' => 'a|Dem ersten Patienten,b|Den ersten Patienten,c|Der erste Patient,d|Des ersten Patienten', 'answer' => 'b'],
+                        ['options' => 'a|daraufhin,b|indem,c|nach,d|nachdem', 'answer' => 'a'],
+                        ['options' => 'a|auf,b|für,c|über,d|von', 'answer' => 'b'],
+                        ['options' => 'a|ist,b|soll,c|war,d|wurde', 'answer' => 'b'],
+                        ['options' => 'a|benannt,b|benennen,c|benennen können,d|zu benennen', 'answer' => 'd'],
+                        ['options' => 'a|an einen,b|auf einen,c|mit einem,d|zu einem', 'answer' => 'a'],
+                    ], 1, 'Lesen Sie den folgenden Text. Welche Option (a, b, c oder d) ist für jede Lücke richtig? Wählen Sie die passende Antwort aus dem jeweiligen Dropdown-Feld.'),
+                ], self::pages(8, 16)),
+                self::section('c1-listening', 'Hoerverstehen', 40, [
+                    self::audio('c1-audio', 'Hoerverstehen Audio', '/telc-assets/telc_deutsch_c1_uebungstest_1_format_2016.mp3'),
+                    self::text('C1-HV1-instruction', 'Hörverstehen Teil 1: Kontroverse Meinungen über den Zoo', "Aussagen:\na Tiere im Zoo leiden unter Platzmangel und unnatürlichen Bedingungen.\nb Zoologische Gärten leisten einen wichtigen Beitrag zum Artenschutz.\nc Für Kinder ist der Zoobesuch eine unersetzliche Erfahrung.\nd Moderne Zoos bemühen sich um artgerechte Tierhaltung.\ne Die Kritik an Zoos ist oft einseitig und unreflektiert.\nf Zoos dienen primär der Unterhaltung und dem Profit.\ng Bildungsangebote in Zoos sollten ausgebaut werden.\nh Zoos vermitteln ein falsches Bild von der Natur.\ni Forschung im Zoo nutzt auch den Tieren in freier Wildbahn.\nj Zoobesuche fördern das Umweltbewusstsein der Besucher.", 'Ordnen Sie den Sprechern 1-8 die passende Aussage a-j zu. Zwei Aussagen passen nicht. Sie hören den Text einmal.'),
+                    ...self::answerElements('C1-HV1-', 47, ['h', 'c', 'e', 'f', 'g', 'j', 'b', 'd'], 'matching', 1, 'a,b,c,d,e,f,g,h,i,j'),
+                    self::text('C1-HV2-instruction', 'Hörverstehen Teil 2: Interview zum Thema Gruppenreisen', '', 'Wählen Sie die richtige Option (a, b oder c) für die Aufgaben 55-64. Sie hören den Text zweimal.'),
+                    self::input('C1-HV2-55', 'Aufgabe 55', 'multiple_choice', 'a', 2, 'a,b,c', "Herr Rimbach ist für die Reisegruppe leicht erkennbar, obwohl er...\na) keine auffälligen Requisiten dabei hat.\nb) nicht durch seine Körpergröße auffällt.\nc) unauffällige Kleidung bevorzugt."),
+                    self::input('C1-HV2-56', 'Aufgabe 56', 'multiple_choice', 'a', 2, 'a,b,c', "Herr Rimbach setzt Körpersprache bewusst ein, um...\na) einen positiven ersten Eindruck zu hinterlassen.\nb) seine eigene Nervosität zu überspielen.\nc) Urlaubern die Nervosität zu nehmen."),
+                    self::input('C1-HV2-57', 'Aufgabe 57', 'multiple_choice', 'c', 2, 'a,b,c', "Nörgler und Unruhestifter...\na) erkennt Herr Rimbach immer auf den ersten Blick.\nb) fallen oft schon am Anreisetag unangenehm auf.\nc) reagieren in Krisensituationen besonders panisch."),
+                    self::input('C1-HV2-58', 'Aufgabe 58', 'multiple_choice', 'b', 2, 'a,b,c', "In schwierigen Situationen...\na) benötigen ältere Urlauber oft besondere Aufmerksamkeit.\nb) braucht Herr Rimbach manchmal schauspielerisches Talent.\nc) kann Herr Rimbach oft schnell eine Lösung finden."),
+                    self::input('C1-HV2-59', 'Aufgabe 59', 'multiple_choice', 'a', 2, 'a,b,c', "Beschwerden über das Essen sind nachvollziehbar, weil...\na) das Angebot oft etwas eintönig ist.\nb) keine landestypischen Gerichte serviert werden.\nc) ungewohnte Zutaten verwendet werden."),
+                    ...self::answerElements('C1-HV2-', 60, ['b', 'a', 'c', 'b', 'a'], 'multiple_choice', 2, 'a,b,c'),
+                    self::text('C1-HV3-instruction', 'Hörverstehen Teil 3: Vortragsreihe „Schöner wohnen“', '', 'Vervollständigen Sie die Notizen stichwortartig.'),
+                    self::input('C1-HV3-65', 'Aufgabe 65', 'fill_blank', 'fließenden Übergang', 2, null, 'Die neue Wandfarbe bewirkt...'),
+                    self::input('C1-HV3-66', 'Aufgabe 66', 'fill_blank', 'mehr als 9 Millionen', 2, null, 'Wir unterscheiden beim Auge...'),
+                    self::input('C1-HV3-67', 'Aufgabe 67', 'fill_blank', 'Emotionen nicht an', 2, null, 'Weiße Wände? Nein, weil...'),
+                    self::input('C1-HV3-68', 'Aufgabe 68', 'fill_blank', 'Off-White', 2, null, 'Alternativen zu reinem Weiß...'),
+                    self::input('C1-HV3-69', 'Aufgabe 69', 'fill_blank', 'Dimensionen', 2, null, 'Die richtige Farbwahl hängt ab von...'),
+                    ...self::answerElements('C1-HV3-', 70, ['kräftigen Farben', 'Kontrast', 'kurz aufhalten', 'Beleuchtungen', 'steril'], 'fill_blank', 2),
+                ], self::pages(17, 19)),
+                self::section('c1-writing', 'Schriftlicher Ausdruck', 70, [
+                    self::input('C1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Stellungnahme zum Thema 1: Soll man Geld spenden?\n\nDie Frage, ob private Geldspenden eine sinnvolle Möglichkeit zur Hilfeleistung darstellen oder ob Gelder primär in bürokratischen Strukturen versickern, wird kontrovers diskutiert. \nEinerseits ermöglichen Spenden die Finanzierung von Hilfsprojekten weltweit, die ohne private Mittel nicht existieren könnten. Insbesondere bei Naturkatastrophen ist schnelle finanzielle Hilfe überlebenswichtig. \nAndererseits ist die Kritik an den hohen Verwaltungskosten großer Organisationen nicht unberechtigt. Dennoch überwiegt der Nutzen, da seriöse Organisationen durch Transparenzberichte nachweisen, dass der Großteil der Gelder die Betroffenen erreicht. \nZusammenfassend lässt sich sagen, dass gezieltes und informiertes Spenden an zertifizierte Organisationen einen unverzichtbaren Beitrag zur globalen Solidarität leistet.", 48, null, "Wählen Sie eines der beiden Themen aus und verfassen Sie einen zusammenhängenden Text (ca. 350 Wörter).\n\nThema 1: Soll man Geld spenden?\nDiskutieren Sie, ob Spendengelder tatsächlich sinnvoll eingesetzt werden oder primär in der Verwaltung versickern. Nehmen Sie Stellung.\n\nThema 2: Überwachungssoftware für Handys der Kinder\nDiskutieren Sie, ob Eltern die Handyaktivitäten ihrer Kinder überwachen sollten. Wie verhält es sich mit dem Recht auf Privatsphäre?"),
+                ], self::pages(20, 20)),
+                self::section('c1-speaking', 'Mündliche Prüfung', 16, [
+                    self::speakingElement('C1-SP-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie eines der Themen:\n1. Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?\noder\n2. Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus?', 6),
+                    self::speakingElement('C1-SP-1b', '1b: Zusammenfassung und Anschlussfragen', 'Zusammenfassung/Anschlussfragen (ca. 2 Minuten). Hören Sie sich die KI-Präsentation zum anderen Thema an und antworten Sie darauf.', 4),
+                    self::speakingElement('C1-SP-2', '2: Diskussion', 'Diskussion (6 Minuten). Diskutieren Sie das folgende Thema: Beziehungen mit großem Altersunterschied sind immer problematisch.', 6),
+                    self::speakingElement('C1-SP-GLOBAL', 'Punkte für sprachliche Angemessenheit', 'Gesamtbewertung für sprachliche Angemessenheit (Flüssigkeit, Repertoire, Grammatische Richtigkeit, Aussprache/Intonation)', 32),
+                ], self::pages(21, 22)),
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     private static function text(string $id, string $label, string $content, ?string $instruction = null): array
     {
         return [
@@ -433,51 +453,6 @@ class TelcTemplateFactory
             'instruction' => $instruction,
             'answer' => '',
             'points' => $points,
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private static function c1(): array
-    {
-        return [
-            'title' => 'telc Deutsch C1',
-            'level' => 'C1',
-            'source_pdf' => 'telc_deutsch_c1_uebungstest_1_format_2016.pdf',
-            'theme' => self::theme('#8f8f8f', '#202020', 'Instrument Sans'),
-            'timings' => [
-                ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 90],
-                ['label' => 'Pause', 'minutes' => 20],
-                ['label' => 'Hoerverstehen', 'minutes' => 40],
-                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 70],
-                ['label' => 'Vorbereitungszeit Muendliche Pruefung', 'minutes' => 20],
-                ['label' => 'Muendlicher Ausdruck', 'minutes' => 16],
-            ],
-            'sections' => [
-                self::section('c1-reading-language', 'Leseverstehen und Sprachbausteine', 90, [
-                    ...self::answerElements('C1-LV1-', 1, ['c', 'e', 'f', 'g', 'd', 'b'], 'matching', 2, 'a,b,c,d,e,f,g,h'),
-                    ...self::answerElements('C1-LV2-', 7, ['d', 'c', 'b', 'c', 'e', 'a'], 'matching', 2, 'a,b,c,d,e'),
-                    ...self::answerElements('C1-LV3-', 13, ['-', 'x', '-', '-', 'x', '+', 'x', '+', '+', '+', '-'], 'true_false', 2, '+,-,x'),
-                    self::input('C1-LV3-24', 'Aufgabe 24', 'multiple_choice', 'c', 2, 'a,b,c'),
-                    ...self::answerElements('C1-SB-', 25, ['b', 'd', 'd', 'a', 'b', 'd', 'd', 'c', 'd', 'd', 'b', 'b', 'd', 'c', 'd', 'd', 'b', 'a', 'b', 'b', 'd', 'a'], 'multiple_choice', 1, 'a,b,c,d'),
-                ], self::pages(8, 16)),
-                self::section('c1-listening', 'Hoerverstehen', 40, [
-                    self::audio('c1-audio', 'Hoerverstehen Audio', '/telc-assets/telc_deutsch_c1_uebungstest_1_format_2016.mp3'),
-                    ...self::answerElements('C1-HV1-', 47, ['h', 'c', 'e', 'f', 'g', 'j', 'b', 'd'], 'matching', 1, 'a,b,c,d,e,f,g,h,i,j'),
-                    ...self::answerElements('C1-HV2-', 55, ['a', 'a', 'c', 'b', 'a', 'b', 'a', 'c', 'b', 'a'], 'multiple_choice', 2, 'a,b,c'),
-                    ...self::answerElements('C1-HV3-', 65, ['fließenden Übergang', 'mehr als 9 Millionen', 'Emotionen nicht an', 'Off-White', 'Dimensionen', 'kräftigen Farben', 'Kontrast', 'kurz aufhalten', 'Beleuchtungen', 'steril'], 'fill_blank', 2),
-                ], self::pages(17, 19)),
-                self::section('c1-writing', 'Schriftlicher Ausdruck', 70, [
-                    self::input('C1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Stellungnahme zum Thema: Soll man Geld spenden?\n\nDie Frage, ob private Geldspenden eine sinnvolle Möglichkeit zur Hilfeleistung darstellen oder ob Gelder primär in bürokratischen Strukturen versickern, wird kontrovers diskutiert. \nEinerseits ermöglichen Spenden die Finanzierung von Hilfsprojekten weltweit, die ohne private Mittel nicht existieren könnten. Insbesondere bei Naturkatastrophen ist schnelle finanzielle Hilfe überlebenswichtig. \nAndererseits ist die Kritik an den hohen Verwaltungskosten großer Organisationen nicht unberechtigt. Dennoch überwiegt der Nutzen, da seriöse Organisationen durch Transparenzberichte nachweisen, dass der Großteil der Gelder die Betroffenen erreicht. \nZusammenfassend lässt sich sagen, dass gezieltes und informiertes Spenden an zertifizierte Organisationen einen unverzichtbaren Beitrag zur globalen Solidarität leistet.", 48),
-                ], self::pages(20, 20)),
-                self::section('c1-speaking', 'Mündliche Prüfung', 16, [
-                    self::speakingElement('C1-SP-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie eines der Themen: 1. Was ist der Nationalsport in Ihrem Land und welche Bedeutung hat er für die Gesellschaft? oder 2. Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit?', 6),
-                    self::speakingElement('C1-SP-1b', '1b: Zusammenfassung und Anschlussfragen', 'Zusammenfassung/Anschlussfragen (ca. 2 Minuten). Hören Sie sich die KI-Präsentation zum anderen Thema an und antworten Sie darauf.', 4),
-                    self::speakingElement('C1-SP-2', '2: Diskussion', 'Diskussion (6 Minuten). Diskutieren Sie das folgende Thema: Beziehungen mit großem Altersunterschied sind immer problematisch.', 6),
-                    self::speakingElement('C1-SP-GLOBAL', 'Punkte für sprachliche Angemessenheit', 'Gesamtbewertung für sprachliche Angemessenheit (Flüssigkeit, Repertoire, Grammatische Richtigkeit, Aussprache/Intonation)', 32),
-                ], self::pages(21, 22)),
-            ],
         ];
     }
 

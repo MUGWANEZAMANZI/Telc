@@ -506,7 +506,11 @@ class ExamDashboard extends Component
         if (($element['type'] ?? '') !== 'inline_gap') {
             return [];
         }
-        $raw = json_decode((string) ($element['options'] ?? '[]'), true);
+
+        $raw = $element['options'] ?? '[]';
+        if (is_string($raw)) {
+            $raw = json_decode($raw, true);
+        }
 
         return is_array($raw) ? array_values($raw) : [];
     }

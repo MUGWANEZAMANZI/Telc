@@ -1002,7 +1002,8 @@ class StudentExam extends Component
             }
 
             if ($gapIndex !== null) {
-                $gaps = json_decode((string) ($element['options'] ?? '[]'), true);
+                $raw = $element['options'] ?? '[]';
+                $gaps = is_string($raw) ? json_decode($raw, true) : $raw;
                 $gap = $gaps[$gapIndex] ?? null;
 
                 if ($gap) {
@@ -1435,7 +1436,10 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             return [];
         }
 
-        $raw = json_decode((string) ($element['options'] ?? '[]'), true);
+        $raw = $element['options'] ?? '[]';
+        if (is_string($raw)) {
+            $raw = json_decode($raw, true);
+        }
 
         return is_array($raw) ? array_values($raw) : [];
     }

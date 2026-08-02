@@ -15,6 +15,16 @@ if (!function_exists('renderPremiumPassage')) {
                 $outputHtml .= "<div style='margin-bottom:0.5rem;'></div>";
                 continue;
             }
+
+            // If the line already starts or ends with HTML tags, output it directly
+            if (str_starts_with($trimmed, '<') || str_ends_with($trimmed, '>')) {
+                if ($inOptionsList) {
+                    $outputHtml .= "</div>";
+                    $inOptionsList = false;
+                }
+                $outputHtml .= $trimmed;
+                continue;
+            }
             
             // Match separator lines like ---
             if (preg_match('/^[-=*_]{3,}$/', $trimmed)) {

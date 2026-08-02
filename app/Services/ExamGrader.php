@@ -117,7 +117,10 @@ class ExamGrader
      */
     private function parseInlineGaps(array $element): array
     {
-        $raw = json_decode((string) ($element['options'] ?? '[]'), true);
+        $raw = $element['options'] ?? '[]';
+        if (is_string($raw)) {
+            $raw = json_decode($raw, true);
+        }
 
         return is_array($raw) ? array_values($raw) : [];
     }
