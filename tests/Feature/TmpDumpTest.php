@@ -3,14 +3,12 @@
 use App\Livewire\ExamDashboard;
 use App\Models\ExamTemplate;
 use App\Models\User;
+use App\Services\TelcTemplateFactory;
 use Livewire\Livewire;
 
 test('dump c1 student html', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin);
-
-    $pdo = new PDO('sqlite:'.base_path('database/database.sqlite'));
-    $sections = json_decode($pdo->query("SELECT sections FROM exam_templates WHERE exam_provider = 'telc' AND level = 'C1' ORDER BY id DESC LIMIT 1")->fetchColumn(), true);
 
     $template = ExamTemplate::create([
         'title' => 'telc Deutsch C1',
@@ -19,7 +17,7 @@ test('dump c1 student html', function () {
         'exam_provider' => 'telc',
         'theme' => [],
         'timings' => [],
-        'sections' => $sections,
+        'sections' => TelcTemplateFactory::forLevel('C1')['sections'],
     ]);
 
     $c = Livewire::test(ExamDashboard::class)
