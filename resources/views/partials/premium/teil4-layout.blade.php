@@ -7,13 +7,17 @@
             $teil4Statements = $teil4['statements'] ?? [];
             $teil4Texts = $teil4['texts'] ?? [];
             $instruction = $textEl['instruction'] ?? ($section['instruction'] ?? '');
+            $teil4Label = $textEl['label'] ?? '';
+            $teil4LabelParts = array_map('trim', explode('—', $teil4Label, 2));
+            $teil4Title = ($teil4LabelParts[0] !== '') ? $teil4LabelParts[0] : ($section['title'] ?? 'Leseverstehen Teil 4');
+            $teil4Time = $teil4LabelParts[1] ?? '';
         @endphp
 
         <div style="border-bottom: 2px solid #1a1a1a; padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
-                <h2 style="font-size: 1.8rem; font-weight: 900; color: #111827; margin: 0;">{{ $section['title'] ?? 'Leseverstehen Teil 4' }}</h2>
+                <h2 style="font-size: 1.8rem; font-weight: 900; color: #111827; margin: 0;">{{ $teil4Title }}</h2>
                 <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 1rem;">
-                    <span>90 Minuten Leseverstehen und Sprachbausteine</span>
+                    <span>{{ $teil4Time }}</span>
                     <span style="background: #1a1a1a; color: #ffffff; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">S. {{ $sectionIdx + 6 }}</span>
                 </div>
             </div>

@@ -90,10 +90,30 @@ if (!function_exists('parseTeilContent')) {
             $layoutStyle = 'teil4';
         }
     }
-    if (in_array($section['id'] ?? '', ['c1-listening', 'c1-writing', 'c1-speaking'])) {
+    if (in_array($section['id'] ?? '', ['c1-writing', 'c1-speaking'])) {
         $layoutStyle = 'hidden';
     }
 @endphp
+
+@if (($section['id'] ?? '') === 'c1-listening-intro')
+    @include('partials.premium.listening-intro-layout', [
+        'section' => $section,
+        'sectionIdx' => $sectionIdx,
+        'result' => $result,
+        'answers' => $answers,
+    ])
+    @php return; @endphp
+@endif
+
+@if (($section['id'] ?? '') === 'c1-listening')
+    @include('partials.premium.listening-layout', [
+        'section' => $section,
+        'sectionIdx' => $sectionIdx,
+        'result' => $result,
+        'answers' => $answers,
+    ])
+    @php return; @endphp
+@endif
 
 @if ($layoutStyle === 'teil1')
     {{-- ==================== TEIL 1 LAYOUT ==================== --}}
@@ -849,7 +869,6 @@ if (!function_exists('parseTeilContent')) {
                             @endfor
                         </div>
                     @endif
-                    </div>
 
                 {{-- INTERACTIVE TEXT --}}
                 @elseif (($element['type'] ?? '') === 'interactive_text')
@@ -1522,7 +1541,6 @@ if (!function_exists('parseTeilContent')) {
                             @endfor
                         </div>
                     @endif
-                    </div>
                 @elseif (in_array($element['type'] ?? '', ['matching']))
                     @php $matchOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? '')); @endphp
                     @if (isset($element['pairs']) && count($element['pairs']) > 0)

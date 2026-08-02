@@ -761,12 +761,20 @@
 
         <hr class="document-divider">
 
-        <!-- SECTION 5: Hörverstehen Audio player & inputs -->
+        <!-- SECTION 5: Kandidatenblätter / Hörverstehen -->
         <section class="exam-section">
-            <div class="section-label">Hörverstehen</div>
-            <h2 class="section-heading">Audio-Auswertung (Wohnen mit Farbe)</h2>
-            <div class="section-instructions">
-                <strong>Anweisung:</strong> Hören Sie sich den Audiovortrag an und beantworten Sie die Fragen stichwortartig.
+            <div class="section-label">Kandidatenblätter</div>
+            <h2 class="section-heading">Hören</h2>
+            <div class="section-instructions" style="font-style: normal; line-height: 1.7; background: #fafafa; border-left: 3px solid #d8232a; padding: 1rem 1.25rem;">
+                <strong>circa 40 Minuten</strong><br>
+                Das Modul Hören hat vier Teile.<br>
+                Sie hören mehrere Texte und lösen Aufgaben dazu.<br>
+                Lesen Sie jeweils zuerst die Aufgaben und hören Sie dann den Text dazu.<br>
+                Für jede Aufgabe gibt es nur eine richtige Lösung.<br>
+                Nach dem Hören haben Sie drei Minuten Zeit, Ihre Lösungen auf den Antwortbogen zu übertragen.<br>
+                Es werden nur die Lösungen und Texte auf dem Antwortbogen bewertet.<br>
+                Bitte schreiben Sie mit einem blauen oder schwarzen Stift.<br>
+                Hilfsmittel (z. B. Wörterbücher, Handys/mobile Endgeräte) sind nicht erlaubt.
             </div>
 
             <audio controls src="/telc-assets/telc_deutsch_c1_uebungstest_1_format_2016.mp3" style="width: 100%; margin-bottom: 2.5rem;"></audio>

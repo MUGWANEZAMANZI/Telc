@@ -206,7 +206,7 @@ if (!function_exists('parseTeilContent')) {
     @foreach ($template['sections'] as $sectionIdx => $section)
         @php
             $isSpeaking = collect($section['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'speaking');
-            $isHiddenC1 = in_array($section['id'] ?? '', ['c1-listening', 'c1-writing', 'c1-speaking']);
+            $isHiddenC1 = in_array($section['id'] ?? '', ['c1-writing', 'c1-speaking']);
             $record = \App\Models\ExamTemplate::find($selectedTemplateId);
             $status = $record ? $this->getTemplateFreeStatus($record) : ['is_free' => false, 'free_sections' => 0];
             $isSubscribed = $this->hasActiveSubscription();
