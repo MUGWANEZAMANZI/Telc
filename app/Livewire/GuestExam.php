@@ -733,6 +733,8 @@ class GuestExam extends Component
         $sections = $this->template['sections'] ?? [];
         $currentId = $sections[$this->activeSectionIndex]['id'] ?? null;
 
+        $retryCandidate = null;
+
         foreach ($sections as $i => $section) {
             $id = $section['id'] ?? '';
 
@@ -747,14 +749,20 @@ class GuestExam extends Component
                 continue;
             }
 
-            if (! $isCompleted && $this->hasReachedLimit) {
-                continue;
+            if (! $isCompleted) {
+                if ($this->hasReachedLimit) {
+                    continue;
+                }
+
+                return $i;
             }
 
-            return $i;
+            if ($retryCandidate === null) {
+                $retryCandidate = $i;
+            }
         }
 
-        return null;
+        return $retryCandidate;
     }
 
     public function backToChapters(): void

@@ -180,6 +180,46 @@ test('limit reached shows login prompt true', function () {
         ->assertSet('showLoginPrompt', false);
 });
 
+test('guest sequential navigation reaches the writing section', function () {
+    ExamTemplate::query()->delete();
+    $template = ExamTemplate::create([
+        'title' => 'Test C1', 'level' => 'C1', 'is_published' => true, 'is_free' => true,
+        'theme' => [], 'timings' => [],
+        'sections' => [
+            ['id' => 'c1-reading', 'title' => 'Reading', 'minutes' => 10, 'elements' => [
+                ['id' => 'q1', 'type' => 'multiple_choice', 'label' => 'Q1', 'options' => 'a,b,c', 'answer' => 'a', 'points' => 2],
+            ]],
+            ['id' => 'c1-listening-intro', 'title' => 'Listening Intro', 'minutes' => 5, 'elements' => [
+                ['id' => 'q2', 'type' => 'multiple_choice', 'label' => 'Q2', 'options' => 'a,b,c', 'answer' => 'b', 'points' => 2],
+            ]],
+            ['id' => 'c1-listening', 'title' => 'Listening', 'minutes' => 5, 'elements' => [
+                ['id' => 'q3', 'type' => 'multiple_choice', 'label' => 'Q3', 'options' => 'a,b,c', 'answer' => 'c', 'points' => 2],
+            ]],
+            ['id' => 'c1-writing', 'title' => 'Schriftlicher Ausdruck', 'minutes' => 15, 'elements' => [
+                ['id' => 'w1', 'type' => 'writing', 'label' => 'Diskussionsbeitrag', 'points' => 48],
+            ]],
+        ],
+    ]);
+
+    $component = Livewire::test(GuestExam::class, ['templateId' => $template->id]);
+
+    $component->call('startSection', 0)->call('submit');
+    expect($component->get('nextSectionIndex'))->toBe(1);
+
+    $component->call('startSection', 1)->call('submit');
+    expect($component->get('nextSectionIndex'))->toBe(2);
+
+    $component->call('startSection', 2)->call('submit');
+    expect($component->get('nextSectionIndex'))->toBe(3);
+
+    $component->call('startSection', 3)
+        ->assertSee('Schriftlicher Ausdruck')
+        ->assertSee('Diskussionsbeitrag')
+        ->call('submit')
+        ->assertSet('result.earned', 0)
+        ->assertSet('result.possible', 54);
+});
+
 test('guest users can switch levels', function () {
     ExamTemplate::query()->delete();
     ExamTemplate::create([
