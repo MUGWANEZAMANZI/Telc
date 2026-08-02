@@ -87,6 +87,10 @@ class ExamDashboard extends Component
 
     public string $googleFormUrl = '';
 
+    public string $newExamTitle = '';
+
+    public string $newExamMessage = '';
+
     public function mount(): void
     {
         abort_unless(Auth::user()?->isAdmin(), 403);
@@ -259,6 +263,17 @@ class ExamDashboard extends Component
 
     public function createFromPreset(string $level): void
     {
+        $template = ExamTemplate::query()
+            ->where('is_template', true)
+            ->where('level', $level)
+            ->where('exam_provider', $this->providerFilter)
+            ->first();
+
+        if ($template) {
+            $this->duplicateTemplate($template, $template->title.' (Neu)');
+            return;
+        }
+
         $preset = TelcTemplateFactory::forLevel($level);
         $preset['title'] .= ' Custom';
         $preset['is_published'] = false;
@@ -267,6 +282,30 @@ class ExamDashboard extends Component
 
         $record = ExamTemplate::create($preset);
 
+        $this->loadTemplate($record->id);
+    }
+
+    public function duplicateTemplateAsExam(): void
+    {
+        $template = ExamTemplate::find($this->selectedTemplateId);
+        if (! $template) {
+            return;
+        }
+
+        $this->duplicateTemplate($template, $this->newExamTitle !== '' ? $this->newExamTitle : $template->title.' (Neu)');
+    }
+
+    private function duplicateTemplate(ExamTemplate $template, string $title): void
+    {
+        $record = $template->replicate();
+        $record->title = $title;
+        $record->is_published = false;
+        $record->is_template = false;
+
+        $record->save();
+
+        $this->newExamTitle = '';
+        $this->newExamMessage = "Exam '{$record->title}' wurde aus dem Template '{$template->title}' erstellt. Titel anpassen und unten veröffentlichen.";
         $this->loadTemplate($record->id);
     }
 

@@ -243,6 +243,22 @@
                     @endforeach
                 </div>
 
+                @if ($newExamMessage)
+                    <div style="margin-top: 0.75rem; padding: 0.6rem 0.75rem; background: #e6f4ea; border: 1px solid #a7f3d0; border-radius: 6px; color: #137333; font-size: 0.8rem; font-weight: 600;">
+                        ✓ {{ $newExamMessage }}
+                    </div>
+                @endif
+
+                <h2>Create Exam from Template</h2>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label>New exam name</label>
+                    <input type="text" wire:model="newExamTitle" class="telc-input" placeholder="e.g. Goethe Zertifikat C1 – Modellsatz 1">
+                    <button type="button" wire:click="duplicateTemplateAsExam" class="telc-button primary"
+                        @if (empty($selectedTemplateId)) disabled style="opacity: 0.5;" title="Select a template first" @endif>
+                        Create Exam from Template
+                    </button>
+                </div>
+
                 <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
                     <h2>Umfrage-Einstellungen</h2>
                     <label>Google Form URL</label>
