@@ -1431,6 +1431,24 @@ select:focus[data-flux-control] {
     width: 100%;
 }
 
+@media (min-width: 1025px) {
+    .exam-layout {
+        flex-direction: row !important;
+        align-items: flex-start;
+        gap: 2rem;
+    }
+    .exam-paper-column {
+        flex: 0 0 794px !important;
+        width: 794px !important;
+    }
+    .exam-answer-column {
+        flex: 1 !important;
+        min-width: 300px !important;
+        position: sticky;
+        top: 2rem;
+    }
+}
+
 .exam-paper-column {
     flex: 1 1 auto;
     min-width: 0;

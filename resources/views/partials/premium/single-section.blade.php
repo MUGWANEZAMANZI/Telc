@@ -86,7 +86,12 @@ if (!function_exists('parseTeilContent')) {
             $layoutStyle = 'teil2';
         } elseif (str_contains($sectionTitleLower, 'teil 3')) {
             $layoutStyle = 'teil3';
+        } elseif (str_contains($sectionTitleLower, 'teil 4')) {
+            $layoutStyle = 'teil4';
         }
+    }
+    if (in_array($section['id'] ?? '', ['c1-listening', 'c1-writing', 'c1-speaking'])) {
+        $layoutStyle = 'hidden';
     }
 @endphp
 
@@ -370,85 +375,17 @@ if (!function_exists('parseTeilContent')) {
         @endif
     </section>
 
-    {{-- ==================== TEIL 4 LAYOUT ==================== --}}
-    <section class="c1-section telc-teil4-layout" data-section-idx="{{ $sectionIdx }}-teil4" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); width: 100%;">
-        @php
-            $teil4Statements = [
-                24 => 'Angriffe auf sensible Daten verursachen zunehmend finanzielle Verluste.',
-                25 => 'Reflektiertes Nutzerverhalten kann dazu beitragen, die Verbreitung von Daten einzuschränken.',
-                26 => 'Unternehmen, die nicht ausreichend für Datenschutz sorgen, werden Kundinnen und Kunden verlieren.',
-                27 => 'Dank immenser Datenmengen können Unternehmen individuelle Kundenangebote erstellen.',
-                28 => 'Inhaber von Internetseiten wollen effizient zum Schutz der Bürgerinnen und Bürger beitragen.',
-                29 => 'Trotz gegenteiliger Äußerungen gehen Nutzerinnen und Nutzer sorglos mit persönlichen Angaben um.',
-                30 => 'Kostenlose Dienstleistungen zielen auf die Gewinnung persönlicher Daten.',
-            ];
+@elseif ($layoutStyle === 'teil4')
+    @include('partials.premium.teil4-layout', [
+        'section' => $section,
+        'sectionIdx' => $sectionIdx,
+        'result' => $result,
+        'answers' => $answers,
+    ])
 
-            $teil4Texts = [
-                'a' => [
-                    'name' => 'Hella Brückner, Professorin für Wirtschaftspsychologie',
-                    'body' => 'Wer ist denn nicht froh, dass es das Internet gibt? Es ist doch eine große Erleichterung, mit einem Klick Tickets oder Waren kaufen oder die Lieblingsserie jederzeit und ohne lästige Werbung sehen zu können. Messenger-Dienste sind aus dem Alltag nicht mehr wegzudenken, über eine Musik-App wird die aktuelle Lieblingsplaylist geteilt und dank einer lustigen Spiele-App kann man sich auch die Wartezeit an der Bushaltestelle angenehm vertreiben. Aber das Ganze hat natürlich seine Schattenseiten. Bei der Nutzung des Internets entsteht, von den meisten völlig unbemerkt, eine Zweckgemeinschaft zwischen dem privaten Nutzer oder der Nutzerin und diversen Firmen. Man erhält nichts umsonst, auch wenn es so aussieht, sondern bezahlt mit seinen Daten. Die digitalen Medien können unsere Lebensqualität fördern, das steht außer Frage. Doch nur der bewusste Umgang damit vermag den Transfer persönlicher Daten in Grenzen zu halten. Denn je selbstverständlicher das Datensammeln im Netzalltag ist, desto mehr verschwimmen die Grenzen des Privaten und desto mehr schwindet auch das Bewusstsein für einen möglichen Verlust.',
-                ],
-                'b' => [
-                    'name' => 'Benedikt Janssen, Direktor des Instituts für Wirtschaftsinformatik',
-                    'body' => 'Das Internet hat nicht nur Vorteile, darüber sollte man sich im Klaren sein, wenn man online einkauft oder den nächsten Urlaub über eine Webseite bucht. Täglich werden kaum vorstellbare Massen an Daten gesammelt, analysiert und für personalisierte Vertriebsaktionen verwertet. Das geht auf Kosten der Kundinnen und Kunden, denn deren Gewohnheiten, Vorlieben, Träume und Ängste sind im ökonomischen Sinne transparent und dadurch quantifizierbar geworden. Erstaunlicherweise ist das den meisten Konsumentinnen und Konsumenten ziemlich egal. Es gibt sogar einen deutlichen Unterschied zwischen Intention und realem Handeln. Obgleich sie in Umfragen beteuern, zur Preisgabe ihrer Daten nicht bereit zu sein, sieht die Sache anders aus, sobald man ihnen beim Einkauf ein paar Bonuspunkte anbietet. Meiner Ansicht nach sollten die Konsumentinnen und Konsumenten darüber aufgeklärt werden, welchen Zwecken sie ungewollt durch die Teilnahme beispielsweise an Rabattprogrammen dienen.',
-                ],
-                'c' => [
-                    'name' => 'Leopold Nowak, Professor für Öffentliches Recht',
-                    'body' => 'Die Lebenswirklichkeit vieler Menschen verlagert sich mehr und mehr in die digitale Welt. Unsere Persönlichkeitsrechte müssen daher besser gesetzlich verankert werden. Hier besteht ein massiver Reformbedarf. Es geht darum, Daten und damit auch die Identität der Bürgerinnen und Bürger besser zu schützen. Denn man muss sich klar machen: Viele Menschen geben überhaupt nicht Acht darauf, wohin ihre Daten schließlich wandern, und ignorieren das Risiko, dass diese missbraucht werden könnten. Das Bundeskriminalamt veröffentlichte jüngst eine Studie, die zeigt, dass Kriminelle mit falschen Identitäten immer öfter an das Geld argloser Internetnutzerinnen und -nutzer gelangen. Den Kopf in den Sand zu stecken, ist also für Konsumentinnen und Konsumenten keine Lösung. Die Politik wird langsam aktiv und drängt Unternehmen dazu, bei ihrem Online-Angebot effektive Sicherheitsvorkehrungen zu treffen. Das ist dringend nötig. Und endlich ein wichtiger Schritt in die richtige Richtung.',
-                ],
-            ];
-        @endphp
 
-        <div style="border-bottom: 2px solid #1a1a1a; padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
-            <div style="display: flex; align-items: baseline; gap: 2rem; flex-wrap: wrap;">
-                <h2 style="font-size: 1rem; font-weight: 900; color: #111827; margin: 0;">Teil 4</h2>
-                <span style="font-size: 0.78rem; color: #52525b;">vorgeschlagene Arbeitszeit: 15 Minuten</span>
-            </div>
-            <p style="font-size: 0.86rem; line-height: 1.55; color: #374151; margin: 1.1rem 0 0;">
-                Sie lesen in einer Fachzeitschrift Beiträge von Wissenschaftlerinnen und Wissenschaftlern.
-                Wählen Sie bei jeder Aussage: Wer äußert das? Zwei Aussagen passen nicht. Markieren Sie in diesem Fall 0.
-            </p>
-        </div>
-
-        <div style="font-size: 0.82rem; color: #27272a; margin-bottom: 3rem;">
-            <div style="font-weight: 800; margin-bottom: 0.85rem; padding-left: 2.2rem;">Beispiel:</div>
-            <div style="display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) auto; gap: 0.8rem; align-items: baseline; margin-bottom: 2rem;">
-                <strong style="color:#111827;">0</strong>
-                <span>Das Internet bietet viele Vorteile, die gern genutzt werden.</span>
-                <strong style="white-space: nowrap;">Lösung: a</strong>
-            </div>
-
-            @foreach ($teil4Statements as $num => $statement)
-                @php $answerId = 'C1-LV4-'.$num; @endphp
-                <div style="display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) 4.25rem; gap: 0.8rem; align-items: baseline; margin-bottom: 1.7rem;">
-                    <strong style="color:#111827;">{{ $num }}</strong>
-                    <span style="line-height: 1.45;">{{ $statement }}</span>
-                    <select class="cloze-select" wire:model.change="answers.{{ $answerId }}" {{ $result ? 'disabled' : '' }} style="font-size:0.85rem; padding:0.15rem 0.25rem; min-width:3.5rem;">
-                        <option value="">---</option>
-                        <option value="a">a</option>
-                        <option value="b">b</option>
-                        <option value="c">c</option>
-                        <option value="0">0</option>
-                    </select>
-                </div>
-            @endforeach
-        </div>
-
-        <div style="border-top: 1px solid #e5e7eb; padding-top: 1.75rem;">
-            <div style="text-align: center; margin-bottom: 1.3rem;">
-                <div style="font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: #52525b; margin-bottom: 0.45rem;">Zukunftsfragen unserer Gesellschaft:</div>
-                <h3 style="font-size: 1.35rem; line-height: 1.2; font-weight: 900; margin: 0; color: #111827;">Privatheit in Zeiten des Internets</h3>
-            </div>
-
-            @foreach ($teil4Texts as $letter => $text)
-                <article style="margin-bottom: 2.25rem; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 0.88rem; line-height: 1.42; color: #27272a;">
-                    <h4 style="font-size: 0.92rem; font-weight: 900; margin: 0 0 0.25rem; color: #111827;">{{ $letter }} {{ $text['name'] }}</h4>
-                    <p style="margin: 0; text-align: left;">{{ $text['body'] }}</p>
-                </article>
-            @endforeach
-        </div>
-    </section>
-
+@elseif ($layoutStyle === 'hidden')
+    {{-- C1: hide sections other than Leseverstehen Teil 1-4 --}}
 @else
     {{-- ==================== STANDARD FALLBACK LAYOUT ==================== --}}
     @if ($isGuest)
@@ -458,6 +395,20 @@ if (!function_exists('parseTeilContent')) {
             @foreach ($section['elements'] ?? [] as $element)
                 @php
                     $elId = $element['id'] ?? ('el_' . $loop->index);
+                @endphp
+                @if ($elId === 'C1-LV4-text')
+                    @include('partials.premium.teil4-layout', [
+                        'section' => $section,
+                        'sectionIdx' => $sectionIdx,
+                        'result' => $result,
+                        'answers' => $answers,
+                    ])
+                    @continue
+                @endif
+                @if (in_array($elId, ['C1-HV1-48', 'C1-HV1-49', 'C1-HV1-50', 'C1-HV1-51', 'C1-HV1-52', 'C1-HV1-53', 'C1-HV1-54', 'C1-LV4-text', 'C1-LV4-24', 'C1-LV4-25', 'C1-LV4-26', 'C1-LV4-27', 'C1-LV4-28', 'C1-LV4-29', 'C1-LV4-30', 'C1-SB-inline']))
+                    @continue
+                @endif
+                @php
                     $elementLabel = $element['label'] ?? '';
                     $tabLabel = '';
                     if (str_contains(strtolower($elementLabel), 'leseverstehen')) {
@@ -496,64 +447,7 @@ if (!function_exists('parseTeilContent')) {
                 @endif
 
                 {{-- TEXT --}}
-                @if (($element['id'] ?? '') === 'C1-LV4-text')
-                    @php
-                        $teil4 = json_decode($element['content'] ?? '[]', true) ?: [];
-                        $teil4Example = $teil4['example'] ?? [];
-                        $teil4Statements = $teil4['statements'] ?? [];
-                        $teil4Texts = $teil4['texts'] ?? [];
-                    @endphp
-
-                    <section class="c1-section telc-teil4-layout" data-section-idx="{{ $sectionIdx }}-teil4-seeded" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin: 3rem 0; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); width: 100%;">
-                        <div style="border-bottom: 2px solid #1a1a1a; padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
-                            <div style="display: flex; align-items: baseline; gap: 2rem; flex-wrap: wrap;">
-                                <h2 style="font-size: 1rem; font-weight: 900; color: #111827; margin: 0;">Teil 4</h2>
-                                <span style="font-size: 0.78rem; color: #52525b;">vorgeschlagene Arbeitszeit: 15 Minuten</span>
-                            </div>
-                            <p style="font-size: 0.86rem; line-height: 1.55; color: #374151; margin: 1.1rem 0 0;">
-                                {{ $element['instruction'] ?? '' }}
-                            </p>
-                        </div>
-
-                        <div style="font-size: 0.82rem; color: #27272a; margin-bottom: 3rem;">
-                            <div style="font-weight: 800; margin-bottom: 0.85rem; padding-left: 2.2rem;">Beispiel:</div>
-                            <div style="display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) auto; gap: 0.8rem; align-items: baseline; margin-bottom: 2rem;">
-                                <strong style="color:#111827;">{{ $teil4Example['number'] ?? 0 }}</strong>
-                                <span>{{ $teil4Example['statement'] ?? '' }}</span>
-                                <strong style="white-space: nowrap;">Lösung: {{ $teil4Example['solution'] ?? 'a' }}</strong>
-                            </div>
-
-                            @foreach ($teil4Statements as $num => $statement)
-                                @php $answerId = 'C1-LV4-'.$num; @endphp
-                                <div style="display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) 4.25rem; gap: 0.8rem; align-items: baseline; margin-bottom: 1.7rem;">
-                                    <strong style="color:#111827;">{{ $num }}</strong>
-                                    <span style="line-height: 1.45;">{{ $statement }}</span>
-                                    <select class="cloze-select" wire:model.change="answers.{{ $answerId }}" {{ $result ? 'disabled' : '' }} style="font-size:0.85rem; padding:0.15rem 0.25rem; min-width:3.5rem;">
-                                        <option value="">---</option>
-                                        <option value="a">a</option>
-                                        <option value="b">b</option>
-                                        <option value="c">c</option>
-                                        <option value="0">0</option>
-                                    </select>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <div style="border-top: 1px solid #e5e7eb; padding-top: 1.75rem;">
-                            <div style="text-align: center; margin-bottom: 1.3rem;">
-                                <div style="font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: #52525b; margin-bottom: 0.45rem;">{{ $teil4['eyebrow'] ?? '' }}</div>
-                                <h3 style="font-size: 1.35rem; line-height: 1.2; font-weight: 900; margin: 0; color: #111827;">{{ $teil4['title'] ?? '' }}</h3>
-                            </div>
-
-                            @foreach ($teil4Texts as $letter => $text)
-                                <article style="margin-bottom: 2.25rem; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 0.88rem; line-height: 1.42; color: #27272a;">
-                                    <h4 style="font-size: 0.92rem; font-weight: 900; margin: 0 0 0.25rem; color: #111827;">{{ $letter }} {{ $text['name'] ?? '' }}</h4>
-                                    <p style="margin: 0; text-align: left;">{{ $text['body'] ?? '' }}</p>
-                                </article>
-                            @endforeach
-                        </div>
-                    </section>
-                @elseif (($element['type'] ?? '') === 'text')
+                @if (($element['type'] ?? '') === 'text')
                     <article class="c1-passage" style="background: #fdfdfd; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">{!! nl2br(e($element['content'] ?? '')) !!}</article>
 
                 {{-- IMAGE --}}
@@ -616,13 +510,16 @@ if (!function_exists('parseTeilContent')) {
                             <style>
                                 .sheet-row {
                                     display: flex;
-                                    flex-direction: column;
-                                    align-items: flex-start;
-                                    gap: 0.75rem;
+                                    flex-direction: row;
+                                    align-items: center;
+                                    gap: 1rem;
+                                    flex-wrap: wrap;
                                     padding: 0.8rem 0;
                                     border-bottom: 1px solid #f1f5f9;
                                 }
                                 .sheet-num {
+                                    width: 1.5rem;
+                                    flex-shrink: 0;
                                     font-weight: 800;
                                     font-size: 1.1rem;
                                     color: #1a1a1a;
@@ -815,32 +712,52 @@ if (!function_exists('parseTeilContent')) {
                             </div>
                         </div>
 
-                        <div class="c1-teil3-answer-sheet" style="margin-top: 3rem; background: #ffffff; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%;">
+                        <div class="c1-teil3-answer-sheet" style="margin-top: 3rem; background: #ffffff; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%; overflow-x: auto;">
                             <h3 style="font-size: 1.25rem; font-weight: 800; color: #1a1a1a; margin-top: 0; margin-bottom: 0.5rem; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem;">Antwortbogen: Teil 3</h3>
                             
                             <style>
                                 .grid-header-row {
-                                    display: none;
+                                    display: flex !important;
+                                    flex-direction: row;
+                                    align-items: center;
+                                    gap: 0.5rem;
+                                    font-weight: 800;
+                                    font-size: 0.85rem;
+                                    color: #475569;
+                                    border-bottom: 2px solid #1e293b;
+                                    padding-bottom: 0.5rem;
+                                    margin-bottom: 0.5rem;
+                                    min-width: max-content;
+                                }
+                                .grid-header-row span:first-child {
+                                    width: 3.5rem;
+                                    flex-shrink: 0;
+                                }
+                                .grid-header-row span:not(:first-child) {
+                                    width: 28px;
+                                    text-align: center;
+                                    flex-shrink: 0;
+                                    text-transform: uppercase;
                                 }
                                 .grid-row-item {
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: flex-start;
+                                    display: flex !important;
+                                    flex-direction: row !important;
+                                    align-items: center;
                                     gap: 0.5rem;
-                                    text-align: left;
                                     padding: 0.5rem 0;
                                     border-bottom: 1px solid #f1f5f9;
+                                    min-width: max-content;
                                 }
                                 .grid-num {
+                                    width: 3.5rem;
+                                    flex-shrink: 0;
                                     font-weight: 800;
-                                    font-size: 1rem;
-                                    color: #1a1a1a;
-                                    text-align: left;
-                                    padding-left: 0.25rem;
+                                    font-size: 0.95rem;
+                                    color: #1e293b;
                                 }
                                 .grid-box {
-                                    width: 24px;
-                                    height: 24px;
+                                    width: 28px;
+                                    height: 28px;
                                     border: 1px solid #cbd5e1;
                                     display: inline-flex;
                                     align-items: center;
@@ -848,7 +765,7 @@ if (!function_exists('parseTeilContent')) {
                                     font-weight: 750;
                                     font-size: 0.85rem;
                                     color: #4b5563;
-                                    border-radius: 2px;
+                                    border-radius: 4px;
                                     cursor: pointer;
                                     position: relative;
                                     user-select: none;
@@ -1093,44 +1010,44 @@ if (!function_exists('parseTeilContent')) {
                 @elseif (($element['type'] ?? '') === 'matching')
                     @php $matchOptions = $this->optionsFor($element); @endphp
                     <div class="mc-question-row">
-                        @if ($element['label'] ?? null)
-                            <div class="mc-question-header">{{ $element['label'] }}</div>
-                        @endif
-                        @if (($element['type'] ?? '') === 'matching' && count($matchOptions) > 5)
-                            <div class="answer-sheet-row">
-                                <span class="question-num">{{ preg_replace('/[^0-9]/', '', $element['label']) ?: $loop->iteration }}</span>
-                                <select wire:model.live="answers.{{ $element['id'] }}" class="matching-select" @disabled($result)>
-                                    <option value="">—</option>
-                                    @foreach ($matchOptions as $opt)
-                                        <option value="{{ $opt }}">{{ $opt }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        @else
-                            <div class="bubble-group">
-                                @foreach ($matchOptions as $option)
-                                    @php
-                                        $isSelected = ($answers[$element['id']] ?? '') === $option;
-                                        $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
-                                        $bubbleCls = 'bubble';
-                                        if ($result) {
-                                            if ($isSelected) {
-                                                $bubbleCls .= $detail && $detail['correct'] ? ' selected correct' : ' selected wrong';
-                                            } elseif ($detail && $option === $detail['expected']) {
-                                                $bubbleCls .= ' correct-key';
+                            @if ($element['label'] ?? null)
+                                <div class="mc-question-header">{{ $element['label'] }}</div>
+                            @endif
+                            @if (($element['type'] ?? '') === 'matching' && count($matchOptions) > 5)
+                                <div class="answer-sheet-row">
+                                    <span class="question-num">{{ preg_replace('/[^0-9]/', '', $element['label']) ?: $loop->iteration }}</span>
+                                    <select wire:model.live="answers.{{ $element['id'] }}" class="matching-select" @disabled($result)>
+                                        <option value="">—</option>
+                                        @foreach ($matchOptions as $opt)
+                                            <option value="{{ $opt }}">{{ $opt }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @else
+                                <div class="bubble-group">
+                                    @foreach ($matchOptions as $option)
+                                        @php
+                                            $isSelected = ($answers[$element['id']] ?? '') === $option;
+                                            $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
+                                            $bubbleCls = 'bubble';
+                                            if ($result) {
+                                                if ($isSelected) {
+                                                    $bubbleCls .= $detail && $detail['correct'] ? ' selected correct' : ' selected wrong';
+                                                } elseif ($detail && $option === $detail['expected']) {
+                                                    $bubbleCls .= ' correct-key';
+                                                }
+                                            } elseif ($isSelected) {
+                                                $bubbleCls .= ' selected';
                                             }
-                                        } elseif ($isSelected) {
-                                            $bubbleCls .= ' selected';
-                                        }
-                                    @endphp
-                                    <label @class([$bubbleCls])>
-                                        <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}" @disabled($result)>
-                                        <span>{{ $option }}</span>
-                                    </label>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
+                                        @endphp
+                                        <label @class([$bubbleCls])>
+                                            <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}" @disabled($result)>
+                                            <span>{{ $option }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
 
                 {{-- WRITING --}}
                 @elseif (($element['type'] ?? '') === 'writing')
@@ -1163,6 +1080,20 @@ if (!function_exists('parseTeilContent')) {
             @foreach ($section['elements'] ?? [] as $element)
                 @php
                     $elId = $element['id'] ?? ('el_' . $sectionIdx . '_' . $loop->index);
+                @endphp
+                @if ($elId === 'C1-LV4-text')
+                    @include('partials.premium.teil4-layout', [
+                        'section' => $section,
+                        'sectionIdx' => $sectionIdx,
+                        'result' => $result,
+                        'answers' => $answers,
+                    ])
+                    @continue
+                @endif
+                @if (in_array($elId, ['C1-HV1-48', 'C1-HV1-49', 'C1-HV1-50', 'C1-HV1-51', 'C1-HV1-52', 'C1-HV1-53', 'C1-HV1-54', 'C1-LV4-24', 'C1-LV4-25', 'C1-LV4-26', 'C1-LV4-27', 'C1-LV4-28', 'C1-LV4-29', 'C1-LV4-30', 'C1-LV4-text', 'C1-SB-inline']))
+                    @continue
+                @endif
+                @php
                     $elementLabel = $element['label'] ?? '';
                     $tabLabel = '';
                     if (str_contains(strtolower($elementLabel), 'leseverstehen')) {
@@ -1252,13 +1183,16 @@ if (!function_exists('parseTeilContent')) {
                             <style>
                                 .sheet-row {
                                     display: flex;
-                                    flex-direction: column;
-                                    align-items: flex-start;
-                                    gap: 0.75rem;
+                                    flex-direction: row;
+                                    align-items: center;
+                                    gap: 1rem;
+                                    flex-wrap: wrap;
                                     padding: 0.8rem 0;
                                     border-bottom: 1px solid #f1f5f9;
                                 }
                                 .sheet-num {
+                                    width: 1.5rem;
+                                    flex-shrink: 0;
                                     font-weight: 800;
                                     font-size: 1.1rem;
                                     color: #1a1a1a;
@@ -1451,32 +1385,52 @@ if (!function_exists('parseTeilContent')) {
                             </div>
                         </div>
 
-                        <div class="c1-teil3-answer-sheet" style="margin-top: 3rem; background: #ffffff; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%;">
+                        <div class="c1-teil3-answer-sheet" style="margin-top: 3rem; background: #ffffff; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%; overflow-x: auto;">
                             <h3 style="font-size: 1.25rem; font-weight: 800; color: #1a1a1a; margin-top: 0; margin-bottom: 0.5rem; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem;">Antwortbogen: Teil 3</h3>
                             
                             <style>
                                 .grid-header-row {
-                                    display: none;
+                                    display: flex !important;
+                                    flex-direction: row;
+                                    align-items: center;
+                                    gap: 0.5rem;
+                                    font-weight: 800;
+                                    font-size: 0.85rem;
+                                    color: #475569;
+                                    border-bottom: 2px solid #1e293b;
+                                    padding-bottom: 0.5rem;
+                                    margin-bottom: 0.5rem;
+                                    min-width: max-content;
+                                }
+                                .grid-header-row span:first-child {
+                                    width: 3.5rem;
+                                    flex-shrink: 0;
+                                }
+                                .grid-header-row span:not(:first-child) {
+                                    width: 28px;
+                                    text-align: center;
+                                    flex-shrink: 0;
+                                    text-transform: uppercase;
                                 }
                                 .grid-row-item {
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: flex-start;
+                                    display: flex !important;
+                                    flex-direction: row !important;
+                                    align-items: center;
                                     gap: 0.5rem;
-                                    text-align: left;
                                     padding: 0.5rem 0;
                                     border-bottom: 1px solid #f1f5f9;
+                                    min-width: max-content;
                                 }
                                 .grid-num {
+                                    width: 3.5rem;
+                                    flex-shrink: 0;
                                     font-weight: 800;
-                                    font-size: 1rem;
-                                    color: #1a1a1a;
-                                    text-align: left;
-                                    padding-left: 0.25rem;
+                                    font-size: 0.95rem;
+                                    color: #1e293b;
                                 }
                                 .grid-box {
-                                    width: 24px;
-                                    height: 24px;
+                                    width: 28px;
+                                    height: 28px;
                                     border: 1px solid #cbd5e1;
                                     display: inline-flex;
                                     align-items: center;
@@ -1484,7 +1438,7 @@ if (!function_exists('parseTeilContent')) {
                                     font-weight: 750;
                                     font-size: 0.85rem;
                                     color: #4b5563;
-                                    border-radius: 2px;
+                                    border-radius: 4px;
                                     cursor: pointer;
                                     position: relative;
                                     user-select: none;
@@ -1572,36 +1526,36 @@ if (!function_exists('parseTeilContent')) {
                 @elseif (in_array($element['type'] ?? '', ['matching']))
                     @php $matchOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? '')); @endphp
                     @if (isset($element['pairs']) && count($element['pairs']) > 0)
-                        @foreach ($element['pairs'] as $pair)
-                            <div style="display:flex;flex-direction:row;align-items:center;gap:1rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif;">
-                                <span style="min-width:150px;font-weight:600;">{{ $pair['left'] ?? '' }}</span>
-                                <select class="cloze-select" wire:model.change="answers.{{ $elId }}.{{ $loop->index }}" {{ $result ? 'disabled' : '' }}>
+                            @foreach ($element['pairs'] as $pair)
+                                <div style="display:flex;flex-direction:row;align-items:center;gap:1rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif;">
+                                    <span style="min-width:150px;font-weight:600;">{{ $pair['left'] ?? '' }}</span>
+                                    <select class="cloze-select" wire:model.change="answers.{{ $elId }}.{{ $loop->index }}" {{ $result ? 'disabled' : '' }}>
+                                        <option value="">---</option>
+                                        @foreach ($matchOptions as $opt)
+                                            <option value="{{ $opt }}">{{ $opt }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endforeach
+                        @else
+                            <div style="display:flex;flex-direction:row;align-items:center;gap:1.5rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif; background: #fafafa; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid #e5e5e5;">
+                                <span style="font-weight:600; color: #1a1a1a; min-width: 100px;">{{ $element['label'] ?? '' }}</span>
+                                <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #ffffff;">
                                     <option value="">---</option>
                                     @foreach ($matchOptions as $opt)
                                         <option value="{{ $opt }}">{{ $opt }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                        @endforeach
-                    @else
-                        <div style="display:flex;flex-direction:row;align-items:center;gap:1.5rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif; background: #fafafa; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid #e5e5e5;">
-                            <span style="font-weight:600; color: #1a1a1a; min-width: 100px;">{{ $element['label'] ?? '' }}</span>
-                            <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #ffffff;">
-                                <option value="">---</option>
-                                @foreach ($matchOptions as $opt)
-                                    <option value="{{ $opt }}">{{ $opt }}</option>
-                                @endforeach
-                            </select>
-                            @if ($result)
-                                @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
-                                @if ($detail)
-                                    <span style="margin-left: auto; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }}; font-size: 0.85rem;">
-                                        {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
-                                    </span>
+                                @if ($result)
+                                    @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
+                                    @if ($detail)
+                                        <span style="margin-left: auto; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }}; font-size: 0.85rem;">
+                                            {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
+                                        </span>
+                                    @endif
                                 @endif
-                            @endif
-                        </div>
-                    @endif
+                            </div>
+                        @endif
                 @elseif (in_array($element['type'] ?? '', ['multiple_choice', 'true_false']))
                     @if (str_starts_with($elId, 'C1-LV2-'))
                         @php

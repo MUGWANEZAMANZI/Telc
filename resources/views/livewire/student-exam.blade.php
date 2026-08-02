@@ -107,6 +107,27 @@
             text-transform: uppercase;
         }
 
+        .premium-document .paper-workbench,
+        .premium-document .exam-layout {
+            display: block !important;
+            width: 100% !important;
+            min-height: auto !important;
+            overflow: visible !important;
+        }
+
+        .premium-document .exam-paper-column,
+        .premium-document .exam-answer-column {
+            display: block !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            flex: none !important;
+            overflow: visible !important;
+        }
+
+        .premium-document .exam-answer-column {
+            margin-top: 2rem !important;
+        }
+
         .premium-document::before {
             content: '';
             position: absolute;
