@@ -27,8 +27,6 @@ class TelcTemplateFactory
         return self::presets()[$level] ?? self::c1();
     }
 
-
-
     /**
      * @return array<string, mixed>
      */
@@ -299,7 +297,7 @@ class TelcTemplateFactory
                         ['options' => 'a|Dennoch,b|Entsprechend,c|Nachdem,d|Zunehmend', 'answer' => 'b'],
                     ], 2, 'Wählen Sie die richtige Option (a, b, c oder d) für jede Lücke aus dem jeweiligen Dropdown-Feld.'),
                     self::text('C1-LV2-instruction', 'Teil 2 — vorgeschlagene Arbeitszeit: 20 Minuten', 'Sie lesen im Internet einen Artikel über eine Studie zur Handynutzung in Familien. Wählen Sie bei jeder Aufgabe die richtige Lösung.'),
-                    self::text('C1-LV2-text', 'FAMILIEN IM FOKUS: Der elterliche Handykonsum und seine Folgen', 
+                    self::text('C1-LV2-text', 'FAMILIEN IM FOKUS: Der elterliche Handykonsum und seine Folgen',
                         "<div style=\"font-family: 'Plus Jakarta Sans', sans-serif; text-align: justify; line-height: 1.6;\">\n".
                         "    <h4 style=\"text-align: center; letter-spacing: 0.1em; color: #64748b; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.25rem; text-transform: uppercase;\">FAMILIEN IM FOKUS</h4>\n".
                         "    <h2 style=\"text-align: center; color: #1e293b; font-size: 1.6rem; font-weight: 800; margin-top: 0; margin-bottom: 1.5rem;\">Der elterliche Handykonsum und seine Folgen</h2>\n".
@@ -317,42 +315,42 @@ class TelcTemplateFactory
                         "    <p style=\"margin-bottom: 1rem; color: #334155;\">Die Expertinnen und Experten geben Empfehlungen, wie sich wirksam Abhilfe schaffen lässt. Natürlich dürfen sich Eltern auch mal ausklinken, bevor sie sich zwischen den Ansprüchen der Familie zerreiben. Auch Mütter und Väter sind nur Menschen, und das natürliche Bedürfnis nach Zerstreuung verschwindet nicht mit dem Kinderglück. Hier kann das Telefon durchaus helfen. Doch darf nicht vergessen werden, im Familienalltag handyfreie Zeiten und Rituale zu schaffen. Bei gemeinsamen Mahlzeiten, beim Spieleabend oder dem Zubettgehen hat das Handy nichts zu suchen.</p>\n".
                         "    \n".
                         "    <p style=\"margin-bottom: 0; color: #334155;\">Aktuell liegt auch das Handy-Fasten im Trend, das sich gemeinsam mit den Kindern anwenden lässt. Auf diese Weise hat die ganze Familie etwas davon: Ob einen Monat, eine Woche oder drei Tage – der freiwillige Verzicht bringt die Menschen wieder ohne digitale Ablenkung an einen Tisch zusammen. Und wo vorher Schweigen war, könnte schon bald ein reger Gedankenaustausch entstehen. Ohne Handy können Eltern auch ihre Freizeit wieder bewusster mit den Kindern verbringen und gemeinsame Unternehmungen planen. Je nach den Vorlieben sollte eine Aktivität gewählt werden, die alle Familienmitglieder einbindet. Falls dennoch Kompromisse notwendig sind, sollte jede und jeder zugestimmt haben. Um eine passende Aktivität zu finden, können auch der Freundes- oder Bekanntenkreis oder entsprechende Portale im Internet befragt werden. Die einen entscheiden sich dann für das Anlegen eines Gemüsebeets im Gemeinschaftsgarten, die anderen für eine Schnitzeljagd durch die Stadt – alles ist erlaubt, Hauptsache, es macht Spaß und das Handy wird nur für Fotos aus der Tasche genommen.</p>\n".
-                        "</div>"
+                        '</div>'
                     ),
-                    self::input('C1-LV2-9', 'Aufgabe 9', 'multiple_choice', 'a', 2, json_encode([
+                    self::input('C1-LV2-9', 'Aufgabe 9', 'multiple_choice', 'a', 2, self::encode([
                         ['key' => 'a', 'text' => 'ob sich Kinder zu viel online beschäftigen.'],
                         ['key' => 'b', 'text' => 'wie Kinder gefördert werden können.'],
-                        ['key' => 'c', 'text' => 'wie stressig die Telefonnutzung der Eltern für Kinder ist.']
+                        ['key' => 'c', 'text' => 'wie stressig die Telefonnutzung der Eltern für Kinder ist.'],
                     ]), 'Innerhalb der Familien wird oft thematisiert, ..'),
-                    self::input('C1-LV2-10', 'Aufgabe 10', 'multiple_choice', 'b', 2, json_encode([
+                    self::input('C1-LV2-10', 'Aufgabe 10', 'multiple_choice', 'b', 2, self::encode([
                         ['key' => 'a', 'text' => 'Aggressives Benehmen in der Familie.'],
                         ['key' => 'b', 'text' => 'Nachlassen der schulischen Leistung.'],
-                        ['key' => 'c', 'text' => 'Unkonzentrierte Erledigung von Hausaufgaben.']
+                        ['key' => 'c', 'text' => 'Unkonzentrierte Erledigung von Hausaufgaben.'],
                     ]), 'Welche Folgen hat der Handykonsum der Eltern bei den Kindern?'),
-                    self::input('C1-LV2-11', 'Aufgabe 11', 'multiple_choice', 'a', 2, json_encode([
+                    self::input('C1-LV2-11', 'Aufgabe 11', 'multiple_choice', 'a', 2, self::encode([
                         ['key' => 'a', 'text' => 'Auswirkungen des Handykonsums von Eltern.'],
                         ['key' => 'b', 'text' => 'Folgen der regelmäßigen Handynutzung von Kindern.'],
-                        ['key' => 'c', 'text' => 'Verhaltensauffälligkeit bei Kindern.']
+                        ['key' => 'c', 'text' => 'Verhaltensauffälligkeit bei Kindern.'],
                     ]), 'Was wurde in einem Experiment mit Elternpaaren untersucht?'),
-                    self::input('C1-LV2-12', 'Aufgabe 12', 'multiple_choice', 'a', 2, json_encode([
+                    self::input('C1-LV2-12', 'Aufgabe 12', 'multiple_choice', 'a', 2, self::encode([
                         ['key' => 'a', 'text' => 'Anspannung abzubauen.'],
                         ['key' => 'b', 'text' => 'chaotischen Zuständen vorzubeugen.'],
-                        ['key' => 'c', 'text' => 'Probleme im Beruf zu lösen.']
+                        ['key' => 'c', 'text' => 'Probleme im Beruf zu lösen.'],
                     ]), 'Laut den Wissenschaftlerinnen und Wissenschaftlern hilft das Handy den Eltern ..'),
-                    self::input('C1-LV2-13', 'Aufgabe 13', 'multiple_choice', 'c', 2, json_encode([
+                    self::input('C1-LV2-13', 'Aufgabe 13', 'multiple_choice', 'c', 2, self::encode([
                         ['key' => 'a', 'text' => 'dem Realitätsverlust der Eltern.'],
                         ['key' => 'b', 'text' => 'der kindlichen Sensibilität.'],
-                        ['key' => 'c', 'text' => 'verminderter elterlicher Zuneigung.']
+                        ['key' => 'c', 'text' => 'verminderter elterlicher Zuneigung.'],
                     ]), 'Die Beziehung zwischen Eltern und Kindern leidet unter ..'),
-                    self::input('C1-LV2-14', 'Aufgabe 14', 'multiple_choice', 'b', 2, json_encode([
+                    self::input('C1-LV2-14', 'Aufgabe 14', 'multiple_choice', 'b', 2, self::encode([
                         ['key' => 'a', 'text' => 'in der Wohnung handyfreie Zonen einzurichten.'],
                         ['key' => 'b', 'text' => 'die Handynutzung bewusst zu reglementieren.'],
-                        ['key' => 'c', 'text' => 'mit ihren Kindern regelmäßig aufs Handy zu verzichten.']
+                        ['key' => 'c', 'text' => 'mit ihren Kindern regelmäßig aufs Handy zu verzichten.'],
                     ]), 'Den Eltern wird empfohlen, ..'),
-                    self::input('C1-LV2-15', 'Aufgabe 15', 'multiple_choice', 'b', 2, json_encode([
+                    self::input('C1-LV2-15', 'Aufgabe 15', 'multiple_choice', 'b', 2, self::encode([
                         ['key' => 'a', 'text' => 'Aktivitäten frühzeitig geplant werden.'],
                         ['key' => 'b', 'text' => 'alle Mitspracherecht bei der Entscheidung haben.'],
-                        ['key' => 'c', 'text' => 'sie leichter fällt, wenn Freunde daran teilnehmen.']
+                        ['key' => 'c', 'text' => 'sie leichter fällt, wenn Freunde daran teilnehmen.'],
                     ]), 'Bei der Freizeitgestaltung muss berücksichtigt werden, dass ..'),
                     self::inlineGap('C1-LV3-matching', 'Leseverstehen Teil 3', "„Manager-Müdigkeit” - eine bedrohliche Entwicklung in Führungsetagen?\n\nLandauf, landab werden derzeit zahlreiche Unternehmen mit einem neuen Phänomen konfrontiert: „Manager-Müdigkeit”. Das mag recht harmlos klingen, bezeichnet jedoch für viele Unternehmen einen bedenklichen Trend. **[0]** Konkret bedeutet es, dass weniger als 10 % der Beschäftigten auf einer Führungsposition arbeiten möchten.\n\nDas Problem ist weit größer, als erste Umfragen erwarten ließen. In den Chefetagen fehlt nicht nur der Nachwuchs. Zunehmendes Desinteresse an Führungsposten ist auch bei jenen festzustellen, die bereits im Management tätig sind. --0-- Mehr als die Hälfte von ihnen fühlt sich beispielsweise gestresst oder empfindet die Anforderungen der Berufswelt als stetig wachsend. Ein Drittel der Managerinnen und Manager ist von den Aufgaben überfordert und würde es sogar bevorzugen, nicht mehr Teil der Arbeitswelt zu sein.\n\nAbstrahiert man vom Einzelschicksal und stellt sich die Folgen dieser neuen Einstellung für Unternehmen – egal welcher Größe – vor, dann kann man ermessen, was für ein eklatantes Problem da auf unsere Wirtschaft zukommt. Denn ohne Führungskräfte sind Unternehmen im wahrsten Sinne des Wortes „führungslos“. --1-- Wer plant, wer konzipiert, wer übernimmt die Verantwortung? Wenn diese Positionen nicht mehr besetzt werden können, wird nicht nur der Profit der Firma zurückgehen, sondern alle Mitarbeitenden werden unter den Folgen zu leiden haben.\n\nDie interessante Frage lautet: Wo liegen die Ursachen für diese Entwicklung? Früher träumten zahlreiche zielstrebige Jura- oder BWL-Studierende von einer steilen Karriere in Unternehmen. --2-- Sicherlich sind die Ursachen für diese tiefgreifende Veränderung vielschichtig, jedoch war der Prozess kontinuierlich und absehbar. Ein wichtiger Grund könnte der moderne Erziehungsstil sein. Obwohl die Eltern der heutigen Jugendlichen lange nach den entbehrreichen Kriegsjahren aufgewachsen sind, konnten sie der Versuchung nicht widerstehen, ihre Kinder zu verwöhnen. Die Kinder erhalten viel und das meist ohne große Gegenleistung. --3-- Warum sollten sie Tätigkeiten auf sich nehmen, die sie unangenehm oder anstrengend finden? Diese Einstellung der jungen Generation hat großen Einfluss auf ihren beruflichen Werdegang.\n\nIm Berufsleben der Kinder treten Eltern in den Hintergrund. Ganz im Gegensatz dazu steht die Schullaufbahn, in deren Verlauf sie ihre Söhne und Töchter durch zahlreiche Lehrergespräche und die Finanzierung von Hausaufgabenhilfe oder Nachhilfestunden unterstützen können. --4-- Jedoch bleibt die Frage offen, ob die Kinder nicht auch ohne ein solches „Rundum-sorglos-Paket“ erfolgreich den Schulabschluss schaffen und später davon profitieren würden. Übertriebene Förderung in der Schule kann im Arbeitsleben nämlich ebenfalls als Karrierehindernis wirken. So setzen einige der Geförderten andere Prioritäten im Leben. --5-- Denn Freizeit geht für sie vor Arbeitsverpflichtungen – man kümmert sich lieber um sich selbst als um das Firmenwohl.\n\nFür jeden individuell mag dies eine kluge Entscheidung sein, als genereller Trend es jedoch problematisch. Verschärft wird die negative Entwicklung durch die schon ermüdeten Managerinnen und Manager, die aktuell Führungspositionen innehaben. --6-- So äußern sie mehr oder weniger unverhohlen: Sollen doch die Jungen übernehmen und die aktuellen Herausforderungen wie Globalisierung und Digitalisierung meistern! Damit liegen sie jedoch falsch – wir benötigen eine gemeinsame Strategie und den Einsatz aller Altersklassen. Es liegt doch auf der Hand, dass die Probleme des 21. Jahrhunderts mit viel Energie und neuen Methoden gelöst werden müssen. --7-- Da dies keine Option sein kann, benötigen wir auch einen neuen Führungsstil, der wieder Spaß macht – dann findet sich auch das Personal dafür.", [
                         ['options' => 'a,b,c,d,e,f,g,h,i,j,x', 'answer' => 'e'],
@@ -426,7 +424,9 @@ class TelcTemplateFactory
                     self::input('C1-HV4-30', 'Aufgabe 30', 'multiple_choice', '', 2, 'a,b,c', "Die geplanten Maßnahmen der EU-Kommission sollen ...\na) dem Bevölkerungswachstum entgegenwirken.\nb) zur Betreuung von Angehörigen ermuntern.\nc) bewirken, dass mehr Kinder geboren werden."),
                 ], self::pages(18, 21)),
                 self::section('c1-writing', 'Schriftlicher Ausdruck', 70, [
-                    self::input('C1-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Stellungnahme zum Thema 1: Soll man Geld spenden?\n\nDie Frage, ob private Geldspenden eine sinnvolle Möglichkeit zur Hilfeleistung darstellen oder ob Gelder primär in bürokratischen Strukturen versickern, wird kontrovers diskutiert. \nEinerseits ermöglichen Spenden die Finanzierung von Hilfsprojekten weltweit, die ohne private Mittel nicht existieren könnten. Insbesondere bei Naturkatastrophen ist schnelle finanzielle Hilfe überlebenswichtig. \nAndererseits ist die Kritik an den hohen Verwaltungskosten großer Organisationen nicht unberechtigt. Dennoch überwiegt der Nutzen, da seriöse Organisationen durch Transparenzberichte nachweisen, dass der Großteil der Gelder die Betroffenen erreicht. \nZusammenfassend lässt sich sagen, dass gezieltes und informiertes Spenden an zertifizierte Organisationen einen unverzichtbaren Beitrag zur globalen Solidarität leistet.", 48, null, "Wählen Sie eines der beiden Themen aus und verfassen Sie einen zusammenhängenden Text (ca. 350 Wörter).\n\nThema 1: Soll man Geld spenden?\nDiskutieren Sie, ob Spendengelder tatsächlich sinnvoll eingesetzt werden oder primär in der Verwaltung versickern. Nehmen Sie Stellung.\n\nThema 2: Überwachungssoftware für Handys der Kinder\nDiskutieren Sie, ob Eltern die Handyaktivitäten ihrer Kinder überwachen sollten. Wie verhält es sich mit dem Recht auf Privatsphäre?"),
+                    self::text('C1-WRITE-0', 'Kandidatenblätter Schreiben', "Kandidatenblätter\nSchreiben\n75 Minuten\n\nDas Modul Schreiben hat zwei Teile.\nIn Teil 1 schreiben Sie einen Diskussionsbeitrag für ein Forum.\nIn Teil 2 schreiben Sie eine Nachricht.\nSie können mit jeder Aufgabe beginnen.\nEs werden nur die Lösungen und Texte\nauf dem Antwortbogen bewertet.\nBitte schreiben Sie mit einem blauen\noder schwarzen Stift.\nHilfsmittel (z. B. Wörterbücher, Handys/\nmobile Endgeräte) sind nicht erlaubt."),
+                    self::input('C1-WRITE-1', 'Teil 1 — Diskussionsbeitrag für ein Forum', 'writing', "In der Diskussion im Kurs hat Maria argumentiert, dass ein Pflichtfach für digitale Kompetenzen in der Schule wichtig ist, damit alle Schülerinnen und Schüler gleichzeitig mit dem digitalen Wandel Schritt halten können. Sie schrieb: ″Ohne digitale Grundbildung verlieren junge Menschen den Anschluss an die Arbeitswelt von morgen. Das Problem ist nicht das Internet selbst, sondern die fehlende Unterstützung durch Lehrkräfte, die selbst noch nicht ausreichend geschult wurden.″\n\nAntwort des Diskussionspartners: ″Ein Pflichtfach ist problematisch, weil viele Schülerinnen und Schüler ohnehin schon durch andere Fächer wie Politik oder Geografie kritisch mit digitalen Medien konfrontiert werden. Zudem fehlt es an ausreichend qualifiziertem Personal, um ein weiteres Fach anzubieten.″", 48, null, "Schreiben Sie einen Diskussionsbeitrag für ein Internet-Forum (ca. 120–150 Wörter).\n\nIn einem Kurs wird diskutiert, ob Schülerinnen und Schüler in der Schule ein Pflichtfach ‚Digitale Kompetenzen‘ einführen sollen. Nehmen Sie Bezug auf die Beiträge von Maria und einem anderen Kursteilnehmer. Formulieren Sie Ihre Position und nennen Sie mindestens zwei Argumente."),
+                    self::input('C1-WRITE-2', 'Teil 2 — Nachricht', 'writing', '', 48, null, "Schreiben Sie eine Nachricht (ca. 50–80 Wörter) an einen Mitbewohner im Studentenwohnheim.\n\nIhr Mitbewohner hat Ihre Teekanne und Tassen immer wieder benutzt, ohne sie danach zu spülen. Bitten Sie höflich, aber bestimmt um Rücksichtnahme und erklären Sie kurz, warum Ihnen das wichtig ist."),
                 ], self::pages(22, 22)),
                 self::section('c1-speaking', 'Mündliche Prüfung', 16, [
                     self::speakingElement('C1-SP-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie eines der Themen:\n1. Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?\noder\n2. Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus?', 6),
@@ -444,7 +444,7 @@ class TelcTemplateFactory
     private static function c1Teil4Elements(): array
     {
         return [
-            self::text('C1-LV4-text', 'Teil 4 — vorgeschlagene Arbeitszeit: 15 Minuten', json_encode([
+            self::text('C1-LV4-text', 'Teil 4 — vorgeschlagene Arbeitszeit: 15 Minuten', self::encode([
                 'title' => 'Privatheit in Zeiten des Internets',
                 'eyebrow' => 'Zukunftsfragen unserer Gesellschaft:',
                 'example' => [
@@ -560,6 +560,20 @@ class TelcTemplateFactory
     private static function audio(string $id, string $label, string $source): array
     {
         return ['id' => $id, 'type' => 'audio', 'label' => $label, 'content' => $source, 'answer' => '', 'points' => 0, 'options' => ''];
+    }
+
+    /**
+     * @param  array<mixed>  $data
+     */
+    private static function encode(array $data, int $flags = 0): string
+    {
+        $json = json_encode($data, $flags);
+
+        if ($json === false) {
+            throw new \RuntimeException('Failed to encode JSON: '.json_last_error_msg());
+        }
+
+        return $json;
     }
 
     /**

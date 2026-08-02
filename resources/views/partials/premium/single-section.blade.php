@@ -90,7 +90,7 @@ if (!function_exists('parseTeilContent')) {
             $layoutStyle = 'teil4';
         }
     }
-    if (in_array($section['id'] ?? '', ['c1-writing', 'c1-speaking'])) {
+    if (in_array($section['id'] ?? '', ['c1-speaking'])) {
         $layoutStyle = 'hidden';
     }
 @endphp
@@ -107,6 +107,16 @@ if (!function_exists('parseTeilContent')) {
 
 @if (($section['id'] ?? '') === 'c1-listening')
     @include('partials.premium.listening-layout', [
+        'section' => $section,
+        'sectionIdx' => $sectionIdx,
+        'result' => $result,
+        'answers' => $answers,
+    ])
+    @php return; @endphp
+@endif
+
+@if (($section['id'] ?? '') === 'c1-writing')
+    @include('partials.premium.writing-intro-layout', [
         'section' => $section,
         'sectionIdx' => $sectionIdx,
         'result' => $result,

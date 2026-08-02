@@ -10,7 +10,7 @@ test('dump c1 student html', function () {
     $this->actingAs($admin);
 
     $pdo = new PDO('sqlite:'.base_path('database/database.sqlite'));
-    $sections = json_decode($pdo->query('SELECT sections FROM exam_templates WHERE id = 70')->fetchColumn(), true);
+    $sections = json_decode($pdo->query("SELECT sections FROM exam_templates WHERE exam_provider = 'telc' AND level = 'C1' ORDER BY id DESC LIMIT 1")->fetchColumn(), true);
 
     $template = ExamTemplate::create([
         'title' => 'telc Deutsch C1',
