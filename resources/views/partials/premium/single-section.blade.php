@@ -250,7 +250,1156 @@ if (!function_exists('parseTeilContent')) {
     @php return; @endphp
 @endif
 
-@if ($layoutStyle === 'teil1')
+@if ($layoutStyle === 'goethe_b2_teil1')
+    {{-- ==================== GOETHE B2 TEIL 1 LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-teil1-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0;">{{ $section['title'] ?? 'Lesen Teil 1' }}</h2>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 1rem;">
+                <span>vorgeschlagene Arbeitszeit: 18 Minuten</span>
+            </div>
+        </div>
+
+        @php
+            $instrEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l1-instruction');
+            $persons = collect($section['elements'])->where('type', 'goethe_portrait')->all();
+            $questions = collect($section['elements'])->where('type', 'matching')->all();
+        @endphp
+
+        @if ($instrEl && $instrEl['content'])
+            <div class="goethe-instructions" style="margin-bottom: 2rem; color: #374151; background: #f8fafc; border-left: 4px solid #a3a3a3; padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.6; border-radius: 4px; font-weight: 500;">
+                {!! nl2br(e($instrEl['content'])) !!}
+            </div>
+        @endif
+
+        {{-- Flex columns: Left = Questions list, Right = Portraits with text --}}
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap; width: 100%; margin-top: 1.5rem;">
+            {{-- Left column: Questions --}}
+            <div style="flex: 1; min-width: 320px;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1.25rem; color: #1f2937; text-transform: uppercase; letter-spacing: 0.05em;">Aussagen</h3>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    @foreach ($questions as $element)
+                        @php
+                            $elId = $element['id'];
+                            $qNum = substr($elId, strrpos($elId, '-') + 1);
+                            $matchOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? 'a,b,c,d'));
+                        @endphp
+                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                                <span style="background: #111827; color: #ffffff; font-weight: 850; font-size: 0.95rem; width: 1.8rem; height: 1.8rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; margin-top: 0.1rem;">{{ $qNum }}</span>
+                                <div style="font-size: 0.95rem; font-weight: 550; color: #1f2937; line-height: 1.5;">{{ $element['instruction'] ?? '' }}</div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding-left: 2.5rem; margin-top: 0.25rem;">
+                                <span style="font-size: 0.82rem; font-weight: 700; color: #4b5563; text-transform: uppercase; letter-spacing: 0.03em;">Lösung:</span>
+                                <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.65rem; border: 1.5px solid #cbd5e1; border-radius: 6px; background: #ffffff; font-size: 0.88rem; font-weight: 700; color: #1f2937; min-width: 80px; transition: border-color 0.15s; outline: none; cursor: pointer;">
+                                    <option value="">---</option>
+                                    @foreach ($matchOptions as $opt)
+                                        <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($result)
+                                    @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
+                                    @if ($detail)
+                                        <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }};">
+                                            {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Lösung: ' . strtoupper($detail['expected']) . ')' }}
+                                        </span>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Right column: Persons --}}
+            <div style="flex: 1.2; min-width: 380px; display: flex; flex-direction: column; gap: 1.5rem;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem; color: #1f2937; text-transform: uppercase; letter-spacing: 0.05em;">Beiträge</h3>
+                @foreach ($persons as $person)
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; display: flex; gap: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); align-items: flex-start;">
+                        @if (!empty($person['image_url']))
+                            <img src="{{ $person['image_url'] }}" style="width: 90px; height: 110px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);" alt="{{ $person['label'] }}">
+                        @endif
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 800; color: #111827; margin: 0; text-transform: capitalize;">{{ $person['label'] }}</h4>
+                            <p style="font-size: 0.88rem; color: #374151; line-height: 1.65; text-align: justify; margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{ $person['content'] }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+@elseif ($layoutStyle === 'goethe_b2_teil2')
+    {{-- ==================== GOETHE B2 TEIL 2 LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-teil2-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0;">{{ $section['title'] ?? 'Lesen Teil 2' }}</h2>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 1rem;">
+                <span>vorgeschlagene Arbeitszeit: 12 Minuten</span>
+            </div>
+        </div>
+
+        @php
+            $instrEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l2-instruction');
+            $imageEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l2-image');
+            $inlineGapEl = collect($section['elements'])->firstWhere('type', 'inline_gap');
+            $sentencesEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l2-sentences');
+        @endphp
+
+        @if ($instrEl && $instrEl['content'])
+            <div class="goethe-instructions" style="margin-bottom: 2rem; color: #374151; background: #f8fafc; border-left: 4px solid #a3a3a3; padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.6; border-radius: 4px; font-weight: 500;">
+                {!! nl2br(e($instrEl['content'])) !!}
+            </div>
+        @endif
+
+        {{-- Center Box for the Article --}}
+        <div style="max-width: 820px; margin: 0 auto; border: 1.5px solid #d1d5db; border-radius: 8px; padding: 2.5rem; background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <h1 style="font-family: Georgia, serif; font-size: 2.2rem; font-weight: 700; color: #111827; margin: 0 0 0.5rem 0;">Reisefieber</h1>
+                <p style="font-size: 1rem; font-weight: 700; color: #374151; margin: 0;">Heute verreist fast jeder, früher aber kaum jemand.</p>
+            </div>
+
+            @if ($imageEl && $imageEl['content'])
+                <div style="width: 100%; height: 260px; overflow: hidden; border-radius: 6px; margin-bottom: 2rem; border: 1px solid #e5e7eb;">
+                    <img src="{{ $imageEl['content'] }}" style="width: 100%; height: 100%; object-fit: cover;" alt="Airport Header">
+                </div>
+            @endif
+
+            {{-- Render Gapped Passage --}}
+            @if ($inlineGapEl)
+                @php
+                    $gaps = $this->gapsFor($inlineGapEl);
+                    $parts = preg_split('/--(\d+)--/', $inlineGapEl['content'] ?? '', -1, PREG_SPLIT_DELIM_CAPTURE);
+                @endphp
+                <div class="goethe-article-body" style="font-family: Georgia, serif; font-size: 1.05rem; line-height: 1.95; color: #1f2937; text-align: justify;">
+                    @foreach ($parts as $i => $part)
+                        @if ($i % 2 === 0)
+                            <span>{!! nl2br(e($part)) !!}</span>
+                        @else
+                            @php
+                                $gapIdx = (int) $part;
+                                $gapDef = $gaps[$gapIdx] ?? null;
+                            @endphp
+                            @if ($gapIdx === 0)
+                                <span style="display: inline-block; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; padding: 0.1rem 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.88rem; font-weight: 800; color: #374151; margin: 0 0.15rem; cursor: not-allowed;" title="Beispiel-Lösung bereits eingesetzt">
+                                    [ ...0... ]
+                                </span>
+                            @elseif ($gapDef)
+                                @php
+                                    $optList = array_filter(array_map('trim', explode(',', $gapDef['options'] ?? 'a,b,c,d,e,f,g,h')));
+                                    $current = $answers[$inlineGapEl['id']][$gapIdx] ?? '';
+                                    $gapCorrect = null;
+                                    $gapExpected = $gapDef['answer'] ?? '';
+                                    if ($result) {
+                                        $gapDetail = collect($result['details'])->firstWhere('id', $inlineGapEl['id'].'.gap.'.$gapIdx);
+                                        if ($gapDetail) {
+                                            $gapCorrect = $gapDetail['correct'] ?? null;
+                                            $gapExpected = $gapDetail['expected'] ?? $gapExpected;
+                                        }
+                                    }
+                                    $gapCls = '';
+                                    if ($result && $current !== '') {
+                                        $gapCls = $gapCorrect ? 'correct' : 'wrong';
+                                    }
+                                @endphp
+                                <span style="display: inline-block; position: relative; margin: 0 0.2rem; font-family: 'Plus Jakarta Sans', sans-serif; vertical-align: middle;">
+                                    <span style="font-size: 0.72rem; font-weight: 800; color: #6b7280; vertical-align: super; margin-right: 2px;">[{{ $gapIdx }}]</span>
+                                    <select wire:model.live="answers.{{ $inlineGapEl['id'] }}.{{ $gapIdx }}" @disabled($result)
+                                        @class(['cloze-select', 'correct' => $gapCls === 'correct', 'wrong' => $gapCls === 'wrong'])
+                                        style="padding: 0.2rem 0.5rem; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem; font-weight: 700; background: #ffffff; cursor: pointer; outline: none; @if($result) pointer-events: none; @endif">
+                                        <option value="">Lücke {{ $gapIdx }}</option>
+                                        @foreach ($optList as $opt)
+                                            <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($result)
+                                        @if ($gapCorrect)
+                                            <span style="color: #16a34a; font-weight: 700; font-size: 0.95rem; margin-left: 0.25rem;">✓</span>
+                                        @else
+                                            <span style="color: #dc2626; font-weight: 700; font-size: 0.85rem; margin-left: 0.25rem;">✗ ({{ strtoupper($gapExpected) }})</span>
+                                        @endif
+                                    @endif
+                                </span>
+                            @endif
+                        @endif
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        {{-- Sentences choice list at the bottom --}}
+        @if ($sentencesEl && $sentencesEl['content'])
+            <div style="max-width: 820px; margin: 2rem auto 0; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 1.5rem;">
+                <h3 style="font-size: 1.05rem; font-weight: 800; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 0.5rem; margin-bottom: 1rem; color: #1e293b; text-transform: uppercase; letter-spacing: 0.03em;">Sätze zur Auswahl</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                    @php
+                        $lines = explode("\n", trim($sentencesEl['content']));
+                    @endphp
+                    @foreach ($lines as $line)
+                        @php
+                            $trimmed = trim($line);
+                            if (empty($trimmed)) continue;
+                            
+                            $firstChar = strtolower(substr($trimmed, 0, 1));
+                            $isUsed = false;
+                            
+                            // Check if this option is chosen in the gaps
+                            if ($inlineGapEl && is_numeric($firstChar) === false) {
+                                $selectedAnswers = $answers[$inlineGapEl['id']] ?? [];
+                                foreach ($selectedAnswers as $ansVal) {
+                                    if (strtolower($ansVal) === $firstChar) {
+                                        $isUsed = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        @endphp
+                        <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 0.5rem 0.75rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.01); @if($isUsed) opacity: 0.45; text-decoration: line-through; @endif">
+                            <span style="background: #e2e8f0; color: #1e293b; font-weight: 800; font-size: 0.9rem; width: 1.7rem; height: 1.7rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; text-transform: uppercase; flex-shrink: 0;">{{ substr($trimmed, 0, 1) }}</span>
+                            <span style="font-size: 0.92rem; color: #374151; line-height: 1.5; font-weight: 550;">{{ trim(substr($trimmed, 1)) }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    </section>
+
+@elseif ($layoutStyle === 'goethe_b2_teil3')
+    {{-- ==================== GOETHE B2 TEIL 3 LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-teil3-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0;">{{ $section['title'] ?? 'Lesen Teil 3' }}</h2>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 1rem;">
+                <span>vorgeschlagene Arbeitszeit: 12 Minuten</span>
+            </div>
+        </div>
+
+        @php
+            $instrEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l3-instruction');
+            $imageEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l3-image');
+            $articleEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l3-article');
+            $mcQuestions = collect($section['elements'])->where('type', 'multiple_choice')->all();
+        @endphp
+
+        @if ($instrEl && $instrEl['content'])
+            <div class="goethe-instructions" style="margin-bottom: 2rem; color: #374151; background: #f8fafc; border-left: 4px solid #a3a3a3; padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.6; border-radius: 4px; font-weight: 500;">
+                {!! nl2br(e($instrEl['content'])) !!}
+            </div>
+        @endif
+
+        {{-- Split screen: Left = Article, Right = MC Questions --}}
+        <div style="display: flex; gap: 2.5rem; flex-wrap: wrap; width: 100%;">
+            {{-- Left column: Article --}}
+            <div style="flex: 1.2; min-width: 400px; background: #ffffff; border: 1.5px solid #d1d5db; border-radius: 8px; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+                @if ($articleEl)
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <h1 style="font-family: Georgia, serif; font-size: 2.2rem; font-weight: 700; color: #111827; margin: 0 0 0.75rem 0;">{{ $articleEl['label'] ?? 'Doktor Google' }}</h1>
+                        @if (!empty($articleEl['instruction']))
+                            <p style="font-size: 1rem; font-weight: 700; color: #111827; margin: 0; line-height: 1.6; text-align: justify; font-family: Georgia, serif;">{{ $articleEl['instruction'] }}</p>
+                        @endif
+                    </div>
+                @endif
+
+                @if ($imageEl && $imageEl['content'])
+                    <div style="width: 100%; height: 260px; overflow: hidden; border-radius: 6px; margin-bottom: 2rem; border: 1px solid #e5e7eb;">
+                        <img src="{{ $imageEl['content'] }}" style="width: 100%; height: 100%; object-fit: cover;" alt="Doktor Google Image">
+                    </div>
+                @endif
+
+                @if ($articleEl)
+                    <div class="goethe-article-body" style="font-family: Georgia, serif; font-size: 1.05rem; line-height: 1.95; color: #1f2937; text-align: justify;">
+                        {!! nl2br(e($articleEl['content'])) !!}
+                    </div>
+                @endif
+            </div>
+
+            {{-- Right column: Multiple Choice --}}
+            <div style="flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 1.5rem;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem; color: #1f2937; text-transform: uppercase; letter-spacing: 0.05em;">Aufgaben</h3>
+
+                {{-- Example 0 --}}
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem;">
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem;">
+                        <span style="background: #6b7280; color: #ffffff; font-weight: 850; font-size: 0.95rem; width: 1.8rem; height: 1.8rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0;">0</span>
+                        <div style="font-size: 0.95rem; font-weight: 700; color: #374151;">Immer mehr Kranke in Deutschland ...</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-left: 2.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.92rem; color: #6b7280; cursor: not-allowed;">
+                            <span style="width: 1.5rem; height: 1.5rem; border: 1.5px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 800; font-size: 0.8rem;">A</span>
+                            <span>lassen sich lieber zu Hause behandeln.</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.92rem; color: #111827; font-weight: 600; cursor: not-allowed;">
+                            <span style="width: 1.5rem; height: 1.5rem; border: 1.5px solid #111827; background: #111827; color: #ffffff; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 800; font-size: 0.8rem;">B</span>
+                            <span>vertrauen auf Hilfe im Internet. (Lösung)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.92rem; color: #6b7280; cursor: not-allowed;">
+                            <span style="width: 1.5rem; height: 1.5rem; border: 1.5px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 800; font-size: 0.8rem;">C</span>
+                            <span>werden in Wartezimmern krank.</span>
+                        </label>
+                    </div>
+                </div>
+
+                {{-- Actual Questions --}}
+                @foreach ($mcQuestions as $element)
+                    @php
+                        $elId = $element['id'];
+                        $qNum = substr($elId, strrpos($elId, '-') + 1);
+                        $optionsText = $element['options'] ?? '';
+                        $optionsArray = [];
+                        if (str_contains($optionsText, '|')) {
+                            foreach (explode(',', $optionsText) as $optionPart) {
+                                $bits = explode('|', $optionPart, 2);
+                                if (count($bits) === 2) {
+                                    $optionsArray[trim($bits[0])] = trim($bits[1]);
+                                }
+                            }
+                        } else {
+                            foreach (explode(',', $optionsText) as $opt) {
+                                $optionsArray[trim($opt)] = trim($opt);
+                            }
+                        }
+                        $selected = $answers[$elId] ?? '';
+                        $isCorrect = null;
+                        $expected = $element['answer'] ?? '';
+                        if ($result) {
+                            $detail = collect($result['details'])->firstWhere('id', $elId);
+                            if ($detail) {
+                                $isCorrect = $detail['correct'] ?? null;
+                                $expected = $detail['expected'] ?? $expected;
+                            }
+                        }
+                    @endphp
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                            <span style="background: #111827; color: #ffffff; font-weight: 850; font-size: 0.95rem; width: 1.8rem; height: 1.8rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; margin-top: 0.1rem;">{{ $qNum }}</span>
+                            <div style="font-size: 0.98rem; font-weight: 700; color: #1f2937; line-height: 1.4;">{{ $element['instruction'] ?? '' }}</div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 0.65rem; padding-left: 2.5rem; margin-top: 0.25rem;">
+                            @foreach ($optionsArray as $key => $text)
+                                @php
+                                    $isThisSelected = strtolower($selected) === strtolower($key);
+                                    $isThisExpected = strtolower($expected) === strtolower($key);
+                                    
+                                    $borderCol = '#cbd5e1';
+                                    $bgCol = '#ffffff';
+                                    $textCol = '#374151';
+                                    $fontW = '550';
+                                    $boxBg = '#ffffff';
+                                    $boxBorder = '#cbd5e1';
+                                    $boxText = strtoupper($key);
+                                    
+                                    if ($isThisSelected) {
+                                        $borderCol = '#111827';
+                                        $boxBg = '#111827';
+                                        $boxBorder = '#111827';
+                                        $boxText = strtoupper($key);
+                                        $fontW = '700';
+                                    }
+                                    
+                                    if ($result) {
+                                        if ($isThisExpected) {
+                                            $borderCol = '#16a34a';
+                                            $boxBg = '#16a34a';
+                                            $boxBorder = '#16a34a';
+                                            $boxText = '✓';
+                                            $fontW = '700';
+                                            $textCol = '#15803d';
+                                        } elseif ($isThisSelected && !$isCorrect) {
+                                            $borderCol = '#dc2626';
+                                            $boxBg = '#dc2626';
+                                            $boxBorder = '#dc2626';
+                                            $boxText = '✗';
+                                            $fontW = '700';
+                                            $textCol = '#b91c1c';
+                                        }
+                                    }
+                                @endphp
+                                <label style="display: flex; align-items: center; gap: 0.85rem; font-size: 0.92rem; color: {{ $textCol }}; font-weight: {{ $fontW }}; cursor: {{ $result ? 'not-allowed' : 'pointer' }}; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 0.15s; margin-left: -0.6rem; background: {{ $isThisSelected ? '#f8fafc' : 'transparent' }}; border: 1px solid {{ $isThisSelected ? $borderCol : 'transparent' }};">
+                                    <input type="radio" name="radio-{{ $elId }}" value="{{ $key }}" wire:model.live="answers.{{ $elId }}" @disabled($result) style="display: none;">
+                                    <span style="width: 1.6rem; height: 1.6rem; border: 1.5px solid {{ $boxBorder }}; background: {{ $boxBg }}; color: @if($boxBg === '#ffffff') #4b5563 @else #ffffff @endif; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 800; font-size: 0.85rem; transition: all 0.15s; flex-shrink: 0;">
+                                        {{ $boxText }}
+                                    </span>
+                                    <span>{{ $text }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+@elseif ($layoutStyle === 'goethe_b2_teil4')
+    {{-- ==================== GOETHE B2 TEIL 4 LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-teil4-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0;">{{ $section['title'] ?? 'Lesen Teil 4' }}</h2>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 1rem;">
+                <span>vorgeschlagene Arbeitszeit: 12 Minuten</span>
+            </div>
+        </div>
+
+        @php
+            $instrEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l4-instruction');
+            $opinions = collect($section['elements'])->where('type', 'goethe_portrait')->all();
+            $questions = collect($section['elements'])->where('type', 'matching')->all();
+        @endphp
+
+        @if ($instrEl && $instrEl['content'])
+            <div class="goethe-instructions" style="margin-bottom: 2rem; color: #374151; background: #f8fafc; border-left: 4px solid #a3a3a3; padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.6; border-radius: 4px; font-weight: 500;">
+                {!! nl2br(e($instrEl['content'])) !!}
+            </div>
+        @endif
+
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap; width: 100%;">
+            {{-- Left column: Headlines (Questions) --}}
+            <div style="flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 1rem;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem; color: #1f2937; text-transform: uppercase; letter-spacing: 0.05em;">Überschriften</h3>
+
+                {{-- Example 0 --}}
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                        <span style="background: #6b7280; color: #ffffff; font-weight: 850; font-size: 0.95rem; width: 1.8rem; height: 1.8rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; margin-top: 0.1rem;">0</span>
+                        <div style="font-size: 0.95rem; font-weight: 650; color: #4b5563; line-height: 1.5;">Familie und Beruf kann man vereinbaren</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding-left: 2.5rem;">
+                        <span style="font-size: 0.82rem; font-weight: 700; color: #4b5563; text-transform: uppercase; letter-spacing: 0.03em;">Lösung:</span>
+                        <span style="background: #e2e8f0; color: #111827; font-weight: 800; font-size: 0.88rem; padding: 0.2rem 0.5rem; border-radius: 4px;">A</span>
+                    </div>
+                </div>
+
+                @foreach ($questions as $element)
+                    @php
+                        $elId = $element['id'];
+                        $qNum = substr($elId, strrpos($elId, '-') + 1);
+                        $matchOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? 'a,b,c,d,e,f,g,h'));
+                    @endphp
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                            <span style="background: #111827; color: #ffffff; font-weight: 850; font-size: 0.95rem; width: 1.8rem; height: 1.8rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; margin-top: 0.1rem;">{{ $qNum }}</span>
+                            <div style="font-size: 0.95rem; font-weight: 550; color: #1f2937; line-height: 1.5;">{{ $element['instruction'] ?? '' }}</div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding-left: 2.5rem; margin-top: 0.25rem;">
+                            <span style="font-size: 0.82rem; font-weight: 700; color: #4b5563; text-transform: uppercase; letter-spacing: 0.03em;">Lösung:</span>
+                            <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.65rem; border: 1.5px solid #cbd5e1; border-radius: 6px; background: #ffffff; font-size: 0.88rem; font-weight: 700; color: #1f2937; min-width: 80px; transition: border-color 0.15s; outline: none; cursor: pointer;">
+                                <option value="">---</option>
+                                @foreach ($matchOptions as $opt)
+                                    <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                @endforeach
+                            </select>
+                            @if ($result)
+                                @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
+                                @if ($detail)
+                                    <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }};">
+                                        {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Lösung: ' . strtoupper($detail['expected']) . ')' }}
+                                    </span>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Right column: Opinions list --}}
+            <div style="flex: 1.3; min-width: 400px; display: flex; flex-direction: column; gap: 1.5rem;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem; color: #1f2937; text-transform: uppercase; letter-spacing: 0.05em;">Meinungen</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    @foreach ($opinions as $opinion)
+                        @php
+                            $charLetter = strtolower(substr($opinion['label'], 0, 1));
+                            $isUsed = false;
+                            
+                            $selectedAnswers = $answers ?? [];
+                            foreach ($questions as $q) {
+                                if (isset($selectedAnswers[$q['id']]) && strtolower($selectedAnswers[$q['id']]) === $charLetter) {
+                                    $isUsed = true;
+                                    break;
+                                }
+                            }
+                        @endphp
+                        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; gap: 1.25rem; align-items: flex-start; @if($isUsed) opacity: 0.45; text-decoration: line-through; @endif">
+                            <span style="background: #111827; color: #ffffff; font-weight: 850; font-size: 0.95rem; width: 1.8rem; height: 1.8rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; flex-shrink: 0; text-transform: uppercase;">{{ $charLetter }}</span>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; flex: 1;">
+                                <p style="font-size: 0.88rem; color: #374151; line-height: 1.65; text-align: justify; margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{ $opinion['content'] }}</p>
+                                <span style="font-size: 0.78rem; font-style: italic; color: #6b7280; text-align: right; display: block; font-weight: 600;">{{ substr($opinion['label'], 2) }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+@elseif ($layoutStyle === 'goethe_b2_teil5')
+    {{-- ==================== GOETHE B2 TEIL 5 LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-teil5-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0;">{{ $section['title'] ?? 'Lesen Teil 5' }}</h2>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 1rem;">
+                <span>vorgeschlagene Arbeitszeit: 6 Minuten</span>
+            </div>
+        </div>
+
+        @php
+            $instrEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l5-instruction');
+            $tocEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-l5-table-of-contents');
+            $paragraphs = collect($section['elements'])->where('type', 'matching')->all();
+        @endphp
+
+        @if ($instrEl && $instrEl['content'])
+            <div class="goethe-instructions" style="margin-bottom: 2rem; color: #374151; background: #f8fafc; border-left: 4px solid #a3a3a3; padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.6; border-radius: 4px; font-weight: 500;">
+                {!! nl2br(e($instrEl['content'])) !!}
+            </div>
+        @endif
+
+        {{-- Split view: Left = Table of Contents, Right = Document paragraphs --}}
+        <div style="display: flex; gap: 2.5rem; flex-wrap: wrap; width: 100%;">
+            {{-- Left: Inhaltsverzeichnis --}}
+            <div style="flex: 1; min-width: 280px; max-width: 360px;">
+                <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 1.5rem; position: sticky; top: 1rem;">
+                    <h3 style="font-size: 1.05rem; font-weight: 800; border-bottom: 1.5px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1rem; color: #111827; text-transform: uppercase; letter-spacing: 0.05em;">Inhaltsverzeichnis</h3>
+                    @if ($tocEl)
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            @php
+                                $lines = explode("\n", trim($tocEl['content']));
+                            @endphp
+                            @foreach ($lines as $line)
+                                @php
+                                    $trimmed = trim($line);
+                                    if (empty($trimmed)) continue;
+                                    
+                                    $firstChar = strtolower(substr($trimmed, 0, 1));
+                                    $isUsed = false;
+                                    
+                                    $selectedAnswers = $answers ?? [];
+                                    foreach ($paragraphs as $p) {
+                                        if (isset($selectedAnswers[$p['id']]) && strtolower($selectedAnswers[$p['id']]) === $firstChar) {
+                                            $isUsed = true;
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                <div style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.92rem; color: #374151; font-weight: 600; @if($isUsed) opacity: 0.45; text-decoration: line-through; @endif">
+                                    <span style="background: #cbd5e1; color: #111827; font-weight: 850; font-size: 0.85rem; width: 1.4rem; height: 1.4rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; flex-shrink: 0; text-transform: uppercase;">{{ $firstChar }}</span>
+                                    <span>{{ trim(substr($trimmed, 2)) }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Right: Paragraphs of Studienordnung --}}
+            <div style="flex: 1.8; min-width: 400px; display: flex; flex-direction: column; gap: 1.5rem; background: #ffffff; border: 1.5px solid #d1d5db; border-radius: 8px; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+                <div style="text-align: center; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                    <h2 style="font-family: Georgia, serif; font-size: 1.6rem; font-weight: 700; color: #111827; margin: 0 0 0.5rem 0;">Studienordnung</h2>
+                    <h3 style="font-family: Georgia, serif; font-size: 1.25rem; font-weight: 700; color: #374151; margin: 0;">für den Bachelorstudiengang Theaterwissenschaft</h3>
+                </div>
+
+                {{-- Example § 0 --}}
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+                        <span style="font-family: Georgia, serif; font-weight: 700; font-size: 1.1rem; color: #111827;">§ 0</span>
+                        <span style="font-size: 0.82rem; font-weight: 700; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; padding: 0.2rem 0.5rem; border-radius: 4px;">c</span>
+                    </div>
+                    <p style="font-family: Georgia, serif; font-size: 1rem; color: #374151; line-height: 1.7; text-align: justify; margin: 0;">Das Studium kann nur zum Wintersemester aufgenommen werden.</p>
+                </div>
+
+                {{-- Actual Paragraphs --}}
+                @foreach ($paragraphs as $element)
+                    @php
+                        $elId = $element['id'];
+                        $matchOptions = method_exists($this, 'optionsFor') ? $this->optionsFor($element) : array_map('trim', explode(',', $element['options'] ?? 'a,b,c,d,e,f,g,h'));
+                    @endphp
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.01);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+                            <span style="font-family: Georgia, serif; font-weight: 700; font-size: 1.1rem; color: #111827;">{{ $element['instruction'] }}</span>
+                            
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 0.8rem; font-weight: 700; color: #4b5563; text-transform: uppercase; letter-spacing: 0.03em;">Überschrift:</span>
+                                <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.25rem 0.5rem; border: 1.5px solid #cbd5e1; border-radius: 4px; background: #ffffff; font-size: 0.88rem; font-weight: 700; color: #1f2937; min-width: 80px; transition: border-color 0.15s; outline: none; cursor: pointer;">
+                                    <option value="">---</option>
+                                    @foreach ($matchOptions as $opt)
+                                        <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($result)
+                                    @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
+                                    @if ($detail)
+                                        <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }};">
+                                            {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Lösung: ' . strtoupper($detail['expected']) . ')' }}
+                                        </span>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                        <p style="font-family: Georgia, serif; font-size: 1rem; color: #374151; line-height: 1.7; text-align: justify; margin: 0; white-space: pre-line;">{{ $element['content'] }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+@elseif ($layoutStyle === 'goethe_b2_hoeren_intro')
+    {{-- ==================== GOETHE B2 HÖREN INTRO LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-hoeren-intro-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2.5rem; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div style="border-bottom: 3px solid #d8232a; padding-bottom: 0.75rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #d8232a; letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">Kandidatenblätter</span>
+                <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.2rem; font-weight: 900; color: #111827; margin: 0; letter-spacing: -0.02em;">Hören</h2>
+            </div>
+            <div style="text-align: right;">
+                <span style="display: block; font-size: 1.1rem; font-weight: 800; color: #1f2937;">circa 40 Minuten</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Modul Hören</span>
+            </div>
+        </div>
+
+        @php
+            $introEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-hoeren-intro-text');
+        @endphp
+
+        @if ($introEl && $introEl['content'])
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 2rem; color: #1f2937; line-height: 1.8; font-size: 1.05rem; font-weight: 500; font-family: system-ui, -apple-system, sans-serif;">
+                {!! nl2br(e($introEl['content'])) !!}
+            </div>
+        @endif
+    </section>
+
+@elseif ($layoutStyle === 'goethe_b2_hoeren_teil1')
+    {{-- ==================== GOETHE B2 HÖREN TEIL 1 LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-hoeren-teil1-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0;">{{ $section['title'] ?? 'Hören Teil 1' }}</h2>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em;">
+                <span>vorgeschlagene Arbeitszeit: 18 Minuten</span>
+            </div>
+        </div>
+
+        @php
+            $instrEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-h1-instruction');
+            $questions = collect($section['elements'])->whereIn('type', ['matching', 'multiple_choice'])->all();
+        @endphp
+
+        @if ($instrEl && $instrEl['content'])
+            <div class="goethe-instructions" style="margin-bottom: 2rem; color: #374151; background: #f8fafc; border-left: 4px solid #a3a3a3; padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.6; border-radius: 4px; font-weight: 500;">
+                {!! nl2br(e($instrEl['content'])) !!}
+            </div>
+        @endif
+
+        {{-- Interactive Gespräch Blocks --}}
+        <div style="display: flex; flex-direction: column; gap: 2rem; margin-top: 1.5rem;">
+            {{-- Example block Gespräch 0 --}}
+            <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 1.5rem; opacity: 0.85;">
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                    <span style="font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: #475569; letter-spacing: 0.05em;">Beispiel (Gespräch 0)</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div style="display: flex; gap: 0.75rem; align-items: flex-start; max-width: 70%;">
+                            <span style="background: #64748b; color: #ffffff; font-weight: 800; font-size: 0.85rem; padding: 0.25rem 0.5rem; border-radius: 4px; flex-shrink: 0;">01</span>
+                            <span style="font-size: 0.92rem; font-weight: 600; color: #334155;">Die Frau fragt nach Freizeitaktivitäten im Sommer.</span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <span style="padding: 0.35rem 1rem; border-radius: 6px; font-size: 0.85rem; font-weight: 800; background: #ffffff; border: 1.5px solid #cbd5e1; color: #64748b;">Richtig</span>
+                            <span style="padding: 0.35rem 1rem; border-radius: 6px; font-size: 0.85rem; font-weight: 800; background: #cbd5e1; border: 1.5px solid #cbd5e1; color: #1e293b; text-decoration: line-through; position: relative;">Falsch<span style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #d8232a; font-weight: 900;">✕</span></span>
+                        </div>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 0.25rem 0;">
+                    <div>
+                        <div style="display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.75rem;">
+                            <span style="background: #64748b; color: #ffffff; font-weight: 850; font-size: 0.85rem; padding: 0.25rem 0.55rem; border-radius: 4px; flex-shrink: 0;">02</span>
+                            <span style="font-size: 0.92rem; font-weight: 600; color: #334155;">Für die Angebote, die etwas kosten, muss man sich ...</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-left: 2.2rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #475569;">
+                                <span style="width: 1.5rem; height: 1.5rem; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 700; background: #fff;">a</span>
+                                <span>im Internet anmelden.</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #475569;">
+                                <span style="width: 1.5rem; height: 1.5rem; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 700; background: #fff;">b</span>
+                                <span>vor dem 1. Juni anmelden.</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #1e293b; font-weight: 700; position: relative;">
+                                <span style="width: 1.5rem; height: 1.5rem; border: 1.5px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 700; background: #cbd5e1;">c<span style="position: absolute; top: -2px; left: 0; font-size: 1.25rem; color: #d8232a; font-weight: 900;">✕</span></span>
+                                <span>persönlich anmelden.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Dynamic Gespräch Blocks 1 to 5 --}}
+            @for ($g = 1; $g <= 5; $g++)
+                @php
+                    $qIdxR = ($g - 1) * 2;
+                    $qIdxMC = $qIdxR + 1;
+                    $qR = $questions[$qIdxR] ?? null;
+                    $qMC = $questions[$qIdxMC] ?? null;
+                @endphp
+
+                @if ($qR && $qMC)
+                    <div style="border: 1.5px solid #cbd5e1; border-radius: 8px; background: #ffffff; padding: 1.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1.25rem;">
+                            <span style="font-weight: 800; font-size: 0.9rem; text-transform: uppercase; color: #1e293b; letter-spacing: 0.05em;">Gespräch {{ $g }}</span>
+                        </div>
+
+                        {{-- Odd Question: Richtig/Falsch --}}
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+                            <div style="display: flex; gap: 0.75rem; align-items: flex-start; max-width: 65%;">
+                                <span style="background: #111827; color: #ffffff; font-weight: 850; font-size: 0.9rem; padding: 0.25rem 0.55rem; border-radius: 4px; flex-shrink: 0;">{{ substr($qR['id'], strrpos($qR['id'], '-') + 1) }}</span>
+                                <span style="font-size: 0.95rem; font-weight: 700; color: #1f2937; line-height: 1.5;">{{ $qR['instruction'] }}</span>
+                            </div>
+
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                @foreach (['richtig', 'falsch'] as $optVal)
+                                    @php
+                                        $selected = ($answers[$qR['id']] ?? '') === $optVal;
+                                        $btnStyle = 'background: #ffffff; border: 1.5px solid #cbd5e1; color: #475569;';
+                                        if ($selected) {
+                                            $btnStyle = 'background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; font-weight: 800;';
+                                        }
+                                        if ($result) {
+                                            $detail = collect($result['details'])->firstWhere('id', $qR['id']);
+                                            $correct = $detail['correct'] ?? false;
+                                            $expected = $detail['expected'] ?? '';
+                                            if ($selected) {
+                                                $btnStyle = $correct ? 'background: #e6f4ea; border-color: #10b981; color: #137333; font-weight:800;' : 'background: #fdf2f2; border-color: #ef4444; color: #9b1c1c; font-weight:800;';
+                                            }
+                                        }
+                                    @endphp
+                                    <button type="button" wire:click="$set('answers.{{ $qR['id'] }}', '{{ $optVal }}')" {{ $result ? 'disabled' : '' }}
+                                        style="padding: 0.4rem 1.25rem; border-radius: 6px; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s; min-width: 90px; text-align: center; outline: none; {{ $btnStyle }}">
+                                        {{ ucfirst($optVal) }}
+                                    </button>
+                                @endforeach
+
+                                @if ($result)
+                                    @php
+                                        $detail = collect($result['details'])->firstWhere('id', $qR['id']);
+                                        $correct = $detail['correct'] ?? false;
+                                        $expected = $detail['expected'] ?? '';
+                                    @endphp
+                                    <span style="font-weight: 800; font-size: 0.9rem; margin-left: 0.5rem; color: {{ $correct ? '#10b981' : '#ef4444' }};">
+                                        {{ $correct ? '✓ Richtig' : '✗ Falsch (Lösung: ' . ucfirst($expected) . ')' }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1.5px dashed #e2e8f0; margin: 1rem 0;">
+
+                        {{-- Even Question: MC a/b/c --}}
+                        <div>
+                            <div style="display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.75rem;">
+                                <span style="background: #111827; color: #ffffff; font-weight: 850; font-size: 0.9rem; padding: 0.25rem 0.55rem; border-radius: 4px; flex-shrink: 0;">{{ substr($qMC['id'], strrpos($qMC['id'], '-') + 1) }}</span>
+                                <span style="font-size: 0.95rem; font-weight: 700; color: #1f2937; line-height: 1.5;">{{ $qMC['instruction'] }}</span>
+                            </div>
+
+                            @php
+                                $mcOptions = [];
+                                foreach (explode(',', $qMC['options'] ?? '') as $rawOpt) {
+                                    $parts = explode('|', $rawOpt);
+                                    if (count($parts) === 2) {
+                                        $mcOptions[$parts[0]] = $parts[1];
+                                    }
+                                }
+                            @endphp
+
+                            <div style="display: flex; flex-direction: column; gap: 0.6rem; padding-left: 2.2rem;">
+                                @foreach ($mcOptions as $optChar => $optText)
+                                    @php
+                                        $selected = ($answers[$qMC['id']] ?? '') === $optChar;
+                                        $optStyle = 'background: #ffffff; border: 1.5px solid #e2e8f0; color: #374151;';
+                                        $chipStyle = 'background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569;';
+                                        
+                                        if ($selected) {
+                                            $optStyle = 'background: #eff6ff; border-color: #3b82f6; color: #1e3a8a; font-weight: 700;';
+                                            $chipStyle = 'background: #3b82f6; border-color: #3b82f6; color: #ffffff;';
+                                        }
+
+                                        if ($result) {
+                                            $detail = collect($result['details'])->firstWhere('id', $qMC['id']);
+                                            $correct = $detail['correct'] ?? false;
+                                            $expected = $detail['expected'] ?? '';
+                                            
+                                            if ($selected) {
+                                                if ($correct) {
+                                                    $optStyle = 'background: #e6f4ea; border-color: #10b981; color: #137333; font-weight: 700;';
+                                                    $chipStyle = 'background: #10b981; border-color: #10b981; color: #ffffff;';
+                                                } else {
+                                                    $optStyle = 'background: #fdf2f2; border-color: #ef4444; color: #9b1c1c; font-weight: 700;';
+                                                    $chipStyle = 'background: #ef4444; border-color: #ef4444; color: #ffffff;';
+                                                }
+                                            } elseif ($optChar === $expected) {
+                                                $optStyle = 'background: #f0fdf4; border-color: #86efac; color: #166534;';
+                                                $chipStyle = 'background: #86efac; border-color: #86efac; color: #166534;';
+                                            }
+                                        }
+                                    @endphp
+
+                                    <button type="button" wire:click="$set('answers.{{ $qMC['id'] }}', '{{ $optChar }}')" {{ $result ? 'disabled' : '' }}
+                                        style="display: flex; align-items: center; gap: 0.75rem; width: 100%; text-align: left; padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.92rem; cursor: pointer; transition: all 0.2s; outline: none; {{ $optStyle }}">
+                                        <span style="font-size: 0.85rem; font-weight: 800; width: 1.6rem; height: 1.6rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; text-transform: uppercase; flex-shrink: 0; {{ $chipStyle }}">{{ $optChar }}</span>
+                                        <span>{{ $optText }}</span>
+                                    </button>
+                                @endforeach
+
+                                @if ($result)
+                                    @php
+                                        $detail = collect($result['details'])->firstWhere('id', $qMC['id']);
+                                        $correct = $detail['correct'] ?? false;
+                                        $expected = $detail['expected'] ?? '';
+                                    @endphp
+                                    <div style="font-weight: 800; font-size: 0.9rem; margin-top: 0.25rem; color: {{ $correct ? '#10b981' : '#ef4444' }};">
+                                        {{ $correct ? '✓ Richtig' : '✗ Falsch (Lösung: ' . strtoupper($expected) . ')' }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endfor
+        </div>
+    </section>
+
+@elseif ($layoutStyle === 'goethe_b2_hoeren_teil2')
+    {{-- ==================== GOETHE B2 HÖREN TEIL 2 LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-hoeren-teil2-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0;">{{ $section['title'] ?? 'Hören Teil 2' }}</h2>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em;">
+                <span>Wählen Sie bei jeder Aufgabe die richtige Lösung</span>
+            </div>
+        </div>
+
+        @php
+            $instrEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-h2-instruction');
+            $questions = collect($section['elements'])->where('type', 'multiple_choice')->all();
+        @endphp
+
+        @if ($instrEl && $instrEl['content'])
+            <div class="goethe-instructions" style="margin-bottom: 2rem; color: #374151; background: #f8fafc; border-left: 4px solid #a3a3a3; padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.6; border-radius: 4px; font-weight: 500;">
+                {!! nl2br(e($instrEl['content'])) !!}
+            </div>
+        @endif
+
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            @foreach ($questions as $element)
+                @php
+                    $elId = $element['id'];
+                    $qNum = substr($elId, strrpos($elId, '-') + 1);
+                    $mcOptions = [];
+                    foreach (explode(',', $element['options'] ?? '') as $rawOpt) {
+                        $parts = explode('|', $rawOpt);
+                        if (count($parts) === 2) {
+                            $mcOptions[$parts[0]] = $parts[1];
+                        }
+                    }
+                @endphp
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.01);">
+                    <div style="display: flex; gap: 0.75rem; align-items: flex-start; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        <span style="background: #111827; color: #ffffff; font-weight: 850; font-size: 0.9rem; padding: 0.25rem 0.55rem; border-radius: 4px; flex-shrink: 0;">{{ $qNum }}</span>
+                        <span style="font-size: 1rem; font-weight: 700; color: #1f2937; line-height: 1.5;">{{ $element['instruction'] }}</span>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-left: 2rem;">
+                        @foreach ($mcOptions as $optChar => $optText)
+                            @php
+                                $selected = ($answers[$elId] ?? '') === $optChar;
+                                $optStyle = 'background: #ffffff; border: 1.5px solid #e2e8f0; color: #374151;';
+                                $chipStyle = 'background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569;';
+                                
+                                if ($selected) {
+                                    $optStyle = 'background: #eff6ff; border-color: #3b82f6; color: #1e3a8a; font-weight: 700;';
+                                    $chipStyle = 'background: #3b82f6; border-color: #3b82f6; color: #ffffff;';
+                                }
+
+                                if ($result) {
+                                    $detail = collect($result['details'])->firstWhere('id', $elId);
+                                    $correct = $detail['correct'] ?? false;
+                                    $expected = $detail['expected'] ?? '';
+                                    
+                                    if ($selected) {
+                                        if ($correct) {
+                                            $optStyle = 'background: #e6f4ea; border-color: #10b981; color: #137333; font-weight: 700;';
+                                            $chipStyle = 'background: #10b981; border-color: #10b981; color: #ffffff;';
+                                        } else {
+                                            $optStyle = 'background: #fdf2f2; border-color: #ef4444; color: #9b1c1c; font-weight: 700;';
+                                            $chipStyle = 'background: #ef4444; border-color: #ef4444; color: #ffffff;';
+                                        }
+                                    } elseif ($optChar === $expected) {
+                                        $optStyle = 'background: #f0fdf4; border-color: #86efac; color: #166534;';
+                                        $chipStyle = 'background: #86efac; border-color: #86efac; color: #166534;';
+                                    }
+                                }
+                            @endphp
+
+                            <button type="button" wire:click="$set('answers.{{ $elId }}', '{{ $optChar }}')" {{ $result ? 'disabled' : '' }}
+                                style="display: flex; align-items: center; gap: 0.75rem; width: 100%; text-align: left; padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.92rem; cursor: pointer; transition: all 0.2s; outline: none; {{ $optStyle }}">
+                                <span style="font-size: 0.85rem; font-weight: 800; width: 1.6rem; height: 1.6rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; text-transform: uppercase; flex-shrink: 0; {{ $chipStyle }}">{{ $optChar }}</span>
+                                <span>{{ $optText }}</span>
+                            </button>
+                        @endforeach
+
+                        @if ($result)
+                            @php
+                                $detail = collect($result['details'])->firstWhere('id', $elId);
+                                $correct = $detail['correct'] ?? false;
+                                $expected = $detail['expected'] ?? '';
+                            @endphp
+                            <div style="font-weight: 800; font-size: 0.9rem; margin-top: 0.25rem; color: {{ $correct ? '#10b981' : '#ef4444' }};">
+                                {{ $correct ? '✓ Richtig' : '✗ Falsch (Lösung: ' . strtoupper($expected) . ')' }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </section>
+
+@elseif ($layoutStyle === 'goethe_b2_hoeren_teil3')
+    {{-- ==================== GOETHE B2 HÖREN TEIL 3 LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-hoeren-teil3-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0;">{{ $section['title'] ?? 'Hören Teil 3' }}</h2>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em;">
+                <span>Wählen Sie bei jeder Aufgabe: Wer sagt das?</span>
+            </div>
+        </div>
+
+        @php
+            $instrEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-h3-instruction');
+            $questions = collect($section['elements'])->where('type', 'matching')->all();
+            
+            $speakers = [
+                'a' => [
+                    'name' => 'Moderator',
+                    'role' => 'Radio LOLA Host',
+                    'img' => 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=150&q=80'
+                ],
+                'b' => [
+                    'name' => 'Lisa Gerster',
+                    'role' => 'Studentin',
+                    'img' => 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80'
+                ],
+                'c' => [
+                    'name' => 'Emma Lücke',
+                    'role' => 'Seniorin',
+                    'img' => 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=150&q=80'
+                ],
+            ];
+        @endphp
+
+        @if ($instrEl && $instrEl['content'])
+            <div class="goethe-instructions" style="margin-bottom: 2rem; color: #374151; background: #f8fafc; border-left: 4px solid #a3a3a3; padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.6; border-radius: 4px; font-weight: 500;">
+                {!! nl2br(e($instrEl['content'])) !!}
+            </div>
+        @endif
+
+        {{-- Speaker profile row at the top --}}
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+            @foreach ($speakers as $char => $speaker)
+                <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 1.25rem; display: flex; gap: 1rem; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                    <img src="{{ $speaker['img'] }}" style="width: 65px; height: 65px; object-fit: cover; border-radius: 50%; border: 1.5px solid #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.08); flex-shrink: 0;" alt="{{ $speaker['name'] }}">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                            <span style="background: #1e293b; color: #ffffff; font-weight: 850; font-size: 0.8rem; width: 1.3rem; height: 1.3rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; text-transform: uppercase;">{{ $char }}</span>
+                            <span style="font-weight: 800; font-size: 0.95rem; color: #111827;">{{ $speaker['name'] }}</span>
+                        </div>
+                        <span style="font-size: 0.8rem; font-weight: 600; color: #4b5563; display: block; margin-top: 0.15rem;">{{ $speaker['role'] }}</span>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        {{-- Example statement (0) --}}
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem; opacity: 0.85;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                <span style="background: #64748b; color: #ffffff; font-weight: 800; font-size: 0.85rem; padding: 0.2rem 0.5rem; border-radius: 4px; flex-shrink: 0;">Beispiel (0)</span>
+                <span style="font-size: 0.95rem; font-weight: 700; color: #1e293b;">In deutschen Großstädten spielen alternative Wohnformen eine Rolle.</span>
+            </div>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; padding-left: 2rem;">
+                @foreach ($speakers as $char => $sp)
+                    <div style="background: {{ $char === 'a' ? '#f1f5f9' : '#ffffff' }}; border: 1.5px solid {{ $char === 'a' ? '#64748b' : '#e2e8f0' }}; border-radius: 6px; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; font-weight: 700; color: {{ $char === 'a' ? '#1e293b' : '#64748b' }}; min-width: 140px; position: relative;">
+                        <span style="width: 1.2rem; height: 1.2rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; background: {{ $char === 'a' ? '#475569' : '#e2e8f0' }}; color: #fff; font-size: 0.75rem;">{{ $char }}</span>
+                        <span>{{ $sp['name'] }}</span>
+                        @if ($char === 'a')
+                            <span style="position: absolute; right: 0.5rem; font-size: 1.1rem; color: #d8232a; font-weight: 900;">✕</span>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Interactive questions --}}
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            @foreach ($questions as $element)
+                @php
+                    $elId = $element['id'];
+                    $qNum = substr($elId, strrpos($elId, '-') + 1);
+                    $selected = $answers[$elId] ?? '';
+                @endphp
+                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.01);">
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        <span style="background: #111827; color: #ffffff; font-weight: 850; font-size: 0.9rem; padding: 0.25rem 0.55rem; border-radius: 4px; flex-shrink: 0;">{{ $qNum }}</span>
+                        <span style="font-size: 0.95rem; font-weight: 700; color: #1f2937; line-height: 1.5;">{{ $element['instruction'] }}</span>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; padding-left: 2rem;">
+                        @foreach ($speakers as $char => $sp)
+                            @php
+                                $optSelected = $selected === $char;
+                                $optStyle = 'background: #ffffff; border: 1.5px solid #cbd5e1; color: #475569;';
+                                $badgeStyle = 'background: #e2e8f0; color: #475569;';
+                                
+                                if ($optSelected) {
+                                    $optStyle = 'background: #eff6ff; border-color: #3b82f6; color: #1e3a8a; font-weight: 800;';
+                                    $badgeStyle = 'background: #3b82f6; color: #ffffff;';
+                                }
+
+                                if ($result) {
+                                    $detail = collect($result['details'])->firstWhere('id', $elId);
+                                    $correct = $detail['correct'] ?? false;
+                                    $expected = $detail['expected'] ?? '';
+                                    
+                                    if ($optSelected) {
+                                        if ($correct) {
+                                            $optStyle = 'background: #e6f4ea; border-color: #10b981; color: #137333; font-weight: 800;';
+                                            $badgeStyle = 'background: #10b981; color: #ffffff;';
+                                        } else {
+                                            $optStyle = 'background: #fdf2f2; border-color: #ef4444; color: #9b1c1c; font-weight: 800;';
+                                            $badgeStyle = 'background: #ef4444; color: #ffffff;';
+                                        }
+                                    } elseif ($char === $expected) {
+                                        $optStyle = 'background: #f0fdf4; border-color: #86efac; color: #166534;';
+                                        $badgeStyle = 'background: #86efac; color: #166534;';
+                                    }
+                                }
+                            @endphp
+
+                            <button type="button" wire:click="$set('answers.{{ $elId }}', '{{ $char }}')" {{ $result ? 'disabled' : '' }}
+                                style="display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; outline: none; min-width: 150px; text-align: left; {{ $optStyle }}">
+                                <span style="width: 1.3rem; height: 1.3rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 0.75rem; font-weight: 800; {{ $badgeStyle }}">{{ $char }}</span>
+                                <span>{{ $sp['name'] }}</span>
+                            </button>
+                        @endforeach
+
+                        @if ($result)
+                            @php
+                                $detail = collect($result['details'])->firstWhere('id', $elId);
+                                $correct = $detail['correct'] ?? false;
+                                $expected = $detail['expected'] ?? '';
+                            @endphp
+                            <div style="font-weight: 800; font-size: 0.9rem; margin-top: 0.25rem; color: {{ $correct ? '#10b981' : '#ef4444' }}; flex-basis: 100%;">
+                                {{ $correct ? '✓ Richtig' : '✗ Falsch (Lösung: ' . strtoupper($expected) . ' - ' . $speakers[$expected]['name'] . ')' }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </section>
+
+@elseif ($layoutStyle === 'goethe_b2_hoeren_teil4')
+    {{-- ==================== GOETHE B2 HÖREN TEIL 4 LAYOUT ==================== --}}
+    <section class="goethe-section goethe-b2-hoeren-teil4-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1a1a1a; margin: 0;">{{ $section['title'] ?? 'Hören Teil 4' }}</h2>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em;">
+                <span>Wählen Sie bei jeder Aufgabe die richtige Lösung</span>
+            </div>
+        </div>
+
+        @php
+            $instrEl = collect($section['elements'])->firstWhere('id', 'goethe-b2-h4-instruction');
+            $questions = collect($section['elements'])->where('type', 'multiple_choice')->all();
+        @endphp
+
+        @if ($instrEl && $instrEl['content'])
+            <div class="goethe-instructions" style="margin-bottom: 2rem; color: #374151; background: #f8fafc; border-left: 4px solid #a3a3a3; padding: 1rem 1.25rem; font-size: 0.95rem; line-height: 1.6; border-radius: 4px; font-weight: 500;">
+                {!! nl2br(e($instrEl['content'])) !!}
+            </div>
+        @endif
+
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            @foreach ($questions as $element)
+                @php
+                    $elId = $element['id'];
+                    $qNum = substr($elId, strrpos($elId, '-') + 1);
+                    $mcOptions = [];
+                    foreach (explode(',', $element['options'] ?? '') as $rawOpt) {
+                        $parts = explode('|', $rawOpt);
+                        if (count($parts) === 2) {
+                            $mcOptions[$parts[0]] = $parts[1];
+                        }
+                    }
+                @endphp
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.01);">
+                    <div style="display: flex; gap: 0.75rem; align-items: flex-start; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        <span style="background: #111827; color: #ffffff; font-weight: 850; font-size: 0.9rem; padding: 0.25rem 0.55rem; border-radius: 4px; flex-shrink: 0;">{{ $qNum }}</span>
+                        <span style="font-size: 1rem; font-weight: 700; color: #1f2937; line-height: 1.5;">{{ $element['instruction'] }}</span>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-left: 2rem;">
+                        @foreach ($mcOptions as $optChar => $optText)
+                            @php
+                                $selected = ($answers[$elId] ?? '') === $optChar;
+                                $optStyle = 'background: #ffffff; border: 1.5px solid #e2e8f0; color: #374151;';
+                                $chipStyle = 'background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569;';
+                                
+                                if ($selected) {
+                                    $optStyle = 'background: #eff6ff; border-color: #3b82f6; color: #1e3a8a; font-weight: 700;';
+                                    $chipStyle = 'background: #3b82f6; border-color: #3b82f6; color: #ffffff;';
+                                }
+
+                                if ($result) {
+                                    $detail = collect($result['details'])->firstWhere('id', $elId);
+                                    $correct = $detail['correct'] ?? false;
+                                    $expected = $detail['expected'] ?? '';
+                                    
+                                    if ($selected) {
+                                        if ($correct) {
+                                            $optStyle = 'background: #e6f4ea; border-color: #10b981; color: #137333; font-weight: 700;';
+                                            $chipStyle = 'background: #10b981; border-color: #10b981; color: #ffffff;';
+                                        } else {
+                                            $optStyle = 'background: #fdf2f2; border-color: #ef4444; color: #9b1c1c; font-weight: 700;';
+                                            $chipStyle = 'background: #ef4444; border-color: #ef4444; color: #ffffff;';
+                                        }
+                                    } elseif ($optChar === $expected) {
+                                        $optStyle = 'background: #f0fdf4; border-color: #86efac; color: #166534;';
+                                        $chipStyle = 'background: #86efac; border-color: #86efac; color: #166534;';
+                                    }
+                                }
+                            @endphp
+
+                            <button type="button" wire:click="$set('answers.{{ $elId }}', '{{ $optChar }}')" {{ $result ? 'disabled' : '' }}
+                                style="display: flex; align-items: center; gap: 0.75rem; width: 100%; text-align: left; padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.92rem; cursor: pointer; transition: all 0.2s; outline: none; {{ $optStyle }}">
+                                <span style="font-size: 0.85rem; font-weight: 800; width: 1.6rem; height: 1.6rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; text-transform: uppercase; flex-shrink: 0; {{ $chipStyle }}">{{ $optChar }}</span>
+                                <span>{{ $optText }}</span>
+                            </button>
+                        @endforeach
+
+                        @if ($result)
+                            @php
+                                $detail = collect($result['details'])->firstWhere('id', $elId);
+                                $correct = $detail['correct'] ?? false;
+                                $expected = $detail['expected'] ?? '';
+                            @endphp
+                            <div style="font-weight: 800; font-size: 0.9rem; margin-top: 0.25rem; color: {{ $correct ? '#10b981' : '#ef4444' }};">
+                                {{ $correct ? '✓ Richtig' : '✗ Falsch (Lösung: ' . strtoupper($expected) . ')' }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </section>
+
+@elseif ($layoutStyle === 'teil1')
     {{-- ==================== TEIL 1 LAYOUT ==================== --}}
     <section class="c1-section telc-teil1-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); width: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">

@@ -308,6 +308,16 @@
                                     <option value="teil1">Teil 1: Überschriften oben, Texte unten</option>
                                     <option value="teil2">Teil 2: Artikel oben, MC unten</option>
                                     <option value="teil3">Teil 3: Situationen oben, Info-Texte unten (Grid)</option>
+                                    <option value="goethe_b2_teil1">Goethe B2 Lesen Teil 1: Forum & Aussagen</option>
+                                    <option value="goethe_b2_teil2">Goethe B2 Lesen Teil 2: Artikel & Lücken</option>
+                                    <option value="goethe_b2_teil3">Goethe B2 Lesen Teil 3: Artikel & MC</option>
+                                    <option value="goethe_b2_teil4">Goethe B2 Lesen Teil 4: Überschriften & Meinungen</option>
+                                    <option value="goethe_b2_teil5">Goethe B2 Lesen Teil 5: Studienordnung (Zuordnung)</option>
+                                    <option value="goethe_b2_hoeren_intro">Goethe B2 Hören: Intro</option>
+                                    <option value="goethe_b2_hoeren_teil1">Goethe B2 Hören Teil 1: Dialoge & MC</option>
+                                    <option value="goethe_b2_hoeren_teil2">Goethe B2 Hören Teil 2: MC</option>
+                                    <option value="goethe_b2_hoeren_teil3">Goethe B2 Hören Teil 3: Sprecher zuordnen</option>
+                                    <option value="goethe_b2_hoeren_teil4">Goethe B2 Hören Teil 4: MC Vortrag</option>
                                 </select>
                                 <button type="button" wire:click="removeSection({{ $sectionIndex }})" class="telc-icon-button danger" title="Remove">×</button>
                             </div>
@@ -358,6 +368,44 @@
                                                         <audio controls src="{{ $element['content'] }}" class="telc-audio-preview"></audio>
                                                     @endif
                                                 </div>
+                                            @elseif ($element['type'] === 'image')
+                                                <label>Image file</label>
+                                                <div class="telc-image-upload" style="margin-bottom: 1rem;">
+                                                    <input type="file" wire:model="imageUpload" accept="image/*">
+                                                    <button type="button" wire:click="uploadImage({{ $sectionIndex }}, {{ $elementIndex }}, 'content')" wire:loading.attr="disabled" wire:target="imageUpload, uploadImage" class="telc-button primary" style="margin-top:0.5rem;">
+                                                        <span wire:loading.remove wire:target="imageUpload, uploadImage">Upload Image</span>
+                                                        <span wire:loading wire:target="imageUpload">Wird geladen...</span>
+                                                        <span wire:loading wire:target="uploadImage">Wird gespeichert...</span>
+                                                    </button>
+                                                    @error('imageUpload') <span class="telc-error">{{ $message }}</span> @enderror
+                                                    @if (! empty($element['content']))
+                                                        <div style="margin-top: 0.5rem;">
+                                                            <img src="{{ $element['content'] }}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd;" alt="Preview">
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <label>Image path / URL override</label>
+                                                <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-input">
+                                            @elseif ($element['type'] === 'goethe_portrait')
+                                                <label>Portrait photo</label>
+                                                <div class="telc-image-upload" style="margin-bottom: 1rem;">
+                                                    <input type="file" wire:model="imageUpload" accept="image/*">
+                                                    <button type="button" wire:click="uploadImage({{ $sectionIndex }}, {{ $elementIndex }}, 'image_url')" wire:loading.attr="disabled" wire:target="imageUpload, uploadImage" class="telc-button primary" style="margin-top:0.5rem;">
+                                                        <span wire:loading.remove wire:target="imageUpload, uploadImage">Upload Portrait</span>
+                                                        <span wire:loading wire:target="imageUpload">Wird geladen...</span>
+                                                        <span wire:loading wire:target="uploadImage">Wird gespeichert...</span>
+                                                    </button>
+                                                    @error('imageUpload') <span class="telc-error">{{ $message }}</span> @enderror
+                                                    @if (! empty($element['image_url']))
+                                                        <div style="margin-top: 0.5rem;">
+                                                            <img src="{{ $element['image_url'] }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;" alt="Portrait Preview">
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <label>Portrait image URL override</label>
+                                                <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.image_url" class="telc-input">
+                                                <label>Statement text of the person</label>
+                                                <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height: 8rem;"></textarea>
                                             @else
                                                 <label>Content, image path, or audio URL</label>
                                                 <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea"></textarea>

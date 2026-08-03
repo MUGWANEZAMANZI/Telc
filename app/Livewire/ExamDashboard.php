@@ -28,6 +28,8 @@ class ExamDashboard extends Component
 
     public mixed $audioUpload = null;
 
+    public mixed $imageUpload = null;
+
     public ?int $selectedTemplateId = null;
 
     public string $mode = 'overview';
@@ -424,6 +426,29 @@ class ExamDashboard extends Component
         $this->save();
     }
 
+    public function uploadImage(int $sectionIndex, int $elementIndex, string $field = 'content'): void
+    {
+        $this->validate([
+            'imageUpload' => ['required', 'file', 'image', 'max:10240'],
+        ], [
+            'imageUpload.required' => 'Bitte wählen Sie zuerst ein Bild aus.',
+            'imageUpload.image' => 'Ungültiges Bild-Format.',
+            'imageUpload.max' => 'Das Bild darf maximal 10 MB groß sein.',
+        ]);
+
+        $path = $this->imageUpload->store('exam-images', 'public');
+        $url = asset('storage/' . $path);
+
+        if ($field === 'image_url') {
+            $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['image_url'] = $url;
+        } else {
+            $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['content'] = $url;
+        }
+
+        $this->imageUpload = null;
+        $this->save();
+    }
+
     public function syncGapIds(int $sectionIndex, int $elementIndex): void
     {
         $content = $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['content'] ?? '';
@@ -534,6 +559,7 @@ class ExamDashboard extends Component
             'true_false' => 'Richtig / Falsch',
             'writing' => 'Schreibfeld',
             'speaking' => 'Sprechen (KI)',
+            'goethe_portrait' => 'Goethe Person (Portrait + Text)',
         ];
     }
 
