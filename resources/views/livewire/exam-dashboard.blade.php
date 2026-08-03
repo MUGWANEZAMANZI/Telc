@@ -318,6 +318,9 @@
                                     <option value="goethe_b2_hoeren_teil2">Goethe B2 Hören Teil 2: MC</option>
                                     <option value="goethe_b2_hoeren_teil3">Goethe B2 Hören Teil 3: Sprecher zuordnen</option>
                                     <option value="goethe_b2_hoeren_teil4">Goethe B2 Hören Teil 4: MC Vortrag</option>
+                                    <option value="goethe_b2_schreiben_intro">Goethe B2 Schreiben: Intro</option>
+                                    <option value="goethe_b2_schreiben_teil1">Goethe B2 Schreiben Teil 1: Forumsbeitrag</option>
+                                    <option value="goethe_b2_schreiben_teil2">Goethe B2 Schreiben Teil 2: Nachricht</option>
                                 </select>
                                 <button type="button" wire:click="removeSection({{ $sectionIndex }})" class="telc-icon-button danger" title="Remove">×</button>
                             </div>

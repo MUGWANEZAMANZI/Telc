@@ -1129,6 +1129,70 @@ class TelcTemplateFactory
                         ['id' => 'goethe-b2-h4-30', 'type' => 'multiple_choice', 'label' => 'Aufgabe 30', 'instruction' => 'Herr Kinigard rät dazu, ..', 'answer' => 'a', 'options' => 'a|Ablenkungen zu vermeiden.,b|auf Einflüsse von außen nicht zu reagieren.,c|E-Mail-Korrespondenz zu reduzieren.', 'points' => 1],
                     ]
                 ],
+                [
+                    'id' => 'goethe-b2-schreiben-intro',
+                    'title' => 'Kandidatenblätter Schreiben',
+                    'minutes' => 75,
+                    'layout_style' => 'goethe_b2_schreiben_intro',
+                    'elements' => [
+                        [
+                            'id' => 'goethe-b2-schreiben-intro-text',
+                            'type' => 'text',
+                            'label' => 'Modul Schreiben',
+                            'content' => "Kandidatenblätter\nSchreiben\n75 Minuten\n\nDas Modul Schreiben hat zwei Teile.\nIn Teil 1 schreiben Sie einen Forumsbeitrag.\nIn Teil 2 schreiben Sie eine Nachricht.\nSie können mit jeder Aufgabe beginnen.\nEs werden nur die Lösungen und Texte auf dem Antwortbogen bewertet.\nBitte schreiben Sie mit einem blauen oder schwarzen Stift.\nHilfsmittel (z. B. Wörterbücher, Handys/mobile Endgeräte) sind nicht erlaubt.",
+                            'answer' => '',
+                            'points' => 0,
+                        ]
+                    ]
+                ],
+                [
+                    'id' => 'goethe-b2-schreiben-teil1',
+                    'title' => 'Schreiben Teil 1',
+                    'minutes' => 50,
+                    'layout_style' => 'goethe_b2_schreiben_teil1',
+                    'elements' => [
+                        [
+                            'id' => 'goethe-b2-schreiben-t1-text',
+                            'type' => 'text',
+                            'label' => 'Teil 1',
+                            'content' => "vorgeschlagene Arbeitszeit: 50 Minuten\n\nSie schreiben einen Forumsbeitrag zur Verschmutzung der Umwelt.\n\n• Äußern Sie Ihre Meinung zu Plastikverpackungen im Alltag.\n• Nennen Sie Gründe, warum Plastikverpackungen so verbreitet sind.\n• Nennen Sie andere Möglichkeiten, Dinge im Alltag zu verpacken.\n• Nennen Sie Vorteile der anderen Verpackungen.\n\nDenken Sie an eine Einleitung und einen Schluss. Bei der Bewertung wird darauf geachtet, wie genau die Inhaltspunkte bearbeitet sind, wie korrekt der Text ist und wie gut die Sätze und Abschnitte sprachlich miteinander verknüpft sind. Schreiben Sie circa 150 Wörter.",
+                            'answer' => '',
+                            'points' => 0,
+                        ],
+                        [
+                            'id' => 'goethe-b2-schreiben-t1-input',
+                            'type' => 'writing',
+                            'label' => 'Ihre Antwort zu Teil 1',
+                            'instruction' => 'Forumsbeitrag zur Verschmutzung der Umwelt (ca. 150 Wörter)',
+                            'answer' => '',
+                            'points' => 15,
+                        ]
+                    ]
+                ],
+                [
+                    'id' => 'goethe-b2-schreiben-teil2',
+                    'title' => 'Schreiben Teil 2',
+                    'minutes' => 25,
+                    'layout_style' => 'goethe_b2_schreiben_teil2',
+                    'elements' => [
+                        [
+                            'id' => 'goethe-b2-schreiben-t2-text',
+                            'type' => 'text',
+                            'label' => 'Teil 2',
+                            'content' => "vorgeschlagene Arbeitszeit: 25 Minuten\n\nSie machen gerade ein Praktikum bei einer deutschen Firma. Sie haben derzeit so viel zu tun, dass Sie Ihre Arbeit nicht mehr schaffen. Schreiben Sie eine Nachricht an Ihren Vorgesetzten, Herrn Ebert.\n\n• Bitten Sie um Verständnis für Ihre Situation.\n• Beschreiben Sie, womit Sie beschäftigt sind.\n• Machen Sie einen Vorschlag für die kommenden Tage.\n• Zeigen Sie Verständnis für die Arbeitssituation in der Firma.\n\nÜberlegen Sie sich eine passende Reihenfolge für die Inhaltspunkte. Bei der Bewertung wird darauf geachtet, wie genau die Inhaltspunkte bearbeitet sind, wie korrekt der Text ist und wie gut die Sätze und Abschnitte sprachlich miteinander verknüpft sind. Vergessen Sie nicht Anrede und Gruß. Schreiben Sie circa 100 Wörter.",
+                            'answer' => '',
+                            'points' => 0,
+                        ],
+                        [
+                            'id' => 'goethe-b2-schreiben-t2-input',
+                            'type' => 'writing',
+                            'label' => 'Ihre Antwort zu Teil 2',
+                            'instruction' => 'Nachricht an Ihren Vorgesetzten, Herrn Ebert (ca. 100 Wörter)',
+                            'answer' => '',
+                            'points' => 10,
+                        ]
+                    ]
+                ]
             ]
         ];
     }
