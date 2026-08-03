@@ -658,8 +658,8 @@ class TelcTemplateFactory
                             'instruction' => '65 Minuten',
                             'answer' => '',
                             'points' => 0,
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-lesen-teil1',
@@ -680,7 +680,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l1-person-a',
                             'type' => 'goethe_portrait',
                             'label' => 'a Erik',
-                            'content' => "In der heutigen Gesellschaft wird leider nur noch konsumiert. Es zählen Besitz und Leistung und das im Überfluss; das ist den Menschen wichtig. Ich sehe das anders, denn ich habe nur Sachen, die ich wirklich brauche. Ein Autokauf käme mir zum Beispiel nicht in den Sinn, ich bevorzuge das Rad oder gehe zu Fuß. Eine größere Wohnung? Warum? - Meine Einzimmerwohnung ist fast leer: Bett, Tisch, zwei Stühle, Garderobe. Einen Kühlschrank brauche ich nicht. Auch als Veganer kann man genussvoll essen. Erdbeeren und Salat pflanze ich auf dem Balkon an. Wenn ich reise, dann mit Rucksack und Zelt, ohne Kamera und Schnickschnack. Bei Freunden daheim mit tollen Fotos angeben gibt mir nichts. Das hat nichts mit Geiz zu tun - das einfache und entspannte Leben ist, was ich will.",
+                            'content' => 'In der heutigen Gesellschaft wird leider nur noch konsumiert. Es zählen Besitz und Leistung und das im Überfluss; das ist den Menschen wichtig. Ich sehe das anders, denn ich habe nur Sachen, die ich wirklich brauche. Ein Autokauf käme mir zum Beispiel nicht in den Sinn, ich bevorzuge das Rad oder gehe zu Fuß. Eine größere Wohnung? Warum? - Meine Einzimmerwohnung ist fast leer: Bett, Tisch, zwei Stühle, Garderobe. Einen Kühlschrank brauche ich nicht. Auch als Veganer kann man genussvoll essen. Erdbeeren und Salat pflanze ich auf dem Balkon an. Wenn ich reise, dann mit Rucksack und Zelt, ohne Kamera und Schnickschnack. Bei Freunden daheim mit tollen Fotos angeben gibt mir nichts. Das hat nichts mit Geiz zu tun - das einfache und entspannte Leben ist, was ich will.',
                             'image_url' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=256&h=256',
                             'answer' => '',
                             'points' => 0,
@@ -689,7 +689,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l1-person-b',
                             'type' => 'goethe_portrait',
                             'label' => 'b Katharina',
-                            'content' => "Die gesamte Debatte über die richtige Lebensweise nervt mich: Warum auf etwas verzichten? Dinge können die schönste Nebensache der Welt sein! Am Abend kehre ich gern in meine Wohnung heim und am Wochenende lade ich lieber Freunde ein, um ihnen Bilder von meinem letzten Urlaub zu zeigen, als mich beim Sport abzumühen. Viel brauche ich nicht, um mich in den Großstädten der Welt wohlzufühlen: ein bisschen Luxus im Hotel, interessante Ausstellungen und schick essen gehen. Viel nehme ich schon deswegen nicht mit, damit im Koffer genug Platz für die Einkäufe ist. Zu einem guten Steak sage ich nie nein. Gesund kann, muss Essen aber nicht sein - man lebt schließlich nur einmal. Mein Auto, ein Cabriolet, nutze ich jeden Tag beruflich, im Sommer am liebsten mit dem Dach offen. Bescheidenheit ist doch nur etwas für die Leute, die sich nichts leisten können.",
+                            'content' => 'Die gesamte Debatte über die richtige Lebensweise nervt mich: Warum auf etwas verzichten? Dinge können die schönste Nebensache der Welt sein! Am Abend kehre ich gern in meine Wohnung heim und am Wochenende lade ich lieber Freunde ein, um ihnen Bilder von meinem letzten Urlaub zu zeigen, als mich beim Sport abzumühen. Viel brauche ich nicht, um mich in den Großstädten der Welt wohlzufühlen: ein bisschen Luxus im Hotel, interessante Ausstellungen und schick essen gehen. Viel nehme ich schon deswegen nicht mit, damit im Koffer genug Platz für die Einkäufe ist. Zu einem guten Steak sage ich nie nein. Gesund kann, muss Essen aber nicht sein - man lebt schließlich nur einmal. Mein Auto, ein Cabriolet, nutze ich jeden Tag beruflich, im Sommer am liebsten mit dem Dach offen. Bescheidenheit ist doch nur etwas für die Leute, die sich nichts leisten können.',
                             'image_url' => 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=256&h=256',
                             'answer' => '',
                             'points' => 0,
@@ -698,7 +698,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l1-person-c',
                             'type' => 'goethe_portrait',
                             'label' => 'c Franzi',
-                            'content' => "Für mich ist es wichtig, sowohl gut zu mir als auch zu meiner Umwelt zu sein. Im Alltag versuche ich auf Fleisch zu verzichten und baue Kräuter am Fenster meines kleinen, aber feinen Appartements an. Ich genieße es, am Wochenende mit Freunden gut essen zu gehen, und wenn es mal nichts Vegetarisches gibt, esse ich ab und zu auch Fleisch. Zur Arbeit nehme ich am liebsten das Rad - das hält mich fit und ist nebenbei auch noch umweltfreundlich; bei Schnee und Regen sind dann aber doch die Öffentlichen angenehmer. Vielleicht mache ich irgendwann mal Carsharing, also Autos am Straßenrand mieten. Mit Geld hat das alles aber nichts zu tun. Es besteht für mich ein großer Unterschied zwischen Urlaub und Reisen: Im Urlaub gönne ich mir gerne etwas: Ein Sterne-Hotel oder einen Einkaufstrip. Auf Reisen jedoch will ich Neues entdecken. Da erkunde ich Länder am liebsten auf Wanderungen.",
+                            'content' => 'Für mich ist es wichtig, sowohl gut zu mir als auch zu meiner Umwelt zu sein. Im Alltag versuche ich auf Fleisch zu verzichten und baue Kräuter am Fenster meines kleinen, aber feinen Appartements an. Ich genieße es, am Wochenende mit Freunden gut essen zu gehen, und wenn es mal nichts Vegetarisches gibt, esse ich ab und zu auch Fleisch. Zur Arbeit nehme ich am liebsten das Rad - das hält mich fit und ist nebenbei auch noch umweltfreundlich; bei Schnee und Regen sind dann aber doch die Öffentlichen angenehmer. Vielleicht mache ich irgendwann mal Carsharing, also Autos am Straßenrand mieten. Mit Geld hat das alles aber nichts zu tun. Es besteht für mich ein großer Unterschied zwischen Urlaub und Reisen: Im Urlaub gönne ich mir gerne etwas: Ein Sterne-Hotel oder einen Einkaufstrip. Auf Reisen jedoch will ich Neues entdecken. Da erkunde ich Länder am liebsten auf Wanderungen.',
                             'image_url' => 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&q=80&w=256&h=256',
                             'answer' => '',
                             'points' => 0,
@@ -707,7 +707,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l1-person-d',
                             'type' => 'goethe_portrait',
                             'label' => 'd Nils',
-                            'content' => "Ich halte das für eine ziemlich deutsche Debatte! In keinem anderen Land wird so viel über das Thema „Richtig leben“ diskutiert. Geld ist nicht alles, aber kann nicht schaden; z. B. für Bio-Produkte: Ich selbst kaufe Fleisch und Wurst auf dem Bauernhof ein, nicht nur der Natur und der Gesundheit zuliebe, es schmeckt einfach besser, und viel Fleisch esse ich sowieso nicht. Der Versuch, einfach und natürlich zu leben, ist bei der Ernährung leider nicht immer kostengünstig. Das Thema „Auto“ sehe ich eher nicht ideologisch: Für mich ist es in erster Linie ein Fortbewegungsmittel, das manchmal notwendig, manchmal auch einfach nur bequem. Wegen des Verkehrs benutze ich oft die Öffentlichen oder das Rad. Ich habe eine Zwei-Zimmer-Wohnung in der Innenstadt und zwar in Flussnähe, der Blick aufs Wasser ist mir wichtig. Für meine Reisen habe ich ein Wohnmobil mit allem Luxus. Da ist man völlig frei und hat doch immer alles Nötige dabei!",
+                            'content' => 'Ich halte das für eine ziemlich deutsche Debatte! In keinem anderen Land wird so viel über das Thema „Richtig leben“ diskutiert. Geld ist nicht alles, aber kann nicht schaden; z. B. für Bio-Produkte: Ich selbst kaufe Fleisch und Wurst auf dem Bauernhof ein, nicht nur der Natur und der Gesundheit zuliebe, es schmeckt einfach besser, und viel Fleisch esse ich sowieso nicht. Der Versuch, einfach und natürlich zu leben, ist bei der Ernährung leider nicht immer kostengünstig. Das Thema „Auto“ sehe ich eher nicht ideologisch: Für mich ist es in erster Linie ein Fortbewegungsmittel, das manchmal notwendig, manchmal auch einfach nur bequem. Wegen des Verkehrs benutze ich oft die Öffentlichen oder das Rad. Ich habe eine Zwei-Zimmer-Wohnung in der Innenstadt und zwar in Flussnähe, der Blick aufs Wasser ist mir wichtig. Für meine Reisen habe ich ein Wohnmobil mit allem Luxus. Da ist man völlig frei und hat doch immer alles Nötige dabei!',
                             'image_url' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=256&h=256',
                             'answer' => '',
                             'points' => 0,
@@ -721,7 +721,7 @@ class TelcTemplateFactory
                         ['id' => 'goethe-b2-l1-7', 'type' => 'matching', 'label' => 'Aufgabe 7', 'instruction' => 'Wer nimmt auf Reisen nichts Überflüssiges mit?', 'answer' => 'a', 'points' => 1, 'options' => 'a,b,c,d'],
                         ['id' => 'goethe-b2-l1-8', 'type' => 'matching', 'label' => 'Aufgabe 8', 'instruction' => 'Für wen zählt beim Essen allein, etwas zu genießen?', 'answer' => 'b', 'points' => 1, 'options' => 'a,b,c,d'],
                         ['id' => 'goethe-b2-l1-9', 'type' => 'matching', 'label' => 'Aufgabe 9', 'instruction' => 'Wer mag sowohl Luxus als auch das einfache Leben?', 'answer' => 'c', 'points' => 1, 'options' => 'a,b,c,d'],
-                    ]
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-lesen-teil2',
@@ -770,7 +770,7 @@ class TelcTemplateFactory
                             'answer' => '',
                             'points' => 0,
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-lesen-teil3',
@@ -858,7 +858,7 @@ class TelcTemplateFactory
                             'options' => 'a|ihre Krankheit zu beschreiben.,b|Informationen über sich weiterzugeben.,c|auf Werbung der Gesundheitsindustrie zu reagieren.',
                             'points' => 1,
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-lesen-teil4',
@@ -879,7 +879,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l4-opinion-a',
                             'type' => 'goethe_portrait',
                             'label' => 'a Amelie, Bonn',
-                            'content' => "Es hört sich im ersten Moment vielleicht etwas überraschend an - aber gerade für berufstätige Eltern hat das digitale Nomadentum Pluspunkte: Man kann seinen Kindern die Welt zeigen und sich tagsüber die Zeit für sie nehmen, die sie brauchen; gearbeitet wird dann eben nachts.",
+                            'content' => 'Es hört sich im ersten Moment vielleicht etwas überraschend an - aber gerade für berufstätige Eltern hat das digitale Nomadentum Pluspunkte: Man kann seinen Kindern die Welt zeigen und sich tagsüber die Zeit für sie nehmen, die sie brauchen; gearbeitet wird dann eben nachts.',
                             'image_url' => '',
                             'answer' => '',
                             'points' => 0,
@@ -888,7 +888,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l4-opinion-b',
                             'type' => 'goethe_portrait',
                             'label' => 'b Eva, Berlin',
-                            'content' => "Die Gefahr, dass die eigene Leistung absinkt, ist einfach zu groß: Jede Arbeit braucht Struktur und das Gespräch mit Experten, um herauszufinden, ob man richtig liegt. Wenn jeder immer nur allein vor sich hin arbeitet, fehlt der Vergleich.",
+                            'content' => 'Die Gefahr, dass die eigene Leistung absinkt, ist einfach zu groß: Jede Arbeit braucht Struktur und das Gespräch mit Experten, um herauszufinden, ob man richtig liegt. Wenn jeder immer nur allein vor sich hin arbeitet, fehlt der Vergleich.',
                             'image_url' => '',
                             'answer' => '',
                             'points' => 0,
@@ -897,7 +897,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l4-opinion-c',
                             'type' => 'goethe_portrait',
                             'label' => 'c Inga, Hannover',
-                            'content' => "Auch wenn es unter den Jüngeren heutzutage Mode ist, sich als digitale Nomaden zu verstehen - wieso möchte keiner mehr fest an einem Ort verankert sein? Woher weiß man denn sonst, wohin man gehört?",
+                            'content' => 'Auch wenn es unter den Jüngeren heutzutage Mode ist, sich als digitale Nomaden zu verstehen - wieso möchte keiner mehr fest an einem Ort verankert sein? Woher weiß man denn sonst, wohin man gehört?',
                             'image_url' => '',
                             'answer' => '',
                             'points' => 0,
@@ -906,7 +906,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l4-opinion-d',
                             'type' => 'goethe_portrait',
                             'label' => 'd Steven, Greifswald',
-                            'content' => "Kaum jemand kann und will ständig allein am Computer vor sich hinarbeiten. Das Arbeiten in flexiblen Büros wäre eine Möglichkeit, einen ständigen Austausch möglich zu machen, fachlich wie menschlich. Aber man würde dabei hoffentlich nicht die Freiheit verlieren, weiterzuziehen, wenn und wann man will.",
+                            'content' => 'Kaum jemand kann und will ständig allein am Computer vor sich hinarbeiten. Das Arbeiten in flexiblen Büros wäre eine Möglichkeit, einen ständigen Austausch möglich zu machen, fachlich wie menschlich. Aber man würde dabei hoffentlich nicht die Freiheit verlieren, weiterzuziehen, wenn und wann man will.',
                             'image_url' => '',
                             'answer' => '',
                             'points' => 0,
@@ -915,7 +915,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l4-opinion-e',
                             'type' => 'goethe_portrait',
                             'label' => 'e Jan, Chemnitz',
-                            'content' => "Diese Arbeitsform funktioniert nur ohne Familie und Verantwortung. Wer hat schon einen Partner, der ständig umziehen kann und will, weil er selbst digitaler Nomade ist? Und sobald eine gute Schulbildung für den Nachwuchs gesichert werden muss, hat dieses Arbeitsmodell mehr Nachteile als Vorteile.",
+                            'content' => 'Diese Arbeitsform funktioniert nur ohne Familie und Verantwortung. Wer hat schon einen Partner, der ständig umziehen kann und will, weil er selbst digitaler Nomade ist? Und sobald eine gute Schulbildung für den Nachwuchs gesichert werden muss, hat dieses Arbeitsmodell mehr Nachteile als Vorteile.',
                             'image_url' => '',
                             'answer' => '',
                             'points' => 0,
@@ -924,7 +924,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l4-opinion-f',
                             'type' => 'goethe_portrait',
                             'label' => 'f Sarah, München',
-                            'content' => "Es darf nicht vergessen werden, dass auch das Berufsleben aus mehr als nur Arbeit besteht: Mit wem wird die Mittagspause verbracht? Wer hat schon Lust, immer allein zu sein? Wer hat schon die Kraft, sich alle paar Wochen einen neuen Freundeskreis aufzubauen?",
+                            'content' => 'Es darf nicht vergessen werden, dass auch das Berufsleben aus mehr als nur Arbeit besteht: Mit wem wird die Mittagspause verbracht? Wer hat schon Lust, immer allein zu sein? Wer hat schon die Kraft, sich alle paar Wochen einen neuen Freundeskreis aufzubauen?',
                             'image_url' => '',
                             'answer' => '',
                             'points' => 0,
@@ -933,7 +933,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l4-opinion-g',
                             'type' => 'goethe_portrait',
                             'label' => 'g Janice, Magdeburg',
-                            'content' => "Zeit- und raumflexibel zu arbeiten, wo und wann auch immer man will - vom Laptop, Smartphone oder Tablet aus -, nennt man digitales Nomadentum. Das mag für manche zwar etwas traurig klingen, nach Verlust der Heimat, aber es ist das einzige dem 21. Jahrhundert angemessene Arbeitsmodell.",
+                            'content' => 'Zeit- und raumflexibel zu arbeiten, wo und wann auch immer man will - vom Laptop, Smartphone oder Tablet aus -, nennt man digitales Nomadentum. Das mag für manche zwar etwas traurig klingen, nach Verlust der Heimat, aber es ist das einzige dem 21. Jahrhundert angemessene Arbeitsmodell.',
                             'image_url' => '',
                             'answer' => '',
                             'points' => 0,
@@ -942,7 +942,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-l4-opinion-h',
                             'type' => 'goethe_portrait',
                             'label' => 'h Katharina, Stuttgart',
-                            'content' => "Bei allen Vorzügen besteht doch die ständige Angst, zu viel zu reisen und zu wenig zu schaffen. Es ist letztlich alles eine Frage des Charakters: Um sein eigener Chef zu sein, ist auf jeden Fall ein hohes Maß an Selbstorganisation und Selbstdisziplin notwendig.",
+                            'content' => 'Bei allen Vorzügen besteht doch die ständige Angst, zu viel zu reisen und zu wenig zu schaffen. Es ist letztlich alles eine Frage des Charakters: Um sein eigener Chef zu sein, ist auf jeden Fall ein hohes Maß an Selbstorganisation und Selbstdisziplin notwendig.',
                             'image_url' => '',
                             'answer' => '',
                             'points' => 0,
@@ -953,7 +953,7 @@ class TelcTemplateFactory
                         ['id' => 'goethe-b2-l4-25', 'type' => 'matching', 'label' => 'Aufgabe 25', 'instruction' => 'Leben als digitaler Nomade eignet sich besonders für Singles', 'answer' => 'e', 'points' => 1, 'options' => 'a,b,c,d,e,f,g,h'],
                         ['id' => 'goethe-b2-l4-26', 'type' => 'matching', 'label' => 'Aufgabe 26', 'instruction' => 'Wichtig ist der Austausch mit Kollegen auch außerhalb der Arbeit', 'answer' => 'f', 'points' => 1, 'options' => 'a,b,c,d,e,f,g,h'],
                         ['id' => 'goethe-b2-l4-27', 'type' => 'matching', 'label' => 'Aufgabe 27', 'instruction' => 'Qualitätssteigerung durch den Austausch unter Kollegen', 'answer' => 'b', 'points' => 1, 'options' => 'a,b,c,d,e,f,g,h'],
-                    ]
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-lesen-teil5',
@@ -1008,7 +1008,7 @@ class TelcTemplateFactory
                             'options' => 'a,b,c,d,e,f,g,h',
                             'points' => 1,
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-hoeren-intro',
@@ -1024,8 +1024,8 @@ class TelcTemplateFactory
                             'instruction' => 'circa 40 Minuten',
                             'answer' => '',
                             'points' => 0,
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-hoeren-teil1',
@@ -1051,7 +1051,7 @@ class TelcTemplateFactory
                         ['id' => 'goethe-b2-h1-8', 'type' => 'multiple_choice', 'label' => 'Aufgabe 8', 'instruction' => 'Nummernschilder bei Fahrrädern ...', 'answer' => 'a', 'options' => 'a|lehnen Experten ab.,b|halten Experten für eine gute Idee.,c|möchten Experten ausprobieren.', 'points' => 1],
                         ['id' => 'goethe-b2-h1-9', 'type' => 'matching', 'label' => 'Aufgabe 9', 'instruction' => 'Die beiden Freunde unterhalten sich über einen Professor.', 'answer' => 'falsch', 'options' => 'richtig,falsch', 'points' => 1],
                         ['id' => 'goethe-b2-h1-10', 'type' => 'multiple_choice', 'label' => 'Aufgabe 10', 'instruction' => 'Die beiden Freunde brauchen noch ein Thema für ...', 'answer' => 'a', 'options' => 'a|eine Präsentation.,b|einen Aufsatz.,c|eine Seminararbeit.', 'points' => 1],
-                    ]
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-hoeren-teil2',
@@ -1073,7 +1073,7 @@ class TelcTemplateFactory
                         ['id' => 'goethe-b2-h2-14', 'type' => 'multiple_choice', 'label' => 'Aufgabe 14', 'instruction' => 'In einigen Ländern isst man heutzutage Insekten, weil ..', 'answer' => 'b', 'options' => 'a|dort Viehbetriebe nicht rentabel sind.,b|es dort schon länger üblich ist.,c|es dort viele verschiedene Insekten gibt.', 'points' => 1],
                         ['id' => 'goethe-b2-h2-15', 'type' => 'multiple_choice', 'label' => 'Aufgabe 15', 'instruction' => 'Was ist der Vorteil einer Landwirtschaft in städtischen Gebieten?', 'answer' => 'a', 'options' => 'a|Der Wasserverbrauch sinkt.,b|Man spart Strom.,c|Sie ist für alle Nutzpflanzen geeignet.', 'points' => 1],
                         ['id' => 'goethe-b2-h2-16', 'type' => 'multiple_choice', 'label' => 'Aufgabe 16', 'instruction' => 'Was bedeutet „individualisierte Landwirtschaft“?', 'answer' => 'a', 'options' => 'a|Die Produktion passt sich an das einzelne Tier an.,b|Computer zeigen an, wie viel Milch eine Kuh gegeben hat.,c|Die Qualität der Milchprodukte steigt.', 'points' => 1],
-                    ]
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-hoeren-teil3',
@@ -1093,7 +1093,7 @@ class TelcTemplateFactory
                             'id' => 'goethe-b2-h3-profiles',
                             'type' => 'text',
                             'label' => 'Sprecherprofile',
-                            'content' => "a Moderator|b Frau Gerster, Studentin|c Frau Lücke, Seniorin",
+                            'content' => 'a Moderator|b Frau Gerster, Studentin|c Frau Lücke, Seniorin',
                             'answer' => '',
                             'points' => 0,
                         ],
@@ -1103,7 +1103,7 @@ class TelcTemplateFactory
                         ['id' => 'goethe-b2-h3-20', 'type' => 'matching', 'label' => 'Aufgabe 20', 'instruction' => 'Wohngemeinschaften für Menschen verschiedenen Alters sind neu.', 'answer' => 'a', 'options' => 'a,b,c', 'points' => 1],
                         ['id' => 'goethe-b2-h3-21', 'type' => 'matching', 'label' => 'Aufgabe 21', 'instruction' => 'Wohngemeinschaften können für die Bewohner nützlich sein.', 'answer' => 'c', 'options' => 'a,b,c', 'points' => 1],
                         ['id' => 'goethe-b2-h3-22', 'type' => 'matching', 'label' => 'Aufgabe 22', 'instruction' => 'Wohngemeinschaften sind für Senioren passender als für Studenten.', 'answer' => 'b', 'options' => 'a,b,c', 'points' => 1],
-                    ]
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-hoeren-teil4',
@@ -1127,7 +1127,7 @@ class TelcTemplateFactory
                         ['id' => 'goethe-b2-h4-28', 'type' => 'multiple_choice', 'label' => 'Aufgabe 28', 'instruction' => 'Laut Herrn Kinigard sind gesetzliche Ruhepausen ..', 'answer' => 'b', 'options' => 'a|unnötig.,b|wichtig.,c|zu stark reguliert.', 'points' => 1],
                         ['id' => 'goethe-b2-h4-29', 'type' => 'multiple_choice', 'label' => 'Aufgabe 29', 'instruction' => 'Wozu kann Zeitdruck führen? Zu ...', 'answer' => 'a', 'options' => 'a|hervorragenden Ergebnissen.,b|langen Blockaden.,c|negativem Stress.', 'points' => 1],
                         ['id' => 'goethe-b2-h4-30', 'type' => 'multiple_choice', 'label' => 'Aufgabe 30', 'instruction' => 'Herr Kinigard rät dazu, ..', 'answer' => 'a', 'options' => 'a|Ablenkungen zu vermeiden.,b|auf Einflüsse von außen nicht zu reagieren.,c|E-Mail-Korrespondenz zu reduzieren.', 'points' => 1],
-                    ]
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-schreiben-intro',
@@ -1142,8 +1142,8 @@ class TelcTemplateFactory
                             'content' => "Kandidatenblätter\nSchreiben\n75 Minuten\n\nDas Modul Schreiben hat zwei Teile.\nIn Teil 1 schreiben Sie einen Forumsbeitrag.\nIn Teil 2 schreiben Sie eine Nachricht.\nSie können mit jeder Aufgabe beginnen.\nEs werden nur die Lösungen und Texte auf dem Antwortbogen bewertet.\nBitte schreiben Sie mit einem blauen oder schwarzen Stift.\nHilfsmittel (z. B. Wörterbücher, Handys/mobile Endgeräte) sind nicht erlaubt.",
                             'answer' => '',
                             'points' => 0,
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-schreiben-teil1',
@@ -1166,8 +1166,8 @@ class TelcTemplateFactory
                             'instruction' => 'Forumsbeitrag zur Verschmutzung der Umwelt (ca. 150 Wörter)',
                             'answer' => '',
                             'points' => 15,
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
                 [
                     'id' => 'goethe-b2-schreiben-teil2',
@@ -1190,10 +1190,10 @@ class TelcTemplateFactory
                             'instruction' => 'Nachricht an Ihren Vorgesetzten, Herrn Ebert (ca. 100 Wörter)',
                             'answer' => '',
                             'points' => 10,
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }

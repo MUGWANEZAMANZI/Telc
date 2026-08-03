@@ -437,7 +437,7 @@ class ExamDashboard extends Component
         ]);
 
         $path = $this->imageUpload->store('exam-images', 'public');
-        $url = asset('storage/' . $path);
+        $url = asset('storage/'.$path);
 
         if ($field === 'image_url') {
             $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['image_url'] = $url;
