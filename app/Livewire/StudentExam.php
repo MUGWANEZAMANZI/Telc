@@ -1509,9 +1509,15 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             } else {
                 $level = $this->template['level'] ?? 'C1';
                 $provider = $this->template['exam_provider'] ?? 'telc';
-                $section = collect($this->template['sections'] ?? [])->first(function($s) use ($elId) {
-                    return collect($s['elements'] ?? [])->contains('id', $elId);
-                });
+                $section = null;
+                foreach ($this->template['sections'] ?? [] as $s) {
+                    foreach ($s['elements'] ?? [] as $el) {
+                        if (($el['id'] ?? '') === $elId) {
+                            $section = $s;
+                            break 2;
+                        }
+                    }
+                }
                 $feedback = $this->generateSampleWritingAnswer($provider, $level, $element, $section);
                 $score = 0;
             }
@@ -1798,6 +1804,10 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
         $this->template = $data;
     }
 
+    /**
+     * @param  array<string, mixed>  $element
+     * @param  array<string, mixed>|null  $section
+     */
     private function generateSampleWritingAnswer(string $provider, string $level, array $element, ?array $section = null): string
     {
         $instruction = $element['instruction'] ?? '';
@@ -1819,7 +1829,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             ."Erstelle eine perfekte Musterantwort (Modellantwort) auf Deutsch für diese Aufgabe.\n"
             ."Deine Antwort MUSS genau so beginnen:\n"
             ."\"Der Prüfling hat keinen Text eingereicht. So hätte eine mögliche Musterantwort für diese Aufgabe ausgesehen:\n\n\""
-            ."Schreibe danach die vollständige Musterantwort.";
+            .'Schreibe danach die vollständige Musterantwort.';
 
         try {
             $model = Gemini::generativeModel(model: config('gemini.model'));
@@ -1827,7 +1837,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
 
             return $resp->text();
         } catch (\Throwable $e) {
-            return "Der Prüfling hat keinen Text eingereicht. (Musterantwort konnte aufgrund eines Fehlers nicht generiert werden: ".$e->getMessage().")";
+            return 'Der Prüfling hat keinen Text eingereicht. (Musterantwort konnte aufgrund eines Fehlers nicht generiert werden: '.$e->getMessage().')';
         }
     }
 }

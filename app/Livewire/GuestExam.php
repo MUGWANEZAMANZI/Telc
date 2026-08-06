@@ -547,9 +547,15 @@ class GuestExam extends Component
                     } else {
                         $lvl = $this->template['level'] ?? 'C1';
                         $provider = $this->template['exam_provider'] ?? 'telc';
-                        $section = collect($sections)->first(function($s) use ($elId) {
-                            return collect($s['elements'] ?? [])->contains('id', $elId);
-                        });
+                        $section = null;
+                        foreach ($sections as $s) {
+                            foreach ($s['elements'] ?? [] as $el) {
+                                if (($el['id'] ?? '') === $elId) {
+                                    $section = $s;
+                                    break 2;
+                                }
+                            }
+                        }
                         $feedback = $this->generateSampleWritingAnswer($provider, $lvl, $element, $section);
                         $score = 0;
                     }
@@ -1272,6 +1278,10 @@ class GuestExam extends Component
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $element
+     * @param  array<string, mixed>|null  $section
+     */
     private function generateSampleWritingAnswer(string $provider, string $level, array $element, ?array $section = null): string
     {
         $instruction = $element['instruction'] ?? '';
@@ -1293,7 +1303,7 @@ class GuestExam extends Component
             ."Erstelle eine perfekte Musterantwort (Modellantwort) auf Deutsch für diese Aufgabe.\n"
             ."Deine Antwort MUSS genau so beginnen:\n"
             ."\"Der Prüfling hat keinen Text eingereicht. So hätte eine mögliche Musterantwort für diese Aufgabe ausgesehen:\n\n\""
-            ."Schreibe danach die vollständige Musterantwort.";
+            .'Schreibe danach die vollständige Musterantwort.';
 
         try {
             $model = Gemini::generativeModel(model: config('gemini.model'));
@@ -1301,7 +1311,7 @@ class GuestExam extends Component
 
             return $resp->text();
         } catch (\Throwable $e) {
-            return "Der Prüfling hat keinen Text eingereicht. (Musterantwort konnte aufgrund eines Fehlers nicht generiert werden: ".$e->getMessage().")";
+            return 'Der Prüfling hat keinen Text eingereicht. (Musterantwort konnte aufgrund eines Fehlers nicht generiert werden: '.$e->getMessage().')';
         }
     }
 }
