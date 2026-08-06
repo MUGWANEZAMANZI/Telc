@@ -174,16 +174,32 @@
                         <div class="hv-answer-row">
                             <span class="hv-qnum">{{ $hvQ }}</span>
                             <span class="hv-prompt">{{ $hvStatement }}</span>
-                            <select wire:model.live="answers.{{ $task['id'] }}" class="matching-select hv-select @if($selCls) {{ $selCls }} @endif" @disabled($result)>
+                            @php
+                                $selectBorder = '#cbd5e1';
+                                if ($result && $detail) {
+                                    $selectBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                                }
+                            @endphp
+                            <select wire:model.live="answers.{{ $task['id'] }}" class="matching-select hv-select" @disabled($result)
+                                    style="border: 1.5px solid {{ $selectBorder }}; border-radius: 6px; padding: 0.25rem 0.5rem; background: #ffffff; font-weight: 700; outline: none;">
                                 <option value="">—</option>
                                 @foreach ($optList as $opt)
                                     <option value="{{ $opt }}" @selected($current === $opt)>{{ $opt }}</option>
                                 @endforeach
                             </select>
                             @if ($result && $detail)
-                                <span class="hv-feedback" style="color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }};">
-                                    {{ $detail['correct'] ? '✓' : '✗ (Lösung: ' . $detail['expected'] . ')' }}
-                                </span>
+                                @if ($detail['correct'])
+                                    <span class="hv-feedback" style="color: #16a34a; font-weight: 700;">
+                                        ✓ Richtig
+                                    </span>
+                                @else
+                                    <span class="hv-feedback" style="color: #dc2626; font-weight: 700;">
+                                        ✗ Falsch
+                                    </span>
+                                    <span class="hv-feedback" style="color: #16a34a; font-weight: 700; margin-left: 0.25rem;">
+                                        (Lösung: {{ strtoupper($detail['expected']) }})
+                                    </span>
+                                @endif
                             @endif
                         </div>
                     @endforeach

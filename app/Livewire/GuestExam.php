@@ -544,6 +544,14 @@ class GuestExam extends Component
                             $score = (int) ($maxPoints / 2);
                             $feedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
                         }
+                    } else {
+                        $lvl = $this->template['level'] ?? 'C1';
+                        $provider = $this->template['exam_provider'] ?? 'telc';
+                        $section = collect($sections)->first(function($s) use ($elId) {
+                            return collect($s['elements'] ?? [])->contains('id', $elId);
+                        });
+                        $feedback = $this->generateSampleWritingAnswer($provider, $lvl, $element, $section);
+                        $score = 0;
                     }
 
                     $writingDetails[] = [
@@ -680,6 +688,11 @@ class GuestExam extends Component
                     $score = (int) ($maxPoints / 2);
                     $feedback = 'Fehler bei der automatischen Bewertung: '.$e->getMessage();
                 }
+            } else {
+                $lvl = $this->template['level'] ?? 'C1';
+                $provider = $this->template['exam_provider'] ?? 'telc';
+                $feedback = $this->generateSampleWritingAnswer($provider, $lvl, $element, $currentSection);
+                $score = 0;
             }
 
             $writingDetails[] = [
@@ -1256,6 +1269,39 @@ class GuestExam extends Component
             $this->result = null;
             $this->started = true;
             $this->remainingSeconds = max((int) ($sections[$this->activeSectionIndex]['minutes'] ?? 1), 1) * 60;
+        }
+    }
+
+    private function generateSampleWritingAnswer(string $provider, string $level, array $element, ?array $section = null): string
+    {
+        $instruction = $element['instruction'] ?? '';
+        $label = $element['label'] ?? '';
+
+        $contextText = '';
+        if ($section && isset($section['elements'])) {
+            foreach ($section['elements'] as $el) {
+                if (($el['type'] ?? '') === 'text' && ! empty($el['content'])) {
+                    $contextText .= "\n".$el['content'];
+                }
+            }
+        }
+
+        $prompt = "Du bist ein offizieller {$provider} {$level} Prüfer für die schriftliche Prüfung.\n"
+            ."Der Prüfling hat keinen Text für die folgende Schreibaufgabe eingereicht.\n\n"
+            ."Aufgabe: {$label} - {$instruction}\n"
+            .($contextText ? "Zusätzlicher Kontext/Details der Aufgabe:\n{$contextText}\n\n" : '')
+            ."Erstelle eine perfekte Musterantwort (Modellantwort) auf Deutsch für diese Aufgabe.\n"
+            ."Deine Antwort MUSS genau so beginnen:\n"
+            ."\"Der Prüfling hat keinen Text eingereicht. So hätte eine mögliche Musterantwort für diese Aufgabe ausgesehen:\n\n\""
+            ."Schreibe danach die vollständige Musterantwort.";
+
+        try {
+            $model = Gemini::generativeModel(model: config('gemini.model'));
+            $resp = $model->generateContent($prompt);
+
+            return $resp->text();
+        } catch (\Throwable $e) {
+            return "Der Prüfling hat keinen Text eingereicht. (Musterantwort konnte aufgrund eines Fehlers nicht generiert werden: ".$e->getMessage().")";
         }
     }
 }

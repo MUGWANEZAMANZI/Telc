@@ -49,8 +49,13 @@
                             $detail = collect($result['details'])->firstWhere('id', $elementId);
                         @endphp
                         @if ($detail)
-                            <span style="margin-left: auto; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }}; font-size: 0.85rem; white-space: nowrap; padding-left: 1rem;">
-                                {{ $detail['correct'] ? '✓' : '✗ (Lösung: ' . strtoupper($detail['expected']) . ')' }}
+                            <span style="margin-left: auto; font-weight: bold; font-size: 0.85rem; white-space: nowrap; padding-left: 1rem;">
+                                @if ($detail['correct'])
+                                    <span style="color: #16a34a;">✓ Richtig</span>
+                                @else
+                                    <span style="color: #dc2626;">✗ Falsch</span>
+                                    <span style="color: #16a34a; margin-left: 0.25rem;">(Lösung: {{ strtoupper($detail['expected']) }})</span>
+                                @endif
                             </span>
                         @endif
                     @endif
