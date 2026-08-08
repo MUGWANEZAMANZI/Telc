@@ -1001,9 +1001,33 @@ class ExamDashboard extends Component
         $this->started = false;
         $sections = $this->template['sections'] ?? [];
         $currentSection = $sections[$this->activeSection] ?? null;
-        if ($currentSection) {
-            $this->result = app(ExamGrader::class)->grade([$currentSection], $this->answers);
+        if (! $currentSection) {
+            return;
         }
+
+        $newGradedResult = app(ExamGrader::class)->grade([$currentSection], $this->answers);
+
+        if (empty($this->result) || ! isset($this->result['details'])) {
+            $this->result = $newGradedResult;
+
+            return;
+        }
+
+        // Merge instead of replacing so previously completed sections keep their answers/highlights.
+        $existingDetails = collect($this->result['details'])->keyBy('id');
+        $newDetails = collect($newGradedResult['details'])->keyBy('id');
+
+        $this->result['details'] = $existingDetails->merge($newDetails)->values()->all();
+
+        $earned = 0;
+        $possible = 0;
+        foreach ($this->result['details'] as $detail) {
+            $possible += (float) ($detail['max_points'] ?? 0);
+            $earned += (float) ($detail['points'] ?? 0);
+        }
+        $this->result['earned'] = round($earned, 2);
+        $this->result['possible'] = round($possible, 2);
+        $this->result['percentage'] = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0;
     }
 
     public function exitExam(): void

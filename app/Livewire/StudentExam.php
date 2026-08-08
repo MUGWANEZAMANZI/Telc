@@ -143,7 +143,8 @@ class StudentExam extends Component
                         }
 
                         $sectionToGrade = $currentSection;
-                        if ($hasInlineGap) {
+                        $provider = $record->exam_provider ?? 'telc';
+                        if ($provider !== 'goethe' && $hasInlineGap) {
                             $inlineElements = [];
                             foreach ($currentSection['elements'] ?? [] as $el) {
                                 if (($el['type'] ?? '') === 'inline_gap') {
@@ -556,6 +557,7 @@ class StudentExam extends Component
             $this->unchosenTopic = $stored['_unchosenTopic'] ?? '';
             $this->aiGeneratedTopics = $stored['_aiGeneratedTopics'] ?? [];
             $this->completedSectionIds = $stored['_completed_sections'] ?? [];
+            $this->result = $stored['_result'] ?? null;
             $status = $this->getTemplateFreeStatus($record);
             $this->activeSection = min($enrollment->active_section, $status['is_free'] ? ($status['free_sections'] - 1) : 999);
             $this->remainingSeconds = $enrollment->remaining_seconds ?? 0;
@@ -654,7 +656,9 @@ class StudentExam extends Component
         }
 
         $isPaidExam = $this->hasActiveSubscription() || $this->isFullyEnrolled($this->selectedTemplateId);
-        if (! $isPaidExam) {
+        $sectionId = $this->template['sections'][$index]['id'] ?? null;
+        $isCompleted = in_array($sectionId, $this->completedSectionIds, true);
+        if (! $isPaidExam && ! $isCompleted) {
             $this->result = null;
         }
 
@@ -693,6 +697,7 @@ class StudentExam extends Component
             $storage['_unchosenTopic'] = $this->unchosenTopic;
             $storage['_aiGeneratedTopics'] = $this->aiGeneratedTopics;
             $storage['_completed_sections'] = $this->completedSectionIds;
+            $storage['_result'] = $this->result;
 
             ExamEnrollment::query()
                 ->where('user_id', Auth::id())
@@ -927,8 +932,14 @@ class StudentExam extends Component
             }
         }
 
-        // Append generated component specifics safely
-        $this->result['details'] = array_merge($this->result['details'] ?? [], $writingDetails, $speakingDetails);
+        // Append generated component specifics safely keying by ID to avoid duplicates!
+        $allDetails = collect($this->result['details'] ?? [])->keyBy('id');
+        $newWriting = collect($writingDetails)->keyBy('id');
+        $newSpeaking = collect($speakingDetails)->keyBy('id');
+
+        $this->result['details'] = $allDetails->merge($newWriting)->merge($newSpeaking)->values()->all();
+
+        $this->result = $this->calculateFinalResult($this->result);
 
         $this->submitting = false;
     }
@@ -1679,12 +1690,34 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
         $writtenEarned = 0;
         $possible = 0;
 
+        $writingEarnedSum = 0;
+        $writingPossibleSum = 0;
+        $writingCount = 0;
+
         foreach ($result['details'] as $detail) {
             if (str_contains($detail['id'], '-SP-') || str_contains(strtolower($detail['id']), '-sp-')) {
                 continue; // Do not count speaking marks in total paper format exam
             }
-            $possible += $detail['max_points'];
-            $writtenEarned += $detail['points'];
+            if (str_contains($detail['id'], '-WRITE-') || str_contains(strtolower($detail['id']), '-write-')) {
+                $writingEarnedSum += $detail['points'];
+                $writingPossibleSum += $detail['max_points'];
+                $writingCount++;
+            } else {
+                $possible += $detail['max_points'];
+                $writtenEarned += $detail['points'];
+            }
+        }
+
+        if ($writingCount > 0) {
+            if ($writingPossibleSum > 0) {
+                $writingEarned = ($writingEarnedSum / $writingPossibleSum) * 48;
+                $writingPossible = 48;
+            } else {
+                $writingEarned = 0;
+                $writingPossible = 0;
+            }
+            $possible += $writingPossible;
+            $writtenEarned += $writingEarned;
         }
 
         $earned = $writtenEarned;
@@ -1706,11 +1739,11 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             }
         }
 
-        $result['earned'] = $earned;
-        $result['possible'] = $possible;
+        $result['earned'] = round($earned, 2);
+        $result['possible'] = round($possible, 2);
         $result['percentage'] = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0;
-        $result['written_earned'] = $writtenEarned;
-        $result['written_max'] = $possible;
+        $result['written_earned'] = round($writtenEarned, 2);
+        $result['written_max'] = round($possible, 2);
         $result['oral_earned'] = 0;
         $result['oral_max'] = 0;
         $result['passed'] = $passed;
@@ -1755,6 +1788,65 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             $data['sections'] = $sections;
         }
         $this->template = $data;
+        $this->initializeMissingAnswers();
+    }
+
+    private function initializeMissingAnswers(): void
+    {
+        if (empty($this->template)) {
+            return;
+        }
+
+        foreach ($this->template['sections'] ?? [] as $section) {
+            foreach ($section['elements'] ?? [] as $element) {
+                $elId = $element['id'] ?? null;
+                if (! $elId) {
+                    continue;
+                }
+
+                $type = $element['type'] ?? '';
+                
+                if ($type === 'inline_gap') {
+                    if (! isset($this->answers[$elId]) || ! is_array($this->answers[$elId])) {
+                        $this->answers[$elId] = [];
+                    }
+                    $gaps = $this->gapsFor($element);
+                    foreach ($gaps as $gapIdx => $gap) {
+                        if (! isset($this->answers[$elId][$gapIdx])) {
+                            $this->answers[$elId][$gapIdx] = '';
+                        }
+                    }
+                } elseif ($type === 'interactive_text') {
+                    if (! isset($this->answers[$elId]) || ! is_array($this->answers[$elId])) {
+                        $this->answers[$elId] = [];
+                    }
+                    $gaps = $element['gaps'] ?? [];
+                    foreach ($gaps as $gapId => $gapDef) {
+                        if (! isset($this->answers[$elId][$gapId])) {
+                            $this->answers[$elId][$gapId] = '';
+                        }
+                    }
+                } else {
+                    if (! array_key_exists($elId, $this->answers)) {
+                        $this->answers[$elId] = '';
+                    }
+                }
+            }
+        }
+
+        // Hydrate C1 Reading Teil 2 & Teil 4 keys explicitly to make sure they are always present on the frontend
+        for ($i = 9; $i <= 15; $i++) {
+            $key = 'C1-LV2-' . $i;
+            if (! array_key_exists($key, $this->answers)) {
+                $this->answers[$key] = '';
+            }
+        }
+        for ($i = 24; $i <= 30; $i++) {
+            $key = 'C1-LV4-' . $i;
+            if (! array_key_exists($key, $this->answers)) {
+                $this->answers[$key] = '';
+            }
+        }
     }
 
     /**

@@ -168,6 +168,7 @@ class GuestExam extends Component
         $data['sections'] = $sections;
         $data['exam_provider'] = $record->exam_provider ?? 'telc';
         $this->template = $data;
+        $this->initializeMissingAnswers();
 
         $this->loadExamCountFromCookie();
 
@@ -180,6 +181,64 @@ class GuestExam extends Component
             $this->recalculateRemaining();
         }
         $this->loadSpeakingTopics();
+    }
+
+    private function initializeMissingAnswers(): void
+    {
+        if (empty($this->template)) {
+            return;
+        }
+
+        foreach ($this->template['sections'] ?? [] as $section) {
+            foreach ($section['elements'] ?? [] as $element) {
+                $elId = $element['id'] ?? null;
+                if (! $elId) {
+                    continue;
+                }
+
+                $type = $element['type'] ?? '';
+                
+                if ($type === 'inline_gap') {
+                    if (! isset($this->answers[$elId]) || ! is_array($this->answers[$elId])) {
+                        $this->answers[$elId] = [];
+                    }
+                    $gaps = $this->gapsFor($element);
+                    foreach ($gaps as $gapIdx => $gap) {
+                        if (! isset($this->answers[$elId][$gapIdx])) {
+                            $this->answers[$elId][$gapIdx] = '';
+                        }
+                    }
+                } elseif ($type === 'interactive_text') {
+                    if (! isset($this->answers[$elId]) || ! is_array($this->answers[$elId])) {
+                        $this->answers[$elId] = [];
+                    }
+                    $gaps = $element['gaps'] ?? [];
+                    foreach ($gaps as $gapId => $gapDef) {
+                        if (! isset($this->answers[$elId][$gapId])) {
+                            $this->answers[$elId][$gapId] = '';
+                        }
+                    }
+                } else {
+                    if (! array_key_exists($elId, $this->answers)) {
+                        $this->answers[$elId] = '';
+                    }
+                }
+            }
+        }
+
+        // Hydrate C1 Reading Teil 2 & Teil 4 keys explicitly to make sure they are always present on the frontend
+        for ($i = 9; $i <= 15; $i++) {
+            $key = 'C1-LV2-' . $i;
+            if (! array_key_exists($key, $this->answers)) {
+                $this->answers[$key] = '';
+            }
+        }
+        for ($i = 24; $i <= 30; $i++) {
+            $key = 'C1-LV4-' . $i;
+            if (! array_key_exists($key, $this->answers)) {
+                $this->answers[$key] = '';
+            }
+        }
     }
 
     public function loadCompletedFromCookie(): void
@@ -448,6 +507,115 @@ class GuestExam extends Component
         $this->nextSectionIndex = null;
         $this->started = true;
         $this->remainingSeconds = max((int) ($sections[$index]['minutes'] ?? 1), 1) * 60;
+
+        $this->restoreAttemptState();
+    }
+
+    private function restoreAttemptState(): void
+    {
+        if (! $this->selectedTemplateId) {
+            $this->answers = [];
+            $this->result = null;
+
+            return;
+        }
+
+        $attempt = ExamAttempt::query()
+            ->where('exam_template_id', $this->selectedTemplateId)
+            ->whereNull('user_id')
+            ->latest('id')
+            ->first();
+
+        if (! $attempt) {
+            $this->answers = [];
+            $this->result = null;
+
+            return;
+        }
+
+        $this->answers = (array) ($attempt->answers ?? []);
+        $this->result = (array) ($attempt->result ?? []);
+    }
+
+    private function accumulatedAnswers(): array
+    {
+        if (! $this->selectedTemplateId) {
+            return $this->answers;
+        }
+
+        $latest = ExamAttempt::query()
+            ->where('exam_template_id', $this->selectedTemplateId)
+            ->whereNull('user_id')
+            ->latest('id')
+            ->first();
+
+        if (! $latest) {
+            return $this->answers;
+        }
+
+        return array_merge((array) ($latest->answers ?? []), $this->answers);
+    }
+
+    private function persistGuestAttempt(): void
+    {
+        $latest = ExamAttempt::query()
+            ->where('exam_template_id', $this->selectedTemplateId)
+            ->whereNull('user_id')
+            ->latest('id')
+            ->first();
+
+        $answers = $latest ? array_merge((array) ($latest->answers ?? []), $this->answers) : $this->answers;
+        $result = $this->result;
+
+        if ($latest && ! empty($latest->result['details'])) {
+            $existing = collect($latest->result['details'])->keyBy('id');
+            $current = collect($this->result['details'] ?? [])->keyBy('id');
+            $result['details'] = $existing->merge($current)->values()->all();
+
+            $result = $this->normalizeGuestResultTotals($result);
+        }
+
+        ExamAttempt::create([
+            'exam_template_id' => $this->selectedTemplateId,
+            'user_id' => null,
+            'answers' => $answers,
+            'result' => $result,
+            'started_at' => now(),
+            'submitted_at' => now(),
+        ]);
+    }
+
+    private function normalizeGuestResultTotals(array $result): array
+    {
+        $writtenEarned = 0;
+        $possible = 0;
+        $writingEarnedSum = 0;
+        $writingPossibleSum = 0;
+        $writingCount = 0;
+
+        foreach ($result['details'] as $detail) {
+            if (str_contains($detail['id'], '-WRITE-') || str_contains(strtolower($detail['id']), '-write-')) {
+                $writingEarnedSum += (float) ($detail['points'] ?? 0);
+                $writingPossibleSum += (float) ($detail['max_points'] ?? 0);
+                $writingCount++;
+            } else {
+                $possible += (float) ($detail['max_points'] ?? 0);
+                $writtenEarned += (float) ($detail['points'] ?? 0);
+            }
+        }
+
+        if ($writingCount > 0) {
+            if ($writingPossibleSum > 0) {
+                $writtenEarned += ($writingEarnedSum / $writingPossibleSum) * 48;
+                $possible += 48;
+            }
+        }
+
+        $result['earned'] = round($writtenEarned, 2);
+        $result['possible'] = round($possible, 2);
+        $result['percentage'] = $possible > 0 ? round(($writtenEarned / $possible) * 100, 2) : 0;
+
+        return $result;
     }
 
     public function tick(): void
@@ -500,7 +668,8 @@ class GuestExam extends Component
         if ($isB1B2C1) {
             if ($isLastSectionOfTemplate) {
                 $this->started = false;
-                $this->result = app(ExamGrader::class)->grade($sections, $this->answers);
+                $accumulatedAnswers = $this->accumulatedAnswers();
+                $this->result = app(ExamGrader::class)->grade($sections, $accumulatedAnswers);
                 $this->enrichExplanations();
 
                 $writingDetails = [];
@@ -516,7 +685,7 @@ class GuestExam extends Component
                     $elId = $element['id'];
                     $maxPoints = (int) ($element['points'] ?? 48);
                     $passMark = (int) ceil($maxPoints * 0.6);
-                    $content = (string) ($this->answers[$elId] ?? '');
+                    $content = (string) ($accumulatedAnswers[$elId] ?? '');
                     $feedback = 'Keine Abgabe für den schriftlichen Ausdruck.';
                     $score = 0;
 
@@ -573,10 +742,43 @@ class GuestExam extends Component
                 }
 
                 if (! empty($writingDetails)) {
-                    $this->result['details'] = array_merge($this->result['details'], $writingDetails);
-                    $this->result['earned'] += array_sum(array_column($writingDetails, 'points'));
-                    $this->result['possible'] += array_sum(array_column($writingDetails, 'max_points'));
-                    $this->result['percentage'] = $this->result['possible'] > 0 ? round(($this->result['earned'] / $this->result['possible']) * 100, 2) : 0;
+                    $allDetails = collect($this->result['details'])->keyBy('id');
+                    $newWriting = collect($writingDetails)->keyBy('id');
+                    $this->result['details'] = $allDetails->merge($newWriting)->values()->all();
+
+                    // Recalculate earned/possible based on all details to avoid duplication/inflation!
+                    $writtenEarned = 0;
+                    $possible = 0;
+                    $writingEarnedSum = 0;
+                    $writingPossibleSum = 0;
+                    $writingCount = 0;
+
+                    foreach ($this->result['details'] as $detail) {
+                        if (str_contains($detail['id'], '-WRITE-') || str_contains(strtolower($detail['id']), '-write-')) {
+                            $writingEarnedSum += $detail['points'];
+                            $writingPossibleSum += $detail['max_points'];
+                            $writingCount++;
+                        } else {
+                            $possible += $detail['max_points'];
+                            $writtenEarned += $detail['points'];
+                        }
+                    }
+
+                    if ($writingCount > 0) {
+                        if ($writingPossibleSum > 0) {
+                            $writingEarned = ($writingEarnedSum / $writingPossibleSum) * 48;
+                            $writingPossible = 48;
+                        } else {
+                            $writingEarned = 0;
+                            $writingPossible = 0;
+                        }
+                        $possible += $writingPossible;
+                        $writtenEarned += $writingEarned;
+                    }
+
+                    $this->result['earned'] = round($writtenEarned, 2);
+                    $this->result['possible'] = round($possible, 2);
+                    $this->result['percentage'] = $possible > 0 ? round(($writtenEarned / $possible) * 100, 2) : 0;
                 }
 
                 $this->completedSectionIds = [];
@@ -586,14 +788,7 @@ class GuestExam extends Component
 
                 $this->incrementExamCount();
 
-                ExamAttempt::create([
-                    'exam_template_id' => $this->selectedTemplateId,
-                    'user_id' => null,
-                    'answers' => $this->answers,
-                    'result' => $this->result,
-                    'started_at' => now(),
-                    'submitted_at' => now(),
-                ]);
+                $this->persistGuestAttempt();
 
                 $this->submitting = false;
 
@@ -648,10 +843,30 @@ class GuestExam extends Component
 
         $this->started = false;
 
-        $this->result = app(ExamGrader::class)->grade(
+        $newGradedResult = app(ExamGrader::class)->grade(
             [$currentSection],
             $this->answers
         );
+
+        if (empty($this->result) || ! isset($this->result['details'])) {
+            $this->result = $newGradedResult;
+        } else {
+            // Merge instead of replacing so previously completed sections keep their answers/highlights.
+            $existingDetails = collect($this->result['details'])->keyBy('id');
+            $newDetails = collect($newGradedResult['details'])->keyBy('id');
+
+            $this->result['details'] = $existingDetails->merge($newDetails)->values()->all();
+
+            $earned = 0;
+            $possible = 0;
+            foreach ($this->result['details'] as $detail) {
+                $possible += (float) ($detail['max_points'] ?? 0);
+                $earned += (float) ($detail['points'] ?? 0);
+            }
+            $this->result['earned'] = round($earned, 2);
+            $this->result['possible'] = round($possible, 2);
+            $this->result['percentage'] = $possible > 0 ? round(($earned / $possible) * 100, 2) : 0;
+        }
 
         $this->enrichExplanations();
 
@@ -714,10 +929,43 @@ class GuestExam extends Component
         }
 
         if (! empty($writingDetails)) {
-            $this->result['details'] = array_merge($this->result['details'], $writingDetails);
-            $this->result['earned'] += array_sum(array_column($writingDetails, 'points'));
-            $this->result['possible'] += array_sum(array_column($writingDetails, 'max_points'));
-            $this->result['percentage'] = $this->result['possible'] > 0 ? round(($this->result['earned'] / $this->result['possible']) * 100, 2) : 0;
+            $allDetails = collect($this->result['details'])->keyBy('id');
+            $newWriting = collect($writingDetails)->keyBy('id');
+            $this->result['details'] = $allDetails->merge($newWriting)->values()->all();
+
+            // Recalculate earned/possible based on all details to avoid duplication/inflation!
+            $writtenEarned = 0;
+            $possible = 0;
+            $writingEarnedSum = 0;
+            $writingPossibleSum = 0;
+            $writingCount = 0;
+
+            foreach ($this->result['details'] as $detail) {
+                if (str_contains($detail['id'], '-WRITE-') || str_contains(strtolower($detail['id']), '-write-')) {
+                    $writingEarnedSum += $detail['points'];
+                    $writingPossibleSum += $detail['max_points'];
+                    $writingCount++;
+                } else {
+                    $possible += $detail['max_points'];
+                    $writtenEarned += $detail['points'];
+                }
+            }
+
+            if ($writingCount > 0) {
+                if ($writingPossibleSum > 0) {
+                    $writingEarned = ($writingEarnedSum / $writingPossibleSum) * 48;
+                    $writingPossible = 48;
+                } else {
+                    $writingEarned = 0;
+                    $writingPossible = 0;
+                }
+                $possible += $writingPossible;
+                $writtenEarned += $writingEarned;
+            }
+
+            $this->result['earned'] = round($writtenEarned, 2);
+            $this->result['possible'] = round($possible, 2);
+            $this->result['percentage'] = $possible > 0 ? round(($writtenEarned / $possible) * 100, 2) : 0;
         }
 
         if ($isFirstCompletion) {
@@ -733,14 +981,7 @@ class GuestExam extends Component
             }
         }
 
-        ExamAttempt::create([
-            'exam_template_id' => $this->selectedTemplateId,
-            'user_id' => null,
-            'answers' => $this->answers,
-            'result' => $this->result,
-            'started_at' => now(),
-            'submitted_at' => now(),
-        ]);
+        $this->persistGuestAttempt();
 
         $this->nextSectionIndex = $this->findNextSectionToJump();
 

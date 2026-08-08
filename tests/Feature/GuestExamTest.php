@@ -220,6 +220,55 @@ test('guest sequential navigation reaches the writing section', function () {
         ->assertSet('result.possible', 54);
 });
 
+test('revisiting a completed section restores graded answers and highlights', function () {
+    ExamTemplate::query()->delete();
+    $template = ExamTemplate::create([
+        'title' => 'Test C1', 'level' => 'C1', 'is_published' => true, 'is_free' => true,
+        'theme' => [], 'timings' => [],
+        'sections' => [
+            ['id' => 'c1-reading', 'title' => 'Leseverstehen', 'minutes' => 10, 'elements' => [
+                ['id' => 'q1', 'type' => 'multiple_choice', 'label' => 'Q1', 'options' => 'a,b,c', 'answer' => 'a', 'points' => 2],
+            ]],
+            ['id' => 'c1-listening', 'title' => 'Hörverstehen', 'minutes' => 10, 'elements' => [
+                ['id' => 'q2', 'type' => 'multiple_choice', 'label' => 'Q2', 'options' => 'a,b,c', 'answer' => 'b', 'points' => 2],
+            ]],
+        ],
+    ]);
+
+    $component = Livewire::test(GuestExam::class, ['templateId' => $template->id]);
+
+    // Complete the reading section with a wrong answer
+    $component->call('startSection', 0)
+        ->set('answers', ['q1' => 'b'])
+        ->call('submit')
+        ->assertSet('result.earned', 0)
+        ->assertSet('result.possible', 2);
+
+    // Go back and reopen the completed reading section: answers + result must be restored
+    $component->call('backToChapters')
+        ->call('startSection', 0);
+
+    expect($component->get('answers.q1'))->toBe('b');
+    expect(collect($component->get('result.details'))->pluck('id'))->toContain('q1');
+
+    // Now complete the listening section as well
+    $component->call('startSection', 1)
+        ->set('answers', ['q2' => 'b'])
+        ->call('submit')
+        ->assertSet('result.earned', 2);
+
+    // Revisiting the reading section must restore the ACCUMULATED details from both sections
+    $component->call('backToChapters')
+        ->call('startSection', 0);
+
+    $detailIds = collect($component->get('result.details'))->pluck('id');
+    expect($detailIds)->toContain('q1');
+    expect($detailIds)->toContain('q2');
+    expect($component->get('answers.q1'))->toBe('b');
+    expect($component->get('result.earned'))->toBe(2);
+    expect($component->get('result.possible'))->toBe(4);
+});
+
 test('guest users can switch levels', function () {
     ExamTemplate::query()->delete();
     ExamTemplate::create([

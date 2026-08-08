@@ -2644,29 +2644,45 @@ if (!function_exists('parseTeilContent')) {
                                                 $expectedAnswer = $detail['expected'] ?? '';
                                             }
                                         }
+                                        $isExpected = $result && ($expectedAnswer === $key);
+                                    @endphp
+                                    @php
+                                        $rowStyle = 'display: flex; align-items: center; gap: 0.75rem; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;';
+                                        $btnStyle = 'width: 24px; height: 24px; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; border-radius: 2px; text-transform: uppercase; color: #1a1a1a; background-color: #ffffff;';
+                                        $textStyle = 'font-size: 0.95rem; color: #4b5563;';
+                                        if ($result) {
+                                            if ($isExpected) {
+                                                $rowStyle = 'display: flex; align-items: center; gap: 0.75rem; cursor: default; border: 1.5px solid #16a34a; background-color: #f0fdf4; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;';
+                                                $btnStyle = 'width: 24px; height: 24px; border: 1.5px solid #16a34a; background-color: #16a34a; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; border-radius: 2px; text-transform: uppercase; color: #ffffff;';
+                                                $textStyle = 'font-size: 0.95rem; color: #15803d; font-weight: 700;';
+                                            } elseif ($isSelected && ! $isCorrectAnswer) {
+                                                $rowStyle = 'display: flex; align-items: center; gap: 0.75rem; cursor: default; border: 1.5px solid #dc2626; background-color: #fdf2f2; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;';
+                                                $btnStyle = 'width: 24px; height: 24px; border: 1.5px solid #dc2626; background-color: #dc2626; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; border-radius: 2px; text-transform: uppercase; color: #ffffff;';
+                                                $textStyle = 'font-size: 0.95rem; color: #b91c1c; text-decoration: line-through;';
+                                            }
+                                        } elseif ($isSelected) {
+                                            $rowStyle = 'display: flex; align-items: center; gap: 0.75rem; cursor: pointer; border: 1px solid #cbd5e1; background-color: #f8fafc; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;';
+                                        }
                                     @endphp
                                     <div class="lv2-option-row"
-                                         @if(!$result) wire:click="$set('answers.{{ $element['id'] }}', '{{ $isSelected ? '' : $key }}')" @endif
-                                    >
-                                        <button type="button" 
-                                            class="answer-box @if($isSelected) selected @endif @if($result) disabled @endif"
-                                            style="
-                                                @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
-                                                @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
-                                                @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
-                                            "
-                                        >
+                                        @if(!$result) wire:click="$set('answers.{{ $element['id'] }}', '{{ $isSelected ? '' : $key }}')" @endif
+                                        style="{{ $rowStyle }}">
+                                        <button type="button" class="answer-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                                            style="{{ $btnStyle }}">
                                             {{ $key }}
                                         </button>
-                                        <span style="
-                                            font-size: 0.95rem;
-                                            @if($isSelected) color: #1a1a1a; font-weight: 700; @else color: #4b5563; @endif
-                                            @if($result && $isSelected && $isCorrectAnswer) color: #15803d; @endif
-                                            @if($result && $isSelected && !$isCorrectAnswer) color: #b91c1c; text-decoration: line-through; @endif
-                                            @if($result && !$isSelected && $expectedAnswer === $key) color: #15803d; font-weight: 700; @endif
-                                        ">
+                                        <span style="{{ $textStyle }}">
                                             {{ $text }}
                                         </span>
+                                        @if ($result)
+                                            @if ($isExpected && ! $isSelected)
+                                                <span style="margin-left: auto; color: #16a34a; font-weight: 700; font-size: 0.85rem;">(Richtige Antwort)</span>
+                                            @elseif ($isSelected && $isCorrectAnswer)
+                                                <span style="margin-left: auto; color: #16a34a; font-weight: 700; font-size: 0.85rem;">✓ Richtig</span>
+                                            @elseif ($isSelected && ! $isCorrectAnswer)
+                                                <span style="margin-left: auto; color: #dc2626; font-weight: 700; font-size: 0.85rem;">✗ Falsch</span>
+                                            @endif
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>
@@ -3420,29 +3436,45 @@ if (!function_exists('parseTeilContent')) {
                                                 $expectedAnswer = $detail['expected'] ?? '';
                                             }
                                         }
+                                        $isExpected = $result && ($expectedAnswer === $key);
+                                    @endphp
+                                    @php
+                                        $rowStyle = 'display: flex; align-items: center; gap: 0.75rem; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;';
+                                        $btnStyle = 'width: 24px; height: 24px; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; border-radius: 2px; text-transform: uppercase; color: #1a1a1a; background-color: #ffffff;';
+                                        $textStyle = 'font-size: 0.95rem; color: #4b5563;';
+                                        if ($result) {
+                                            if ($isExpected) {
+                                                $rowStyle = 'display: flex; align-items: center; gap: 0.75rem; cursor: default; border: 1.5px solid #16a34a; background-color: #f0fdf4; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;';
+                                                $btnStyle = 'width: 24px; height: 24px; border: 1.5px solid #16a34a; background-color: #16a34a; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; border-radius: 2px; text-transform: uppercase; color: #ffffff;';
+                                                $textStyle = 'font-size: 0.95rem; color: #15803d; font-weight: 700;';
+                                            } elseif ($isSelected && ! $isCorrectAnswer) {
+                                                $rowStyle = 'display: flex; align-items: center; gap: 0.75rem; cursor: default; border: 1.5px solid #dc2626; background-color: #fdf2f2; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;';
+                                                $btnStyle = 'width: 24px; height: 24px; border: 1.5px solid #dc2626; background-color: #dc2626; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; border-radius: 2px; text-transform: uppercase; color: #ffffff;';
+                                                $textStyle = 'font-size: 0.95rem; color: #b91c1c; text-decoration: line-through;';
+                                            }
+                                        } elseif ($isSelected) {
+                                            $rowStyle = 'display: flex; align-items: center; gap: 0.75rem; cursor: pointer; border: 1px solid #cbd5e1; background-color: #f8fafc; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;';
+                                        }
                                     @endphp
                                     <div class="lv2-option-row"
-                                         @if(!$result) wire:click="$set('answers.{{ $elId }}', '{{ $isSelected ? '' : $key }}')" @endif
-                                    >
-                                        <button type="button" 
-                                            class="answer-box @if($isSelected) selected @endif @if($result) disabled @endif"
-                                            style="
-                                                @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
-                                                @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
-                                                @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
-                                            "
-                                        >
+                                        @if(!$result) wire:click="$set('answers.{{ $elId }}', '{{ $isSelected ? '' : $key }}')" @endif
+                                        style="{{ $rowStyle }}">
+                                        <button type="button" class="answer-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                                            style="{{ $btnStyle }}">
                                             {{ $key }}
                                         </button>
-                                        <span style="
-                                            font-size: 0.95rem;
-                                            @if($isSelected) color: #1a1a1a; font-weight: 700; @else color: #4b5563; @endif
-                                            @if($result && $isSelected && $isCorrectAnswer) color: #15803d; @endif
-                                            @if($result && $isSelected && !$isCorrectAnswer) color: #b91c1c; text-decoration: line-through; @endif
-                                            @if($result && !$isSelected && $expectedAnswer === $key) color: #15803d; font-weight: 700; @endif
-                                        ">
+                                        <span style="{{ $textStyle }}">
                                             {{ $text }}
                                         </span>
+                                        @if ($result)
+                                            @if ($isExpected && ! $isSelected)
+                                                <span style="margin-left: auto; color: #16a34a; font-weight: 700; font-size: 0.85rem;">(Richtige Antwort)</span>
+                                            @elseif ($isSelected && $isCorrectAnswer)
+                                                <span style="margin-left: auto; color: #16a34a; font-weight: 700; font-size: 0.85rem;">✓ Richtig</span>
+                                            @elseif ($isSelected && ! $isCorrectAnswer)
+                                                <span style="margin-left: auto; color: #dc2626; font-weight: 700; font-size: 0.85rem;">✗ Falsch</span>
+                                            @endif
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

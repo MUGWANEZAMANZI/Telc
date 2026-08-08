@@ -7,7 +7,14 @@ require __DIR__.'/vendor/autoload.php';
 $app = require __DIR__.'/bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
 
-$t = ExamTemplate::where('title', 'telc Deutsch C1')->first();
+$t = ExamTemplate::where('title', 'Goethe Zertifikat C1')->first();
 $sections = collect($t->sections);
-$writingSection = $sections->where('id', 'c1-writing')->first();
-echo json_encode($writingSection, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+$reading = $sections->where('id', 'c1-reading-language')->first();
+foreach ($reading['elements'] as $el) {
+    if (str_starts_with($el['id'], 'C1-LV2-')) {
+        echo "Element: " . $el['id'] . "\n";
+        echo "  Type: " . $el['type'] . "\n";
+        echo "  Answer: " . ($el['answer'] ?? 'none') . "\n";
+        echo "  Options: " . ($el['options'] ?? 'none') . "\n";
+    }
+}

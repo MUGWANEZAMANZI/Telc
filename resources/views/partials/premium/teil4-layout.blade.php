@@ -146,7 +146,8 @@
                 .teil4-grid-box:hover:not(.disabled) {
                     border-color: #1a1a1a;
                     background-color: #f4f4f5;
-                          .teil4-grid-box.selected::after {
+                }
+                .teil4-grid-box.selected::after {
                     content: "";
                     position: absolute;
                     top: 0;
@@ -157,8 +158,7 @@
                         linear-gradient(to top right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%),
                         linear-gradient(to bottom right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%);
                 }
-                .teil4-grid-box.selected.correct-answer-highlight::after,
-                .teil4-grid-box.correct-answer-highlight::after {
+                .teil4-grid-box.selected.correct-answer-highlight::after {
                     content: "";
                     position: absolute;
                     top: 0;
@@ -184,6 +184,26 @@
                 .teil4-grid-box.disabled {
                     cursor: not-allowed;
                 }
+                
+                /* Highlight states for grading (custom overrides to bypass base styles) */
+                .teil4-grid-box.bg-green-100 {
+                    background-color: #f0fdf4 !important;
+                    border: 2px solid #16a34a !important;
+                    color: #15803d !important;
+                    font-weight: 700 !important;
+                }
+                .teil4-grid-box.bg-red-100 {
+                    background-color: #fdf2f2 !important;
+                    border: 2px solid #dc2626 !important;
+                    color: #b91c1c !important;
+                }
+                .teil4-grid-box.bg-green-50,
+                .teil4-grid-box.correct-answer-highlight {
+                    background-color: #f0fdf4 !important;
+                    border: 2px solid #22c55e !important;
+                    color: #15803d !important;
+                    font-weight: 700 !important;
+                }
             </style>
  
             <div class="teil4-grid-header">
@@ -203,7 +223,7 @@
                     $elementId = 'C1-LV4-'.$rowNum;
                     $currentAnswer = $answers[$elementId] ?? '';
                 @endphp
-                <div class="teil4-grid-row">
+                <div class="teil4-grid-row" wire:key="teil4-row-{{ $rowNum }}">
                     <span class="teil4-grid-num">Aufgabe {{ $rowNum }}</span>
                     @foreach ($teil4Options as $key)
                         @php
@@ -218,27 +238,20 @@
                                 }
                             }
                             $isExpected = strtolower($expectedAnswer) === strtolower($key);
-                            
-                            $boxClass = 'teil4-grid-box';
-                            if ($isSelected) {
-                                $boxClass .= ' selected';
-                            }
-                            if ($result) {
-                                $boxClass .= ' disabled';
-                                if ($isExpected) {
-                                    $boxClass .= ' correct-answer-highlight';
-                                } elseif ($isSelected) {
-                                    $boxClass .= ' wrong-answer';
-                                }
-                            }
                         @endphp
                         <button type="button"
+                            wire:key="teil4-btn-{{ $rowNum }}-{{ $key }}"
                             @if(!$result) wire:click="$set('answers.{{ $elementId }}', '{{ $isSelected ? '' : $key }}')" @endif
-                            class="{{ $boxClass }}"
-                            style="
-                                @if($result && $isExpected) border-color: #16a34a; background-color: #f0fdf4; color: #15803d; @endif
-                                @if($result && $isSelected && !$isExpected) border-color: #dc2626; background-color: #fdf2f2; color: #b91c1c; @endif
-                            "
+                            @class([
+                                'teil4-grid-box transition-all duration-150',
+                                'selected' => $isSelected,
+                                'disabled' => $result,
+                                'bg-green-100 text-green-800 border-green-500 font-bold' => $result && $isSelected && $isCorrectAnswer,
+                                'bg-red-100 text-red-800 border-red-500' => $result && $isSelected && !$isCorrectAnswer,
+                                'bg-green-50 text-green-700 border-green-300' => $result && !$isSelected && $isExpected,
+                                'correct-answer-highlight' => $result && $isExpected,
+                                'wrong-answer' => $result && $isSelected && !$isExpected,
+                            ])
                             title="Aufgabe {{ $rowNum }} - Option {{ strtoupper($key) }}"
                         >
                             {{ $key }}
