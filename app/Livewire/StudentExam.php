@@ -1357,7 +1357,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             $raw = json_decode($raw, true);
         }
 
-        return is_array($raw) ? array_values($raw) : [];
+        return is_array($raw) ? $raw : [];
     }
 
     public function setGapAnswer(string $elementId, int $gapIndex, string $value): void

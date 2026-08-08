@@ -578,7 +578,7 @@ class ExamDashboard extends Component
             $raw = json_decode($raw, true);
         }
 
-        return is_array($raw) ? array_values($raw) : [];
+        return is_array($raw) ? $raw : [];
     }
 
     /**

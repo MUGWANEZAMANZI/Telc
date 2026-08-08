@@ -122,7 +122,7 @@ class ExamGrader
             $raw = json_decode($raw, true);
         }
 
-        return is_array($raw) ? array_values($raw) : [];
+        return is_array($raw) ? $raw : [];
     }
 
     private function matches(mixed $given, mixed $expected, string $type): bool
