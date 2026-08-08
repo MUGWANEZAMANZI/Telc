@@ -1014,8 +1014,8 @@ class ExamDashboard extends Component
         }
 
         // Merge instead of replacing so previously completed sections keep their answers/highlights.
-        $existingDetails = collect($this->result['details'])->keyBy('id');
-        $newDetails = collect($newGradedResult['details'])->keyBy('id');
+        $existingDetails = collect((array) $this->result['details'])->keyBy('id');
+        $newDetails = collect((array) $newGradedResult['details'])->keyBy('id');
 
         $this->result['details'] = $existingDetails->merge($newDetails)->values()->all();
 

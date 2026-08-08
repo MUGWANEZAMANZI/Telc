@@ -197,7 +197,7 @@ class GuestExam extends Component
                 }
 
                 $type = $element['type'] ?? '';
-                
+
                 if ($type === 'inline_gap') {
                     if (! isset($this->answers[$elId]) || ! is_array($this->answers[$elId])) {
                         $this->answers[$elId] = [];
@@ -228,13 +228,13 @@ class GuestExam extends Component
 
         // Hydrate C1 Reading Teil 2 & Teil 4 keys explicitly to make sure they are always present on the frontend
         for ($i = 9; $i <= 15; $i++) {
-            $key = 'C1-LV2-' . $i;
+            $key = 'C1-LV2-'.$i;
             if (! array_key_exists($key, $this->answers)) {
                 $this->answers[$key] = '';
             }
         }
         for ($i = 24; $i <= 30; $i++) {
-            $key = 'C1-LV4-' . $i;
+            $key = 'C1-LV4-'.$i;
             if (! array_key_exists($key, $this->answers)) {
                 $this->answers[$key] = '';
             }
@@ -537,6 +537,9 @@ class GuestExam extends Component
         $this->result = (array) ($attempt->result ?? []);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function accumulatedAnswers(): array
     {
         if (! $this->selectedTemplateId) {
@@ -568,8 +571,8 @@ class GuestExam extends Component
         $result = $this->result;
 
         if ($latest && ! empty($latest->result['details'])) {
-            $existing = collect($latest->result['details'])->keyBy('id');
-            $current = collect($this->result['details'] ?? [])->keyBy('id');
+            $existing = collect((array) ($latest->result['details'] ?? []))->keyBy('id');
+            $current = collect((array) ($this->result['details'] ?? []))->keyBy('id');
             $result['details'] = $existing->merge($current)->values()->all();
 
             $result = $this->normalizeGuestResultTotals($result);
@@ -585,6 +588,10 @@ class GuestExam extends Component
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $result
+     * @return array<string, mixed>
+     */
     private function normalizeGuestResultTotals(array $result): array
     {
         $writtenEarned = 0;
@@ -742,7 +749,7 @@ class GuestExam extends Component
                 }
 
                 if (! empty($writingDetails)) {
-                    $allDetails = collect($this->result['details'])->keyBy('id');
+                    $allDetails = collect((array) ($this->result['details'] ?? []))->keyBy('id');
                     $newWriting = collect($writingDetails)->keyBy('id');
                     $this->result['details'] = $allDetails->merge($newWriting)->values()->all();
 
@@ -852,8 +859,8 @@ class GuestExam extends Component
             $this->result = $newGradedResult;
         } else {
             // Merge instead of replacing so previously completed sections keep their answers/highlights.
-            $existingDetails = collect($this->result['details'])->keyBy('id');
-            $newDetails = collect($newGradedResult['details'])->keyBy('id');
+            $existingDetails = collect((array) $this->result['details'])->keyBy('id');
+            $newDetails = collect((array) $newGradedResult['details'])->keyBy('id');
 
             $this->result['details'] = $existingDetails->merge($newDetails)->values()->all();
 
@@ -929,7 +936,7 @@ class GuestExam extends Component
         }
 
         if (! empty($writingDetails)) {
-            $allDetails = collect($this->result['details'])->keyBy('id');
+            $allDetails = collect((array) ($this->result['details'] ?? []))->keyBy('id');
             $newWriting = collect($writingDetails)->keyBy('id');
             $this->result['details'] = $allDetails->merge($newWriting)->values()->all();
 

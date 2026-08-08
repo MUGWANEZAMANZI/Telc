@@ -12,9 +12,9 @@ $sections = collect($t->sections);
 $reading = $sections->where('id', 'c1-reading-language')->first();
 foreach ($reading['elements'] as $el) {
     if (str_starts_with($el['id'], 'C1-LV2-')) {
-        echo "Element: " . $el['id'] . "\n";
-        echo "  Type: " . $el['type'] . "\n";
-        echo "  Answer: " . ($el['answer'] ?? 'none') . "\n";
-        echo "  Options: " . ($el['options'] ?? 'none') . "\n";
+        echo 'Element: '.$el['id']."\n";
+        echo '  Type: '.$el['type']."\n";
+        echo '  Answer: '.($el['answer'] ?? 'none')."\n";
+        echo '  Options: '.($el['options'] ?? 'none')."\n";
     }
 }
