@@ -79,7 +79,8 @@ jobs:
             cd /var/www/telc
             
             # Force Git to use your specific SSH key and bypass prompts
-            GIT_SSH_COMMAND="ssh -i ~/.ssh/github-deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" git pull origin master
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/github-deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" git fetch origin master
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/github-deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" git reset --hard FETCH_HEAD
             
             # Authenticate Composer for Flux UI on the VPS
             composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
