@@ -579,6 +579,28 @@
                 display: none !important;
             }
         }
+        .mc-option-item.correct {
+            border-color: #166534 !important;
+            background-color: #f0fdf4 !important;
+            color: #166534 !important;
+        }
+
+        .mc-option-item.wrong {
+            border-color: #991b1b !important;
+            background-color: #fef2f2 !important;
+            color: #991b1b !important;
+        }
+
+        .explanation-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-left: 4px solid #64748b;
+            font-size: 0.9rem;
+            color: #334155;
+            border-radius: 4px;
+        }
+
     </style>
 
     @if (empty($template))
@@ -1172,32 +1194,74 @@
                                                     <div class="answer-sheet-row" wire:key="answer-{{ $element['id'] }}">
                                                         <span class="question-num">{{ $qNum }}</span>
 
+                                                        @php
+                                                            $detail = $result ? collect($result['details'])->firstWhere('id', $element['id']) : null;
+                                                            $current = $answers[$element['id']] ?? '';
+                                                            $expected = $detail['expected'] ?? '';
+                                                            
+                                                            $selectBorder = '#cbd5e1';
+                                                            $inputBorder = '#cbd5e1';
+                                                            if ($result && $detail) {
+                                                                $selectBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                                                                $inputBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                                                            }
+                                                        @endphp
+
                                                         @if (($element['type'] ?? '') === 'fill_blank' && $options === [])
-                                                            <input type="text" wire:model.live="answers.{{ $element['id'] }}" class="fill-blank-input" placeholder="Antwort">
+                                                            <input type="text" wire:model.live="answers.{{ $element['id'] }}" @disabled($result) class="fill-blank-input" placeholder="Antwort" style="border: 1.5px solid {{ $inputBorder }};">
                                                         @elseif ($isMatching && count($options) > 5)
-                                                            <select wire:model.live="answers.{{ $element['id'] }}" class="matching-select">
+                                                            <select wire:model.live="answers.{{ $element['id'] }}" @disabled($result) class="matching-select" style="border: 1.5px solid {{ $selectBorder }}; outline: none; cursor: pointer;">
                                                                 <option value="">—</option>
                                                                 @foreach ($options as $opt)
-                                                                    <option value="{{ $opt }}">{{ $opt }}</option>
+                                                                    <option value="{{ $opt }}"
+                                                                        @if($result && $opt === $expected)
+                                                                            style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                                                        @elseif($result && $current === $opt && !$detail['correct'])
+                                                                            style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                                                        @endif
+                                                                    >{{ $opt }}</option>
                                                                 @endforeach
                                                             </select>
                                                         @else
                                                             <div class="bubble-group">
                                                                 @foreach ($options as $option)
-                                                                    <label @class(['bubble', 'selected' => (($answers[$element['id']] ?? '') === $option)])>
-                                                                        <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}">
-                                                                        <span>{{ $option }}</span>
+                                                                    @php
+                                                                        $isSelected = $current === $option;
+                                                                        $spanStyle = '';
+                                                                        if ($result && $detail) {
+                                                                            if ($option === $expected) {
+                                                                                if ($isSelected) {
+                                                                                    $spanStyle = 'border-color: #16a34a; background-color: #16a34a; color: #ffffff;';
+                                                                                } else {
+                                                                                    $spanStyle = 'border-color: #16a34a; background-color: #e6f4ea; color: #15803d; font-weight: 800;';
+                                                                                }
+                                                                            } elseif ($isSelected) {
+                                                                                $spanStyle = 'border-color: #dc2626; background-color: #dc2626; color: #ffffff;';
+                                                                            }
+                                                                        }
+                                                                    @endphp
+                                                                    <label @class(['bubble', 'selected' => $isSelected])>
+                                                                        <input type="radio" wire:model.live="answers.{{ $element['id'] }}" value="{{ $option }}" @disabled($result)>
+                                                                        <span style="{{ $spanStyle }}">{{ $option }}</span>
                                                                     </label>
                                                                 @endforeach
                                                             </div>
                                                         @endif
 
-                                                        @if ($result)
-                                                            @php $detail = collect($result['details'])->firstWhere('id', $element['id']); @endphp
-                                                            @if ($detail)
-                                                                <em @class(['answer-mark', 'correct' => $detail['correct']])>
-                                                                    {{ $detail['correct'] ? '✓' : '✗ ' . $detail['expected'] }}
-                                                                </em>
+                                                        @if ($result && $detail)
+                                                            @if ($detail['correct'])
+                                                                <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #16a34a;">
+                                                                    ✓ Richtig
+                                                                </span>
+                                                            @else
+                                                                @if ($current !== '')
+                                                                    <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #dc2626;">
+                                                                        ✗ Falsch
+                                                                    </span>
+                                                                @endif
+                                                                <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #16a34a; border: 1px solid #16a34a; padding: 0.1rem 0.4rem; border-radius: 4px; background-color: #f0fdf4;">
+                                                                    Lösung: {{ strtoupper($expected) }}
+                                                                </span>
                                                             @endif
                                                         @endif
                                                     </div>

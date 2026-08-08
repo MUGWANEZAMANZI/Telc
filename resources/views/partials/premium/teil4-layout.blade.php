@@ -146,8 +146,7 @@
                 .teil4-grid-box:hover:not(.disabled) {
                     border-color: #1a1a1a;
                     background-color: #f4f4f5;
-                }
-                .teil4-grid-box.selected::after {
+                          .teil4-grid-box.selected::after {
                     content: "";
                     position: absolute;
                     top: 0;
@@ -158,11 +157,35 @@
                         linear-gradient(to top right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%),
                         linear-gradient(to bottom right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%);
                 }
+                .teil4-grid-box.selected.correct-answer-highlight::after,
+                .teil4-grid-box.correct-answer-highlight::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: 
+                        linear-gradient(to top right, transparent 46%, #16a34a 46%, #16a34a 54%, transparent 54%),
+                        linear-gradient(to bottom right, transparent 46%, #16a34a 46%, #16a34a 54%, transparent 54%);
+                }
+                .teil4-grid-box.selected.wrong-answer::after,
+                .teil4-grid-box.wrong-answer::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: 
+                        linear-gradient(to top right, transparent 46%, #dc2626 46%, #dc2626 54%, transparent 54%),
+                        linear-gradient(to bottom right, transparent 46%, #dc2626 46%, #dc2626 54%, transparent 54%);
+                }
                 .teil4-grid-box.disabled {
                     cursor: not-allowed;
                 }
             </style>
-
+ 
             <div class="teil4-grid-header">
                 <span>Aufgabe</span>
                 <span>a</span>
@@ -170,11 +193,11 @@
                 <span>c</span>
                 <span>0</span>
             </div>
-
+ 
             @php
                 $teil4Options = ['a', 'b', 'c', '0'];
             @endphp
-
+ 
             @for ($rowNum = 24; $rowNum <= 30; $rowNum++)
                 @php
                     $elementId = 'C1-LV4-'.$rowNum;
@@ -184,7 +207,7 @@
                     <span class="teil4-grid-num">Aufgabe {{ $rowNum }}</span>
                     @foreach ($teil4Options as $key)
                         @php
-                            $isSelected = $currentAnswer === $key;
+                            $isSelected = strtolower($currentAnswer) === strtolower($key);
                             $isCorrectAnswer = false;
                             $expectedAnswer = '';
                             if ($result) {
@@ -194,14 +217,27 @@
                                     $expectedAnswer = $detail['expected'] ?? '';
                                 }
                             }
+                            $isExpected = strtolower($expectedAnswer) === strtolower($key);
+                            
+                            $boxClass = 'teil4-grid-box';
+                            if ($isSelected) {
+                                $boxClass .= ' selected';
+                            }
+                            if ($result) {
+                                $boxClass .= ' disabled';
+                                if ($isExpected) {
+                                    $boxClass .= ' correct-answer-highlight';
+                                } elseif ($isSelected) {
+                                    $boxClass .= ' wrong-answer';
+                                }
+                            }
                         @endphp
                         <button type="button"
                             @if(!$result) wire:click="$set('answers.{{ $elementId }}', '{{ $isSelected ? '' : $key }}')" @endif
-                            class="teil4-grid-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                            class="{{ $boxClass }}"
                             style="
-                                @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
-                                @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
-                                @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                @if($result && $isExpected) border-color: #16a34a; background-color: #f0fdf4; color: #15803d; @endif
+                                @if($result && $isSelected && !$isExpected) border-color: #dc2626; background-color: #fdf2f2; color: #b91c1c; @endif
                             "
                             title="Aufgabe {{ $rowNum }} - Option {{ strtoupper($key) }}"
                         >

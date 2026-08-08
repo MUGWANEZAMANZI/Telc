@@ -295,14 +295,23 @@ if (!function_exists('parseTeilContent')) {
                                 @php
                                     $selectBorder = '#cbd5e1';
                                     $detail = $result ? collect($result['details'])->firstWhere('id', $elId) : null;
+                                    $current = $answers[$elId] ?? '';
+                                    $expected = $element['answer'] ?? '';
                                     if ($result && $detail) {
                                         $selectBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                                        $expected = $detail['expected'] ?? $expected;
                                     }
                                 @endphp
                                 <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.65rem; border: 1.5px solid {{ $selectBorder }}; border-radius: 6px; background: #ffffff; font-size: 0.88rem; font-weight: 700; color: #1f2937; min-width: 80px; transition: border-color 0.15s; outline: none; cursor: pointer;">
                                     <option value="">---</option>
                                     @foreach ($matchOptions as $opt)
-                                        <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                        <option value="{{ $opt }}"
+                                            @if($result && $opt === $expected)
+                                                style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                            @elseif($result && $current === $opt && !$detail['correct'])
+                                                style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                            @endif
+                                        >{{ strtoupper($opt) }}</option>
                                     @endforeach
                                 </select>
                                 @if ($result && $detail)
@@ -311,11 +320,13 @@ if (!function_exists('parseTeilContent')) {
                                             ✓ Richtig
                                         </span>
                                     @else
-                                        <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #dc2626;">
-                                            ✗ Falsch
-                                        </span>
-                                        <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #16a34a;">
-                                            (Lösung: {{ strtoupper($detail['expected']) }})
+                                        @if ($current !== '')
+                                            <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #dc2626;">
+                                                ✗ Falsch
+                                            </span>
+                                        @endif
+                                        <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #16a34a; border: 1px solid #16a34a; padding: 0.1rem 0.4rem; border-radius: 4px; background-color: #f0fdf4;">
+                                            Lösung: {{ strtoupper($expected) }}
                                         </span>
                                     @endif
                                 @endif
@@ -418,6 +429,7 @@ if (!function_exists('parseTeilContent')) {
                                 @endphp
                                 @php
                                     $gapBorder = '#cbd5e1';
+                                    $current = $answers[$inlineGapEl['id']][$gapIdx] ?? '';
                                     if ($result) {
                                         $gapBorder = $gapCorrect ? '#16a34a' : '#dc2626';
                                     }
@@ -429,15 +441,25 @@ if (!function_exists('parseTeilContent')) {
                                         style="padding: 0.2rem 0.5rem; border: 1.5px solid {{ $gapBorder }}; border-radius: 4px; font-size: 0.9rem; font-weight: 700; background: #ffffff; cursor: pointer; outline: none; @if($result) pointer-events: none; @endif">
                                         <option value="">Lücke {{ $gapIdx }}</option>
                                         @foreach ($optList as $opt)
-                                            <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                            <option value="{{ $opt }}"
+                                                @if($result && $opt === $gapExpected)
+                                                    style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                                @elseif($result && $current === $opt && !$gapCorrect)
+                                                    style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                                @endif
+                                            >{{ strtoupper($opt) }}</option>
                                         @endforeach
                                     </select>
                                     @if ($result)
                                         @if ($gapCorrect)
                                             <span style="color: #16a34a; font-weight: 700; font-size: 0.95rem; margin-left: 0.25rem;">✓</span>
                                         @else
-                                            <span style="color: #dc2626; font-weight: 700; font-size: 0.95rem; margin-left: 0.25rem;">✗</span>
-                                            <span style="color: #16a34a; font-weight: 700; font-size: 0.85rem; margin-left: 0.25rem;">({{ strtoupper($gapExpected) }})</span>
+                                            @if ($current !== '')
+                                                <span style="color: #dc2626; font-weight: 700; font-size: 0.95rem; margin-left: 0.25rem;">✗</span>
+                                            @endif
+                                            <span style="color: #16a34a; font-weight: 700; font-size: 0.85rem; margin-left: 0.25rem; border: 1px solid #16a34a; padding: 0.1rem 0.3rem; border-radius: 3px; background-color: #f0fdf4;">
+                                                Lösung: {{ strtoupper($gapExpected) }}
+                                            </span>
                                         @endif
                                     @endif
                                 </span>
@@ -635,8 +657,26 @@ if (!function_exists('parseTeilContent')) {
                                             $textCol = '#b91c1c';
                                         }
                                     }
+
+                                    $labelBg = 'transparent';
+                                    $labelBorder = 'transparent';
+                                    
+                                    if ($result) {
+                                        if ($isThisExpected) {
+                                            $labelBg = '#f0fdf4';
+                                            $labelBorder = '#16a34a';
+                                        } elseif ($isThisSelected) {
+                                            $labelBg = '#fdf2f2';
+                                            $labelBorder = '#dc2626';
+                                        }
+                                    } else {
+                                        if ($isThisSelected) {
+                                            $labelBg = '#f8fafc';
+                                            $labelBorder = '#111827';
+                                        }
+                                    }
                                 @endphp
-                                <label style="display: flex; align-items: center; gap: 0.85rem; font-size: 0.92rem; color: {{ $textCol }}; font-weight: {{ $fontW }}; cursor: {{ $result ? 'not-allowed' : 'pointer' }}; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 0.15s; margin-left: -0.6rem; background: {{ $isThisSelected ? '#f8fafc' : 'transparent' }}; border: 1px solid {{ $isThisSelected ? $borderCol : 'transparent' }};">
+                                <label style="display: flex; align-items: center; gap: 0.85rem; font-size: 0.92rem; color: {{ $textCol }}; font-weight: {{ $fontW }}; cursor: {{ $result ? 'not-allowed' : 'pointer' }}; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 0.15s; margin-left: -0.6rem; background: {{ $labelBg }}; border: 1px solid {{ $labelBorder }};">
                                     <input type="radio" name="radio-{{ $elId }}" value="{{ $key }}" wire:model.live="answers.{{ $elId }}" @disabled($result) style="display: none;">
                                     <span style="width: 1.6rem; height: 1.6rem; border: 1.5px solid {{ $boxBorder }}; background: {{ $boxBg }}; color: @if($boxBg === '#ffffff') #4b5563 @else #ffffff @endif; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 800; font-size: 0.85rem; transition: all 0.15s; flex-shrink: 0;">
                                         {{ $boxText }}
@@ -707,14 +747,23 @@ if (!function_exists('parseTeilContent')) {
                             @php
                                 $selectBorder = '#cbd5e1';
                                 $detail = $result ? collect($result['details'])->firstWhere('id', $elId) : null;
+                                $current = $answers[$elId] ?? '';
+                                $expected = $element['answer'] ?? '';
                                 if ($result && $detail) {
                                     $selectBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                                    $expected = $detail['expected'] ?? $expected;
                                 }
                             @endphp
                             <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.65rem; border: 1.5px solid {{ $selectBorder }}; border-radius: 6px; background: #ffffff; font-size: 0.88rem; font-weight: 700; color: #1f2937; min-width: 80px; transition: border-color 0.15s; outline: none; cursor: pointer;">
                                 <option value="">---</option>
                                 @foreach ($matchOptions as $opt)
-                                    <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                    <option value="{{ $opt }}"
+                                        @if($result && $opt === $expected)
+                                            style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                        @elseif($result && $current === $opt && !$detail['correct'])
+                                            style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                        @endif
+                                    >{{ strtoupper($opt) }}</option>
                                 @endforeach
                             </select>
                             @if ($result && $detail)
@@ -723,11 +772,13 @@ if (!function_exists('parseTeilContent')) {
                                         ✓ Richtig
                                     </span>
                                 @else
-                                    <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #dc2626;">
-                                        ✗ Falsch
-                                    </span>
-                                    <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #16a34a;">
-                                        (Lösung: {{ strtoupper($detail['expected']) }})
+                                    @if ($current !== '')
+                                        <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #dc2626;">
+                                            ✗ Falsch
+                                        </span>
+                                    @endif
+                                    <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #16a34a; border: 1px solid #16a34a; padding: 0.1rem 0.4rem; border-radius: 4px; background-color: #f0fdf4;">
+                                        Lösung: {{ strtoupper($expected) }}
                                     </span>
                                 @endif
                             @endif
@@ -857,14 +908,23 @@ if (!function_exists('parseTeilContent')) {
                                 @php
                                     $selectBorder = '#cbd5e1';
                                     $detail = $result ? collect($result['details'])->firstWhere('id', $elId) : null;
+                                    $current = $answers[$elId] ?? '';
+                                    $expected = $element['answer'] ?? '';
                                     if ($result && $detail) {
                                         $selectBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                                        $expected = $detail['expected'] ?? $expected;
                                     }
                                 @endphp
                                 <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.25rem 0.5rem; border: 1.5px solid {{ $selectBorder }}; border-radius: 4px; background: #ffffff; font-size: 0.88rem; font-weight: 700; color: #1f2937; min-width: 80px; transition: border-color 0.15s; outline: none; cursor: pointer;">
                                     <option value="">---</option>
                                     @foreach ($matchOptions as $opt)
-                                        <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                        <option value="{{ $opt }}"
+                                            @if($result && $opt === $expected)
+                                                style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                            @elseif($result && $current === $opt && !$detail['correct'])
+                                                style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                            @endif
+                                        >{{ strtoupper($opt) }}</option>
                                     @endforeach
                                 </select>
                                 @if ($result && $detail)
@@ -873,11 +933,13 @@ if (!function_exists('parseTeilContent')) {
                                             ✓ Richtig
                                         </span>
                                     @else
-                                        <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #dc2626;">
-                                            ✗ Falsch
-                                        </span>
-                                        <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #16a34a;">
-                                            (Lösung: {{ strtoupper($detail['expected']) }})
+                                        @if ($current !== '')
+                                            <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #dc2626;">
+                                                ✗ Falsch
+                                            </span>
+                                        @endif
+                                        <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #16a34a; border: 1px solid #16a34a; padding: 0.1rem 0.4rem; border-radius: 4px; background-color: #f0fdf4;">
+                                            Lösung: {{ strtoupper($expected) }}
                                         </span>
                                     @endif
                                 @endif
@@ -1695,17 +1757,41 @@ if (!function_exists('parseTeilContent')) {
                     @endphp
                     <div style="display:flex;flex-direction:row;align-items:center;gap:1.5rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif; background: #ffffff; padding: 0.75rem 1.25rem; border-radius: 6px; border: 1px solid #e5e5e5; box-shadow: 0 1px 2px rgba(0,0,0,0.01);">
                         <span style="font-weight:700; color: #1a1a1a; min-width: 120px;">{{ $element['label'] ?? '' }}</span>
-                        <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.4rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #ffffff; font-size: 0.9rem;">
+                        @php
+                            $selectBorder = '#cbd5e1';
+                            $detail = $result ? collect($result['details'])->firstWhere('id', $elId) : null;
+                            $current = $answers[$elId] ?? '';
+                            $expected = $element['answer'] ?? '';
+                            if ($result && $detail) {
+                                $selectBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                                $expected = $detail['expected'] ?? $expected;
+                            }
+                        @endphp
+                        <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.4rem 0.75rem; border: 1.5px solid {{ $selectBorder }}; border-radius: 4px; background: #ffffff; font-size: 0.9rem; outline: none; cursor: pointer;">
                             <option value="">---</option>
                             @foreach ($matchOptions as $opt)
-                                <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                <option value="{{ $opt }}"
+                                    @if($result && $opt === $expected)
+                                        style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                    @elseif($result && $current === $opt && !$detail['correct'])
+                                        style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                    @endif
+                                >{{ strtoupper($opt) }}</option>
                             @endforeach
                         </select>
-                        @if ($result)
-                            @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
-                            @if ($detail)
-                                <span style="margin-left: auto; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }}; font-size: 0.9rem;">
-                                    {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
+                        @if ($result && $detail)
+                            @if ($detail['correct'])
+                                <span style="margin-left: auto; font-weight: bold; color: #16a34a; font-size: 0.9rem;">
+                                    ✓ Richtig
+                                </span>
+                            @else
+                                <span style="margin-left: auto; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                                    @if ($current !== '')
+                                        <span style="font-weight: bold; color: #dc2626;">✗ Falsch</span>
+                                    @endif
+                                    <span style="font-weight: bold; color: #16a34a; border: 1px solid #16a34a; padding: 0.1rem 0.4rem; border-radius: 4px; background-color: #f0fdf4;">
+                                        Richtig: {{ strtoupper($expected) }}
+                                    </span>
                                 </span>
                             @endif
                         @endif
@@ -1891,17 +1977,41 @@ if (!function_exists('parseTeilContent')) {
                     @endphp
                     <div style="display:flex;flex-direction:row;align-items:center;gap:1.5rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif; background: #ffffff; padding: 0.75rem 1.25rem; border-radius: 6px; border: 1px solid #e5e5e5; box-shadow: 0 1px 2px rgba(0,0,0,0.01);">
                         <span style="font-weight:700; color: #1a1a1a; min-width: 120px;">{{ $element['label'] ?? '' }}</span>
-                        <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.4rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #ffffff; font-size: 0.9rem;">
+                        @php
+                            $selectBorder = '#cbd5e1';
+                            $detail = $result ? collect($result['details'])->firstWhere('id', $elId) : null;
+                            $current = $answers[$elId] ?? '';
+                            $expected = $element['answer'] ?? '';
+                            if ($result && $detail) {
+                                $selectBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                                $expected = $detail['expected'] ?? $expected;
+                            }
+                        @endphp
+                        <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.4rem 0.75rem; border: 1.5px solid {{ $selectBorder }}; border-radius: 4px; background: #ffffff; font-size: 0.9rem; outline: none; cursor: pointer;">
                             <option value="">---</option>
                             @foreach ($matchOptions as $opt)
-                                <option value="{{ $opt }}">{{ strtoupper($opt) }}</option>
+                                <option value="{{ $opt }}"
+                                    @if($result && $opt === $expected)
+                                        style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                    @elseif($result && $current === $opt && !$detail['correct'])
+                                        style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                    @endif
+                                >{{ strtoupper($opt) }}</option>
                             @endforeach
                         </select>
-                        @if ($result)
-                            @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
-                            @if ($detail)
-                                <span style="margin-left: auto; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }}; font-size: 0.9rem;">
-                                    {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
+                        @if ($result && $detail)
+                            @if ($detail['correct'])
+                                <span style="margin-left: auto; font-weight: bold; color: #16a34a; font-size: 0.9rem;">
+                                    ✓ Richtig
+                                </span>
+                            @else
+                                <span style="margin-left: auto; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                                    @if ($current !== '')
+                                        <span style="font-weight: bold; color: #dc2626;">✗ Falsch</span>
+                                    @endif
+                                    <span style="font-weight: bold; color: #16a34a; border: 1px solid #16a34a; padding: 0.1rem 0.4rem; border-radius: 4px; background-color: #f0fdf4;">
+                                        Richtig: {{ strtoupper($expected) }}
+                                    </span>
                                 </span>
                             @endif
                         @endif
@@ -2025,11 +2135,24 @@ if (!function_exists('parseTeilContent')) {
                                             <option value="">--{{ $element['id'] === 'C1-LV3-matching' ? ($gapIdx + 16) : $gapIdx }}--</option>
                                             @foreach ($optList as $opt)
                                                 @php $optParts = explode('|', $opt, 2); $optKey = trim($optParts[0]); $optLabel = trim($optParts[1] ?? $optKey); @endphp
-                                                <option value="{{ $optKey }}">{{ $optLabel }}</option>
+                                                <option value="{{ $optKey }}"
+                                                    @if($result && $optKey === $gapExpected)
+                                                        style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                                    @elseif($result && $current === $optKey && !$gapCorrect)
+                                                        style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                                    @endif
+                                                >{{ $optLabel }}</option>
                                             @endforeach
                                         </select>
                                         @if ($result)
-                                            <span class="feedback-badge {{ $gapCorrect ? 'ok' : 'fail' }}">{{ $gapCorrect ? '✓' : '✗ ' . $gapExpected }}</span>
+                                            @if ($gapCorrect)
+                                                <span class="feedback-badge ok">✓</span>
+                                            @else
+                                                @if ($current !== '')
+                                                    <span class="feedback-badge fail">✗</span>
+                                                @endif
+                                                <span class="feedback-badge ok" style="border: 1px solid #16a34a; padding: 0.1rem 0.3rem; border-radius: 3px; background-color: #f0fdf4; margin-left: 0.25rem;">Lösung: {{ strtoupper($gapExpected) }}</span>
+                                            @endif
                                         @endif
                                     </span>
                                 @endif
@@ -2419,16 +2542,50 @@ if (!function_exists('parseTeilContent')) {
                                     $isDropdown = ($seg['gapDef']['type'] ?? '') === 'dropdown';
                                     $optList = $parser->optionList($seg['gapDef']);
                                 @endphp
-                                <span class="inline-gap-pill">
+                                @php
+                                    $gapCorrect = false;
+                                    $gapExpected = '';
+                                    $gapDetail = null;
+                                    if ($result) {
+                                        $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$seg['gapId']);
+                                        if ($gapDetail) {
+                                            $gapCorrect = $gapDetail['correct'] ?? false;
+                                            $gapExpected = $gapDetail['expected'] ?? '';
+                                        }
+                                    }
+                                    $gapCls = '';
+                                    if ($result) {
+                                        $gapCls = $gapCorrect ? 'correct' : 'wrong';
+                                    }
+                                @endphp
+                                <span class="inline-gap-pill" style="display: inline-flex; align-items: center;">
                                     @if ($isDropdown && count($optList) > 0)
-                                        <select wire:model.live="answers.{{ $wireKey }}" class="cloze-select">
+                                        <select wire:model.live="answers.{{ $wireKey }}" @disabled($result) @class(['cloze-select', 'correct' => $gapCls === 'correct', 'wrong' => $gapCls === 'wrong'])>
                                             <option value="">{{ $current ?: '___' }}</option>
                                             @foreach ($optList as $opt)
-                                                <option value="{{ $opt['value'] }}" @selected($current === $opt['value'])>{{ $opt['label'] }}</option>
+                                                <option value="{{ $opt['value'] }}" @selected($current === $opt['value'])
+                                                    @if($result && $opt['value'] === $gapExpected)
+                                                        style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                                    @elseif($result && $current === $opt['value'] && !$gapCorrect)
+                                                        style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                                    @endif
+                                                >{{ $opt['label'] }}</option>
                                             @endforeach
                                         </select>
                                     @else
-                                        <input type="text" wire:model.live="answers.{{ $wireKey }}" class="cloze-select" style="width:80px;" placeholder="___" value="{{ $current }}">
+                                        <input type="text" wire:model.live="answers.{{ $wireKey }}" @disabled($result) @class(['cloze-select', 'correct' => $gapCls === 'correct', 'wrong' => $gapCls === 'wrong']) style="width:80px;" placeholder="___" value="{{ $current }}">
+                                    @endif
+                                    @if ($result)
+                                        @if ($gapCorrect)
+                                            <span style="color: #16a34a; font-weight: 700; font-size: 0.95rem; margin-left: 0.25rem;">✓</span>
+                                        @else
+                                            @if ($current !== '')
+                                                <span style="color: #dc2626; font-weight: 700; font-size: 0.95rem; margin-left: 0.25rem;">✗</span>
+                                            @endif
+                                            <span style="color: #16a34a; font-weight: 700; font-size: 0.85rem; margin-left: 0.25rem; border: 1px solid #16a34a; padding: 0.1rem 0.3rem; border-radius: 3px; background-color: #f0fdf4;">
+                                                Lösung: {{ strtoupper($gapExpected) }}
+                                            </span>
+                                        @endif
                                     @endif
                                 </span>
                             @endif
@@ -2766,6 +2923,7 @@ if (!function_exists('parseTeilContent')) {
                                             $gapCls = '';
                                             $gapCorrect = false;
                                             $gapExpected = $gapDef['answer'] ?? '';
+                                            $current = $answers[$elId][$gapIdx] ?? '';
                                             if ($result) {
                                                 $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$gapIdx);
                                                 if ($gapDetail) {
@@ -2780,11 +2938,24 @@ if (!function_exists('parseTeilContent')) {
                                             <select class="cloze-select {{ $gapCls }}" wire:model.change="answers.{{ $elId }}.{{ $gapIdx }}" {{ $result ? 'disabled' : '' }}>
                                                 <option value="">---</option>
                                                 @foreach ($gapOptionList as $opt)
-                                                    <option value="{{ $opt['key'] }}">{{ $opt['text'] }}</option>
+                                                    <option value="{{ $opt['key'] }}"
+                                                        @if($result && $opt['key'] === $gapExpected)
+                                                            style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                                        @elseif($result && $current === $opt['key'] && !$gapCorrect)
+                                                            style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                                        @endif
+                                                    >{{ $opt['text'] }}</option>
                                                 @endforeach
                                             </select>
                                             @if ($result)
-                                                <span class="feedback-badge {{ $gapCorrect ? 'ok' : 'fail' }}">{{ $gapCorrect ? '✓' : '✗ ' . strtoupper($gapExpected) }}</span>
+                                                @if ($gapCorrect)
+                                                    <span class="feedback-badge ok">✓</span>
+                                                @else
+                                                    @if ($current !== '')
+                                                        <span class="feedback-badge fail">✗</span>
+                                                    @endif
+                                                    <span class="feedback-badge ok" style="border: 1px solid #16a34a; padding: 0.1rem 0.3rem; border-radius: 3px; background-color: #f0fdf4; margin-left: 0.25rem;">Lösung: {{ strtoupper($gapExpected) }}</span>
+                                                @endif
                                             @endif
                                         </span>
                                     @endif
@@ -3158,17 +3329,41 @@ if (!function_exists('parseTeilContent')) {
                         @else
                             <div style="display:flex;flex-direction:row;align-items:center;gap:1.5rem;margin-bottom:0.75rem;font-family:'Plus Jakarta Sans',sans-serif; background: #fafafa; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid #e5e5e5;">
                                 <span style="font-weight:600; color: #1a1a1a; min-width: 100px;">{{ $element['label'] ?? '' }}</span>
-                                <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #ffffff;">
+                                @php
+                                    $selectBorder = '#cbd5e1';
+                                    $detail = $result ? collect($result['details'])->firstWhere('id', $elId) : null;
+                                    $current = $answers[$elId] ?? '';
+                                    $expected = $element['answer'] ?? '';
+                                    if ($result && $detail) {
+                                        $selectBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                                        $expected = $detail['expected'] ?? $expected;
+                                    }
+                                @endphp
+                                <select class="cloze-select" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="padding: 0.35rem 0.75rem; border: 1.5px solid {{ $selectBorder }}; border-radius: 4px; background: #ffffff; outline: none; cursor: pointer;">
                                     <option value="">---</option>
                                     @foreach ($matchOptions as $opt)
-                                        <option value="{{ $opt }}">{{ $opt }}</option>
+                                        <option value="{{ $opt }}"
+                                            @if($result && $opt === $expected)
+                                                style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                            @elseif($result && $current === $opt && !$detail['correct'])
+                                                style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                            @endif
+                                        >{{ $opt }}</option>
                                     @endforeach
                                 </select>
-                                @if ($result)
-                                    @php $detail = collect($result['details'])->firstWhere('id', $elId); @endphp
-                                    @if ($detail)
-                                        <span style="margin-left: auto; font-weight: bold; color: {{ $detail['correct'] ? '#16a34a' : '#dc2626' }}; font-size: 0.85rem;">
-                                            {{ $detail['correct'] ? '✓ Richtig' : '✗ Falsch (Richtig: ' . strtoupper($detail['expected']) . ')' }}
+                                @if ($result && $detail)
+                                    @if ($detail['correct'])
+                                        <span style="margin-left: auto; font-weight: bold; color: #16a34a; font-size: 0.85rem;">
+                                            ✓ Richtig
+                                        </span>
+                                    @else
+                                        @if ($current !== '')
+                                            <span style="margin-left: auto; font-weight: bold; color: #dc2626; font-size: 0.85rem;">
+                                                ✗ Falsch
+                                            </span>
+                                        @endif
+                                        <span style="margin-left: auto; font-weight: bold; color: #16a34a; font-size: 0.85rem; border: 1px solid #16a34a; padding: 0.1rem 0.4rem; border-radius: 4px; background-color: #f0fdf4;">
+                                            Lösung: {{ strtoupper($expected) }}
                                         </span>
                                     @endif
                                 @endif
@@ -3262,8 +3457,30 @@ if (!function_exists('parseTeilContent')) {
                             </legend>
                             <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
                                 @foreach ($rawOptions as $opt)
-                                    <label class="mc-option-item" style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
-                                        <input type="radio" name="{{ $elId }}" value="{{ $opt }}" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }}>
+                                    @php
+                                        $isSelected = ($answers[$elId] ?? '') === $opt;
+                                        $detail = $result ? collect($result['details'])->firstWhere('id', $elId) : null;
+                                        $expected = $detail['expected'] ?? '';
+                                        
+                                        $labelStyle = 'display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer; padding: 0.25rem 0.5rem; border-radius: 4px; transition: all 0.15s;';
+                                        if ($result && $detail) {
+                                            if ($opt === $expected) {
+                                                $labelStyle .= ' border: 1px solid #16a34a; background-color: #f0fdf4; color: #15803d; font-weight: 700;';
+                                            } elseif ($isSelected) {
+                                                $labelStyle .= ' border: 1px solid #dc2626; background-color: #fdf2f2; color: #b91c1c;';
+                                            } else {
+                                                $labelStyle .= ' border: 1px solid transparent;';
+                                            }
+                                        } else {
+                                            if ($isSelected) {
+                                                $labelStyle .= ' border: 1px solid #111827; background-color: #f8fafc; font-weight: 700;';
+                                            } else {
+                                                $labelStyle .= ' border: 1px solid transparent;';
+                                            }
+                                        }
+                                    @endphp
+                                    <label class="mc-option-item" style="{{ $labelStyle }}">
+                                        <input type="radio" name="{{ $elId }}" value="{{ $opt }}" wire:model.change="answers.{{ $elId }}" {{ $result ? 'disabled' : '' }} style="display: none;">
                                         <span style="font-weight: 500; text-transform: uppercase;">{{ $opt }}</span>
                                     </label>
                                 @endforeach

@@ -23,30 +23,55 @@
                     $wireKey = $gap['elementId'].'.'.$gap['gapId'];
                     $current = $answers[$gap['elementId']][$gap['gapId']] ?? '';
                     $isDropdown = $gap['type'] === 'dropdown' || $gap['type'] === 'matching';
+                    
+                    $fieldBorder = '#cbd5e1';
+                    $detail = null;
+                    $expected = '';
+                    if ($result ?? false) {
+                        $detail = collect($result['details'] ?? [])->firstWhere('id', $gap['elementId'].'.gap.'.$gap['gapId']);
+                        if ($detail) {
+                            $fieldBorder = $detail['correct'] ? '#16a34a' : '#dc2626';
+                            $expected = $detail['expected'] ?? '';
+                        }
+                    }
                 @endphp
 
                 <div class="answer-sheet-row" wire:key="sheet-{{ $wireKey }}">
                     <span class="question-num">{{ $gap['label'] }}</span>
 
                     @if ($isDropdown)
-                        <select wire:model.live="answers.{{ $wireKey }}" class="bubble-select">
+                        <select wire:model.live="answers.{{ $wireKey }}" @disabled($result ?? false) class="bubble-select" style="border: 1.5px solid {{ $fieldBorder }}; outline: none; cursor: pointer;">
                             <option value="">—</option>
                             @foreach ($gap['options'] as $opt)
-                                <option value="{{ $opt['value'] }}">{{ $opt['label'] }}</option>
+                                <option value="{{ $opt['value'] }}"
+                                    @if($result && $detail && $opt['value'] === $expected)
+                                        style="color: #16a34a; font-weight: bold; background-color: #f0fdf4;"
+                                    @elseif($result && $detail && $current === $opt['value'] && !$detail['correct'])
+                                        style="color: #dc2626; text-decoration: line-through; background-color: #fdf2f2;"
+                                    @endif
+                                >{{ $opt['label'] }}</option>
                             @endforeach
                         </select>
                     @else
-                        <input type="text" wire:model.live="answers.{{ $wireKey }}" class="bubble-input" placeholder="...">
+                        <input type="text" wire:model.live="answers.{{ $wireKey }}" @disabled($result ?? false) class="bubble-input" placeholder="..." style="border: 1.5px solid {{ $fieldBorder }}; outline: none;">
                     @endif
 
                     @if ($result ?? false)
-                        @php
-                            $detail = collect($result['details'] ?? [])->firstWhere('id', $gap['elementId'].'.gap.'.$gap['gapId']);
-                        @endphp
                         @if ($detail)
-                            <em @class(['answer-mark', 'correct' => $detail['correct']])>
-                                {{ $detail['correct'] ? '✓' : '✗ ' . $detail['expected'] }}
-                            </em>
+                            @if ($detail['correct'])
+                                <span style="font-weight: 700; font-size: 0.9rem; margin-left: 0.5rem; color: #16a34a;">
+                                    ✓ Richtig
+                                </span>
+                            @else
+                                <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+                                    @if ($current !== '')
+                                        <span style="font-weight: 700; font-size: 0.9rem; color: #dc2626;">✗ Falsch</span>
+                                    @endif
+                                    <span style="font-weight: 700; font-size: 0.8rem; color: #16a34a; border: 1px solid #16a34a; padding: 0.05rem 0.25rem; border-radius: 4px; background-color: #f0fdf4; white-space: nowrap;">
+                                        Lös: {{ strtoupper($expected) }}
+                                    </span>
+                                </span>
+                            @endif
                         @endif
                     @endif
                 </div>
