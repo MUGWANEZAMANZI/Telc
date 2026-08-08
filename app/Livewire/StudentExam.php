@@ -134,27 +134,7 @@ class StudentExam extends Component
                     $sections = $record->sections ?? [];
                     $currentSection = $sections[$activeSectionIdx] ?? null;
                     if ($currentSection) {
-                        $hasInlineGap = false;
-                        foreach ($currentSection['elements'] ?? [] as $el) {
-                            if (($el['type'] ?? '') === 'inline_gap') {
-                                $hasInlineGap = true;
-                                break;
-                            }
-                        }
-
-                        $sectionToGrade = $currentSection;
-                        $provider = $record->exam_provider ?? 'telc';
-                        if ($provider !== 'goethe' && $hasInlineGap) {
-                            $inlineElements = [];
-                            foreach ($currentSection['elements'] ?? [] as $el) {
-                                if (($el['type'] ?? '') === 'inline_gap') {
-                                    $inlineElements[] = $el;
-                                }
-                            }
-                            $sectionToGrade['elements'] = $inlineElements;
-                        }
-
-                        $result = app(ExamGrader::class)->grade([$sectionToGrade], $answers);
+                        $result = app(ExamGrader::class)->grade([$currentSection], $answers);
 
                         // Grade writing
                         $writingDetails = [];
@@ -728,28 +708,9 @@ class StudentExam extends Component
         $this->started = false;
 
         $sections = $this->template['sections'] ?? [];
-        $provider = $this->template['exam_provider'] ?? 'telc';
-        
-        $sectionsToGrade = array_map(function ($section) use ($provider) {
-            if ($provider === 'goethe') {
-                return $section;
-            }
-            
-            $elements = $section['elements'] ?? [];
-            $hasInlineGap = collect($elements)->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
-
-            if ($hasInlineGap) {
-                $section['elements'] = collect($elements)
-                    ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
-                    ->values()
-                    ->all();
-            }
-
-            return $section;
-        }, $sections);
 
         // Grade everything at once
-        $this->result = app(ExamGrader::class)->grade($sectionsToGrade, $this->answers);
+        $this->result = app(ExamGrader::class)->grade($sections, $this->answers);
 
         $this->enrichExplanations();
 
@@ -807,24 +768,8 @@ class StudentExam extends Component
             return;
         }
 
-        // Apply Goethe safety check for section-by-section grading
-        $provider = $this->template['exam_provider'] ?? 'telc';
-        $sectionToGrade = $currentSection;
-        
-        if ($provider !== 'goethe') {
-            $hasInlineGap = collect((array) ($currentSection['elements'] ?? []))
-                ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
-
-            if ($hasInlineGap) {
-                $sectionToGrade['elements'] = collect((array) ($currentSection['elements'] ?? []))
-                    ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
-                    ->values()
-                    ->all();
-            }
-        }
-
         // CRITICAL FIX: Merge results instead of completely erasing previous Teils!
-        $newGradedResult = app(ExamGrader::class)->grade([$sectionToGrade], $this->answers);
+        $newGradedResult = app(ExamGrader::class)->grade([$currentSection], $this->answers);
         
         if (empty($this->result) || !isset($this->result['details'])) {
             $this->result = $newGradedResult;
