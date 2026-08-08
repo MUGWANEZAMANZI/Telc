@@ -726,7 +726,11 @@ class StudentExam extends Component
         // Filter sections: for inline_gap sections, only grade inline_gap elements
         // (standard answer elements are not visible in the inline_gap view)
         $sections = $this->template['sections'] ?? [];
-        $sectionsToGrade = array_map(function ($section) {
+        $provider = $this->template['exam_provider'] ?? 'telc';
+        $sectionsToGrade = array_map(function ($section) use ($provider) {
+            if ($provider === 'goethe') {
+                return $section;
+            }
             /** @var array<int, array<string, mixed>> $elements */
             $elements = $section['elements'] ?? [];
             $hasInlineGap = collect($elements)
@@ -806,15 +810,18 @@ class StudentExam extends Component
         }
 
         // Apply same inline_gap filtering if applicable
-        $hasInlineGap = collect((array) ($currentSection['elements'] ?? []))
-            ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
-
+        $provider = $this->template['exam_provider'] ?? 'telc';
         $sectionToGrade = $currentSection;
-        if ($hasInlineGap) {
-            $sectionToGrade['elements'] = collect((array) ($currentSection['elements'] ?? []))
-                ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
-                ->values()
-                ->all();
+        if ($provider !== 'goethe') {
+            $hasInlineGap = collect((array) ($currentSection['elements'] ?? []))
+                ->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
+
+            if ($hasInlineGap) {
+                $sectionToGrade['elements'] = collect((array) ($currentSection['elements'] ?? []))
+                    ->filter(fn ($el) => ($el['type'] ?? '') === 'inline_gap')
+                    ->values()
+                    ->all();
+            }
         }
 
         $this->result = app(ExamGrader::class)->grade([$sectionToGrade], $this->answers);
