@@ -1,4 +1,39 @@
 @php
+if (!function_exists('parseMultipleChoiceOptions')) {
+    function parseMultipleChoiceOptions(?string $rawOptions): array {
+        if (empty($rawOptions)) {
+            return [];
+        }
+        $decoded = json_decode($rawOptions, true);
+        if (is_array($decoded)) {
+            $options = [];
+            if (array_keys($decoded) !== range(0, count($decoded) - 1)) {
+                return $decoded;
+            }
+            foreach ($decoded as $opt) {
+                if (is_array($opt)) {
+                    $key = $opt['key'] ?? $opt['char'] ?? $opt['value'] ?? '';
+                    $text = $opt['text'] ?? $opt['label'] ?? $opt['content'] ?? '';
+                    $options[$key] = $text;
+                } else {
+                    $options[$opt] = $opt;
+                }
+            }
+            return $options;
+        }
+
+        $options = [];
+        $parts = preg_split('/,(?=[a-zA-Z]\|)/', $rawOptions);
+        foreach ($parts as $rawOpt) {
+            $bits = explode('|', $rawOpt, 2);
+            if (count($bits) === 2) {
+                $options[trim($bits[0])] = trim($bits[1]);
+            }
+        }
+        return $options;
+    }
+}
+
 if (!function_exists('renderPremiumPassage')) {
     function renderPremiumPassage(string $content): string {
         $lines = explode("\n", $content);
@@ -1115,13 +1150,7 @@ if (!function_exists('parseTeilContent')) {
                             </div>
 
                             @php
-                                $mcOptions = [];
-                                foreach (explode(',', $qMC['options'] ?? '') as $rawOpt) {
-                                    $parts = explode('|', $rawOpt);
-                                    if (count($parts) === 2) {
-                                        $mcOptions[$parts[0]] = $parts[1];
-                                    }
-                                }
+                                $mcOptions = parseMultipleChoiceOptions($qMC['options'] ?? '');
                             @endphp
 
                             <div style="display: flex; flex-direction: column; gap: 0.6rem; padding-left: 2.2rem;">
@@ -1207,13 +1236,7 @@ if (!function_exists('parseTeilContent')) {
                 @php
                     $elId = $element['id'];
                     $qNum = substr($elId, strrpos($elId, '-') + 1);
-                    $mcOptions = [];
-                    foreach (explode(',', $element['options'] ?? '') as $rawOpt) {
-                        $parts = explode('|', $rawOpt);
-                        if (count($parts) === 2) {
-                            $mcOptions[$parts[0]] = $parts[1];
-                        }
-                    }
+                    $mcOptions = parseMultipleChoiceOptions($element['options'] ?? '');
                 @endphp
                 <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.01);">
                     <div style="display: flex; gap: 0.75rem; align-items: flex-start; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.5rem; margin-bottom: 1rem;">
@@ -1445,13 +1468,7 @@ if (!function_exists('parseTeilContent')) {
                 @php
                     $elId = $element['id'];
                     $qNum = substr($elId, strrpos($elId, '-') + 1);
-                    $mcOptions = [];
-                    foreach (explode(',', $element['options'] ?? '') as $rawOpt) {
-                        $parts = explode('|', $rawOpt);
-                        if (count($parts) === 2) {
-                            $mcOptions[$parts[0]] = $parts[1];
-                        }
-                    }
+                    $mcOptions = parseMultipleChoiceOptions($element['options'] ?? '');
                 @endphp
                 <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.01);">
                     <div style="display: flex; gap: 0.75rem; align-items: flex-start; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.5rem; margin-bottom: 1rem;">
