@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Grading\GraderFactory;
+
 class ExamGrader
 {
     /**
@@ -9,8 +11,15 @@ class ExamGrader
      * @param  array<string, mixed>  $answers
      * @return array{earned: float, possible: float, percentage: float, details: array<int, array<string, mixed>>, ...}
      */
-    public function grade(array $sections, array $answers): array
+    public function grade(array $sections, array $answers, ?string $provider = null, ?string $level = null): array
     {
+        if ($provider && $level) {
+            $grader = GraderFactory::make($provider, $level);
+            if ($grader) {
+                return $grader->grade($sections, $answers);
+            }
+        }
+
         $items = $this->gradableItems($sections);
         $earned = 0;
         $details = [];

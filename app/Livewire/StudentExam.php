@@ -133,7 +133,7 @@ class StudentExam extends Component
                     $sections = $record->sections ?? [];
                     $currentSection = $sections[$activeSectionIdx] ?? null;
                     if ($currentSection) {
-                        $result = app(ExamGrader::class)->grade([$currentSection], $answers);
+                        $result = app(ExamGrader::class)->grade([$currentSection], $answers, $record->exam_provider, $record->level);
 
                         // Grade writing
                         $writingDetails = [];
@@ -710,7 +710,7 @@ class StudentExam extends Component
         $sections = $this->template['sections'] ?? [];
 
         // Grade everything at once
-        $this->result = app(ExamGrader::class)->grade($sections, $this->answers);
+        $this->result = app(ExamGrader::class)->grade($sections, $this->answers, $this->template['exam_provider'] ?? null, $this->template['level'] ?? null);
 
         $this->enrichExplanations();
 
@@ -772,7 +772,7 @@ class StudentExam extends Component
         }
 
         // CRITICAL FIX: Merge results instead of completely erasing previous Teils!
-        $newGradedResult = app(ExamGrader::class)->grade([$currentSection], $this->answers);
+        $newGradedResult = app(ExamGrader::class)->grade([$currentSection], $this->answers, $this->template['exam_provider'] ?? null, $this->template['level'] ?? null);
 
         if (empty($this->result) || ! isset($this->result['details'])) {
             $this->result = $newGradedResult;
@@ -1717,7 +1717,7 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
 
     private function loadTemplateData(ExamTemplate $record): void
     {
-        $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free']);
+        $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free', 'exam_provider']);
         $status = $this->getTemplateFreeStatus($record);
         if ($status['is_free']) {
             $sections = [];

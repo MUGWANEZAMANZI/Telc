@@ -522,7 +522,7 @@ class ExamDashboard extends Component
     public function submit(): void
     {
         $this->started = false;
-        $this->result = app(ExamGrader::class)->grade($this->template['sections'], $this->answers);
+        $this->result = app(ExamGrader::class)->grade($this->template['sections'], $this->answers, $this->template['exam_provider'] ?? null, $this->template['level'] ?? null);
 
         if ($this->selectedTemplateId) {
             ExamAttempt::create([
@@ -1005,7 +1005,7 @@ class ExamDashboard extends Component
             return;
         }
 
-        $newGradedResult = app(ExamGrader::class)->grade([$currentSection], $this->answers);
+        $newGradedResult = app(ExamGrader::class)->grade([$currentSection], $this->answers, $this->template['exam_provider'] ?? null, $this->template['level'] ?? null);
 
         if (empty($this->result) || ! isset($this->result['details'])) {
             $this->result = $newGradedResult;

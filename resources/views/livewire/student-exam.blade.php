@@ -797,7 +797,7 @@
         @endphp
 
         {{-- Premium Document Layout for Paid C1 / B1 / B2 or dynamic templates without PDF --}}
-        @if (empty($template['source_pdf']) || ($isPaidExam && in_array($template['level'] ?? '', ['B1', 'B2', 'C1', 'C2'], true)))
+        @if (empty($template['source_pdf']) || in_array($template['level'] ?? '', ['B1', 'B2', 'C1', 'C2'], true))
             <div class="premium-document-shell" wire:poll.1s="tick">
                 <div class="premium-document">
                     @include('partials.premium.header')

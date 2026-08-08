@@ -676,7 +676,7 @@ class GuestExam extends Component
             if ($isLastSectionOfTemplate) {
                 $this->started = false;
                 $accumulatedAnswers = $this->accumulatedAnswers();
-                $this->result = app(ExamGrader::class)->grade($sections, $accumulatedAnswers);
+                $this->result = app(ExamGrader::class)->grade($sections, $accumulatedAnswers, $this->template['exam_provider'] ?? null, $this->template['level'] ?? null);
                 $this->enrichExplanations();
 
                 $writingDetails = [];
@@ -852,7 +852,9 @@ class GuestExam extends Component
 
         $newGradedResult = app(ExamGrader::class)->grade(
             [$currentSection],
-            $this->answers
+            $this->answers,
+            $this->template['exam_provider'] ?? null,
+            $this->template['level'] ?? null
         );
 
         if (empty($this->result) || ! isset($this->result['details'])) {
