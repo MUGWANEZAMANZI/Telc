@@ -1483,14 +1483,16 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
             $content = (string) ($this->answers[$elId] ?? '');
             $feedback = 'Keine Abgabe für den schriftlichen Ausdruck.';
             $score = 0;
+            $level = $this->template['level'] ?? 'C1';
+            $provider = $this->template['exam_provider'] ?? 'telc';
 
             if (! empty(trim($content))) {
                 try {
                     $model = Gemini::generativeModel(model: config('gemini.model'))
                         ->withSystemInstruction(
                             Content::parse(
-                                'Du bist ein offizieller TELC-C1-Prüfer für die schriftliche Prüfung. '
-                                .'Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis '.$maxPoints.' Punkten zurück.'
+                                "Du bist ein offizieller {$provider} {$level} Prüfer für die schriftliche Prüfung. "
+                                ."Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis {$maxPoints} Punkten zurück."
                             )
                         );
                     $resp = $model->generateContent(
@@ -1604,11 +1606,13 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
 
             if (! $foundScore) {
                 try {
+                    $level = $this->template['level'] ?? 'C1';
+                    $provider = $this->template['exam_provider'] ?? 'telc';
                     $model = Gemini::generativeModel(model: config('gemini.model'))
                         ->withSystemInstruction(
                             Content::parse(
-                                'Du bist ein offizieller TELC-Prüfer für die mündliche Prüfung. '
-                                .'Bewerte das vorliegende Gesprächsprotokoll. Gib eine exakte Punktzahl von 0 bis '.$maxPoints.' Punkten zurück.'
+                                "Du bist ein offizieller {$provider} {$level} Prüfer für die mündliche Prüfung. "
+                                ."Bewerte das vorliegende Gesprächsprotokoll. Gib eine exakte Punktzahl von 0 bis {$maxPoints} Punkten zurück."
                             )
                         );
                     $resp = $model->generateContent(
@@ -1669,10 +1673,12 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
 
             if (! empty(trim($combinedTranscript))) {
                 try {
+                    $level = $this->template['level'] ?? 'C1';
+                    $provider = $this->template['exam_provider'] ?? 'telc';
                     $model = Gemini::generativeModel(model: config('gemini.model'))
                         ->withSystemInstruction(
                             Content::parse(
-                                'Du bist ein offizieller TELC-Prüfer für die mündliche Prüfung. '
+                                "Du bist ein offizieller {$provider} {$level} Prüfer für die mündliche Prüfung. "
                                 .'Bewerte die gesamte mündliche Leistung des Lernenden über alle Prüfungsteile hinweg anhand der sprachlichen Angemessenheit.'
                             )
                         );

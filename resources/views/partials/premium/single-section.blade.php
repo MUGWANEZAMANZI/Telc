@@ -412,7 +412,7 @@ if (!function_exists('parseTeilContent')) {
                                         }
                                     }
                                     $gapCls = '';
-                                    if ($result && $current !== '') {
+                                    if ($result) {
                                         $gapCls = $gapCorrect ? 'correct' : 'wrong';
                                     }
                                 @endphp
@@ -1543,10 +1543,10 @@ if (!function_exists('parseTeilContent')) {
                     @php
                         $feedback = collect($result['details'])->firstWhere('id', $elId);
                     @endphp
-                    @if ($feedback && !empty($feedback['feedback']))
+                    @if ($feedback && (!empty($feedback['explanation']) || !empty($feedback['feedback'])))
                         <div style="background: #fef08a; border: 1px solid #fef08a; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
                             <strong style="color: #854d0e;">Feedback vom Lehrer:</strong>
-                            <p style="margin: 0.5rem 0 0 0; color: #713f12; font-size: 0.95rem;">{{ $feedback['feedback'] }}</p>
+                            <p style="margin: 0.5rem 0 0 0; color: #713f12; font-size: 0.95rem;">{{ $feedback['explanation'] ?? $feedback['feedback'] }}</p>
                         </div>
                     @endif
                 @endif
@@ -1620,10 +1620,10 @@ if (!function_exists('parseTeilContent')) {
                     @php
                         $feedback = collect($result['details'])->firstWhere('id', $elId);
                     @endphp
-                    @if ($feedback && !empty($feedback['feedback']))
+                    @if ($feedback && (!empty($feedback['explanation']) || !empty($feedback['feedback'])))
                         <div style="background: #fef08a; border: 1px solid #fef08a; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
                             <strong style="color: #854d0e;">Feedback vom Lehrer:</strong>
-                            <p style="margin: 0.5rem 0 0 0; color: #713f12; font-size: 0.95rem;">{{ $feedback['feedback'] }}</p>
+                            <p style="margin: 0.5rem 0 0 0; color: #713f12; font-size: 0.95rem;">{{ $feedback['explanation'] ?? $feedback['feedback'] }}</p>
                         </div>
                     @endif
                 @endif
@@ -2016,7 +2016,7 @@ if (!function_exists('parseTeilContent')) {
                                             }
                                         }
                                         $gapCls = '';
-                                        if ($result && $current !== '') {
+                                        if ($result) {
                                             $gapCls = $gapCorrect ? 'correct' : 'wrong';
                                         }
                                     @endphp
@@ -2028,7 +2028,7 @@ if (!function_exists('parseTeilContent')) {
                                                 <option value="{{ $optKey }}">{{ $optLabel }}</option>
                                             @endforeach
                                         </select>
-                                        @if ($result && $current !== '')
+                                        @if ($result)
                                             <span class="feedback-badge {{ $gapCorrect ? 'ok' : 'fail' }}">{{ $gapCorrect ? '✓' : '✗ ' . $gapExpected }}</span>
                                         @endif
                                     </span>
@@ -2194,6 +2194,11 @@ if (!function_exists('parseTeilContent')) {
                                         </div>
                                     @endforeach
                                 </div>
+                                @if ($result && !empty($gapDetail['explanation']))
+                                    <div class="explanation-box" style="margin-top: 0.25rem; margin-bottom: 0.5rem; padding: 0.5rem 0.75rem; background-color: #f8fafc; border-left: 3px solid #3b82f6; font-size: 0.88rem; color: #4b5563; width: 100%; border-radius: 0 4px 4px 0; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                        <strong>Erklärung:</strong> {{ $gapDetail['explanation'] }}
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
                     @endif
@@ -2352,35 +2357,43 @@ if (!function_exists('parseTeilContent')) {
                                 @php
                                     $rowNum = $i + 16;
                                     $currentAnswer = $answers[$element['id']][$i] ?? '';
+                                    $gapDetail = null;
+                                    if ($result) {
+                                        $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$i);
+                                    }
                                 @endphp
-                                <div class="grid-row-item">
-                                    <span class="grid-num">{{ $rowNum }}</span>
-                                    @foreach ($optionsKeys as $key)
-                                        @php
-                                            $isSelected = $currentAnswer === $key;
-                                            $isCorrectAnswer = false;
-                                            $expectedAnswer = '';
-                                            if ($result) {
-                                                $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$i);
+                                <div style="border-bottom: 1px solid #f1f5f9; padding: 0.25rem 0;">
+                                    <div class="grid-row-item" style="border-bottom: none; padding-bottom: 0;">
+                                        <span class="grid-num">{{ $rowNum }}</span>
+                                        @foreach ($optionsKeys as $key)
+                                            @php
+                                                $isSelected = $currentAnswer === $key;
+                                                $isCorrectAnswer = false;
+                                                $expectedAnswer = '';
                                                 if ($gapDetail) {
                                                     $isCorrectAnswer = $gapDetail['correct'] ?? false;
                                                     $expectedAnswer = $gapDetail['expected'] ?? '';
                                                 }
-                                            }
-                                        @endphp
-                                        <button type="button"
-                                            @if(!$result) wire:click="$set('answers.{{ $element['id'] }}.{{ $i }}', '{{ $isSelected ? '' : $key }}')" @endif
-                                            class="grid-box @if($isSelected) selected @endif @if($result) disabled @endif"
-                                            style="
-                                                @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
-                                                @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
-                                                @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
-                                            "
-                                            title="Lücke {{ $rowNum }} - {{ strtoupper($key) }}"
-                                        >
-                                            {{ $key }}
-                                        </button>
-                                    @endforeach
+                                            @endphp
+                                            <button type="button"
+                                                @if(!$result) wire:click="$set('answers.{{ $element['id'] }}.{{ $i }}', '{{ $isSelected ? '' : $key }}')" @endif
+                                                class="grid-box @if($isSelected) selected @endif @if($result) disabled @endif"
+                                                style="
+                                                    @if($result && $isSelected && $isCorrectAnswer) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                    @if($result && $isSelected && !$isCorrectAnswer) border-color: #dc2626; background-color: #fdf2f2; @endif
+                                                    @if($result && !$isSelected && $expectedAnswer === $key) border-color: #16a34a; background-color: #f0fdf4; @endif
+                                                "
+                                                title="Lücke {{ $rowNum }} - {{ strtoupper($key) }}"
+                                            >
+                                                {{ $key }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                    @if ($result && !empty($gapDetail['explanation']))
+                                        <div class="explanation-box" style="margin-top: 0.25rem; margin-bottom: 0.25rem; padding: 0.4rem 0.75rem; background-color: #f8fafc; border-left: 3px solid #3b82f6; font-size: 0.85rem; color: #4b5563; border-radius: 0 4px 4px 0; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                            <strong>Erklärung:</strong> {{ $gapDetail['explanation'] }}
+                                        </div>
+                                    @endif
                                 </div>
                             @endfor
                         </div>
@@ -2500,6 +2513,17 @@ if (!function_exists('parseTeilContent')) {
                                     </div>
                                 @endforeach
                             </div>
+
+                            @if ($result)
+                                @php
+                                    $detail = collect($result['details'])->firstWhere('id', $element['id']);
+                                @endphp
+                                @if ($detail && !empty($detail['explanation']))
+                                    <div class="explanation-box" style="margin-top: 0.75rem; margin-bottom: 0.5rem; padding: 0.5rem 0.75rem; background-color: #f8fafc; border-left: 3px solid #3b82f6; font-size: 0.88rem; color: #4b5563; border-radius: 0 4px 4px 0; margin-left: 1.75rem;">
+                                        <strong>Erklärung:</strong> {{ $detail['explanation'] }}
+                                    </div>
+                                @endif
+                            @endif
                         </div>
                     @else
                         @php $rawOptions = $this->optionsFor($element); @endphp
@@ -2738,14 +2762,30 @@ if (!function_exists('parseTeilContent')) {
                                                 }
                                             }
                                         @endphp
+                                        @php
+                                            $gapCls = '';
+                                            $gapCorrect = false;
+                                            $gapExpected = $gapDef['answer'] ?? '';
+                                            if ($result) {
+                                                $gapDetail = collect($result['details'])->firstWhere('id', $element['id'].'.gap.'.$gapIdx);
+                                                if ($gapDetail) {
+                                                    $gapCorrect = $gapDetail['correct'] ?? false;
+                                                    $gapExpected = $gapDetail['expected'] ?? $gapExpected;
+                                                }
+                                                $gapCls = $gapCorrect ? 'correct' : 'wrong';
+                                            }
+                                        @endphp
                                         <span class="cloze-select-wrapper">
                                             <span class="cloze-gap-num">{{ $elId === 'C1-LV3-matching' ? ($gapIdx + 16) : $gapIdx }}</span>
-                                            <select class="cloze-select" wire:model.change="answers.{{ $elId }}.{{ $gapIdx }}" {{ $result ? 'disabled' : '' }}>
+                                            <select class="cloze-select {{ $gapCls }}" wire:model.change="answers.{{ $elId }}.{{ $gapIdx }}" {{ $result ? 'disabled' : '' }}>
                                                 <option value="">---</option>
                                                 @foreach ($gapOptionList as $opt)
                                                     <option value="{{ $opt['key'] }}">{{ $opt['text'] }}</option>
                                                 @endforeach
                                             </select>
+                                            @if ($result)
+                                                <span class="feedback-badge {{ $gapCorrect ? 'ok' : 'fail' }}">{{ $gapCorrect ? '✓' : '✗ ' . strtoupper($gapExpected) }}</span>
+                                            @endif
                                         </span>
                                     @endif
                                 @endforeach

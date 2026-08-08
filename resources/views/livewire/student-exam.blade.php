@@ -218,6 +218,16 @@
             border-bottom-color: #d8232a;
         }
 
+        .cloze-select.correct {
+            border-bottom-color: #166534 !important;
+            color: #166534 !important;
+        }
+
+        .cloze-select.wrong {
+            border-bottom-color: #991b1b !important;
+            color: #991b1b !important;
+        }
+
         .cloze-gap-num {
             font-size: 0.75rem;
             font-weight: 800;
