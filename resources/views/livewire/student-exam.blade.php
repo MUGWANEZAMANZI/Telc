@@ -841,12 +841,12 @@
                     </div>
 
                     @if ($isPaidExam)
-                        <button type="button" wire:click="submit" class="telc-button primary wide">
+                        <button type="button" wire:click="submit" class="telc-button primary wide highlighted-submit-btn">
                             Antwortbogen abgeben
                         </button>
                     @else
                         @if (!$result)
-                            <button type="button" wire:click="submitSection" class="telc-button primary wide">
+                            <button type="button" wire:click="submitSection" class="telc-button primary wide highlighted-submit-btn">
                                 Abschnitt abgeben
                             </button>
                         @else
@@ -907,6 +907,13 @@
 
                 <main class="paper-workbench" style="--telc-accent: {{ $theme['accent'] ?? '#8f8f8f' }}; --telc-ink: {{ $theme['ink'] ?? '#202020' }};">
                     @if ($section)
+                        @if (!empty($section['audio_url']))
+                            <div class="section-audio-container" style="max-width: 794px; margin: 0 auto 1.5rem; padding: 1rem; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                <strong style="font-size: 0.9rem; color: #1a1a1a;">🎧 Audio für diesen Teil abspielen:</strong>
+                                <audio controls src="{{ $section['audio_url'] }}" style="width: 100%; max-width: 500px;"></audio>
+                            </div>
+                        @endif
+
                         @php
                             $hasInlineGap = collect($section['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'inline_gap');
                             $hasInteractiveText = collect($section['elements'] ?? [])->contains(fn ($el) => ($el['type'] ?? '') === 'interactive_text');
@@ -1287,6 +1294,33 @@
                 </main>
             </div>
         @endif
+    @endif
+
+    {{-- Time Expired Modal --}}
+    @if ($timeExpired)
+        <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+            <div style="background: #ffffff; padding: 2.5rem; max-width: 440px; width: 90%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid #d8232a; font-family: 'Plus Jakarta Sans', sans-serif; text-align: center;">
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 0.75rem; color: #1a1a1a;">Zeit abgelaufen!</h3>
+                <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.75rem; line-height: 1.6;">Die Zeit für diesen Prüfungsteil ist abgelaufen. Du kannst dir selbst zusätzliche Minuten geben, um den Teil in Ruhe fertigzustellen, oder den Teil jetzt abgeben.</p>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button type="button" wire:click="addExtraMinutes(5)" class="telc-button primary wide" style="background-color: #137333; border-color: #137333; color: #ffffff; font-weight: 750;">
+                        + 5 Minuten hinzufügen
+                    </button>
+                    <button type="button" wire:click="addExtraMinutes(10)" class="telc-button primary wide" style="background-color: #137333; border-color: #137333; color: #ffffff; font-weight: 750;">
+                        + 10 Minuten hinzufügen
+                    </button>
+                    @if ($isPaidExam)
+                        <button type="button" wire:click="submit" class="telc-button wide highlighted-submit-btn" style="font-weight: 750;">
+                            Prüfung abgeben
+                        </button>
+                    @else
+                        <button type="button" wire:click="submitSection" class="telc-button wide highlighted-submit-btn" style="font-weight: 750;">
+                            Abschnitt abgeben
+                        </button>
+                    @endif
+                </div>
+            </div>
+        </div>
     @endif
 
     {{-- Revolut Payment Modal --}}

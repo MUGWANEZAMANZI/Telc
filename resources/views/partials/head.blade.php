@@ -1,5 +1,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="google" content="notranslate" />
 
 <title>
     {{ filled($title ?? null) ? $title.' - '.config('app.name', 'German Success') : config('app.name', 'German Success') }}

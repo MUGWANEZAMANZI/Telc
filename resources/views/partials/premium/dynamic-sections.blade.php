@@ -16,6 +16,35 @@ if (!function_exists('renderPremiumPassage')) {
                 continue;
             }
 
+            // Match markdown headers
+            if (str_starts_with($trimmed, '#')) {
+                if ($inOptionsList) {
+                    $outputHtml .= "</div>";
+                    $inOptionsList = false;
+                }
+                
+                $level = 0;
+                while ($level < strlen($trimmed) && $trimmed[$level] === '#') {
+                    $level++;
+                }
+                
+                $headerText = trim(substr($trimmed, $level));
+                $headerText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $headerText);
+                $headerText = preg_replace('/_(.*?)_/', '<em>$1</em>', $headerText);
+                $headerText = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $headerText);
+
+                if ($level === 1) {
+                    $outputHtml .= "<h1 style='text-align:center; color:#1e293b; font-size:2rem; font-weight:800; margin-top:1.5rem; margin-bottom:1.5rem;'>{$headerText}</h1>";
+                } elseif ($level === 2) {
+                    $outputHtml .= "<h2 style='text-align:center; color:#1e293b; font-size:1.6rem; font-weight:800; margin-top:1rem; margin-bottom:1.5rem;'>{$headerText}</h2>";
+                } elseif ($level === 3) {
+                    $outputHtml .= "<h3 style='text-align:center; color:#475569; font-size:1.25rem; font-weight:700; margin-top:1rem; margin-bottom:1rem;'>{$headerText}</h3>";
+                } else {
+                    $outputHtml .= "<h4 style='text-align:center; letter-spacing:0.1em; color:#64748b; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem; text-transform:uppercase;'>{$headerText}</h4>";
+                }
+                continue;
+            }
+
             // If the line already starts or ends with HTML tags, output it directly
             if (str_starts_with($trimmed, '<') || str_ends_with($trimmed, '>')) {
                 if ($inOptionsList) {
@@ -54,6 +83,9 @@ if (!function_exists('renderPremiumPassage')) {
                 }
                 $letter = strtolower($matches[1]);
                 $text = trim($matches[3]);
+                $text = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $text);
+                $text = preg_replace('/_(.*?)_/', '<em>$1</em>', $text);
+                $text = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $text);
                 $outputHtml .= "
                     <div class='option-strip-item' style='display:flex; align-items:center; gap:1rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:0.6rem 1rem; font-family:var(--font-sans); box-shadow:0 1px 2px rgba(0,0,0,0.02);'>
                         <span style='background:#e2e8f0; color:#1e293b; font-weight:800; font-size:0.95rem; width:1.75rem; height:1.75rem; display:flex; align-items:center; justify-content:center; border-radius:4px; text-transform:uppercase;'>{$letter}</span>
@@ -97,6 +129,9 @@ if (!function_exists('renderPremiumPassage')) {
                 $prefix = trim($matches[1]);
                 $num = $matches[2];
                 $text = trim($matches[4]);
+                $text = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $text);
+                $text = preg_replace('/_(.*?)_/', '<em>$1</em>', $text);
+                $text = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $text);
                 $badgeText = $prefix ? "{$prefix} {$num}" : $num;
                 $outputHtml .= "
                     <div class='paragraph-styled-block' style='display:flex; gap:1.25rem; margin-top:1.25rem; margin-bottom:1.25rem;'>
@@ -113,7 +148,11 @@ if (!function_exists('renderPremiumPassage')) {
                 $outputHtml .= "</div>";
                 $inOptionsList = false;
             }
-            $outputHtml .= "<p style='color:#1a1a1a; line-height:1.75; font-size:0.95rem; margin-bottom:1rem; font-weight:450;'>" . e($trimmed) . "</p>";
+            $lineContent = e($trimmed);
+            $lineContent = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $lineContent);
+            $lineContent = preg_replace('/_(.*?)_/', '<em>$1</em>', $lineContent);
+            $lineContent = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $lineContent);
+            $outputHtml .= "<p style='color:#1a1a1a; line-height:1.75; font-size:0.95rem; margin-bottom:1rem; font-weight:450;'>{$lineContent}</p>";
         }
         
         if ($inOptionsList) {

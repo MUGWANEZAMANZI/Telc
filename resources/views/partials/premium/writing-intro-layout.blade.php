@@ -51,7 +51,7 @@
             @if ($writeDetail)
                 <span class="writing-score" style="display: inline-block; background: #1a1a1a; color: #eab308; font-size: 0.8rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 4px; margin-top: 0.5rem;">{{ $writeDetail['points'] }} / {{ $maxPoints }} Punkte</span>
                 @if (($writeDetail['explanation'] ?? $writeDetail['feedback'] ?? '') !== '')
-                    <div style="margin-top:0.75rem;padding:0.75rem;background:#f9f9f9;border-left:3px solid #d8232a;border-radius:4px;font-size:0.85rem;">
+                    <div style="margin-top:0.75rem;padding:0.75rem;background:#f9f9f9;border-left:3px solid #d8232a;border-radius:4px;font-size:0.85rem;white-space:pre-wrap;">
                         <strong>Feedback:</strong> {{ $writeDetail['explanation'] ?? $writeDetail['feedback'] }}
                     </div>
                 @endif

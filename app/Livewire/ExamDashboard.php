@@ -52,6 +52,12 @@ class ExamDashboard extends Component
 
     public bool $started = false;
 
+    public bool $timeExpired = false;
+
+    public array $editingOptions = [];
+
+    public array $editingTeil4 = [];
+
     public string $providerFilter = 'telc';
 
     public string $selectedTopic = '';
@@ -409,6 +415,250 @@ class ExamDashboard extends Component
         $this->template['sections'][$sectionIndex]['elements'] = $this->move($this->template['sections'][$sectionIndex]['elements'], $from, $to);
     }
 
+    public function setInlineGapCorrectAnswer(int $sectionIndex, int $elementIndex, int $gapIndex, string $letter): void
+    {
+        $options = $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['options'] ?? '[]';
+        if (is_string($options)) {
+            $options = json_decode($options, true) ?: [];
+        }
+
+        if (! isset($options[$gapIndex])) {
+            $options[$gapIndex] = [
+                'options' => 'a|,b|,c|,d|',
+                'answer' => 'a',
+            ];
+        }
+
+        $options[$gapIndex]['answer'] = $letter;
+
+        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['options'] = $options;
+        $this->save();
+    }
+
+    public function setInlineGapOptionText(int $sectionIndex, int $elementIndex, int $gapIndex, string $letter, string $value): void
+    {
+        $options = $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['options'] ?? '[]';
+        if (is_string($options)) {
+            $options = json_decode($options, true) ?: [];
+        }
+
+        if (! isset($options[$gapIndex])) {
+            $options[$gapIndex] = [
+                'options' => 'a|,b|,c|,d|',
+                'answer' => 'a',
+            ];
+        }
+
+        $parts = explode(',', $options[$gapIndex]['options'] ?? '');
+        $optList = [];
+        foreach ($parts as $p) {
+            $pair = explode('|', $p, 2);
+            $optList[trim($pair[0])] = $pair[1] ?? '';
+        }
+        $optList[$letter] = $value;
+
+        $newParts = [];
+        foreach ($optList as $k => $v) {
+            $newParts[] = "{$k}|{$v}";
+        }
+        $options[$gapIndex]['options'] = implode(',', $newParts);
+
+        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['options'] = $options;
+        $this->save();
+    }
+
+    public function loadEditingOptions(string $elementId, string $rawOptions): void
+    {
+        $list = [];
+        $decoded = json_decode($rawOptions, true);
+        if (is_array($decoded)) {
+            foreach ($decoded as $opt) {
+                if (is_array($opt)) {
+                    $list[] = [
+                        'key' => $opt['key'] ?? $opt['char'] ?? $opt['value'] ?? '',
+                        'text' => $opt['text'] ?? $opt['label'] ?? $opt['content'] ?? '',
+                    ];
+                } else {
+                    $list[] = [
+                        'key' => (string) $opt,
+                        'text' => (string) $opt,
+                    ];
+                }
+            }
+        } else {
+            $parts = array_filter(array_map('trim', explode(',', $rawOptions)));
+            foreach ($parts as $p) {
+                $bits = explode('|', $p, 2);
+                if (count($bits) === 2) {
+                    $list[] = [
+                        'key' => trim($bits[0]),
+                        'text' => trim($bits[1]),
+                    ];
+                } else {
+                    $list[] = [
+                        'key' => trim($p),
+                        'text' => trim($p),
+                    ];
+                }
+            }
+        }
+
+        if (empty($list)) {
+            $list = [
+                ['key' => 'a', 'text' => ''],
+                ['key' => 'b', 'text' => ''],
+                ['key' => 'c', 'text' => ''],
+            ];
+        }
+
+        $this->editingOptions[$elementId] = $list;
+    }
+
+    public function syncElementOptions(int $sectionIndex, int $elementIndex, string $elementId): void
+    {
+        $list = $this->editingOptions[$elementId] ?? [];
+        
+        $formatted = [];
+        foreach ($list as $item) {
+            $key = trim($item['key'] ?? '');
+            $text = trim($item['text'] ?? '');
+            if ($key !== '') {
+                $formatted[] = [
+                    'key' => $key,
+                    'text' => $text,
+                ];
+            }
+        }
+
+        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['options'] = json_encode($formatted, JSON_UNESCAPED_UNICODE);
+        $this->save();
+    }
+
+    public function addEditingOption(int $sectionIndex, int $elementIndex, string $elementId): void
+    {
+        if (! isset($this->editingOptions[$elementId])) {
+            $this->loadEditingOptions($elementId, $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['options'] ?? '');
+        }
+
+        $nextKey = 'a';
+        $count = count($this->editingOptions[$elementId]);
+        if ($count > 0) {
+            $lastKey = $this->editingOptions[$elementId][$count - 1]['key'];
+            if (strlen($lastKey) === 1) {
+                $nextKey = chr(ord($lastKey) + 1);
+            }
+        }
+
+        $this->editingOptions[$elementId][] = [
+            'key' => $nextKey,
+            'text' => '',
+        ];
+
+        $this->syncElementOptions($sectionIndex, $elementIndex, $elementId);
+    }
+
+    public function removeEditingOption(int $sectionIndex, int $elementIndex, string $elementId, int $optIdx): void
+    {
+        if (isset($this->editingOptions[$elementId][$optIdx])) {
+            unset($this->editingOptions[$elementId][$optIdx]);
+            $this->editingOptions[$elementId] = array_values($this->editingOptions[$elementId]);
+            $this->syncElementOptions($sectionIndex, $elementIndex, $elementId);
+        }
+    }
+
+    public function loadEditingTeil4(string $elementId, string $rawContent): void
+    {
+        $data = json_decode($rawContent, true);
+        if (! is_array($data)) {
+            $data = [
+                'title' => '',
+                'eyebrow' => '',
+                'example' => [
+                    'number' => 0,
+                    'statement' => '',
+                    'solution' => 'a',
+                ],
+                'statements' => [
+                    24 => '',
+                    25 => '',
+                    26 => '',
+                ],
+                'texts' => [
+                    'a' => ['name' => '', 'body' => ''],
+                    'b' => ['name' => '', 'body' => ''],
+                    'c' => ['name' => '', 'body' => ''],
+                ],
+            ];
+        }
+
+        $this->editingTeil4[$elementId] = $data;
+    }
+
+    public function syncTeil4(int $sectionIndex, int $elementIndex, string $elementId): void
+    {
+        $data = $this->editingTeil4[$elementId] ?? [];
+        
+        // Ensure statements keys are integers
+        if (isset($data['statements'])) {
+            $statements = [];
+            foreach ($data['statements'] as $k => $v) {
+                $statements[(int) $k] = $v;
+            }
+            $data['statements'] = $statements;
+        }
+
+        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['content'] = json_encode($data, JSON_UNESCAPED_UNICODE);
+        $this->save();
+    }
+
+    public function addTeil4Statement(int $sectionIndex, int $elementIndex, string $elementId): void
+    {
+        if (! isset($this->editingTeil4[$elementId])) {
+            $this->loadEditingTeil4($elementId, $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['content'] ?? '');
+        }
+
+        $statements = $this->editingTeil4[$elementId]['statements'] ?? [];
+        $nextNum = count($statements) > 0 ? (int) max(array_keys($statements)) + 1 : 24;
+        $this->editingTeil4[$elementId]['statements'][$nextNum] = '';
+
+        $this->syncTeil4($sectionIndex, $elementIndex, $elementId);
+    }
+
+    public function removeTeil4Statement(int $sectionIndex, int $elementIndex, string $elementId, int $num): void
+    {
+        if (isset($this->editingTeil4[$elementId]['statements'][$num])) {
+            unset($this->editingTeil4[$elementId]['statements'][$num]);
+            $this->syncTeil4($sectionIndex, $elementIndex, $elementId);
+        }
+    }
+
+    public function addTeil4Text(int $sectionIndex, int $elementIndex, string $elementId): void
+    {
+        if (! isset($this->editingTeil4[$elementId])) {
+            $this->loadEditingTeil4($elementId, $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['content'] ?? '');
+        }
+
+        $texts = $this->editingTeil4[$elementId]['texts'] ?? [];
+        $nextLetter = 'a';
+        if (count($texts) > 0) {
+            $lastKey = (string) max(array_keys($texts));
+            if (strlen($lastKey) === 1) {
+                $nextLetter = chr(ord($lastKey) + 1);
+            }
+        }
+        $this->editingTeil4[$elementId]['texts'][$nextLetter] = ['name' => '', 'body' => ''];
+
+        $this->syncTeil4($sectionIndex, $elementIndex, $elementId);
+    }
+
+    public function removeTeil4Text(int $sectionIndex, int $elementIndex, string $elementId, string $letter): void
+    {
+        if (isset($this->editingTeil4[$elementId]['texts'][$letter])) {
+            unset($this->editingTeil4[$elementId]['texts'][$letter]);
+            $this->syncTeil4($sectionIndex, $elementIndex, $elementId);
+        }
+    }
+
     public function uploadAudio(int $sectionIndex, int $elementIndex): void
     {
         $this->validate([
@@ -423,6 +673,29 @@ class ExamDashboard extends Component
 
         $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['content'] = route('exam.audio', ['path' => $path]);
         $this->audioUpload = null;
+        $this->save();
+    }
+
+    public function uploadSectionAudio(int $sectionIndex): void
+    {
+        $this->validate([
+            'audioUpload' => ['required', 'file', 'mimes:mp3,wav,ogg,m4a,aac,flac,mpga', 'max:102400'],
+        ], [
+            'audioUpload.required' => 'Bitte wählen Sie zuerst eine Audio-Datei aus.',
+            'audioUpload.mimes' => 'Ungültiges Audio-Format. Erlaubt sind MP3, WAV, OGG, M4A, AAC, FLAC.',
+            'audioUpload.max' => 'Die Audio-Datei darf maximal 100 MB groß sein.',
+        ]);
+
+        $path = $this->audioUpload->store('', 'exam-audio');
+
+        $this->template['sections'][$sectionIndex]['audio_url'] = route('exam.audio', ['path' => $path]);
+        $this->audioUpload = null;
+        $this->save();
+    }
+
+    public function removeSectionAudio(int $sectionIndex): void
+    {
+        $this->template['sections'][$sectionIndex]['audio_url'] = '';
         $this->save();
     }
 
@@ -502,6 +775,7 @@ class ExamDashboard extends Component
     {
         $this->activeSection = $sectionIndex;
         $this->started = true;
+        $this->timeExpired = false;
         $minutes = (int) ($this->template['sections'][$sectionIndex]['minutes'] ?? 0);
         $this->remainingSeconds = max($minutes, 1) * 60;
     }
@@ -515,9 +789,17 @@ class ExamDashboard extends Component
         $this->remainingSeconds--;
 
         if ($this->remainingSeconds === 0) {
-            $this->submit();
+            $this->started = false;
+            $this->timeExpired = true;
         }
-    }
+     }
+
+     public function addExtraMinutes(int $minutes): void
+     {
+         $this->remainingSeconds += $minutes * 60;
+         $this->started = true;
+         $this->timeExpired = false;
+     }
 
     public function submit(): void
     {

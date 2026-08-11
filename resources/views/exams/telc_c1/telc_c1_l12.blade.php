@@ -317,7 +317,7 @@
                     <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.01);">
                         <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
                             <span style="background: #d8232a; color: #ffffff; font-weight: 850; font-size: 0.9rem; padding: 0.25rem 0.55rem; border-radius: 4px; flex-shrink: 0;">{{ $qNum }}</span>
-                            <span style="font-size: 0.95rem; font-weight: 700; color: #1f2937; line-height: 1.5;">{{ $q['question'] ?: $q['label'] }}</span>
+                            <span style="font-size: 0.95rem; font-weight: 700; color: #1f2937; line-height: 1.5;">{{ ($q['question'] ?? '') ?: ($q['label'] ?? '') }}</span>
                         </div>
 
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-top: 1px dashed #e2e8f0; padding-top: 0.75rem;">

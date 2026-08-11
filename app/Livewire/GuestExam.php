@@ -58,6 +58,8 @@ class GuestExam extends Component
 
     public bool $started = false;
 
+    public bool $timeExpired = false;
+
     public string $selectedTopic = '';
 
     public string $transitionMessage = '';
@@ -506,6 +508,7 @@ class GuestExam extends Component
         $this->result = null;
         $this->nextSectionIndex = null;
         $this->started = true;
+        $this->timeExpired = false;
         $this->remainingSeconds = max((int) ($sections[$index]['minutes'] ?? 1), 1) * 60;
 
         $this->restoreAttemptState();
@@ -634,8 +637,16 @@ class GuestExam extends Component
         $this->remainingSeconds--;
 
         if ($this->remainingSeconds === 0) {
-            $this->submit();
+            $this->started = false;
+            $this->timeExpired = true;
         }
+    }
+
+    public function addExtraMinutes(int $minutes): void
+    {
+        $this->remainingSeconds += $minutes * 60;
+        $this->started = true;
+        $this->timeExpired = false;
     }
 
     public function submit(): void
@@ -700,16 +711,36 @@ class GuestExam extends Component
                         try {
                             $lvl = $this->template['level'] ?? 'C1';
                             $provider = $this->template['exam_provider'] ?? 'telc';
+                            $taskDescription = $element['content'] ?? $element['label'] ?? '';
+                            $systemInstruction = "Du bist ein offizieller {$provider} {$lvl} Prüfer für die schriftliche Prüfung.\n"
+                                ."DEINE AUFGABE:\n"
+                                ."Bewerte die Abgabe des Teilnehmers basierend auf der folgenden Aufgabenstellung:\n"
+                                ."\"{$taskDescription}\"\n\n"
+                                ."WICHTIGE REGELN:\n"
+                                ."1. Wenn die Abgabe unvollständig ist, völlig am Thema vorbeigeht, reiner Unsinn/Nonsense ist oder viel zu kurz ist (weniger als 10 Wörter), bewerte sie streng mit 0 Punkten (SCORE: 0/{$maxPoints}) und weise den Benutzer freundlich darauf hin, dass es sich um eine ungültige Abgabe handelt. Gib ihm dann eine vollständige Musterantwort (Beispielantwort), wie die Aufgabe gelöst werden sollte.\n"
+                                ."2. Wenn die Abgabe gültig ist, bewerte sie fair auf einer Skala von 0 bis {$maxPoints}. Korrigiere alle Grammatik-, Rechtschreib-, Zeichensetzungs- und Wortwahlfehler im Text detailliert.\n"
+                                ."3. Schreibe am Ende eine überarbeitete, stilistisch verbesserte Version des Textes des Nutzers (KORRIGIERTE VERSION) in fehlerfreiem, flüssigem Deutsch.\n"
+                                ."4. Formatiere deine Antwort IMMER strukturiert mit folgenden Überschriften:\n"
+                                ."\n"
+                                ."SCORE: X/{$maxPoints}\n"
+                                ."\n"
+                                ."### BEWERTUNG\n"
+                                ."[Deine detaillierte Bewertung und Begründung der Punkte]\n"
+                                ."\n"
+                                ."### FEHLERKORREKTUR\n"
+                                ."[Auflistung und Erklärung der korrigierten Fehler im Text des Nutzers]\n"
+                                ."\n"
+                                ."### VERBESSERTER TEXT / KORRIGIERTE VERSION\n"
+                                ."[Die korrigierte und verbesserte Version des Nutzers]\n"
+                                ."\n"
+                                ."### MUSTERANTWORT (BEISPIEL)\n"
+                                ."[Eine professionelle Beispielantwort auf die gestellte Aufgabe]";
+
                             $model = Gemini::generativeModel(model: config('gemini.model'))
-                                ->withSystemInstruction(
-                                    Content::parse(
-                                        "Du bist ein offizieller {$provider} {$lvl} Prüfer für die schriftliche Prüfung. "
-                                        ."Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis {$maxPoints} Punkten zurück."
-                                    )
-                                );
+                                ->withSystemInstruction(Content::parse($systemInstruction));
+
                             $resp = $model->generateContent(
-                                "Aufsatz:\n{$content}\n\n"
-                                ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                                "Nutzer-Abgabe:\n{$content}"
                             );
                             $feedback = $resp->text();
                             preg_match('/SCORE:\s*(\d+)/i', $feedback, $matches);
@@ -898,16 +929,36 @@ class GuestExam extends Component
                 try {
                     $lvl = $this->template['level'] ?? 'C1';
                     $provider = $this->template['exam_provider'] ?? 'telc';
+                    $taskDescription = $element['content'] ?? $element['label'] ?? '';
+                    $systemInstruction = "Du bist ein offizieller {$provider} {$lvl} Prüfer für die schriftliche Prüfung.\n"
+                        ."DEINE AUFGABE:\n"
+                        ."Bewerte die Abgabe des Teilnehmers basierend auf der folgenden Aufgabenstellung:\n"
+                        ."\"{$taskDescription}\"\n\n"
+                        ."WICHTIGE REGELN:\n"
+                        ."1. Wenn die Abgabe unvollständig ist, völlig am Thema vorbeigeht, reiner Unsinn/Nonsense ist oder viel zu kurz ist (weniger als 10 Wörter), bewerte sie streng mit 0 Punkten (SCORE: 0/{$maxPoints}) und weise den Benutzer freundlich darauf hin, dass es sich um eine ungültige Abgabe handelt. Gib ihm dann eine vollständige Musterantwort (Beispielantwort), wie die Aufgabe gelöst werden sollte.\n"
+                        ."2. Wenn die Abgabe gültig ist, bewerte sie fair auf einer Skala von 0 bis {$maxPoints}. Korrigiere alle Grammatik-, Rechtschreib-, Zeichensetzungs- und Wortwahlfehler im Text detailliert.\n"
+                        ."3. Schreibe am Ende eine überarbeitete, stilistisch verbesserte Version des Textes des Nutzers (KORRIGIERTE VERSION) in fehlerfreiem, flüssigem Deutsch.\n"
+                        ."4. Formatiere deine Antwort IMMER strukturiert mit folgenden Überschriften:\n"
+                        ."\n"
+                        ."SCORE: X/{$maxPoints}\n"
+                        ."\n"
+                        ."### BEWERTUNG\n"
+                        ."[Deine detaillierte Bewertung und Begründung der Punkte]\n"
+                        ."\n"
+                        ."### FEHLERKORREKTUR\n"
+                        ."[Auflistung und Erklärung der korrigierten Fehler im Text des Nutzers]\n"
+                        ."\n"
+                        ."### VERBESSERTER TEXT / KORRIGIERTE VERSION\n"
+                        ."[Die korrigierte und verbesserte Version des Nutzers]\n"
+                        ."\n"
+                        ."### MUSTERANTWORT (BEISPIEL)\n"
+                        ."[Eine professionelle Beispielantwort auf die gestellte Aufgabe]";
+
                     $model = Gemini::generativeModel(model: config('gemini.model'))
-                        ->withSystemInstruction(
-                            Content::parse(
-                                "Du bist ein offizieller {$provider} {$lvl} Prüfer für die schriftliche Prüfung. "
-                                ."Bewerte den gegebenen Aufsatz. Gib eine exakte Punktzahl von 0 bis {$maxPoints} Punkten zurück."
-                            )
-                        );
+                        ->withSystemInstruction(Content::parse($systemInstruction));
+
                     $resp = $model->generateContent(
-                        "Aufsatz:\n{$content}\n\n"
-                        ."Bitte antworte genau im Format 'SCORE: X/{$maxPoints}', gefolgt von einer kurzen Begründung."
+                        "Nutzer-Abgabe:\n{$content}"
                     );
                     $feedback = $resp->text();
                     preg_match('/SCORE:\s*(\d+)/i', $feedback, $matches);
@@ -1296,6 +1347,7 @@ class GuestExam extends Component
                 $this->speakingStep = 2;
                 $this->transitionMessage = 'Teil 1a ist abgeschlossen. Sehr gut! Wir gehen jetzt zu Teil 1b über. Hören Sie sich bitte den KI-Vortrag an.';
                 $this->saveProgress();
+                $this->checkAndAdvanceSpeaking($elementId, $assistantReply, false);
             } catch (\Throwable $e) {
                 array_pop($this->speakingHistory[$elementId]);
                 $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
@@ -1330,6 +1382,7 @@ class GuestExam extends Component
                 $this->speakingStep = 3;
                 $this->transitionMessage = 'Teil 1b ist abgeschlossen. Sehr gut! Wir gehen jetzt zur Diskussion über.';
                 $this->saveProgress();
+                $this->checkAndAdvanceSpeaking($elementId, $assistantReply, false);
             } catch (\Throwable $e) {
                 array_pop($this->speakingHistory[$elementId]);
                 $this->speakingFeedback[$elementId] = 'Fehler: '.$e->getMessage();
@@ -1377,15 +1430,53 @@ class GuestExam extends Component
 
             $this->speakingFeedback[$elementId] = $assistantReply;
             $this->answers[$elementId] = $transcribedText;
-            if ($isLastTurn || str_contains($assistantReply, 'SCORE:')) {
-                $this->dispatch('stop-all-speech');
-            }
             $this->saveProgress();
+            $this->checkAndAdvanceSpeaking($elementId, $assistantReply, $isLastTurn);
         } catch (\Throwable $e) {
             array_pop($this->speakingHistory[$elementId]);
             $this->speakingFeedback[$elementId] = 'Fehler bei der Analyse: '.$e->getMessage();
         } finally {
             $this->speakingProcessing[$elementId] = false;
+        }
+    }
+
+    private function checkAndAdvanceSpeaking(string $elementId, string $assistantReply, bool $isLastTurn): void
+    {
+        $elementCompleted = false;
+        if (str_ends_with($elementId, '-SP-1a') && $this->speakingStep >= 2) {
+            $elementCompleted = true;
+        } elseif (str_ends_with($elementId, '-SP-1b') && $this->speakingStep >= 3) {
+            $elementCompleted = true;
+        } elseif (str_ends_with($elementId, '-SP-2') && ($isLastTurn || str_contains($assistantReply, 'SCORE:'))) {
+            $elementCompleted = true;
+        } elseif (!str_contains($elementId, '-SP-1a') && !str_contains($elementId, '-SP-1b') && !str_contains($elementId, '-SP-2') && str_contains($assistantReply, 'SCORE:')) {
+            $elementCompleted = true;
+        }
+
+        if ($elementCompleted) {
+            $currentSectionElements = $this->template['sections'][$this->activeSectionIndex]['elements'] ?? [];
+            $hasMoreSpeakingInSection = false;
+            foreach ($currentSectionElements as $el) {
+                if (($el['type'] ?? '') === 'speaking' && $el['id'] !== $elementId) {
+                    if (str_ends_with($el['id'], '-SP-1b') && $this->speakingStep < 2) {
+                        $hasMoreSpeakingInSection = true;
+                    }
+                    if (str_ends_with($el['id'], '-SP-2') && $this->speakingStep < 3) {
+                        $hasMoreSpeakingInSection = true;
+                    }
+                }
+            }
+
+            if (!$hasMoreSpeakingInSection) {
+                $this->dispatch('stop-all-speech');
+                $this->remainingSeconds = 0;
+                $this->timeExpired = false;
+                
+                $this->submit();
+                if ($this->nextSectionIndex !== null) {
+                    $this->startSection($this->nextSectionIndex);
+                }
+            }
         }
     }
 
