@@ -12,6 +12,7 @@ class TelcTemplateFactory
         return [
             'B1' => array_merge(self::b1(), ['exam_provider' => 'telc']),
             'B2' => array_merge(self::b2(), ['exam_provider' => 'telc']),
+            'C1' => array_merge(self::telcC1(), ['exam_provider' => 'telc']),
             'Goethe-B1' => array_merge(self::goetheB1(), ['exam_provider' => 'goethe']),
             'Goethe-B2' => array_merge(self::goetheB2(), ['exam_provider' => 'goethe']),
             'Goethe-C1' => array_merge(self::c1(), ['title' => 'Goethe Zertifikat C1', 'level' => 'C1', 'exam_provider' => 'goethe']),
@@ -1935,6 +1936,225 @@ class TelcTemplateFactory
                         ],
                     ],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function telcC1(): array
+    {
+        return [
+            'title' => 'telc Deutsch C1 Hochschule',
+            'level' => 'C1',
+            'source_pdf' => 'telc_deutsch_c1_uebungstest_1.pdf',
+            'theme' => self::theme('#d8232a', '#202020', 'Instrument Sans'),
+            'timings' => [
+                ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 90],
+                ['label' => 'Hoerverstehen', 'minutes' => 40],
+                ['label' => 'Schriftlicher Ausdruck', 'minutes' => 70],
+                ['label' => 'Mündliche Prüfung', 'minutes' => 16],
+            ],
+            'sections' => [
+                array_merge(self::section('telc-c1-reading-language', 'Leseverstehen und Sprachbausteine', 90, [
+                    [
+                        'id' => 'telc-c1-lv1-instruction',
+                        'type' => 'text',
+                        'label' => 'Leseverstehen Teil 1',
+                        'content' => "Lesen Sie den folgenden Text. Welche der Sätze a–h gehören in die Lücken 1–6? Es gibt jeweils nur eine richtige Lösung. Zwei Sätze können nicht zugeordnet werden. Markieren Sie Ihre Lösungen für die Aufgaben 1–6 auf dem Antwortbogen.\nLücke (0) ist ein Beispiel.\n\nSie lesen den folgenden Artikel in einer Zeitschrift:",
+                        'instruction' => '',
+                        'answer' => '',
+                        'points' => 0,
+                    ],
+                    self::inlineGap('telc-c1-lv1-cloze', 'Der Mars – bald eine Reise wert?', "Könnten wir den eisigen Mars „terraformen“? Die Antwort lautet: z. Wir wissen heute, dass es auf dem Mars einst wärmer war als heute. Es muss sogar Flüsse und Seen gegeben haben. --1-- Indem man genug Treibhausgase in seine Atmosphäre bläst. Ein großer Teil des Kohlendioxids (CO2), das den Roten Planeten früher wärmte, ist wohl noch vorhanden – gebunden in den Eiskappen der Pole und im Boden. Gefrorenes Wasser wurde ebenfalls nachgewiesen. Technisch ist es also machbar, dort wieder Pflanzen wachsen zu lassen.\n\n„Wir müssen nur die Temperatur ein wenig erhöhen und ein paar Samen ausstreuen“, sagt der Nasa-Planetenforscher Chris McKay, „--2--.“ Um den Prozess in Gang zu setzen, kann man aus der Marsoberfläche Perfluorkohlenstoffe (PFC) gewinnen. PFC sind wirksame Treibhausgase. Sobald sich die Atmosphäre aufheizt, wird gefrorenes CO2 aus den Böden frei. Ein sich verstärkender Treibhauseffekt entsteht. Der Luftdruck steigt, und irgendwann fließt wieder Wasser. Menschliche Pioniere können die Felsen mit Bakterien und Flechten „impfen“, die auf der Erde gedeihen. Später bringt man Moose aus, dann Bäume. Die Pflanzen reichern die Atmosphäre mit Sauerstoff an, doch bis wir sie atmen können, werden viele tausend Jahre vergehen.\n\nRobert Zubrin, der Präsident einer Organisation zur Besiedlung des Mars, träumt schon von Städten auf dem Mars. --3-- „Wir werden auf dem Mars leben wie die Forscher heute in der Antarktis“ – in kleinen Stationen also, ohne viel Komfort. Doch aus den Erfahrungen bei der Umgestaltung des Mars könnten wir viel lernen, um künftig die Erde besser zu bewahren, meint er. Das sind freilich noch Gedankenspiele. Zunächst will die Nasa wieder auf dem Mond landen oder auf einem Asteroiden. --4--. Was es kosten würde, den Roten Planeten zu begrünen, ist noch nicht einmal geschätzt.\n\nDer Zeitplan für eine potentielle Besiedlung: --5--. Nach seinem sechs Monate dauernden Flug zum Mars installiert zunächst jedes Team eine kleine Wohneinheit und legt damit den Grundstein für die Besiedlung. Die ersten 100 Jahre: Die Atmosphäre wird dichter, wenn man das an den Polkappen gebundene CO2 freisetzt. Um das zu erreichen, erzeugen Fabriken Treibhausgase. Auch das Sonnenlicht konzentrierende Spiegel könnten das Eis auftauen. 200-600 Jahre: Regen fällt und Wasser fließt, sobald ausreichend CO2 in der Atmosphäre die mittlere Temperatur über den Gefrierpunkt angehoben hat. Bakterien, Algen und Flechten beginnen, die steinige Wüste zu besiedeln. Später wachsen auch Blütenpflanzen und irdische Bäume aus nördlichen Breiten. 900 Jahre: Die Energie für die Städte wird anfangs von Atomkraftwerken und Windkraftanlagen produziert. --6-- 1000 Jahre: Marsbewohner können nur mit Atemgeräten ins Freie, weil der Sauerstoffgehalt der Luft sehr langsam steigt. Langfristig wird der Mars seine Atmosphäre auch wieder verlieren und erneut abkühlen.", [
+                        ['options' => 'a|a,b|b,c|c,d|d,e|e,f|f,g|g,h|h', 'answer' => 'c'],
+                        ['options' => 'a|a,b|b,c|c,d|d,e|e,f|f,g|g,h|h', 'answer' => 'e'],
+                        ['options' => 'a|a,b|b,c|c,d|d,e|e,f|f,g|g,h|h', 'answer' => 'f'],
+                        ['options' => 'a|a,b|b,c|c,d|d,e|e,f|f,g|g,h|h', 'answer' => 'g'],
+                        ['options' => 'a|a,b|b,c|c,d|d,e|e,f|f,g|g,h|h', 'answer' => 'd'],
+                        ['options' => 'a|a,b|b,c|c,d|d,e|e,f|f,g|g,h|h', 'answer' => 'b'],
+                    ], 2),
+                    [
+                        'id' => 'telc-c1-lv1-sentences',
+                        'type' => 'text',
+                        'label' => 'Satzoptionen',
+                        'content' => "Beispiel:\nz  Wahrscheinlich wäre es zu schaffen.\n\na  Allerdings war die Atmosphäre niemals so dicht wie bei der Erde.\nb  Auf lange Sicht wären die besten Stromlieferanten aber wohl Fusionsreaktoren.\nc  Aus eigener Erfahrung wissen wir auch, wie man einen kühlen Planeten aufheizt:\nd  Das 1000-Jahres-Projekt beginnt mit einer Reihe von Expeditionen.\ne  Den Rest der Arbeit wird das Leben selber erledigen.\nf  Der Nasa-Experte Chris McKay sieht die Aussichten jedoch nüchtern:\ng  Doch selbst dafür fehlt es an Geld.\nh  Es gibt daher keine Gewässer mit flüssigem Wasser auf der Marsoberfläche.",
+                        'instruction' => '',
+                        'answer' => '',
+                        'points' => 0,
+                    ],
+                    [
+                        'id' => 'telc-c1-lv2-instruction',
+                        'type' => 'text',
+                        'label' => 'Leseverstehen Teil 2',
+                        'content' => 'Lesen Sie den folgenden Text. In welchem Textabsatz a–e finden Sie die Antworten auf die Fragen 7–12? Es gibt jeweils nur eine richtige Lösung. Jeder Absatz kann Antworten auf mehrere Fragen enthalten. Markieren Sie Ihre Lösungen für die Aufgaben 7–12 auf dem Antwortbogen.',
+                        'instruction' => '',
+                        'answer' => '',
+                        'points' => 0,
+                    ],
+                    [
+                        'id' => 'telc-c1-lv2-text',
+                        'type' => 'text',
+                        'label' => 'Ein Selbstversuch als Hobbybäuerin',
+                        'content' => "a\nIch bin stolz auf mich und fühle mich richtig gut, weil ich meine ambitionierten Ziele bis jetzt immer realisieren konnte. Damit meine ich nicht nur die beruflichen Ziele, sondern auch meine privaten, denn diese können ja bekanntlich gleichermaßen anspruchsvoll sein. Wenn ich jetzt nach vielen Jahren Bilanz ziehe, macht mich das Ergebnis sehr zufrieden. Bin ich vielleicht sogar eine Heldin? Diese Frage habe ich mir nun eine Woche lang gestellt. Nicht, weil ich unbedingt mit einer Großtat in die Geschichtsbücher eingehen wollte, sondern vor einer weiteren Herausforderung stehe. Eine selbstauferlegte Aufgabe, die es zu meistern gilt. Ich muss mich bis Ende Oktober entscheiden, ob ich mein Stück Gartenland auch im nächsten Jahr wieder bestellen will. Wenn ja, wird es für mich reserviert, sobald der Frühling kommt. Es liegt vor den Toren Münchens, und ich habe darauf nun einen Sommer lang Gemüse angebaut. Wenn ich Hobbybäuerin bleiben will, muss ich mich bereits jetzt als Ackerheldin für das kommende Jahr anmelden.\n\nb\nBin ich nun eine Heldin oder nicht? Nun kann man über meine Leibesstärke diskutieren; ich würde jedenfalls behaupten, meine geistige Stärke ist ausgeprägter. Und besondere Tapferkeit kann ich mir auch nicht wirklich zusprechen. Ich war höchstens eine Heldin der Arbeit, als ich auf dem Acker herumkroch. Menschen, die mich kennen, hätten mich in meinem Outfit nicht wiedererkannt. Ich habe gebuddelt, was das Zeug hielt, und an besonders warmen Tagen konnte ich meinen Körpergeruch selbst kaum ertragen. Mit schwarzen Fingernägeln und zerzaustem Haar fuhr ich dann nach getaner Arbeit nach Hause und war froh, dass ich zumindest dazu noch in der Lage war. Ich hatte also die Schlacht gewonnen. Mein Leben habe ich dabei nicht riskiert, höchstens ab und zu meine körperliche Unversehrtheit, wenn die Mücken mal wieder zubissen oder der Muskelkater schmerzte. Immerhin stellte ich mich allwöchentlich dem Kampf gegen einen unerbittlichen Kontrahenten: das Unkraut. So gesehen bin ich zumindest eine Ackerheldin, die den Kampf für sich entscheiden konnte. Häufig siegte aber auch der Acker – über meine Kraft (mehr als zehn Gießkannen Wasser konnte ich bei 30 Grad einfach nicht schleppen) und vor allem über meinen inneren Schweinehund. Wenn ich mich mal nicht aufraffte, zum Feld zu fahren, plagte mich das schlechte Gewissen.\n\nc\nEinige Freundschaften hat es mich auch gekostet: Ein Freund redet nicht mehr mit mir, seit er zum Unkrautrupfen mitkam. Wir gerieten über die Frage, wie weit man Salat von Radieschen fernhalten sollte, in einen lächerlichen Streit. Eine Freundin, die sich an einem Nachmittag als Erntehelferin beteiligt hatte, wurde von einer Wespe ins Ohr gestochen und musste sich in ärztliche Behandlung begeben. „Du und dein Acker!“, schnaubte sie später ins Telefon, „wir sehen uns wieder, wenn die Saison vorbei ist.“ Andere Freunde riefen mich immer seltener an, weil sie befürchteten, ich könnte sie um Hilfe bitten. In dieser Zeit begann ich immer häufiger über meine Freunde nachzudenken und erkannte den Wert meiner Freundschaften. Sie konnten nicht einmal banalen Dingen standhalten. Nun wusste ich, wie meine sogenannten Freunde tickten. „So ein unzuverlässiges und treuloses Pack“, dachte ich mir ganz oft. Mit diesen Subjekten habe ich mal meine Zeit verbracht; welch eine Verschwendung.\n\nd\nMan muss auch beim Bewältigen der Erntemengen Ideen sprießen lassen, schließlich wird vieles gleichzeitig reif. Und man muss bestimmte Abstriche machen, wenn man nur einmal pro Woche vor Ort sein kann. Das ist wie im wirklichen Leben: Bedenken Sie, dass wir auch im Job gleichzeitig an vielen Projekten arbeiten und uns selten den Luxus gönnen, eine Sache nach der anderen abzuarbeiten. Das gilt natürlich auch für unser Privatleben, wo wir meist mehrere Baustellen haben und oft gar nicht wissen, wo wir anfangen sollen. Was die Abstriche angeht, so verhält es sich sich nicht anders. Man hat in der Regel immer Zeitdruck und ein begrenztes Budget. Das ist einfach die Reality, ob es uns nun gefällt oder nicht. Ich kann jedem, der sich in solchen Situationen überfordert fühlt, nur raten, nicht zu perfektionistisch an eine Sache heranzugehen. Lernen Sie Kompromisse zu machen und damit zu leben. Mieten Sie sich notfalls einen Garten, so wie ich es gemacht habe. Ich garantiere Ihnen: Sie lernen dabei nicht nur etwas über Gemüseanbau!\n\ne\nIm Grunde haben wir uns beide heldenhaft geschlagen, der Acker und ich. Er hat mich einen Sommer lang genauso überlebt wie ich ihn. Wenn ich mich nächstes Jahr wieder auf das Abenteuer „Garten“ einlasse, will ich es tapfer und aufopfernd tun, aber ich will nachsichtig mit mir sein. Superman hatte ebenfalls einen Bürojob, und er rettete die Welt schließlich auch nicht in eineinhalb Stunden.",
+                        'instruction' => '',
+                        'answer' => '',
+                        'points' => 0,
+                    ],
+                    ['id' => 'telc-c1-lv2-7', 'type' => 'matching', 'label' => 'Aufgabe 7', 'instruction' => 'ist die Autorin belehrend?', 'answer' => 'd', 'options' => 'a,b,c,d,e', 'points' => 2],
+                    ['id' => 'telc-c1-lv2-8', 'type' => 'matching', 'label' => 'Aufgabe 8', 'instruction' => 'ist die Autorin polemisch?', 'answer' => 'c', 'options' => 'a,b,c,d,e', 'points' => 2],
+                    ['id' => 'telc-c1-lv2-9', 'type' => 'matching', 'label' => 'Aufgabe 9', 'instruction' => 'übt die Autorin Selbstironie?', 'answer' => 'b', 'options' => 'a,b,c,d,e', 'points' => 2],
+                    ['id' => 'telc-c1-lv2-10', 'type' => 'matching', 'label' => 'Aufgabe 10', 'instruction' => 'übt die Autorin Kritik?', 'answer' => 'd', 'options' => 'a,b,c,d,e', 'points' => 2],
+                    ['id' => 'telc-c1-lv2-11', 'type' => 'matching', 'label' => 'Aufgabe 11', 'instruction' => 'zieht die Autorin Lehren für die Zukunft?', 'answer' => 'e', 'options' => 'a,b,c,d,e', 'points' => 2],
+                    ['id' => 'telc-c1-lv2-12', 'type' => 'matching', 'label' => 'Aufgabe 12', 'instruction' => 'will sich die Autorin profilieren?', 'answer' => 'a', 'options' => 'a,b,c,d,e', 'points' => 2],
+
+                    // Teil 3
+                    [
+                        'id' => 'telc-c1-lv3-instruction',
+                        'type' => 'text',
+                        'label' => 'Leseverstehen Teil 3',
+                        'content' => 'Lesen Sie den folgenden Text und die Aussagen 13–23. Welche der Aussagen sind richtig (+), falsch (-) oder gar nicht im Text enthalten (x)? Es gibt jeweils nur eine richtige Lösung. Markieren Sie Ihre Lösungen für die Aufgaben 13–23 auf dem Antwortbogen.',
+                        'instruction' => '',
+                        'answer' => '',
+                        'points' => 0,
+                    ],
+                    [
+                        'id' => 'telc-c1-lv3-text',
+                        'type' => 'text',
+                        'label' => 'Die Wissenschaft und ihre Protagonisten im Film',
+                        'content' => "1 Die Wissenschaft und ihre Protagonisten sind inzwischen zu Lieblingen der Filmschaffenden avanciert – diesen Eindruck jedenfalls bekommt schnell, wer einmal die großen Kinofilme Revue passieren lässt: Mit Alan Turing und Stephen Hawking wurden innerhalb eines Jahres in „The Imitation Game“ beziehungsweise „The Theory of Everything“ gleich zwei genialen Forschern monumentale filmische Denkmäler gesetzt, während ein sarkastisch-sympathischer Botaniker und dessen Erfindergeist ins Zentrum des Geschehens auf dem Roten Planeten rückte. Nur wenig früher hatten in „Interstellar“ und „Contagion“ Wissenschaftler heldenhaft die Menschheit vor der sicheren Auslöschung durch Umweltkatastrophen und Killerviren bewahrt. Und in „Gravity“ kämpft die Filmheldin Dr. Ryan Stone nicht nur gegen die Unwirtlichkeit des Weltraums an, sondern auch gegen ihre eigenen Schwächen.\n\n2 All das ist insofern bemerkenswert, als alle westlichen Filmkulturen lange Zeit auf wenige, sich ähnelnde Typen von Wissenschaftlern setzten, die sich von den Anfängen des filmischen Erzählens bis in die Gegenwart hinein kaum verändert haben. Das schmale Spektrum ihrer Charaktereigenschaften reichte vom machtbesessenen Bösewicht bis zur Lachnummer mit wirren Haaren und weißem Kittel. Die Ambivalenzen einer komplexen Persönlichkeit suchte man meist vergeblich.\n\n3 In der überwiegenden Mehrzahl der Fälle ist der Wissenschaftler im Film ein Verrückter, ein „mad scientist“. In seiner bösen, düsteren Ausprägung geht er in geheimen Labors monströsen Forschungsprojekten nach, losgelöst von der Welt und der Kontrolle einer Akademie. Oft experimentiert er an Tieren oder Menschen, züchtet künstliches Leben oder arbeitet auf die Vernichtung der ganzen Menschheit hin. Bösewichte dieser Art begegnen uns als „Dr. No“, James Bonds allererstem Gegenspieler, in Stanley Kubricks „Dr. Seltsam“, in der Figur des Rotwang in Fritz Langs „Metropolis“, der mit einem Maschinenmenschen die Massen aufzuwiegeln versucht, sowie in den zahlreichen Frankenstein-Verfilmungen.\n\n4 Führt der verrückte Wissenschaftler einmal nichts Böses im Schilde, zeitigt sein Forschergeist im Unterhaltungsfilm eben unbeabsichtigt schlimme Folgen – etwa weil ein Experiment schiefgeht oder die Ergebnisse seiner harten Arbeit für einen anderen als den vorgesehenen Zweck verwendet werden. So wird John Hammond in „Jurassic Park“ in jenem Moment zum „mad scientist“ wider Willen, in dem die von ihm erschaffenen Dinosaurier den Freizeitpark samt Personal und Besuchern verschlingen. Wenig besser ergeht es Dr. Bruce Banner in „The Incredible Hulk“, der sich infolge radioaktiver Bestrahlung unversehens in ein gemeingefährliches grünes Monster verwandelt. Ein anderes berühmtes Beispiel ist der Wissenschaftler aus „Die Fliege“. Er ist mit einem Experiment zur Auflösung und Wiederzusammensetzung von Materie beschäftigt. Bei einem Selbstversuch gelangt eine Fliege in die zu diesem Zweck erbaute Maschine und sorgt für eine Vermischung der Körper. Der Mann hat plötzlich Kopf und Arme einer Fliege und muss sich von seiner Frau, die ihn aber nur verhüllt sehen darf, versorgen lassen.\n\n5 Kaum schmeichelhafter ist die Rolle, die dem Wissenschaftler in der Komödie zufällt: Dort tritt er, wie beispielsweise Doc Brown in „Back to the Future“, typischerweise als schrulliger Professor mit wirrem Haar und weißem Kittel in Erscheinung, der bei aller Tollpatschigkeit aber immerhin eine harmlose, zuweilen liebenswerte Gestalt ist. Nur als Abenteurer dürfen Wissenschaftler im Actionfilm auch einmal in die Rolle des Helden schlüpfen. Die Indiana-Jones-Filme sind ein eindrückliches Beispiel dafür – wenngleich Jones’ Ehrgeiz offensichtlich weniger der Archäologie als dem Erbeuten von wertvollen Artefakten gilt.\n\n6 „Im Film gibt es viele schlechte und nur wenige gute Wissenschaftler, aber vor allem nur eine überschaubare Anzahl von Stereotypen“, konstatieren deshalb Peter Weingart und Petra Pansegrau von der Universität Bielefeld, die die Darstellung von Wissenschaftlern im Film einer systematischen Untersuchung unterzogen. Tatsächlich sind die Rollenklischees, die Wissenschaftler im Film ausfüllen, aber sehr viel älter als die Filmgeschichte. Sie lassen sich bis in die Literatur des Mittelalters zurückverfolgen, wo der „böse Alchemist“ als Prototyp des skrupellosen „mad scientist“ in Erscheinung tritt. In beiden spiegelt sich laut Weingart jene Ambivalenz, mit der Wissenschaft und Technik seit je wahrgenommen werden: Forschung weckt Hoffnungen, aber auch tiefgreifende Ängste; sie verspricht Fortschritt und Wohlstand, birgt aber in der öffentlichen Wahrnehmung zugleich große Zerstörungspotenziale.\n\n7 Diese extremen Gegensätze verdichten Literatur und Film in der Figur des Wissenschaftlers. In diesem Sinne manifestiert sich im Stereotyp des „mad scientist“ ein gesellschaftlich weitverbreitetes, fundamentales Misstrauen wissenschaftlichen Tätigkeiten gegenüber, das auch damit begründet wird, dass, was einmal gedacht ist, nicht mehr rückgängig gemacht werden kann. Das erklärt auch, warum im Film auch vor allem Mediziner, Physiker und Chemiker als Bösewichte herhalten müssen: Ihre Disziplinen vermögen die Welt zum Guten wie zum Bösen zu verändern und bieten entsprechend viel Raum für Schreckensszenarien. Astronomen und Archäologen hingegen, deren wissenschaftliche Arbeit sich auf das Beobachten beschränkt, fällt im Film die Rolle des Abenteurers zu.\n\n8 Nun kann die Wissenschaft von heute kaum als weniger komplex oder weniger konfliktgeladen gelten als jene vergangener Zeiten. Nach wie vor taugt sie als Lieferant für Szenarien globaler Bedrohung, bieten sich doch Kernkraft, Killerviren, Gen- und Nanotechnologie oder künstliche Intelligenz als Kulisse für filmische Dystopien nach den alten Schemata an. Woran also liegt es, dass Filmschaffende neuerdings einen anderen Umgang mit ihren Wissenschaftlerfiguren pflegen?\n\n9 Nur vordergründig seien die alten Klischees verschwunden, sagt dazu Sven Stollfuss, Medienwissenschaftler an der Universität Bayreuth. Doch sei das Bild bunter geworden, weil stereotype Grundmuster von Filmcharakteren heute stärker vermischt, untereinander „hybridisiert“ würden, um die Figuren plastischer erscheinen zu lassen. Dieser Wandel ist laut Stollfuss nicht nur auf Wissenschaftler beschränkt, sondern lässt sich genauso bei anderen Filmfiguren beobachten: Auch Verbrecher sind im Film nicht mehr nur böse, Ärzte geben sich gelegentlich zynisch statt empathisch, und Polizisten müssen nicht mehr laufend den Helden spielen.\n\n10 Diese Entwicklung hänge mit einem allgemeinen Bestreben hin zu einer vielschichtiger angelegten Erzählweise und Storyentwicklung zusammen, sagt Stollfuss. Filmschaffende bemühten sich heute generell um authentischere Charaktere, recherchierten genauer. Aus holzschnittartigen Stereotypen würden dadurch vielschichtige Protagonisten mit jeweils individuellen Zügen.\n\n11 Das heute vorherrschende Stereotyp vom professionellen Wissenschaftler ist demnach das eines Nerds, bei dem fachliche Brillanz mit mehr oder weniger schwerwiegenden sozialen Handicaps und einem gewissen Außenseitertum einhergeht – dabei aber Raum für Coolness, Liebenswürdigkeit, ausgeprägten Sarkasmus oder eine Frohnatur lässt. Am deutlichsten zeigt sich das derzeit in aktuellen US-Serien, etwa in den Protagonisten von „CSI – Crime Scene Investigation“, die dank wissenschaftlicher Kompetenz in der Verbrechensbekämpfung brillieren. Und „The Big Bang Theory“ verleiht gleich einer ganzen Wohngemeinschaft voller Wissenschafts-Nerds Kultstatus.\n\n12 Ganz passé sind die alten Stereotype also nicht. Doch transportieren Wissenschaftler im Film heute keine gezielte, grundsätzliche Kritik am Wissenschaftsbetrieb mehr, wie das bei den „mad scientists“ der Fall war. Das mag auch daran liegen, dass die erzählten Handlungen komplexer geworden sind. Drohszenarien gehen kaum noch monokausal von einem Bösewicht aus, sondern werden eher als strukturell bedingt dargestellt: Beispielsweise gelangen die üblen Viren in „Contagion“ ganz banal durch Mutation in die Welt, obwohl zum Zeitpunkt der Entstehung des Films das Horrorszenario eines irren Biologen, der ein Killervirus in die Welt setzt, in Wissenschaft und Medien breit diskutiert wurde.\n\n13 Derart befreit von der Rolle des Übeltäters können sich die neuen Wissenschaftler im Film nun ganz auf ihre Laborarbeit konzentrieren – und nebenbei mal eben die Welt retten.",
+                        'instruction' => '',
+                        'answer' => '',
+                        'points' => 0,
+                    ],
+                    ...self::answerElements('telc-c1-lv3-', 13, ['-', '+', '-', '-', 'x', '+', 'x', '+', '+', '+', '-'], 'true_false', 2, '+,-,x'),
+                    [
+                        'id' => 'telc-c1-lv3-24',
+                        'type' => 'multiple_choice',
+                        'label' => 'Aufgabe 24',
+                        'content' => '',
+                        'instruction' => 'Welche der Überschriften a, b oder c trifft die Aussage des Textes am besten?',
+                        'answer' => 'c',
+                        'points' => 2,
+                        'options' => 'a,b,c',
+                    ],
+
+                    // Sprachbausteine
+                    [
+                        'id' => 'telc-c1-sb-instruction',
+                        'type' => 'text',
+                        'label' => 'Sprachbausteine',
+                        'content' => 'Wählen Sie das passende Wort für jede Lücke aus den Optionen a, b, c oder d.',
+                        'instruction' => '',
+                        'answer' => '',
+                        'points' => 0,
+                    ],
+                    self::inlineGap('telc-c1-sb-inline', 'Ein merkwürdiger Akzent', "Ein merkwürdiger Akzent\n\nStellen Sie sich vor, Sie wachen eines Morgens auf und wünschen Ihrem Partner einen guten Morgen – --0-- die Worte aus Ihrem Mund klingen --1--. Dann könnte es sich um eine --2-- seltene neurologische Störung handeln: das „Foreign Accent Syndrome“, zu Deutsch Fremdsprachenakzentsyndrom.\n\nBeim Fremdsprachenakzentsyndrom sprechen Patienten plötzlich ihre Muttersprache mit einem --3-- regionalen oder ausländischen Akzent. Meist geht die veränderte Sprechweise auf Hirnschäden --4-- eines Schlaganfalls oder einer Verletzung --5--. Die Erkrankung beeinflusst die Sprachmelodie, wobei die --6-- Lautbildung und Betonung fälschlicherweise den Eindruck erweckt, der Betroffene sei kein Muttersprachler.\n\nEin in der Fachwelt bekanntes Beispiel ist der Fall von Sabine Kindschuh. Hätte die Patientin ein paar hundert Jahre früher gelebt, --7-- sie eine Kandidatin für den Scheiterhaufen gewesen. Ihr Heimatdorf Oberalba in Thüringen war im 17. Jahrhundert Schauplatz mehrerer Hexenprozesse, und was mit der 57-Jährigen --8--, hätte man einst wohl übernatürlichen Mächten --9--: Sie sprach nach einem Schlaganfall plötzlich mit einem Tonfall, der an den Schweizer Dialekt erinnerte. --10-- sie auch versuchte, wieder normal zu sprechen, es gelang ihr einfach nicht.\n\nDie --11-- Ärzte vermuteten psychische Ursachen dahinter, --12-- eine regionale Tageszeitung berichtete. Erst ein Sprachtherapeut erkannte: Es handelte sich um das „Foreign Accent Syndrome“, eine neurologische Erkrankung, die --13-- selten ist, dass ein durchschnittlicher Mediziner in seinem gesamten Leben keinen einzigen Betroffenen --14-- bekommt. Experten sprechen von weltweit rund 60, maximal 100 Fällen, die überhaupt jemals --15--.\n\n--16-- beschrieb der französische Neurologe Pierre Marie 1907: Eine Pariserin, die einen Schlaganfall erlitten hatte und danach rechtsseitig gelähmt war, begann --17-- mit einem elsässisch klingenden Akzent zu sprechen. Mehr Details sind von einer anderen historischen Patientin überliefert: Der Experte --18-- Sprachstörungen Georg Herman Monrad-Krohn dokumentierte 1943 die Geschichte der Norwegerin Astrid L., die bei einem Unfall am linken Stirnhirn verletzt wurde. Sie --19-- mehrere Tage bewusstlos und danach rechtsseitig gelähmt gewesen sein. Zunächst hatte sie enorme Schwierigkeiten, einfache Gegenstände wie eine Streichholzschachtel --20--, und machte zahlreiche Grammatikfehler. Mit der Zeit lernte sie zwar wieder, korrekt und flüssig zu sprechen, allerdings mit einem Tonfall, der ihre Landsleute offenbar --21-- deutschen Akzent erinnerte.", [
+                        ['options' => 'a|dagegen,b|doch,c|hingegen,d|jedoch', 'answer' => 'b'],
+                        ['options' => 'a|anderweitig,b|artfremd,c|auswärtig,d|fremdartig', 'answer' => 'd'],
+                        ['options' => 'a|durchweg,b|extra,c|gehörig,d|überaus', 'answer' => 'd'],
+                        ['options' => 'a|vermeintlich,b|vermeintliche,c|vermeintlichem,d|vermeintlicher', 'answer' => 'a'],
+                        ['options' => 'a|dank,b|infolge,c|kraft,d|zwecks', 'answer' => 'b'],
+                        ['options' => 'a|hervor,b|hinaus,c|voraus,d|zurück', 'answer' => 'd'],
+                        ['options' => 'a|vererbbare,b|veränderbare,c|veränderliche,d|veränderte', 'answer' => 'd'],
+                        ['options' => 'a|sei,b|war,c|wäre,d|würde', 'answer' => 'c'],
+                        ['options' => 'a|für sich hatte,b|mit sich zog,c|von sich gab,d|vor sich ging', 'answer' => 'd'],
+                        ['options' => 'a|angeschrieben,b|gutgeschrieben,c|vorgeschrieben,d|zugeschrieben', 'answer' => 'd'],
+                        ['options' => 'a|Desto,b|So sehr,c|So weit,d|Weit mehr', 'answer' => 'b'],
+                        ['options' => 'a|behandelnde,b|behandelnden,c|behandelte,d|behandelten', 'answer' => 'b'],
+                        ['options' => 'a|als,b|das,c|die,d|wie', 'answer' => 'a'],
+                        ['options' => 'a|der Art,b|Derart,c|derart,d|der-Art', 'answer' => 'c'],
+                        ['options' => 'a|im Blick,b|in Sicht,c|ins Auge,d|zu Gesicht', 'answer' => 'd'],
+                        ['options' => 'a|bekannt gewesen war,b|bekannt geworden,c|bekannt sind,d|bekannt wurden', 'answer' => 'd'],
+                        ['options' => 'a|Dem ersten Patienten,b|Den ersten Patienten,c|Der erste Patient,d|Des ersten Patienten', 'answer' => 'b'],
+                        ['options' => 'a|daraufhin,b|indem,c|nach,d|nachdem', 'answer' => 'a'],
+                        ['options' => 'a|auf,b|für,c|über,d|von', 'answer' => 'b'],
+                        ['options' => 'a|ist,b|soll,c|war,d|wurde', 'answer' => 'b'],
+                        ['options' => 'a|benannt,b|benennen,c|benennen können,d|zu benennen', 'answer' => 'd'],
+                        ['options' => 'a|an einen,b|auf einen,c|mit einem,d|zu einem', 'answer' => 'a'],
+                    ], 1),
+                ], self::pages(8, 16)), ['layout_style' => 'telc_c1_l12']),
+                self::section('telc-c1-listening-intro', 'Kandidatenblätter', 40, [
+                    self::text('telc-c1-hv0-intro', 'Kandidatenblätter Hören', "Kandidatenblätter\nHören\ncirca 40 Minuten\n\nDas Modul Hören hat vier Teile.\nSie hören mehrere Texte und lösen Aufgaben dazu.\nLesen Sie jeweils zuerst die Aufgaben\nund hören Sie dann den Text dazu.\nFür jede Aufgabe gibt es nur eine\nrichtige Lösung.\nNach dem Hören haben Sie drei\nMinuten Zeit, Ihre Lösungen auf den\nAntwortbogen zu übertragen.\nEs werden nur die Lösungen und Texte\nauf dem Antwortbogen bewertet.\nBitte schreiben Sie mit einem blauen\noder schwarzen Stift.\nHilfsmittel (z. B. Wörterbücher, Handys/\nmobile Endgeräte) sind nicht erlaubt."),
+                ], self::pages(17, 17)),                self::section('telc-c1-listening', 'Hörverstehen', 40, [
+                    self::audio('telc-c1-audio', 'Hörverstehen Audio', '/goethe-assets/goethe_zertifikat_c1_uebungstest_1_format_2016.mp3'),
+                    
+                    self::text('telc-c1-hv1-instruction', 'Hörverstehen Teil 1: Kontroverse Meinungen über den Zoo', 'Sie hören eine Diskussionsrunde über Zoos. Sie hören den Text einmal. Ordnen Sie den Sprechern 1 bis 8 (Aufgaben 47 bis 54) die passenden Aussagen a bis j zu. Zwei Aussagen passen nicht. Markieren Sie Ihre Lösungen für die Aufgaben 47-54 auf dem Antwortbogen.'),
+                    self::input('telc-c1-hv1-47', 'Aufgabe 47', 'matching', 'h', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 1'),
+                    self::input('telc-c1-hv1-48', 'Aufgabe 48', 'matching', 'c', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 2'),
+                    self::input('telc-c1-hv1-49', 'Aufgabe 49', 'matching', 'e', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 3'),
+                    self::input('telc-c1-hv1-50', 'Aufgabe 50', 'matching', 'f', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 4'),
+                    self::input('telc-c1-hv1-51', 'Aufgabe 51', 'matching', 'g', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 5'),
+                    self::input('telc-c1-hv1-52', 'Aufgabe 52', 'matching', 'j', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 6'),
+                    self::input('telc-c1-hv1-53', 'Aufgabe 53', 'matching', 'b', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 7'),
+                    self::input('telc-c1-hv1-54', 'Aufgabe 54', 'matching', 'd', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 8'),
+                    
+                    self::text('telc-c1-hv2-instruction', 'Hörverstehen Teil 2: Interview mit Reiseleiter Herr Rimbach', 'Sie hören ein Interview mit dem Reiseleiter Herr Rimbach. Sie hören den Text zweimal. Wählen Sie bei jeder Aufgabe 55 bis 64 die richtige Lösung a, b oder c. Markieren Sie Ihre Lösungen auf dem Antwortbogen.'),
+                    self::input('telc-c1-hv2-55', 'Aufgabe 55', 'multiple_choice', 'b', 2, 'a,b,c', "Herr Rimbach ist für die Reisegruppe leicht erkennbar, obwohl er...
+a) keine auffälligen Requisiten dabei hat.
+b) nicht durch seine Körpergröße auffällt.
+c) unauffällige Kleidung bevorzugt."),
+                    self::input('telc-c1-hv2-56', 'Aufgabe 56', 'multiple_choice', 'a', 2, 'a,b,c', "Herr Rimbach setzt Körpersprache bewusst ein, um...
+a) einen positiven ersten Eindruck zu hinterlassen.
+b) seine eigene Nervosität zu überspielen.
+c) Urlaubern die Nervosität zu nehmen."),
+                    self::input('telc-c1-hv2-57', 'Aufgabe 57', 'multiple_choice', 'b', 2, 'a,b,c', "Nörgler und Unruhestifter...
+a) erkennt Herr Rimbach immer auf den ersten Blick.
+b) fallen oft schon am Anreisetag unangenehm auf.
+c) reagieren in Krisensituationen besonders panisch."),
+                    self::input('telc-c1-hv2-58', 'Aufgabe 58', 'multiple_choice', 'c', 2, 'a,b,c', "In schwierigen Situationen...
+a) benötigen ältere Urlauber oft besondere Aufmerksamkeit.
+b) braucht Herr Rimbach manchmal schauspielerisches Talent.
+c) kann Herr Rimbach oft schnell eine Lösung finden."),
+                    self::input('telc-c1-hv2-59', 'Aufgabe 59', 'multiple_choice', 'a', 2, 'a,b,c', "Beschwerden über das Essen sind verständlich, weil...
+a) das Angebot oft etwas eintönig ist.
+b) keine landestypischen Gerichte serviert werden.
+c) ungewöhnliche Gewürze verwendet werden."),
+                    self::input('telc-c1-hv2-60', 'Aufgabe 60', 'multiple_choice', 'b', 2, 'a,b,c', "Das Klischee, dass Deutsche für alle Eventualitäten gerüstet sein wollen,...
+a) hält Herr Rimbach inzwischen für überholt.
+b) kann Herr Rimbach aus eigener Erfahrung bestätigen.
+c) sieht Herr Rimbach als übertrieben an."),
+                    self::input('telc-c1-hv2-61', 'Aufgabe 61', 'multiple_choice', 'b', 2, 'a,b,c', "Der deutsche Urlauber...
+a) hat ein ausgeprägtes Bedürfnis nach Struktur.
+b) hat ein Problem mit Wartezeiten.
+c) kann auch sehr spontan sein."),
+                    self::input('telc-c1-hv2-62', 'Aufgabe 62', 'multiple_choice', 'c', 2, 'a,b,c', "Die Verwendung des „Du“ schafft eine Vertrautheit, die...
+a) auch auf Abenteuerreisen nicht gut ankommt.
+b) auf Studienreisen absolut erwünscht ist.
+c) zu Irritationen bzw. schwierigen Situationen führen kann."),
+                    self::input('telc-c1-hv2-63', 'Aufgabe 63', 'multiple_choice', 'c', 2, 'a,b,c', "Besserwissern begegnet Herr Rimbach, indem er...
+a) gar nicht erst auf sie eingeht.
+b) gelassen und sachlich bleibt.
+c) humorvolle Bemerkungen macht."),
+                    self::input('telc-c1-hv2-64', 'Aufgabe 64', 'multiple_choice', 'a', 2, 'a,b,c', "Herr Rimbach...
+a) ärgert sich über zu wenig Trinkgeld.
+b) findet es unangenehm, Trinkgeld anzunehmen.
+c) spendet sein Trinkgeld grundsätzlich."),
+                    
+                    self::text('telc-c1-hv3-instruction', 'Hörverstehen Teil 3: Vortragsreihe „Schöner wohnen“ - Martin Wintermeyer', 'Sie hören einen Vortrag. Sie hören den Text einmal. Schreiben Sie die fehlenden Informationen stichwortartig in die freien Zeilen 65 bis 74 in der rechten Spalte.'),
+                    self::input('telc-c1-hv3-65', 'Aufgabe 65', 'fill_blank', 'gemütlich', 2, '', 'Die neue Wandfarbe bewirkt:'),
+                    self::input('telc-c1-hv3-66', 'Aufgabe 66', 'fill_blank', 'warme und kalte', 2, '', 'Farbe ist nicht gleich Farbe. Wir unterscheiden'),
+                    self::input('telc-c1-hv3-67', 'Aufgabe 67', 'fill_blank', 'kalt wirken', 2, '', 'Weiße Wände? Nein, weil:'),
+                    self::input('telc-c1-hv3-68', 'Aufgabe 68', 'fill_blank', 'pastelltöne', 2, '', 'Alternativen:'),
+                    self::input('telc-c1-hv3-69', 'Aufgabe 69', 'fill_blank', 'raumgröße', 2, '', 'Die richtige Farbwahl und -menge hängt ab von'),
+                    self::input('telc-c1-hv3-70', 'Aufgabe 70', 'fill_blank', 'rot für dynamik', 2, '', 'Farbe und Persönlichkeit. Ein Beispiel:'),
+                    self::input('telc-c1-hv3-71', 'Aufgabe 71', 'fill_blank', 'belebung', 2, '', 'Farbakzente. Vorteil von Farbakzenten:'),
+                    self::input('telc-c1-hv3-72', 'Aufgabe 72', 'fill_blank', 'kleinen räumen', 2, '', 'Mehr Mut zur Farbe in'),
+                    self::input('telc-c1-hv3-73', 'Aufgabe 73', 'fill_blank', 'tageslicht nutzen', 2, '', 'Der Faktor Licht. Wohngefühl positiv beeinflussen, indem'),
+                    self::input('telc-c1-hv3-74', 'Aufgabe 74', 'fill_blank', 'steriles design', 2, '', 'Kritik an modernen Wohnungen'),
+                ], self::pages(18, 21), ['layout_style' => 'telc_c1_listening']),
+                self::section('telc-c1-writing', 'Schriftlicher Ausdruck', 70, [
+                    self::text('telc-c1-write-0', 'Kandidatenblätter Schreiben', "Kandidatenblätter\nSchreiben\n75 Minuten\n\nDas Modul Schreiben hat zwei Teile.\nIn Teil 1 schreiben Sie einen Diskussionsbeitrag für ein Forum.\nIn Teil 2 schreiben Sie eine Nachricht.\nSie können mit jeder Aufgabe beginnen.\nEs werden nur die Lösungen und Texte\nauf dem Antwortbogen bewertet.\nBitte schreiben Sie mit einem blauen\noder schwarzen Stift.\nHilfsmittel (z. B. Wörterbücher, Handys/\nmobile Endgeräte) sind nicht erlaubt."),
+                    self::input('telc-c1-write-1', 'Teil 1 — Diskussionsbeitrag für ein Forum', 'writing', "In der Diskussion im Kurs hat Maria argumentiert, dass ein Pflichtfach für digitale Kompetenzen in der Schule wichtig ist, damit alle Schülerinnen und Schüler gleichzeitig mit dem digitalen Wandel Schritt halten können. Sie schrieb: ″Ohne digitale Grundbildung verlieren junge Menschen den Anschluss an die Arbeitswelt von morgen. Das Problem ist nicht das Internet selbst, sondern die fehlende Unterstützung durch Lehrkräfte, die selbst noch nicht ausreichend geschult wurden.″\n\nAntwort des Diskussionspartners: ″Ein Pflichtfach ist problematisch, weil viele Schülerinnen und Schüler ohnehin schon durch andere Fächer wie Politik oder Geografie kritisch mit digitalen Medien konfrontiert werden. Zudem fehlt es an ausreichend qualifiziertem Personal, um ein weiteres Fach anzubieten.″", 48, null, "Schreiben Sie einen Diskussionsbeitrag für ein Internet-Forum (ca. 120–150 Wörter).\n\nIn einem Kurs wird diskutiert, ob Schülerinnen und Schüler in der Schule ein Pflichtfach ‚Digitale Kompetenzen‘ einführen sollen. Nehmen Sie Bezug auf die Beiträge von Maria und einem anderen Kursteilnehmer. Formulieren Sie Ihre Position und nennen Sie mindestens zwei Argumente."),
+                    self::input('telc-c1-write-2', 'Teil 2 — Nachricht', 'writing', '', 48, null, "Schreiben Sie eine Nachricht (ca. 50–80 Wörter) an einen Mitbewohner im Studentenwohnheim.\n\nIhr Mitbewohner hat Ihre Teekanne und Tassen immer wieder benutzt, ohne sie danach zu spülen. Bitten Sie höflich, aber bestimmt um Rücksichtnahme und erklären Sie kurz, warum Ihnen das wichtig ist."),
+                ], self::pages(22, 22)),
+                self::section('telc-c1-speaking', 'Mündliche Prüfung', 16, [
+                    self::speakingElement('telc-c1-sp-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie eines der Themen:\n1. Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?\noder\n2. Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus?', 6),
+                    self::speakingElement('telc-c1-sp-1b', '1b: Zusammenfassung und Anschlussfragen', 'Zusammenfassung/Anschlussfragen (ca. 2 Minuten). Hören Sie sich die KI-Präsentation zum anderen Thema an und antworten Sie darauf.', 4),
+                    self::speakingElement('telc-c1-sp-2', '2: Diskussion', 'Diskussion (6 Minuten). Diskutieren Sie das folgende Thema: Beziehungen mit großem Altersunterschied sind immer problematisch.', 6),
+                    self::speakingElement('telc-c1-sp-global', 'Punkte für sprachliche Angemessenheit', 'Gesamtbewertung für sprachliche Angemessenheit (Flüssigkeit, Repertoire, Grammatische Richtigkeit, Aussprache/Intonation)', 32),
+                ], self::pages(23, 24)),
             ],
         ];
     }

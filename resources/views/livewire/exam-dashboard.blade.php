@@ -169,7 +169,7 @@
         </section>
 
     @if ($mode === 'builder')
-        <div class="telc-admin-grid">
+        <main class="telc-admin-grid" wire:key="dashboard-builder-view">
             <aside class="telc-panel">
                 <div style="margin-bottom: 1.5rem;">
                     <label>Template Category Directory</label>
@@ -483,22 +483,24 @@
                                                                                  <input type="text" 
                                                                                         value="{{ $optList[$letter] ?? '' }}" 
                                                                                         x-on:input="
-                                                                                            let arr = JSON.parse($wire.get('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options') || '[]');
+                                                                                            let raw = $wire.get('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options');
+                                                                                            let arr = Array.isArray(raw) ? JSON.parse(JSON.stringify(raw)) : (typeof raw === 'object' && raw !== null ? Object.values(raw) : JSON.parse(raw || '[]'));
                                                                                             if (!arr[{{ $gapIdx }}]) arr[{{ $gapIdx }}] = {options: 'a|,b|,c|,d|', answer: 'a'};
                                                                                             let opts = (arr[{{ $gapIdx }}].options || '').split(',').map(o => o.split('|'));
                                                                                             let match = opts.find(o => o[0] === '{{ $letter }}');
                                                                                             if (match) match[1] = $event.target.value;
                                                                                             else opts.push(['{{ $letter }}', $event.target.value]);
                                                                                             arr[{{ $gapIdx }}].options = opts.map(o => o.join('|')).join(',');
-                                                                                            $wire.set('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options', JSON.stringify(arr));
+                                                                                            $wire.set('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options', arr);
                                                                                         "
                                                                                         class="telc-input" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; width: 100%;">
                                                                                  <button type="button" 
                                                                                          x-on:click="
-                                                                                            let arr = JSON.parse($wire.get('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options') || '[]');
+                                                                                            let raw = $wire.get('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options');
+                                                                                            let arr = Array.isArray(raw) ? JSON.parse(JSON.stringify(raw)) : (typeof raw === 'object' && raw !== null ? Object.values(raw) : JSON.parse(raw || '[]'));
                                                                                             if (!arr[{{ $gapIdx }}]) arr[{{ $gapIdx }}] = {options: 'a|,b|,c|,d|', answer: 'a'};
                                                                                             arr[{{ $gapIdx }}].answer = '{{ $letter }}';
-                                                                                            $wire.set('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options', JSON.stringify(arr));
+                                                                                            $wire.set('template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.options', arr);
                                                                                          "
                                                                                          style="margin-top: 0.35rem; font-size: 0.75rem; width: 100%; border: 1px solid #ccc; cursor: pointer; border-radius: 4px; padding: 4px 0; background: {{ ($cur['answer'] ?? '') === $letter ? '#4ade80' : '#f3f4f6' }}; font-weight: {{ ($cur['answer'] ?? '') === $letter ? 'bold' : 'normal' }};">
                                                                                      {{ ($cur['answer'] ?? '') === $letter ? '✓ Correct' : 'Set Correct' }}
@@ -607,15 +609,15 @@
                     </div>
                 @endif
             </main>
-        </div>
+        </main>
     @elseif ($mode === 'topics')
-        <livewire:admin-topics />
+        <div wire:key="dashboard-topics-view"><livewire:admin-topics /></div>
     @elseif ($mode === 'pricing')
-        <livewire:admin-pricing />
+        <div wire:key="dashboard-pricing-view"><livewire:admin-pricing /></div>
     @elseif ($mode === 'blog')
-        <livewire:admin-blog />
+        <div wire:key="dashboard-blog-view"><livewire:admin-blog /></div>
     @elseif ($mode === 'contacts')
-        <div class="telc-panel" style="background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 2rem; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
+        <div class="telc-panel" wire:key="dashboard-contacts-view" style="background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 2rem; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
             <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 0.25rem; color: #1a1a1a;">Kontaktanfragen</h3>
@@ -679,7 +681,7 @@
             </div>
         </div>
     @elseif ($mode === 'student')
-        <div class="admin-student-preview" style="max-width: 100%;">
+        <section class="admin-student-preview" wire:key="dashboard-student-view" style="max-width: 100%;">
             @if (empty($template))
                 <p style="padding: 2rem; text-align: center; color: #6b7280; font-style: italic;">
                     Keine Vorlage geladen. Bitte wählen Sie zuerst eine Vorlage im Builder aus.
@@ -687,73 +689,71 @@
             @else
                 @include('livewire.student-exam')
             @endif
-        </div>
+        </section>
     @endif
 
-    @if ($mode !== 'student')
-        {{-- Manual Payment Approvals List --}}
-        <div class="telc-panel" style="margin-top: 2rem; background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 1.5rem;">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1.25rem; color: #1a1a1a;">Freizugebende PayPal-Zahlungen</h3>
-            
-            @if (session()->has('payment_message'))
-                <div style="background: #e6f4ea; color: #137333; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; margin-bottom: 1rem; font-size: 0.85rem;">
-                    {{ session('payment_message') }}
-                </div>
-            @endif
-
-            <div class="admin-table-wrap">
-                <table class="admin-table">
-                    <thead>
-                        <tr style="text-align: left; background: #fafafa; border-bottom: 2px solid #edf0f4;">
-                            <th style="padding: 0.75rem;">Teilnehmer</th>
-                            <th style="padding: 0.75rem;">Prüfung</th>
-                            <th style="padding: 0.75rem;">Transaktions-ID</th>
-                            <th style="padding: 0.75rem;">Beleg</th>
-                            <th style="padding: 0.75rem; text-align: right;">Aktionen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($pendingPayments as $payment)
-                            <tr style="border-bottom: 1px solid #edf0f4;">
-                                <td style="padding: 0.75rem;">
-                                    <strong>{{ $payment->user->name }}</strong><br>
-                                    <small style="color: #666666;">{{ $payment->user->email }}</small>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    {{ $payment->examTemplate->title ?? 'TELC' }} ({{ $payment->examTemplate->level }})
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px;">{{ $payment->transaction_id }}</code>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    @if ($payment->receipt_path)
-                                        <a href="{{ Storage::url($payment->receipt_path) }}" target="_blank" style="color: #d8232a; font-weight: 700; text-decoration: underline;">
-                                            Beleg öffnen
-                                        </a>
-                                    @else
-                                        <span style="color: #666666; font-style: italic;">Kein Bild</span>
-                                    @endif
-                                </td>
-                                <td style="padding: 0.75rem; text-align: right;">
-                                    <button type="button" wire:click="approvePayment({{ $payment->id }})" class="telc-button primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; margin-right: 0.25rem;">
-                                        Freigeben
-                                    </button>
-                                    <button type="button" wire:click="rejectPayment({{ $payment->id }})" class="telc-button" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; border-color: #d8232a; color: #d8232a;">
-                                        Ablehnen
-                                    </button>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" style="padding: 1.5rem; text-align: center; color: #666666; font-style: italic;">
-                                    Keine ausstehenden Freigabeanträge gefunden.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+    {{-- Manual Payment Approvals List --}}
+    <div class="telc-panel" wire:key="dashboard-payment-approvals" style="margin-top: 2rem; background: #ffffff; border: 1px solid #d9dde5; border-radius: 8px; padding: 1.5rem; @if ($mode === 'student') display: none; @endif">
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1.25rem; color: #1a1a1a;">Freizugebende PayPal-Zahlungen</h3>
+        
+        @if (session()->has('payment_message'))
+            <div style="background: #e6f4ea; color: #137333; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; margin-bottom: 1rem; font-size: 0.85rem;">
+                {{ session('payment_message') }}
             </div>
+        @endif
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr style="text-align: left; background: #fafafa; border-bottom: 2px solid #edf0f4;">
+                        <th style="padding: 0.75rem;">Teilnehmer</th>
+                        <th style="padding: 0.75rem;">Prüfung</th>
+                        <th style="padding: 0.75rem;">Transaktions-ID</th>
+                        <th style="padding: 0.75rem;">Beleg</th>
+                        <th style="padding: 0.75rem; text-align: right;">Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($pendingPayments as $payment)
+                        <tr style="border-bottom: 1px solid #edf0f4;">
+                            <td style="padding: 0.75rem;">
+                                <strong>{{ $payment->user->name }}</strong><br>
+                                <small style="color: #666666;">{{ $payment->user->email }}</small>
+                            </td>
+                            <td style="padding: 0.75rem;">
+                                {{ $payment->examTemplate->title ?? 'TELC' }} ({{ $payment->examTemplate->level }})
+                            </td>
+                            <td style="padding: 0.75rem;">
+                                <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px;">{{ $payment->transaction_id }}</code>
+                            </td>
+                            <td style="padding: 0.75rem;">
+                                @if ($payment->receipt_path)
+                                    <a href="{{ Storage::url($payment->receipt_path) }}" target="_blank" style="color: #d8232a; font-weight: 700; text-decoration: underline;">
+                                        Beleg öffnen
+                                    </a>
+                                @else
+                                    <span style="color: #666666; font-style: italic;">Kein Bild</span>
+                                @endif
+                            </td>
+                            <td style="padding: 0.75rem; text-align: right;">
+                                <button type="button" wire:click="approvePayment({{ $payment->id }})" class="telc-button primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; margin-right: 0.25rem;">
+                                    Freigeben
+                                </button>
+                                <button type="button" wire:click="rejectPayment({{ $payment->id }})" class="telc-button" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: auto; border-color: #d8232a; color: #d8232a;">
+                                    Ablehnen
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" style="padding: 1.5rem; text-align: center; color: #666666; font-style: italic;">
+                                Keine ausstehenden Freigabeanträge gefunden.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-    @endif
+    </div>
     @endif
 </div>

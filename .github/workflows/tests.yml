@@ -86,6 +86,7 @@ jobs:
             
             composer install --no-interaction --prefer-dist --optimize-autoloader
             php artisan migrate --force
+            php artisan db:seed
             npm ci && npm run build
             php artisan optimize
             sudo systemctl reload php8.4-fpm
