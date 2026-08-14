@@ -734,7 +734,7 @@ class GuestExam extends Component
                                 ."[Die korrigierte und verbesserte Version des Nutzers]\n"
                                 ."\n"
                                 ."### MUSTERANTWORT (BEISPIEL)\n"
-                                ."[Eine professionelle Beispielantwort auf die gestellte Aufgabe]";
+                                .'[Eine professionelle Beispielantwort auf die gestellte Aufgabe]';
 
                             $model = Gemini::generativeModel(model: config('gemini.model'))
                                 ->withSystemInstruction(Content::parse($systemInstruction));
@@ -952,7 +952,7 @@ class GuestExam extends Component
                         ."[Die korrigierte und verbesserte Version des Nutzers]\n"
                         ."\n"
                         ."### MUSTERANTWORT (BEISPIEL)\n"
-                        ."[Eine professionelle Beispielantwort auf die gestellte Aufgabe]";
+                        .'[Eine professionelle Beispielantwort auf die gestellte Aufgabe]';
 
                     $model = Gemini::generativeModel(model: config('gemini.model'))
                         ->withSystemInstruction(Content::parse($systemInstruction));
@@ -1449,7 +1449,7 @@ class GuestExam extends Component
             $elementCompleted = true;
         } elseif (str_ends_with($elementId, '-SP-2') && ($isLastTurn || str_contains($assistantReply, 'SCORE:'))) {
             $elementCompleted = true;
-        } elseif (!str_contains($elementId, '-SP-1a') && !str_contains($elementId, '-SP-1b') && !str_contains($elementId, '-SP-2') && str_contains($assistantReply, 'SCORE:')) {
+        } elseif (! str_contains($elementId, '-SP-1a') && ! str_contains($elementId, '-SP-1b') && ! str_contains($elementId, '-SP-2') && str_contains($assistantReply, 'SCORE:')) {
             $elementCompleted = true;
         }
 
@@ -1467,11 +1467,11 @@ class GuestExam extends Component
                 }
             }
 
-            if (!$hasMoreSpeakingInSection) {
+            if (! $hasMoreSpeakingInSection) {
                 $this->dispatch('stop-all-speech');
                 $this->remainingSeconds = 0;
                 $this->timeExpired = false;
-                
+
                 $this->submit();
                 if ($this->nextSectionIndex !== null) {
                     $this->startSection($this->nextSectionIndex);

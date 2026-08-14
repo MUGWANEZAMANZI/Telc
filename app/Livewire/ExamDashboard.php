@@ -54,8 +54,10 @@ class ExamDashboard extends Component
 
     public bool $timeExpired = false;
 
+    /** @var array<string, array<int, array{key: string, text: string}>> */
     public array $editingOptions = [];
 
+    /** @var array<string, array{title: string, eyebrow: string, example: array{number: int, statement: string, solution: string}, statements: array<int, string>, texts: array<string, array{name: string, body: string}>}> */
     public array $editingTeil4 = [];
 
     public string $providerFilter = 'telc';
@@ -517,11 +519,11 @@ class ExamDashboard extends Component
     public function syncElementOptions(int $sectionIndex, int $elementIndex, string $elementId): void
     {
         $list = $this->editingOptions[$elementId] ?? [];
-        
+
         $formatted = [];
         foreach ($list as $item) {
-            $key = trim($item['key'] ?? '');
-            $text = trim($item['text'] ?? '');
+            $key = trim($item['key']);
+            $text = trim($item['text']);
             if ($key !== '') {
                 $formatted[] = [
                     'key' => $key,
@@ -545,7 +547,7 @@ class ExamDashboard extends Component
         if ($count > 0) {
             $lastKey = $this->editingOptions[$elementId][$count - 1]['key'];
             if (strlen($lastKey) === 1) {
-                $nextKey = chr(ord($lastKey) + 1);
+                $nextKey = chr(min(255, ord($lastKey) + 1));
             }
         }
 
@@ -568,36 +570,67 @@ class ExamDashboard extends Component
 
     public function loadEditingTeil4(string $elementId, string $rawContent): void
     {
-        $data = json_decode($rawContent, true);
-        if (! is_array($data)) {
-            $data = [
-                'title' => '',
-                'eyebrow' => '',
-                'example' => [
-                    'number' => 0,
-                    'statement' => '',
-                    'solution' => 'a',
-                ],
-                'statements' => [
-                    24 => '',
-                    25 => '',
-                    26 => '',
-                ],
-                'texts' => [
-                    'a' => ['name' => '', 'body' => ''],
-                    'b' => ['name' => '', 'body' => ''],
-                    'c' => ['name' => '', 'body' => ''],
-                ],
+        $decoded = json_decode($rawContent, true);
+        if (! is_array($decoded)) {
+            $decoded = [];
+        }
+
+        $example = $decoded['example'] ?? null;
+        $statements = $decoded['statements'] ?? null;
+        $texts = $decoded['texts'] ?? null;
+
+        $normalizedStatements = [];
+        if (is_array($statements)) {
+            foreach ($statements as $key => $value) {
+                if (is_string($value)) {
+                    $normalizedStatements[(int) $key] = $value;
+                }
+            }
+        }
+        if ($normalizedStatements === []) {
+            $normalizedStatements = [
+                24 => '',
+                25 => '',
+                26 => '',
             ];
         }
 
-        $this->editingTeil4[$elementId] = $data;
+        $normalizedTexts = [];
+        if (is_array($texts)) {
+            foreach ($texts as $key => $value) {
+                if (is_string($key) && is_array($value)) {
+                    $normalizedTexts[$key] = [
+                        'name' => is_string($value['name'] ?? null) ? $value['name'] : '',
+                        'body' => is_string($value['body'] ?? null) ? $value['body'] : '',
+                    ];
+                }
+            }
+        }
+        if ($normalizedTexts === []) {
+            $normalizedTexts = [
+                'a' => ['name' => '', 'body' => ''],
+                'b' => ['name' => '', 'body' => ''],
+                'c' => ['name' => '', 'body' => ''],
+            ];
+        }
+
+        $this->editingTeil4[$elementId] = [
+            'title' => is_string($decoded['title'] ?? null) ? $decoded['title'] : '',
+            'eyebrow' => is_string($decoded['eyebrow'] ?? null) ? $decoded['eyebrow'] : '',
+            'example' => [
+                'number' => is_array($example) && is_int($example['number'] ?? null) ? $example['number'] : 0,
+                'statement' => is_array($example) && is_string($example['statement'] ?? null) ? $example['statement'] : '',
+                'solution' => is_array($example) && is_string($example['solution'] ?? null) ? $example['solution'] : 'a',
+            ],
+            'statements' => $normalizedStatements,
+            'texts' => $normalizedTexts,
+        ];
     }
 
     public function syncTeil4(int $sectionIndex, int $elementIndex, string $elementId): void
     {
         $data = $this->editingTeil4[$elementId] ?? [];
-        
+
         // Ensure statements keys are integers
         if (isset($data['statements'])) {
             $statements = [];
@@ -618,7 +651,8 @@ class ExamDashboard extends Component
         }
 
         $statements = $this->editingTeil4[$elementId]['statements'] ?? [];
-        $nextNum = count($statements) > 0 ? (int) max(array_keys($statements)) + 1 : 24;
+        $keys = array_keys($statements);
+        $nextNum = $keys !== [] ? max($keys) + 1 : 24;
         $this->editingTeil4[$elementId]['statements'][$nextNum] = '';
 
         $this->syncTeil4($sectionIndex, $elementIndex, $elementId);
@@ -640,10 +674,11 @@ class ExamDashboard extends Component
 
         $texts = $this->editingTeil4[$elementId]['texts'] ?? [];
         $nextLetter = 'a';
-        if (count($texts) > 0) {
-            $lastKey = (string) max(array_keys($texts));
+        $keys = array_keys($texts);
+        if ($keys !== []) {
+            $lastKey = max($keys);
             if (strlen($lastKey) === 1) {
-                $nextLetter = chr(ord($lastKey) + 1);
+                $nextLetter = chr(min(255, ord($lastKey) + 1));
             }
         }
         $this->editingTeil4[$elementId]['texts'][$nextLetter] = ['name' => '', 'body' => ''];
@@ -792,14 +827,14 @@ class ExamDashboard extends Component
             $this->started = false;
             $this->timeExpired = true;
         }
-     }
+    }
 
-     public function addExtraMinutes(int $minutes): void
-     {
-         $this->remainingSeconds += $minutes * 60;
-         $this->started = true;
-         $this->timeExpired = false;
-     }
+    public function addExtraMinutes(int $minutes): void
+    {
+        $this->remainingSeconds += $minutes * 60;
+        $this->started = true;
+        $this->timeExpired = false;
+    }
 
     public function submit(): void
     {

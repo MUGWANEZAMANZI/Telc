@@ -2077,9 +2077,9 @@ class TelcTemplateFactory
                 ], self::pages(8, 16)), ['layout_style' => 'telc_c1_l12']),
                 self::section('telc-c1-listening-intro', 'Kandidatenblätter', 40, [
                     self::text('telc-c1-hv0-intro', 'Kandidatenblätter Hören', "Kandidatenblätter\nHören\ncirca 40 Minuten\n\nDas Modul Hören hat vier Teile.\nSie hören mehrere Texte und lösen Aufgaben dazu.\nLesen Sie jeweils zuerst die Aufgaben\nund hören Sie dann den Text dazu.\nFür jede Aufgabe gibt es nur eine\nrichtige Lösung.\nNach dem Hören haben Sie drei\nMinuten Zeit, Ihre Lösungen auf den\nAntwortbogen zu übertragen.\nEs werden nur die Lösungen und Texte\nauf dem Antwortbogen bewertet.\nBitte schreiben Sie mit einem blauen\noder schwarzen Stift.\nHilfsmittel (z. B. Wörterbücher, Handys/\nmobile Endgeräte) sind nicht erlaubt."),
-                ], self::pages(17, 17)),                self::section('telc-c1-listening', 'Hörverstehen', 40, [
+                ], self::pages(17, 17)),                array_merge(self::section('telc-c1-listening', 'Hörverstehen', 40, [
                     self::audio('telc-c1-audio', 'Hörverstehen Audio', '/goethe-assets/goethe_zertifikat_c1_uebungstest_1_format_2016.mp3'),
-                    
+
                     self::text('telc-c1-hv1-instruction', 'Hörverstehen Teil 1: Kontroverse Meinungen über den Zoo', 'Sie hören eine Diskussionsrunde über Zoos. Sie hören den Text einmal. Ordnen Sie den Sprechern 1 bis 8 (Aufgaben 47 bis 54) die passenden Aussagen a bis j zu. Zwei Aussagen passen nicht. Markieren Sie Ihre Lösungen für die Aufgaben 47-54 auf dem Antwortbogen.'),
                     self::input('telc-c1-hv1-47', 'Aufgabe 47', 'matching', 'h', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 1'),
                     self::input('telc-c1-hv1-48', 'Aufgabe 48', 'matching', 'c', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 2'),
@@ -2089,49 +2089,49 @@ class TelcTemplateFactory
                     self::input('telc-c1-hv1-52', 'Aufgabe 52', 'matching', 'j', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 6'),
                     self::input('telc-c1-hv1-53', 'Aufgabe 53', 'matching', 'b', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 7'),
                     self::input('telc-c1-hv1-54', 'Aufgabe 54', 'matching', 'd', 1, 'a,b,c,d,e,f,g,h,i,j', 'Sprecher 8'),
-                    
+
                     self::text('telc-c1-hv2-instruction', 'Hörverstehen Teil 2: Interview mit Reiseleiter Herr Rimbach', 'Sie hören ein Interview mit dem Reiseleiter Herr Rimbach. Sie hören den Text zweimal. Wählen Sie bei jeder Aufgabe 55 bis 64 die richtige Lösung a, b oder c. Markieren Sie Ihre Lösungen auf dem Antwortbogen.'),
-                    self::input('telc-c1-hv2-55', 'Aufgabe 55', 'multiple_choice', 'b', 2, 'a,b,c', "Herr Rimbach ist für die Reisegruppe leicht erkennbar, obwohl er...
+                    self::input('telc-c1-hv2-55', 'Aufgabe 55', 'multiple_choice', 'b', 2, 'a,b,c', 'Herr Rimbach ist für die Reisegruppe leicht erkennbar, obwohl er...
 a) keine auffälligen Requisiten dabei hat.
 b) nicht durch seine Körpergröße auffällt.
-c) unauffällige Kleidung bevorzugt."),
-                    self::input('telc-c1-hv2-56', 'Aufgabe 56', 'multiple_choice', 'a', 2, 'a,b,c', "Herr Rimbach setzt Körpersprache bewusst ein, um...
+c) unauffällige Kleidung bevorzugt.'),
+                    self::input('telc-c1-hv2-56', 'Aufgabe 56', 'multiple_choice', 'a', 2, 'a,b,c', 'Herr Rimbach setzt Körpersprache bewusst ein, um...
 a) einen positiven ersten Eindruck zu hinterlassen.
 b) seine eigene Nervosität zu überspielen.
-c) Urlaubern die Nervosität zu nehmen."),
-                    self::input('telc-c1-hv2-57', 'Aufgabe 57', 'multiple_choice', 'b', 2, 'a,b,c', "Nörgler und Unruhestifter...
+c) Urlaubern die Nervosität zu nehmen.'),
+                    self::input('telc-c1-hv2-57', 'Aufgabe 57', 'multiple_choice', 'b', 2, 'a,b,c', 'Nörgler und Unruhestifter...
 a) erkennt Herr Rimbach immer auf den ersten Blick.
 b) fallen oft schon am Anreisetag unangenehm auf.
-c) reagieren in Krisensituationen besonders panisch."),
-                    self::input('telc-c1-hv2-58', 'Aufgabe 58', 'multiple_choice', 'c', 2, 'a,b,c', "In schwierigen Situationen...
+c) reagieren in Krisensituationen besonders panisch.'),
+                    self::input('telc-c1-hv2-58', 'Aufgabe 58', 'multiple_choice', 'c', 2, 'a,b,c', 'In schwierigen Situationen...
 a) benötigen ältere Urlauber oft besondere Aufmerksamkeit.
 b) braucht Herr Rimbach manchmal schauspielerisches Talent.
-c) kann Herr Rimbach oft schnell eine Lösung finden."),
-                    self::input('telc-c1-hv2-59', 'Aufgabe 59', 'multiple_choice', 'a', 2, 'a,b,c', "Beschwerden über das Essen sind verständlich, weil...
+c) kann Herr Rimbach oft schnell eine Lösung finden.'),
+                    self::input('telc-c1-hv2-59', 'Aufgabe 59', 'multiple_choice', 'a', 2, 'a,b,c', 'Beschwerden über das Essen sind verständlich, weil...
 a) das Angebot oft etwas eintönig ist.
 b) keine landestypischen Gerichte serviert werden.
-c) ungewöhnliche Gewürze verwendet werden."),
-                    self::input('telc-c1-hv2-60', 'Aufgabe 60', 'multiple_choice', 'b', 2, 'a,b,c', "Das Klischee, dass Deutsche für alle Eventualitäten gerüstet sein wollen,...
+c) ungewöhnliche Gewürze verwendet werden.'),
+                    self::input('telc-c1-hv2-60', 'Aufgabe 60', 'multiple_choice', 'b', 2, 'a,b,c', 'Das Klischee, dass Deutsche für alle Eventualitäten gerüstet sein wollen,...
 a) hält Herr Rimbach inzwischen für überholt.
 b) kann Herr Rimbach aus eigener Erfahrung bestätigen.
-c) sieht Herr Rimbach als übertrieben an."),
-                    self::input('telc-c1-hv2-61', 'Aufgabe 61', 'multiple_choice', 'b', 2, 'a,b,c', "Der deutsche Urlauber...
+c) sieht Herr Rimbach als übertrieben an.'),
+                    self::input('telc-c1-hv2-61', 'Aufgabe 61', 'multiple_choice', 'b', 2, 'a,b,c', 'Der deutsche Urlauber...
 a) hat ein ausgeprägtes Bedürfnis nach Struktur.
 b) hat ein Problem mit Wartezeiten.
-c) kann auch sehr spontan sein."),
-                    self::input('telc-c1-hv2-62', 'Aufgabe 62', 'multiple_choice', 'c', 2, 'a,b,c', "Die Verwendung des „Du“ schafft eine Vertrautheit, die...
+c) kann auch sehr spontan sein.'),
+                    self::input('telc-c1-hv2-62', 'Aufgabe 62', 'multiple_choice', 'c', 2, 'a,b,c', 'Die Verwendung des „Du“ schafft eine Vertrautheit, die...
 a) auch auf Abenteuerreisen nicht gut ankommt.
 b) auf Studienreisen absolut erwünscht ist.
-c) zu Irritationen bzw. schwierigen Situationen führen kann."),
-                    self::input('telc-c1-hv2-63', 'Aufgabe 63', 'multiple_choice', 'c', 2, 'a,b,c', "Besserwissern begegnet Herr Rimbach, indem er...
+c) zu Irritationen bzw. schwierigen Situationen führen kann.'),
+                    self::input('telc-c1-hv2-63', 'Aufgabe 63', 'multiple_choice', 'c', 2, 'a,b,c', 'Besserwissern begegnet Herr Rimbach, indem er...
 a) gar nicht erst auf sie eingeht.
 b) gelassen und sachlich bleibt.
-c) humorvolle Bemerkungen macht."),
-                    self::input('telc-c1-hv2-64', 'Aufgabe 64', 'multiple_choice', 'a', 2, 'a,b,c', "Herr Rimbach...
+c) humorvolle Bemerkungen macht.'),
+                    self::input('telc-c1-hv2-64', 'Aufgabe 64', 'multiple_choice', 'a', 2, 'a,b,c', 'Herr Rimbach...
 a) ärgert sich über zu wenig Trinkgeld.
 b) findet es unangenehm, Trinkgeld anzunehmen.
-c) spendet sein Trinkgeld grundsätzlich."),
-                    
+c) spendet sein Trinkgeld grundsätzlich.'),
+
                     self::text('telc-c1-hv3-instruction', 'Hörverstehen Teil 3: Vortragsreihe „Schöner wohnen“ - Martin Wintermeyer', 'Sie hören einen Vortrag. Sie hören den Text einmal. Schreiben Sie die fehlenden Informationen stichwortartig in die freien Zeilen 65 bis 74 in der rechten Spalte.'),
                     self::input('telc-c1-hv3-65', 'Aufgabe 65', 'fill_blank', 'gemütlich', 2, '', 'Die neue Wandfarbe bewirkt:'),
                     self::input('telc-c1-hv3-66', 'Aufgabe 66', 'fill_blank', 'warme und kalte', 2, '', 'Farbe ist nicht gleich Farbe. Wir unterscheiden'),
@@ -2143,7 +2143,7 @@ c) spendet sein Trinkgeld grundsätzlich."),
                     self::input('telc-c1-hv3-72', 'Aufgabe 72', 'fill_blank', 'kleinen räumen', 2, '', 'Mehr Mut zur Farbe in'),
                     self::input('telc-c1-hv3-73', 'Aufgabe 73', 'fill_blank', 'tageslicht nutzen', 2, '', 'Der Faktor Licht. Wohngefühl positiv beeinflussen, indem'),
                     self::input('telc-c1-hv3-74', 'Aufgabe 74', 'fill_blank', 'steriles design', 2, '', 'Kritik an modernen Wohnungen'),
-                ], self::pages(18, 21), ['layout_style' => 'telc_c1_listening']),
+                ], self::pages(18, 21)), ['layout_style' => 'telc_c1_listening']),
                 self::section('telc-c1-writing', 'Schriftlicher Ausdruck', 70, [
                     self::text('telc-c1-write-0', 'Kandidatenblätter Schreiben', "Kandidatenblätter\nSchreiben\n75 Minuten\n\nDas Modul Schreiben hat zwei Teile.\nIn Teil 1 schreiben Sie einen Diskussionsbeitrag für ein Forum.\nIn Teil 2 schreiben Sie eine Nachricht.\nSie können mit jeder Aufgabe beginnen.\nEs werden nur die Lösungen und Texte\nauf dem Antwortbogen bewertet.\nBitte schreiben Sie mit einem blauen\noder schwarzen Stift.\nHilfsmittel (z. B. Wörterbücher, Handys/\nmobile Endgeräte) sind nicht erlaubt."),
                     self::input('telc-c1-write-1', 'Teil 1 — Diskussionsbeitrag für ein Forum', 'writing', "In der Diskussion im Kurs hat Maria argumentiert, dass ein Pflichtfach für digitale Kompetenzen in der Schule wichtig ist, damit alle Schülerinnen und Schüler gleichzeitig mit dem digitalen Wandel Schritt halten können. Sie schrieb: ″Ohne digitale Grundbildung verlieren junge Menschen den Anschluss an die Arbeitswelt von morgen. Das Problem ist nicht das Internet selbst, sondern die fehlende Unterstützung durch Lehrkräfte, die selbst noch nicht ausreichend geschult wurden.″\n\nAntwort des Diskussionspartners: ″Ein Pflichtfach ist problematisch, weil viele Schülerinnen und Schüler ohnehin schon durch andere Fächer wie Politik oder Geografie kritisch mit digitalen Medien konfrontiert werden. Zudem fehlt es an ausreichend qualifiziertem Personal, um ein weiteres Fach anzubieten.″", 48, null, "Schreiben Sie einen Diskussionsbeitrag für ein Internet-Forum (ca. 120–150 Wörter).\n\nIn einem Kurs wird diskutiert, ob Schülerinnen und Schüler in der Schule ein Pflichtfach ‚Digitale Kompetenzen‘ einführen sollen. Nehmen Sie Bezug auf die Beiträge von Maria und einem anderen Kursteilnehmer. Formulieren Sie Ihre Position und nennen Sie mindestens zwei Argumente."),
