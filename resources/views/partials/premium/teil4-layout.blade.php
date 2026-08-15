@@ -1,23 +1,37 @@
 <section class="c1-section telc-teil4-layout" data-section-idx="{{ $sectionIdx }}" style="position: relative; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 3rem; background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); width: 100%; display: flex; flex-direction: column;">
 
         @php
-            $textEl = collect($section['elements'])->firstWhere('id', 'C1-LV4-text');
-            $teil4 = $textEl ? (json_decode($textEl['content'] ?? '[]', true) ?: []) : [];
-            $teil4Example = $teil4['example'] ?? [];
-            $teil4Statements = $teil4['statements'] ?? [];
-            $teil4Texts = $teil4['texts'] ?? [];
+            // Find the text element (which contains title, eyebrow, and example)
+            $textEl = collect($section['elements'])->firstWhere(function($el) {
+                return ($el['type'] ?? '') === 'text' && str_contains($el['id'] ?? '', 'LV4');
+            });
+            if (!$textEl) {
+                $textEl = collect($section['elements'])->firstWhere('type', 'text');
+            }
+
+            $teil4Title = $textEl['content'] ?? ($section['title'] ?? 'Leseverstehen Teil 4');
+            $teil4Eyebrow = $textEl['label'] ?? '';
             $instruction = $textEl['instruction'] ?? ($section['instruction'] ?? '');
-            $teil4Label = $textEl['label'] ?? '';
-            $teil4LabelParts = array_map('trim', explode('—', $teil4Label, 2));
-            $teil4Title = ($teil4LabelParts[0] !== '') ? $teil4LabelParts[0] : ($section['title'] ?? 'Leseverstehen Teil 4');
-            $teil4Time = $teil4LabelParts[1] ?? '';
+            
+            // Example
+            $teil4Example = [
+                'number' => 0,
+                'statement' => $textEl['instruction'] ?? '',
+                'solution' => $textEl['options'] ?? 'a',
+            ];
+
+            // Portagers (Text Passages): all elements of type 'goethe_portrait' in this section
+            $portraits = collect($section['elements'])->where('type', 'goethe_portrait')->all();
+
+            // Questions (Statements): all elements of type 'matching' in this section
+            $questions = collect($section['elements'])->where('type', 'matching')->all();
         @endphp
 
         <div style="border-bottom: 2px solid #1a1a1a; padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
                 <h2 style="font-size: 1.8rem; font-weight: 900; color: #111827; margin: 0;">{{ $teil4Title }}</h2>
                 <div style="font-size: 0.85rem; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 1rem;">
-                    <span>{{ $teil4Time }}</span>
+                    <span>Teil 4</span>
                     <span style="background: #1a1a1a; color: #ffffff; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">S. {{ $sectionIdx + 6 }}</span>
                 </div>
             </div>
@@ -35,17 +49,21 @@
             <div style="display: flex; gap: 1rem; align-items: baseline; margin-bottom: 2rem; padding: 0.5rem 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; color: #64748b;">
                 <strong style="color:#1e293b; width: 1.5rem; flex-shrink:0;">{{ $teil4Example['number'] ?? 0 }}</strong>
                 <span style="flex-grow: 1;">{{ $teil4Example['statement'] ?? '' }}</span>
-                <strong style="white-space: nowrap; color: #1e293b; margin-left: auto;">Lösung: {{ $teil4Example['solution'] ?? 'a' }}</strong>
+                <strong style="white-space: nowrap; color: #1e293b; margin-left: auto;">Lösung: {{ strtoupper($teil4Example['solution'] ?? 'a') }}</strong>
             </div>
 
             <div style="font-weight: 800; margin-bottom: 0.85rem; color: #1e293b;">Aussagen:</div>
-            @foreach ($teil4Statements as $num => $statement)
+            @foreach ($questions as $q)
+                @php
+                    preg_match('/\d+/', $q['label'] ?? '', $m);
+                    $num = $m[0] ?? ($loop->index + 24);
+                    $elementId = $q['id'];
+                @endphp
                 <div style="display: flex; gap: 1rem; align-items: baseline; margin-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
                     <strong style="color:#1e293b; width: 1.5rem; flex-shrink:0;">{{ $num }}</strong>
-                    <span style="line-height: 1.5; color: #334155;">{{ $statement }}</span>
+                    <span style="line-height: 1.5; color: #334155;">{{ $q['content'] ?? '' }}</span>
                     @if ($result)
                         @php
-                            $elementId = 'C1-LV4-'.$num;
                             $detail = collect($result['details'])->firstWhere('id', $elementId);
                         @endphp
                         @if ($detail)
@@ -65,18 +83,34 @@
 
         {{-- Text Passages a, b, c --}}
         <div style="border-top: 1px solid #e5e7eb; padding-top: 1.75rem; margin-bottom: 3rem;">
-            <div style="text-align: center; margin-bottom: 1.3rem;">
-                <div style="font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: #52525b; margin-bottom: 0.45rem;">{{ $teil4['eyebrow'] ?? '' }}</div>
-                <h3 style="font-size: 1.35rem; line-height: 1.2; font-weight: 900; margin: 0; color: #111827;">{{ $teil4['title'] ?? '' }}</h3>
-            </div>
+            @if ($teil4Eyebrow || $teil4Title)
+                <div style="text-align: center; margin-bottom: 1.3rem;">
+                    @if ($teil4Eyebrow)
+                        <div style="font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: #52525b; margin-bottom: 0.45rem;">{{ $teil4Eyebrow }}</div>
+                    @endif
+                    @if ($teil4Title)
+                        <h3 style="font-size: 1.35rem; line-height: 1.2; font-weight: 900; margin: 0; color: #111827;">{{ $teil4Title }}</h3>
+                    @endif
+                </div>
+            @endif
 
-            @foreach ($teil4Texts as $letter => $text)
+            @foreach ($portraits as $idx => $p)
+                @php
+                    $labelParts = explode(':', $p['label'] ?? '', 2);
+                    if (count($labelParts) === 2 && strlen(trim($labelParts[0])) === 1) {
+                        $letter = strtolower(trim($labelParts[0]));
+                        $name = trim($labelParts[1]);
+                    } else {
+                        $letter = chr(ord('a') + $idx);
+                        $name = $p['label'] ?? '';
+                    }
+                @endphp
                 <article style="margin-bottom: 2.25rem; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 0.88rem; line-height: 1.42; color: #27272a;">
                     <h4 style="font-size: 0.92rem; font-weight: 900; margin: 0 0 0.25rem; color: #111827;">
                         <span style="background: #1e293b; color: #ffffff; font-weight: 800; font-size: 0.95rem; width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; text-transform: uppercase; margin-right: 0.5rem;">{{ $letter }}</span>
-                        {{ $text['name'] ?? '' }}
+                        {{ $name }}
                     </h4>
-                    <p style="margin: 0; text-align: left;">{{ $text['body'] ?? '' }}</p>
+                    <p style="margin: 0; text-align: left;">{{ $p['content'] ?? '' }}</p>
                 </article>
             @endforeach
         </div>
@@ -155,8 +189,8 @@
                     width: 100%;
                     height: 100%;
                     background: 
-                        linear-gradient(to top right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%),
-                        linear-gradient(to bottom right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%);
+                    linear-gradient(to top right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%),
+                    linear-gradient(to bottom right, transparent 46%, #1a1a1a 46%, #1a1a1a 54%, transparent 54%);
                 }
                 .teil4-grid-box.selected.correct-answer-highlight::after {
                     content: "";
@@ -166,8 +200,8 @@
                     width: 100%;
                     height: 100%;
                     background: 
-                        linear-gradient(to top right, transparent 46%, #16a34a 46%, #16a34a 54%, transparent 54%),
-                        linear-gradient(to bottom right, transparent 46%, #16a34a 46%, #16a34a 54%, transparent 54%);
+                    linear-gradient(to top right, transparent 46%, #16a34a 46%, #16a34a 54%, transparent 54%),
+                    linear-gradient(to bottom right, transparent 46%, #16a34a 46%, #16a34a 54%, transparent 54%);
                 }
                 .teil4-grid-box.selected.wrong-answer::after,
                 .teil4-grid-box.wrong-answer::after {
@@ -178,14 +212,13 @@
                     width: 100%;
                     height: 100%;
                     background: 
-                        linear-gradient(to top right, transparent 46%, #dc2626 46%, #dc2626 54%, transparent 54%),
-                        linear-gradient(to bottom right, transparent 46%, #dc2626 46%, #dc2626 54%, transparent 54%);
+                    linear-gradient(to top right, transparent 46%, #dc2626 46%, #dc2626 54%, transparent 54%),
+                    linear-gradient(to bottom right, transparent 46%, #dc2626 46%, #dc2626 54%, transparent 54%);
                 }
                 .teil4-grid-box.disabled {
                     cursor: not-allowed;
                 }
                 
-                /* Highlight states for grading (custom overrides to bypass base styles) */
                 .teil4-grid-box.bg-green-100 {
                     background-color: #f0fdf4 !important;
                     border: 2px solid #16a34a !important;
@@ -206,21 +239,26 @@
                 }
             </style>
  
+            @php
+                $firstQ = collect($questions)->first();
+                $teil4Options = $firstQ ? array_filter(array_map('trim', explode(',', $firstQ['options'] ?? ''))) : ['a', 'b', 'c', '0'];
+                if (empty($teil4Options)) {
+                    $teil4Options = ['a', 'b', 'c', '0'];
+                }
+            @endphp
+
             <div class="teil4-grid-header">
                 <span>Aufgabe</span>
-                <span>a</span>
-                <span>b</span>
-                <span>c</span>
-                <span>0</span>
+                @foreach ($teil4Options as $opt)
+                    <span>{{ $opt }}</span>
+                @endforeach
             </div>
  
-            @php
-                $teil4Options = ['a', 'b', 'c', '0'];
-            @endphp
- 
-            @for ($rowNum = 24; $rowNum <= 30; $rowNum++)
+            @foreach ($questions as $q)
                 @php
-                    $elementId = 'C1-LV4-'.$rowNum;
+                    preg_match('/\d+/', $q['label'] ?? '', $m);
+                    $rowNum = $m[0] ?? ($loop->index + 24);
+                    $elementId = $q['id'];
                     $currentAnswer = $answers[$elementId] ?? '';
                 @endphp
                 <div class="teil4-grid-row" wire:key="teil4-row-{{ $rowNum }}">
@@ -258,6 +296,6 @@
                         </button>
                     @endforeach
                 </div>
-            @endfor
+            @endforeach
         </div>
     </section>

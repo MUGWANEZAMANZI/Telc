@@ -687,16 +687,18 @@ if (!function_exists('parseTeilContent')) {
                 @php
                     $elId = $element['id'] ?? ('el_' . $loop->index);
                 @endphp
-                @if ($elId === 'C1-LV4-text')
-                    @include('partials.premium.teil4-layout', [
-                        'section' => $section,
-                        'sectionIdx' => $sectionIdx,
-                        'result' => $result,
-                        'answers' => $answers,
-                    ])
+                @if (str_contains($elId, 'LV4'))
+                    @if (str_contains($elId, 'text') && !str_contains($elId, 'text-'))
+                        @include('partials.premium.teil4-layout', [
+                            'section' => $section,
+                            'sectionIdx' => $sectionIdx,
+                            'result' => $result,
+                            'answers' => $answers,
+                        ])
+                    @endif
                     @continue
                 @endif
-                @if (in_array($elId, ['C1-HV1-48', 'C1-HV1-49', 'C1-HV1-50', 'C1-HV1-51', 'C1-HV1-52', 'C1-HV1-53', 'C1-HV1-54', 'C1-LV4-text', 'C1-LV4-24', 'C1-LV4-25', 'C1-LV4-26', 'C1-LV4-27', 'C1-LV4-28', 'C1-LV4-29', 'C1-LV4-30', 'C1-SB-inline']))
+                @if (in_array($elId, ['C1-HV1-48', 'C1-HV1-49', 'C1-HV1-50', 'C1-HV1-51', 'C1-HV1-52', 'C1-HV1-53', 'C1-HV1-54']))
                     @continue
                 @endif
                 @php
@@ -902,16 +904,22 @@ if (!function_exists('parseTeilContent')) {
                             </div>
 
                             @php
-                                $sheetData = [
-                                    1 => ['options' => ['a' => 'bekommen', 'b' => 'erfahren', 'c' => 'lernen', 'd' => 'wissen']],
-                                    2 => ['options' => ['a' => 'als Anlage zu', 'b' => 'in Einklang mit', 'c' => 'im Einverständnis mit', 'd' => 'mithilfe von']],
-                                    3 => ['options' => ['a' => 'umsonst', 'b' => 'ungefähr', 'c' => 'ungewöhnlich', 'd' => 'umgekehrt']],
-                                    4 => ['options' => ['a' => 'das', 'b' => 'die', 'c' => 'für die', 'd' => 'mit denen']],
-                                    5 => ['options' => ['a' => 'bei', 'b' => 'im', 'c' => 'in', 'd' => 'von']],
-                                    6 => ['options' => ['a' => 'daraus', 'b' => 'davon', 'c' => 'gegenüber', 'd' => 'somit']],
-                                    7 => ['options' => ['a' => 'erfüllen', 'b' => 'ergänzen', 'c' => 'erledigen', 'd' => 'erzeugen']],
-                                    8 => ['options' => ['a' => 'Dennoch', 'b' => 'Entsprechend', 'c' => 'Nachdem', 'd' => 'Zunehmend']],
-                                ];
+                                $gaps = is_string($element['options'] ?? null) ? (json_decode($element['options'], true) ?: []) : ($element['options'] ?? []);
+                                $sheetData = [];
+                                foreach ($gaps as $gapIdx => $gapDef) {
+                                    $rowNum = $gapIdx + 1;
+                                    $parts = array_filter(array_map('trim', explode(',', $gapDef['options'] ?? '')));
+                                    $opts = [];
+                                    foreach ($parts as $p) {
+                                        $bits = explode('|', $p, 2);
+                                        if (count($bits) === 2) {
+                                            $opts[trim($bits[0])] = trim($bits[1]);
+                                        } else {
+                                            $opts[trim($p)] = trim($p);
+                                        }
+                                    }
+                                    $sheetData[$rowNum] = ['options' => $opts];
+                                }
                             @endphp
 
                             @foreach ($sheetData as $rowNum => $data)
@@ -970,7 +978,38 @@ if (!function_exists('parseTeilContent')) {
                             @endforeach
                         </div>
                     @endif
-                    @if (($element['id'] ?? '') === 'C1-LV3-matching')
+                    @if (str_contains($element['id'] ?? '', 'LV3'))
+                        @php
+                            $instructionText = $element['instruction'] ?? '';
+                            $instructionLines = explode("\n", $instructionText);
+                            $parsedInstruction = '';
+                            $parsedSentences = [];
+                            foreach ($instructionLines as $line) {
+                                $trimmed = trim($line);
+                                if (preg_match('/^([a-j])\s*[\:)]\s*(.+)$/i', $trimmed, $matches)) {
+                                    $parsedSentences[strtolower($matches[1])] = trim($matches[2]);
+                                } else {
+                                    if ($trimmed !== '') {
+                                        $parsedInstruction .= $trimmed . "\n";
+                                    }
+                                }
+                            }
+                            
+                            if (empty($parsedSentences)) {
+                                $parsedSentences = [
+                                    'a' => 'Heute empfinden die meisten die Anforderungen dieses Wegs als Zumutung.',
+                                    'b' => 'So lernen sie nicht, dass sich der Einsatz für ein bestimmtes Ziel lohnt.',
+                                    'c' => 'Diese Maßnahmen ebnen zunächst den Weg für den Erfolg.',
+                                    'd' => 'Trotz der Lösungsansätze sinkt die Attraktivität dieses Tätigkeitsbereichs.',
+                                    'e' => 'Als Folge ihrer Berufstätigkeit leiden sie unter verschiedenen Symptomen.',
+                                    'f' => 'Den eigenen Nachwuchs schützen zu wollen, kann sich nachteilig auswirken.',
+                                    'g' => 'Ein Managerposten reizt sie nicht, da er keine angemessene Balance von Arbeit und Vergnügen zulässt.',
+                                    'h' => 'Sie sind zufrieden mit ihrem Einsatz in den vergangenen Jahrzehnten und träumen von Frührente.',
+                                    'i' => 'Das liegt an der essenziellen Funktion, die Managerinnen und Manager für den Betrieb haben.',
+                                    'j' => 'Denn wenn wir in den bisherigen Mustern verhaftet bleiben, werden wir scheitern.',
+                                ];
+                            }
+                        @endphp
                         <div class="c1-teil3-sentences" style="margin-top: 2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; font-family: 'Plus Jakarta Sans', sans-serif;">
                             <h4 style="margin-top: 0; margin-bottom: 1rem; font-weight: 800; color: #1e293b; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">Sätze zur Auswahl</h4>
                             <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.95rem; line-height: 1.6;">
@@ -978,46 +1017,12 @@ if (!function_exists('parseTeilContent')) {
                                     <span style="font-weight: 900; width: 1.25rem; text-align: right;">0</span>
                                     <span style="font-weight: 500; font-style: italic;">(Beispiel) Und was genau ist damit gemeint?</span>
                                 </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">a</span>
-                                    <span>Heute empfinden die meisten die Anforderungen dieses Wegs als Zumutung.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">b</span>
-                                    <span>So lernen sie nicht, dass sich der Einsatz für ein bestimmtes Ziel lohnt.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">c</span>
-                                    <span>Diese Maßnahmen ebnen zunächst den Weg für den Erfolg.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">d</span>
-                                    <span>Trotz der Lösungsansätze sinkt die Attraktivität dieses Tätigkeitsbereichs.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">e</span>
-                                    <span>Als Folge ihrer Berufstätigkeit leiden sie unter verschiedenen Symptomen.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">f</span>
-                                    <span>Den eigenen Nachwuchs schützen zu wollen, kann sich nachteilig auswirken.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">g</span>
-                                    <span>Ein Managerposten reizt sie nicht, da er keine angemessene Balance von Arbeit und Vergnügen zulässt.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">h</span>
-                                    <span>Sie sind zufrieden mit ihrem Einsatz in den vergangenen Jahrzehnten und träumen von Frührente.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">i</span>
-                                    <span>Das liegt an der essenziellen Funktion, die Managerinnen und Manager für den Betrieb haben.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">j</span>
-                                    <span>Denn wenn wir in den bisherigen Mustern verhaftet bleiben, werden wir scheitern.</span>
-                                </div>
+                                @foreach ($parsedSentences as $letter => $sentence)
+                                    <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                        <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">{{ $letter }}</span>
+                                        <span>{{ $sentence }}</span>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
 
@@ -1118,7 +1123,10 @@ if (!function_exists('parseTeilContent')) {
                             </div>
 
                             @php
-                                $optionsKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'x'];
+                                $optionsKeys = array_keys($parsedSentences ?? ['a' => 1, 'b' => 1, 'c' => 1, 'd' => 1, 'e' => 1, 'f' => 1, 'g' => 1, 'h' => 1, 'i' => 1, 'j' => 1]);
+                                if (!in_array('x', $optionsKeys)) {
+                                    $optionsKeys[] = 'x';
+                                }
                             @endphp
 
                             @for ($i = 0; $i < 8; $i++)
@@ -1502,16 +1510,18 @@ if (!function_exists('parseTeilContent')) {
                 @php
                     $elId = $element['id'] ?? ('el_' . $sectionIdx . '_' . $loop->index);
                 @endphp
-                @if ($elId === 'C1-LV4-text')
-                    @include('partials.premium.teil4-layout', [
-                        'section' => $section,
-                        'sectionIdx' => $sectionIdx,
-                        'result' => $result,
-                        'answers' => $answers,
-                    ])
+                @if (str_contains($elId, 'LV4'))
+                    @if (str_contains($elId, 'text') && !str_contains($elId, 'text-'))
+                        @include('partials.premium.teil4-layout', [
+                            'section' => $section,
+                            'sectionIdx' => $sectionIdx,
+                            'result' => $result,
+                            'answers' => $answers,
+                        ])
+                    @endif
                     @continue
                 @endif
-                @if (in_array($elId, ['C1-HV1-48', 'C1-HV1-49', 'C1-HV1-50', 'C1-HV1-51', 'C1-HV1-52', 'C1-HV1-53', 'C1-HV1-54', 'C1-LV4-24', 'C1-LV4-25', 'C1-LV4-26', 'C1-LV4-27', 'C1-LV4-28', 'C1-LV4-29', 'C1-LV4-30', 'C1-LV4-text', 'C1-SB-inline']))
+                @if (in_array($elId, ['C1-HV1-48', 'C1-HV1-49', 'C1-HV1-50', 'C1-HV1-51', 'C1-HV1-52', 'C1-HV1-53', 'C1-HV1-54']))
                     @continue
                 @endif
                 @php
@@ -1722,16 +1732,22 @@ if (!function_exists('parseTeilContent')) {
                             </div>
 
                             @php
-                                $sheetData = [
-                                    1 => ['options' => ['a' => 'bekommen', 'b' => 'erfahren', 'c' => 'lernen', 'd' => 'wissen']],
-                                    2 => ['options' => ['a' => 'als Anlage zu', 'b' => 'in Einklang mit', 'c' => 'im Einverständnis mit', 'd' => 'mithilfe von']],
-                                    3 => ['options' => ['a' => 'umsonst', 'b' => 'ungefähr', 'c' => 'ungewöhnlich', 'd' => 'umgekehrt']],
-                                    4 => ['options' => ['a' => 'das', 'b' => 'die', 'c' => 'für die', 'd' => 'mit denen']],
-                                    5 => ['options' => ['a' => 'bei', 'b' => 'im', 'c' => 'in', 'd' => 'von']],
-                                    6 => ['options' => ['a' => 'daraus', 'b' => 'davon', 'c' => 'gegenüber', 'd' => 'somit']],
-                                    7 => ['options' => ['a' => 'erfüllen', 'b' => 'ergänzen', 'c' => 'erledigen', 'd' => 'erzeugen']],
-                                    8 => ['options' => ['a' => 'Dennoch', 'b' => 'Entsprechend', 'c' => 'Nachdem', 'd' => 'Zunehmend']],
-                                ];
+                                $gaps = is_string($element['options'] ?? null) ? (json_decode($element['options'], true) ?: []) : ($element['options'] ?? []);
+                                $sheetData = [];
+                                foreach ($gaps as $gapIdx => $gapDef) {
+                                    $rowNum = $gapIdx + 1;
+                                    $parts = array_filter(array_map('trim', explode(',', $gapDef['options'] ?? '')));
+                                    $opts = [];
+                                    foreach ($parts as $p) {
+                                        $bits = explode('|', $p, 2);
+                                        if (count($bits) === 2) {
+                                            $opts[trim($bits[0])] = trim($bits[1]);
+                                        } else {
+                                            $opts[trim($p)] = trim($p);
+                                        }
+                                    }
+                                    $sheetData[$rowNum] = ['options' => $opts];
+                                }
                             @endphp
 
                             @foreach ($sheetData as $rowNum => $data)
@@ -1785,7 +1801,38 @@ if (!function_exists('parseTeilContent')) {
                             @endforeach
                         </div>
                     @endif
-                    @if (($elId ?? '') === 'C1-LV3-matching')
+                    @if (str_contains($elId ?? '', 'LV3'))
+                        @php
+                            $instructionText = $element['instruction'] ?? '';
+                            $instructionLines = explode("\n", $instructionText);
+                            $parsedInstruction = '';
+                            $parsedSentences = [];
+                            foreach ($instructionLines as $line) {
+                                $trimmed = trim($line);
+                                if (preg_match('/^([a-j])\s*[\:)]\s*(.+)$/i', $trimmed, $matches)) {
+                                    $parsedSentences[strtolower($matches[1])] = trim($matches[2]);
+                                } else {
+                                    if ($trimmed !== '') {
+                                        $parsedInstruction .= $trimmed . "\n";
+                                    }
+                                }
+                            }
+                            
+                            if (empty($parsedSentences)) {
+                                $parsedSentences = [
+                                    'a' => 'Heute empfinden die meisten die Anforderungen dieses Wegs als Zumutung.',
+                                    'b' => 'So lernen sie nicht, dass sich der Einsatz für ein bestimmtes Ziel lohnt.',
+                                    'c' => 'Diese Maßnahmen ebnen zunächst den Weg für den Erfolg.',
+                                    'd' => 'Trotz der Lösungsansätze sinkt die Attraktivität dieses Tätigkeitsbereichs.',
+                                    'e' => 'Als Folge ihrer Berufstätigkeit leiden sie unter verschiedenen Symptomen.',
+                                    'f' => 'Den eigenen Nachwuchs schützen zu wollen, kann sich nachteilig auswirken.',
+                                    'g' => 'Ein Managerposten reizt sie nicht, da er keine angemessene Balance von Arbeit und Vergnügen zulässt.',
+                                    'h' => 'Sie sind zufrieden mit ihrem Einsatz in den vergangenen Jahrzehnten und träumen von Frührente.',
+                                    'i' => 'Das liegt an der essenziellen Funktion, die Managerinnen und Manager für den Betrieb haben.',
+                                    'j' => 'Denn wenn wir in den bisherigen Mustern verhaftet bleiben, werden wir scheitern.',
+                                ];
+                            }
+                        @endphp
                         <div class="c1-teil3-sentences" style="margin-top: 2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; font-family: 'Plus Jakarta Sans', sans-serif;">
                             <h4 style="margin-top: 0; margin-bottom: 1rem; font-weight: 800; color: #1e293b; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">Sätze zur Auswahl</h4>
                             <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.95rem; line-height: 1.6;">
@@ -1793,46 +1840,12 @@ if (!function_exists('parseTeilContent')) {
                                     <span style="font-weight: 900; width: 1.25rem; text-align: right;">0</span>
                                     <span style="font-weight: 500; font-style: italic;">(Beispiel) Und was genau ist damit gemeint?</span>
                                 </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">a</span>
-                                    <span>Heute empfinden die meisten die Anforderungen dieses Wegs als Zumutung.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">b</span>
-                                    <span>So lernen sie nicht, dass sich der Einsatz für ein bestimmtes Ziel lohnt.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">c</span>
-                                    <span>Diese Maßnahmen ebnen zunächst den Weg für den Erfolg.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">d</span>
-                                    <span>Trotz der Lösungsansätze sinkt die Attraktivität dieses Tätigkeitsbereichs.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">e</span>
-                                    <span>Als Folge ihrer Berufstätigkeit leiden sie unter verschiedenen Symptomen.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">f</span>
-                                    <span>Den eigenen Nachwuchs schützen zu wollen, kann sich nachteilig auswirken.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">g</span>
-                                    <span>Ein Managerposten reizt sie nicht, da er keine angemessene Balance von Arbeit und Vergnügen zulässt.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">h</span>
-                                    <span>Sie sind zufrieden mit ihrem Einsatz in den vergangenen Jahrzehnten und träumen von Frührente.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">i</span>
-                                    <span>Das liegt an der essenziellen Funktion, die Managerinnen und Manager für den Betrieb haben.</span>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; color: #334155;">
-                                    <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">j</span>
-                                    <span>Denn wenn wir in den bisherigen Mustern verhaftet bleiben, werden wir scheitern.</span>
-                                </div>
+                                @foreach ($parsedSentences as $letter => $sentence)
+                                    <div style="display: flex; gap: 0.75rem; color: #334155;">
+                                        <span style="font-weight: 900; width: 1.25rem; text-align: right; color: #1e293b;">{{ $letter }}</span>
+                                        <span>{{ $sentence }}</span>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
 
@@ -1933,7 +1946,10 @@ if (!function_exists('parseTeilContent')) {
                             </div>
 
                             @php
-                                $optionsKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'x'];
+                                $optionsKeys = array_keys($parsedSentences ?? ['a' => 1, 'b' => 1, 'c' => 1, 'd' => 1, 'e' => 1, 'f' => 1, 'g' => 1, 'h' => 1, 'i' => 1, 'j' => 1]);
+                                if (!in_array('x', $optionsKeys)) {
+                                    $optionsKeys[] = 'x';
+                                }
                             @endphp
 
                             @for ($i = 0; $i < 8; $i++)

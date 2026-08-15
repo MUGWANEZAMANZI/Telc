@@ -444,45 +444,41 @@ class TelcTemplateFactory
     private static function c1Teil4Elements(): array
     {
         return [
-            self::text('C1-LV4-text', 'Teil 4 — vorgeschlagene Arbeitszeit: 15 Minuten', self::encode([
-                'title' => 'Privatheit in Zeiten des Internets',
-                'eyebrow' => 'Zukunftsfragen unserer Gesellschaft:',
-                'example' => [
-                    'number' => 0,
-                    'statement' => 'Das Internet bietet viele Vorteile, die gern genutzt werden.',
-                    'solution' => 'a',
-                ],
-                'statements' => [
-                    24 => 'Angriffe auf sensible Daten verursachen zunehmend finanzielle Verluste.',
-                    25 => 'Reflektiertes Nutzerverhalten kann dazu beitragen, die Verbreitung von Daten einzuschränken.',
-                    26 => 'Unternehmen, die nicht ausreichend für Datenschutz sorgen, werden Kundinnen und Kunden verlieren.',
-                    27 => 'Dank immenser Datenmengen können Unternehmen individuelle Kundenangebote erstellen.',
-                    28 => 'Inhaber von Internetseiten wollen effizient zum Schutz der Bürgerinnen und Bürger beitragen.',
-                    29 => 'Trotz gegenteiliger Äußerungen gehen Nutzerinnen und Nutzer sorglos mit persönlichen Angaben um.',
-                    30 => 'Kostenlose Dienstleistungen zielen auf die Gewinnung persönlicher Daten.',
-                ],
-                'texts' => [
-                    'a' => [
-                        'name' => 'Hella Brückner, Professorin für Wirtschaftspsychologie',
-                        'body' => 'Wer ist denn nicht froh, dass es das Internet gibt? Es ist doch eine große Erleichterung, mit einem Klick Tickets oder Waren kaufen oder die Lieblingsserie jederzeit und ohne lästige Werbung sehen zu können. Messenger-Dienste sind aus dem Alltag nicht mehr wegzudenken, über eine Musik-App wird die aktuelle Lieblingsplaylist geteilt und dank einer lustigen Spiele-App kann man sich auch die Wartezeit an der Bushaltestelle angenehm vertreiben. Aber das Ganze hat natürlich seine Schattenseiten. Bei der Nutzung des Internets entsteht, von den meisten völlig unbemerkt, eine Zweckgemeinschaft zwischen dem privaten Nutzer oder der Nutzerin und diversen Firmen. Man erhält nichts umsonst, auch wenn es so aussieht, sondern bezahlt mit seinen Daten. Die digitalen Medien können unsere Lebensqualität fördern, das steht außer Frage. Doch nur der bewusste Umgang damit vermag den Transfer persönlicher Daten in Grenzen zu halten. Denn je selbstverständlicher das Datensammeln im Netzalltag ist, desto mehr verschwimmen die Grenzen des Privaten und desto mehr schwindet auch das Bewusstsein für einen möglichen Verlust.',
-                    ],
-                    'b' => [
-                        'name' => 'Benedikt Janssen, Direktor des Instituts für Wirtschaftsinformatik',
-                        'body' => 'Das Internet hat nicht nur Vorteile, darüber sollte man sich im Klaren sein, wenn man online einkauft oder den nächsten Urlaub über eine Webseite bucht. Täglich werden kaum vorstellbare Massen an Daten gesammelt, analysiert und für personalisierte Vertriebsaktionen verwertet. Das geht auf Kosten der Kundinnen und Kunden, denn deren Gewohnheiten, Vorlieben, Träume und Ängste sind im ökonomischen Sinne transparent und dadurch quantifizierbar geworden. Erstaunlicherweise ist das den meisten Konsumentinnen und Konsumenten ziemlich egal. Es gibt sogar einen deutlichen Unterschied zwischen Intention und realem Handeln. Obgleich sie in Umfragen beteuern, zur Preisgabe ihrer Daten nicht bereit zu sein, sieht die Sache anders aus, sobald man ihnen beim Einkauf ein paar Bonuspunkte anbietet. Meiner Ansicht nach sollten die Konsumentinnen und Konsumenten darüber aufgeklärt werden, welchen Zwecken sie ungewollt durch die Teilnahme beispielsweise an Rabattprogrammen dienen.',
-                    ],
-                    'c' => [
-                        'name' => 'Leopold Nowak, Professor für Öffentliches Recht',
-                        'body' => 'Die Lebenswirklichkeit vieler Menschen verlagert sich mehr und mehr in die digitale Welt. Unsere Persönlichkeitsrechte müssen daher besser gesetzlich verankert werden. Hier besteht ein massiver Reformbedarf. Es geht darum, Daten und damit auch die Identität der Bürgerinnen und Bürger besser zu schützen. Denn man muss sich klar machen: Viele Menschen geben überhaupt nicht Acht darauf, wohin ihre Daten schließlich wandern, und ignorieren das Risiko, dass diese missbraucht werden könnten. Das Bundeskriminalamt veröffentlichte jüngst eine Studie, die zeigt, dass Kriminelle mit falschen Identitäten immer öfter an das Geld argloser Internetnutzerinnen und -nutzer gelangen. Den Kopf in den Sand zu stecken, ist also für Konsumentinnen und Konsumenten keine Lösung. Die Politik wird langsam aktiv und drängt Unternehmen dazu, bei ihrem Online-Angebot effektive Sicherheitsvorkehrungen zu treffen. Das ist dringend nötig. Und endlich ein wichtiger Schritt in die richtige Richtung.',
-                    ],
-                ],
-            ], JSON_UNESCAPED_UNICODE), 'Sie lesen in einer Fachzeitschrift Beiträge von Wissenschaftlerinnen und Wissenschaftlern. Wählen Sie bei jeder Aussage: Wer äußert das? Zwei Aussagen passen nicht. Markieren Sie in diesem Fall 0.'),
-            self::input('C1-LV4-24', 'Aufgabe 24', 'matching', 'c', 2, 'a,b,c,0'),
-            self::input('C1-LV4-25', 'Aufgabe 25', 'matching', 'a', 2, 'a,b,c,0'),
-            self::input('C1-LV4-26', 'Aufgabe 26', 'matching', 'c', 2, 'a,b,c,0'),
-            self::input('C1-LV4-27', 'Aufgabe 27', 'matching', 'b', 2, 'a,b,c,0'),
-            self::input('C1-LV4-28', 'Aufgabe 28', 'matching', '0', 2, 'a,b,c,0'),
-            self::input('C1-LV4-29', 'Aufgabe 29', 'matching', 'b', 2, 'a,b,c,0'),
-            self::input('C1-LV4-30', 'Aufgabe 30', 'matching', 'a', 2, 'a,b,c,0'),
+            array_merge(self::text('C1-LV4-text', 'Zukunftsfragen unserer Gesellschaft:', 'Privatheit in Zeiten des Internets', 'Das Internet bietet viele Vorteile, die gern genutzt werden.'), ['options' => 'a']),
+            [
+                'id' => 'C1-LV4-text-a',
+                'type' => 'goethe_portrait',
+                'label' => 'a: Hella Brückner, Professorin für Wirtschaftspsychologie',
+                'content' => 'Wer ist denn nicht froh, dass es das Internet gibt? Es ist doch eine große Erleichterung, mit einem Klick Tickets oder Waren kaufen oder die Lieblingsserie jederzeit und ohne lästige Werbung sehen zu können. Messenger-Dienste sind aus dem Alltag nicht mehr wegzudenken, über eine Musik-App wird die aktuelle Lieblingsplaylist geteilt und dank einer lustigen Spiele-App kann man sich auch die Wartezeit an der Bushaltestelle angenehm vertreiben. Aber das Ganze hat natürlich seine Schattenseiten. Bei der Nutzung des Internets entsteht, von den meisten völlig unbemerkt, eine Zweckgemeinschaft zwischen dem privaten Nutzer oder der Nutzerin und diversen Firmen. Man erhält nichts umsonst, auch wenn es so aussieht, sondern bezahlt mit seinen Daten. Die digitalen Medien können unsere Lebensqualität fördern, das steht außer Frage. Doch nur der bewusste Umgang damit vermag den Transfer persönlicher Daten in Grenzen zu halten. Denn je selbstverständlicher das Datensammeln im Netzalltag ist, desto mehr verschwimmen die Grenzen des Privaten und desto mehr schwindet auch das Bewusstsein für einen möglichen Verlust.',
+                'image_url' => '',
+                'answer' => '',
+                'points' => 0,
+            ],
+            [
+                'id' => 'C1-LV4-text-b',
+                'type' => 'goethe_portrait',
+                'label' => 'b: Benedikt Janssen, Direktor des Instituts für Wirtschaftsinformatik',
+                'content' => 'Das Internet hat nicht nur Vorteile, darüber sollte man sich im Klaren sein, wenn man online einkauft oder den nächsten Urlaub über eine Webseite bucht. Täglich werden kaum vorstellbare Massen an Daten gesammelt, analysiert und für personalisierte Vertriebsaktionen verwertet. Das geht auf Kosten der Kundinnen und Kunden, denn deren Gewohnheiten, Vorlieben, Träume und Ängste sind im ökonomischen Sinne transparent und dadurch quantifizierbar geworden. Erstaunlicherweise ist das den meisten Konsumentinnen und Konsumenten ziemlich egal. Es gibt sogar einen deutlichen Unterschied zwischen Intention und realem Handeln. Obgleich sie in Umfragen beteuern, zur Preisgabe ihrer Daten nicht bereit zu sein, sieht die Sache anders aus, sobald man ihnen beim Einkauf ein paar Bonuspunkte anbietet. Meiner Ansicht nach sollten die Konsumentinnen und Konsumenten darüber aufgeklärt werden, welchen Zwecken sie ungewollt durch die Teilnahme beispielsweise an Rabattprogrammen dienen.',
+                'image_url' => '',
+                'answer' => '',
+                'points' => 0,
+            ],
+            [
+                'id' => 'C1-LV4-text-c',
+                'type' => 'goethe_portrait',
+                'label' => 'c: Leopold Nowak, Professor für Öffentliches Recht',
+                'content' => 'Die Lebenswirklichkeit vieler Menschen verlagert sich mehr und mehr in die digitale Welt. Unsere Persönlichkeitsrechte müssen daher besser gesetzlich verankert werden. Hier besteht ein massiver Reformbedarf. Es geht darum, Daten und damit auch die Identität der Bürgerinnen und Bürger besser zu schützen. Denn man muss sich klar machen: Viele Menschen geben überhaupt nicht Acht darauf, wohin ihre Daten schließlich wandern, und ignorieren das Risiko, dass diese missbraucht werden könnten. Das Bundeskriminalamt veröffentlichte jüngst eine Studie, die zeigt, dass Kriminelle mit falschen Identitäten immer öfter an das Geld argloser Internetnutzerinnen und -nutzer gelangen. Den Kopf in den Sand zu stecken, ist also für Konsumentinnen und Konsumenten keine Lösung. Die Politik wird langsam aktiv und drängt Unternehmen dazu, bei ihrem Online-Angebot effektive Sicherheitsvorkehrungen zu treffen. Das ist dringend nötig. Und endlich ein wichtiger Schritt in die richtige Richtung.',
+                'image_url' => '',
+                'answer' => '',
+                'points' => 0,
+            ],
+            self::input('C1-LV4-24', 'Aufgabe 24', 'matching', 'c', 2, 'a,b,c,0', 'Angriffe auf sensible Daten verursachen zunehmend finanzielle Verluste.'),
+            self::input('C1-LV4-25', 'Aufgabe 25', 'matching', 'a', 2, 'a,b,c,0', 'Reflektiertes Nutzerverhalten kann dazu beitragen, die Verbreitung von Daten einzuschränken.'),
+            self::input('C1-LV4-26', 'Aufgabe 26', 'matching', 'c', 2, 'a,b,c,0', 'Unternehmen, die nicht ausreichend für Datenschutz sorgen, werden Kundinnen und Kunden verlieren.'),
+            self::input('C1-LV4-27', 'Aufgabe 27', 'matching', 'b', 2, 'a,b,c,0', 'Dank immenser Datenmengen können Unternehmen individuelle Kundenangebote erstellen.'),
+            self::input('C1-LV4-28', 'Aufgabe 28', 'matching', '0', 2, 'a,b,c,0', 'Inhaber von Internetseiten wollen effizient zum Schutz der Bürgerinnen und Bürger beitragen.'),
+            self::input('C1-LV4-29', 'Aufgabe 29', 'matching', 'b', 2, 'a,b,c,0', 'Trotz gegenteiliger Äußerungen gehen Nutzerinnen und Nutzer sorglos mit persönlichen Angaben um.'),
+            self::input('C1-LV4-30', 'Aufgabe 30', 'matching', 'a', 2, 'a,b,c,0', 'Kostenlose Dienstleistungen zielen auf die Gewinnung persönlicher Daten.'),
         ];
     }
 

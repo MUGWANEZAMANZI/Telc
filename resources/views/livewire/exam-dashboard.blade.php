@@ -367,9 +367,8 @@
                                         <div class="telc-element-fields">
                                             <label>Label</label>
                                             <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.label" class="telc-input">
-
                                             <label>Instruction / Question Text</label>
-                                            <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.instruction" class="telc-input" placeholder="e.g. Question text or section instruction">
+                                            <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.instruction" class="telc-textarea" style="min-height: 3rem;" placeholder="e.g. Question text or section instruction (For matching/Teil 3, list sentences as a: Sentence 1, b: Sentence 2...)"></textarea>
 
                                             @if ($element['type'] === 'audio')
                                                 <label>Audio file</label>
@@ -418,145 +417,22 @@
                                                     @error('imageUpload') <span class="telc-error">{{ $message }}</span> @enderror
                                                     @if (! empty($element['image_url']))
                                                         <div style="margin-top: 0.5rem;">
-                                                            <img src="{{ $element['image_url'] }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;" alt="Portrait Preview">
+                                                            <img src="{{ $element['image_url'] }}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd;" alt="Preview">
                                                         </div>
                                                     @endif
                                                 </div>
                                                 <label>Portrait image URL override</label>
                                                 <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.image_url" class="telc-input">
-                                                <label>Statement text of the person</label>
-                                                @if (($element['type'] ?? '') === 'text' && (str_contains($element['id'] ?? '', 'LV4-text') || str_starts_with(trim($element['content'] ?? ''), '{')))
-                                                     {{-- Goethe C1 Matching (Teil 4) Visual Builder --}}
-                                                     <div class="teil4-visual-editor" wire:key="teil4-editor-{{ $element['id'] }}" style="padding: 1.25rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 1.25rem; width: 100%;">
-                                                         <h4 style="margin-top: 0; margin-bottom: 1rem; color: #4f46e5; font-weight: 850; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.5rem;">
-                                                             <span>🧩</span> Goethe C1 Lesen Teil 4 matching Editor
-                                                         </h4>
-                                                         
-                                                         @php
-                                                             $t4Data = $this->editingTeil4[$element['id']] ?? null;
-                                                             if ($t4Data === null) {
-                                                                 $this->loadEditingTeil4($element['id'], $element['content'] ?? '');
-                                                                 $t4Data = $this->editingTeil4[$element['id']];
-                                                             }
-                                                         @endphp
-
-                                                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-                                                             <div>
-                                                                 <label style="font-size: 0.75rem; font-weight: 600; color: #4b5563; display: block; margin-bottom: 0.25rem;">Dachzeile (Eyebrow)</label>
-                                                                 <input type="text" 
-                                                                        wire:model.live="editingTeil4.{{ $element['id'] }}.eyebrow" 
-                                                                        wire:change="syncTeil4({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                        class="telc-input" style="padding: 0.4rem 0.6rem; font-size: 0.85rem;">
-                                                             </div>
-                                                             <div>
-                                                                 <label style="font-size: 0.75rem; font-weight: 600; color: #4b5563; display: block; margin-bottom: 0.25rem;">Titel (Title)</label>
-                                                                 <input type="text" 
-                                                                        wire:model.live="editingTeil4.{{ $element['id'] }}.title" 
-                                                                        wire:change="syncTeil4({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                        class="telc-input" style="padding: 0.4rem 0.6rem; font-size: 0.85rem;">
-                                                             </div>
-                                                         </div>
-
-                                                         {{-- Example Section --}}
-                                                         <div style="background: #ffffff; padding: 0.85rem; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                                                             <strong style="display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: #475569; text-transform: uppercase; letter-spacing: 0.03em;">Beispiel (Example)</strong>
-                                                             <div style="display: grid; grid-template-columns: 80px 1fr 100px; gap: 0.5rem; align-items: center;">
-                                                                 <div>
-                                                                     <label style="font-size: 0.65rem; color: #6b7280; display: block;">Nummer</label>
-                                                                     <input type="number" 
-                                                                            wire:model.live="editingTeil4.{{ $element['id'] }}.example.number" 
-                                                                            wire:change="syncTeil4({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                            class="telc-input" style="text-align: center; padding: 0.35rem; font-size: 0.8rem;">
-                                                                 </div>
-                                                                 <div>
-                                                                     <label style="font-size: 0.65rem; color: #6b7280; display: block;">Aussage</label>
-                                                                     <input type="text" 
-                                                                            wire:model.live="editingTeil4.{{ $element['id'] }}.example.statement" 
-                                                                            wire:change="syncTeil4({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                            placeholder="Beispiel Aussage" 
-                                                                            class="telc-input" style="padding: 0.35rem; font-size: 0.8rem;">
-                                                                 </div>
-                                                                 <div>
-                                                                     <label style="font-size: 0.65rem; color: #6b7280; display: block;">Lösung</label>
-                                                                     <input type="text" 
-                                                                            wire:model.live="editingTeil4.{{ $element['id'] }}.example.solution" 
-                                                                            wire:change="syncTeil4({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                            placeholder="Lösung (z.B. a)" 
-                                                                            class="telc-input" style="text-align: center; padding: 0.35rem; font-size: 0.8rem;">
-                                                                 </div>
-                                                             </div>
-                                                         </div>
-
-                                                         {{-- Statements Section --}}
-                                                         <div style="background: #ffffff; padding: 0.85rem; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                                                             <strong style="display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: #475569; text-transform: uppercase; letter-spacing: 0.03em;">Aussagen (Statements)</strong>
-                                                             <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                                                 @foreach ($t4Data['statements'] ?? [] as $sNum => $statement)
-                                                                     <div style="display: flex; gap: 0.5rem; align-items: center;" wire:key="t4-stmt-{{ $sNum }}">
-                                                                         <span style="font-weight: 800; min-width: 32px; font-size: 0.85rem; color: #1e293b;">#{{ $sNum }}</span>
-                                                                         <input type="text" 
-                                                                                wire:model.live="editingTeil4.{{ $element['id'] }}.statements.{{ $sNum }}" 
-                                                                                wire:change="syncTeil4({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                                class="telc-input" style="flex: 1; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
-                                                                         <button type="button" 
-                                                                                 wire:click="removeTeil4Statement({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}', {{ $sNum }})" 
-                                                                                 class="telc-icon-button danger" style="padding: 0.25rem 0.5rem; min-height: auto;" title="Löschen">
-                                                                             ×
-                                                                         </button>
-                                                                     </div>
-                                                                 @endforeach
-                                                             </div>
-                                                             <button type="button" 
-                                                                     wire:click="addTeil4Statement({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')" 
-                                                                     class="telc-link-button" style="font-size: 0.75rem; color: #4f46e5; border: 1px dashed #cbd5e1; padding: 0.25rem 0.5rem; border-radius: 4px;">
-                                                                 + Aussage hinzufügen
-                                                             </button>
-                                                         </div>
-
-                                                         {{-- Texts Section --}}
-                                                         <div style="background: #ffffff; padding: 0.85rem; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                                                             <strong style="display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: #475569; text-transform: uppercase; letter-spacing: 0.03em;">Texte & Autoren (Texts & Authors)</strong>
-                                                             <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem;">
-                                                                 @foreach ($t4Data['texts'] ?? [] as $tLetter => $text)
-                                                                     <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.75rem; background: #fafafa; position: relative;" wire:key="t4-text-{{ $tLetter }}">
-                                                                         <button type="button" 
-                                                                                 wire:click="removeTeil4Text({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}', '{{ $tLetter }}')" 
-                                                                                 class="telc-icon-button danger" style="position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.25rem 0.5rem; min-height: auto;" title="Löschen">
-                                                                             ×
-                                                                         </button>
-                                                                         <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; max-width: calc(100% - 2rem);">
-                                                                             <span style="background: #1e293b; color: #fff; font-weight: 800; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; text-transform: uppercase; font-size: 0.85rem; flex-shrink: 0;">{{ $tLetter }}</span>
-                                                                             <input type="text" 
-                                                                                    wire:model.live="editingTeil4.{{ $element['id'] }}.texts.{{ $tLetter }}.name" 
-                                                                                    wire:change="syncTeil4({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                                    placeholder="Autor Name (z.B. Dr. Hella Brückner)" 
-                                                                                    class="telc-input" style="flex: 1; padding: 0.35rem 0.5rem; font-size: 0.8rem; font-weight: bold;">
-                                                                         </div>
-                                                                         <textarea 
-                                                                                wire:model.live="editingTeil4.{{ $element['id'] }}.texts.{{ $tLetter }}.body" 
-                                                                                wire:change="syncTeil4({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                                placeholder="Textinhalt..." 
-                                                                                class="telc-textarea" style="min-height: 5rem; margin-top: 0.5rem; font-size: 0.8rem; padding: 0.5rem;"></textarea>
-                                                                     </div>
-                                                                 @endforeach
-                                                             </div>
-                                                             <button type="button" 
-                                                                     wire:click="addTeil4Text({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')" 
-                                                                     class="telc-link-button" style="font-size: 0.75rem; color: #4f46e5; border: 1px dashed #cbd5e1; padding: 0.25rem 0.5rem; border-radius: 4px;">
-                                                                 + Text/Autor hinzufügen
-                                                             </button>
-                                                         </div>
-                                                     </div>
-                                                 @else
-                                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
-                                                         <label style="margin-bottom: 0;">Content, image path, or audio URL</label>
-                                                         <span style="font-size: 0.72rem; color: #6b7280; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: monospace;">
-                                                             Formatierung: <strong>**Fett**</strong>, <em>*Kursiv*</em>, # Überschrift
-                                                         </span>
-                                                     </div>
-                                                     <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea"></textarea>
-                                                 @endif
-                                            @endif
+                                                <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height: 6rem;"></textarea>
+                                             @else
+                                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                                                     <label style="margin-bottom: 0;">Content, image path, or audio URL</label>
+                                                     <span style="font-size: 0.72rem; color: #6b7280; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: monospace;">
+                                                         Formatierung: <strong>**Fett**</strong>, <em>*Kursiv*</em>, # Überschrift
+                                                     </span>
+                                                 </div>
+                                                 <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height: 6rem;"></textarea>
+                                             @endif
 
                                             @if (in_array($element['type'], ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true))
                                                 <div class="telc-options-editor" wire:key="options-editor-{{ $element['id'] }}" style="grid-column: span 2; margin-bottom: 1rem; padding: 1rem; background: #fafafa; border: 1px solid #e2e8f0; border-radius: 6px;">
