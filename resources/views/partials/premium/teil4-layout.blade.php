@@ -25,6 +25,12 @@
 
             // Questions (Statements): all elements of type 'matching' in this section
             $questions = collect($section['elements'])->where('type', 'matching')->all();
+
+            $firstQ = collect($questions)->first();
+            $teil4Options = $firstQ ? array_filter(array_map('trim', explode(',', $firstQ['options'] ?? ''))) : ['a', 'b', 'c', '0'];
+            if (empty($teil4Options)) {
+                $teil4Options = ['a', 'b', 'c', '0'];
+            }
         @endphp
 
         <div style="border-bottom: 2px solid #1a1a1a; padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
@@ -58,25 +64,55 @@
                     preg_match('/\d+/', $q['label'] ?? '', $m);
                     $num = $m[0] ?? ($loop->index + 24);
                     $elementId = $q['id'];
+                    $isSelected = ($answers[$elementId] ?? '') !== '';
+                    $selectBorder = '#cbd5e1';
+                    $selectBg = '#ffffff';
+                    $selectColor = '#1e293b';
+                    $isCorrect = false;
+                    $expected = '';
+                    
+                    if ($result) {
+                        $detail = collect($result['details'])->firstWhere('id', $elementId);
+                        if ($detail) {
+                            $isCorrect = $detail['correct'] ?? false;
+                            $expected = $detail['expected'] ?? '';
+                            $selectBorder = $isCorrect ? '#16a34a' : '#dc2626';
+                            $selectBg = $isCorrect ? '#f0fdf4' : '#fdf2f2';
+                            $selectColor = $isCorrect ? '#16a34a' : '#dc2626';
+                        }
+                    }
                 @endphp
                 <div style="display: flex; gap: 1rem; align-items: baseline; margin-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
                     <strong style="color:#1e293b; width: 1.5rem; flex-shrink:0;">{{ $num }}</strong>
-                    <span style="line-height: 1.5; color: #334155;">{{ $q['content'] ?? '' }}</span>
-                    @if ($result)
-                        @php
-                            $detail = collect($result['details'])->firstWhere('id', $elementId);
-                        @endphp
-                        @if ($detail)
-                            <span style="margin-left: auto; font-weight: bold; font-size: 0.85rem; white-space: nowrap; padding-left: 1rem;">
-                                @if ($detail['correct'])
-                                    <span style="color: #16a34a;">✓ Richtig</span>
-                                @else
-                                    <span style="color: #dc2626;">✗ Falsch</span>
-                                    <span style="color: #16a34a; margin-left: 0.25rem;">(Lösung: {{ strtoupper($detail['expected']) }})</span>
-                                @endif
-                            </span>
+                    <span style="line-height: 1.5; color: #334155; flex-grow: 1;">{{ $q['instruction'] ?? ($q['content'] ?? '') }}</span>
+                    
+                    {{-- Inline select matching options --}}
+                    <div style="display: inline-flex; align-items: center; gap: 0.5rem; margin-left: auto;">
+                        <span style="font-size: 0.85rem; font-weight: 700; color: #475569; text-transform: uppercase;">Abschnitt:</span>
+                        <select wire:model.live="answers.{{ $elementId }}" @disabled($result)
+                            style="font-family: inherit; font-size: 0.9rem; font-weight: 700; padding: 0.25rem 0.5rem; border: 2px solid {{ $selectBorder }}; background: {{ $selectBg }}; color: {{ $selectColor }}; border-radius: 6px; outline: none; cursor: pointer; width: 110px;">
+                            <option value="">Wählen...</option>
+                            @foreach ($teil4Options as $opt)
+                                <option value="{{ $opt }}">{{ $opt === '0' ? 'Keiner (0)' : strtoupper($opt) }}</option>
+                            @endforeach
+                        </select>
+                        
+                        @if ($result)
+                            @php
+                                $detail = collect($result['details'])->firstWhere('id', $elementId);
+                            @endphp
+                            @if ($detail)
+                                <span style="font-weight: bold; font-size: 0.85rem; white-space: nowrap; padding-left: 0.5rem;">
+                                    @if ($detail['correct'])
+                                        <span style="color: #16a34a;">✓ Richtig</span>
+                                    @else
+                                        <span style="color: #dc2626;">✗ Falsch</span>
+                                        <span style="color: #16a34a; margin-left: 0.25rem;">(Lösung: {{ strtoupper($detail['expected']) }})</span>
+                                    @endif
+                                </span>
+                            @endif
                         @endif
-                    @endif
+                    </div>
                 </div>
             @endforeach
         </div>
@@ -239,13 +275,7 @@
                 }
             </style>
  
-            @php
-                $firstQ = collect($questions)->first();
-                $teil4Options = $firstQ ? array_filter(array_map('trim', explode(',', $firstQ['options'] ?? ''))) : ['a', 'b', 'c', '0'];
-                if (empty($teil4Options)) {
-                    $teil4Options = ['a', 'b', 'c', '0'];
-                }
-            @endphp
+
 
             <div class="teil4-grid-header">
                 <span>Aufgabe</span>
