@@ -608,20 +608,20 @@ class TelcTemplateFactory
     /**
      * Parse a JSON configuration for a matching (portraits/opinions) section and generate template elements.
      *
-     * @param string|array $jsonOrArray The JSON string or array representing the matching structure.
-     * @param string $idPrefix The prefix for element IDs (e.g. 'C1-LV4')
+     * @param  string|array<mixed>  $jsonOrArray  The JSON string or array representing the matching structure.
+     * @param  string  $idPrefix  The prefix for element IDs (e.g. 'C1-LV4')
      * @return array<int, array<string, mixed>>
      */
     public static function parseMatchingJson(string|array $jsonOrArray, string $idPrefix = 'C1-LV4'): array
     {
         $data = is_string($jsonOrArray) ? json_decode($jsonOrArray, true) : $jsonOrArray;
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             return [];
         }
 
         $title = $data['title'] ?? 'Zuordnungsaufgabe';
         $eyebrow = $data['eyebrow'] ?? '';
-        
+
         $example = $data['example'] ?? null;
         $exampleNum = $example['number'] ?? 0;
         $exampleStatement = $example['statement'] ?? '';
@@ -631,16 +631,16 @@ class TelcTemplateFactory
         $texts = $data['texts'] ?? [];
 
         // Compile options list based on text letters (e.g. 'a,b,c') plus '0' for no match
-        $textLetters = array_map('strtolower', array_keys($texts));
+        $textLetters = array_map(fn ($key) => strtolower((string) $key), array_keys($texts));
         sort($textLetters);
-        $optionsList = implode(',', $textLetters) . ',0';
+        $optionsList = implode(',', $textLetters).',0';
 
         // 1. First element: introductory text with title, eyebrow, and example statement
         $elements = [
             array_merge(
-                self::text($idPrefix . '-text', $eyebrow, $title, $exampleStatement),
+                self::text($idPrefix.'-text', $eyebrow, $title, $exampleStatement),
                 ['options' => $exampleSolution]
-            )
+            ),
         ];
 
         // 2. Portrait / text passages elements
@@ -648,11 +648,11 @@ class TelcTemplateFactory
             $letter = strtolower($letter);
             $name = $info['name'] ?? '';
             $body = $info['body'] ?? '';
-            
+
             $elements[] = [
-                'id' => $idPrefix . '-text-' . $letter,
+                'id' => $idPrefix.'-text-'.$letter,
                 'type' => 'goethe_portrait',
-                'label' => $letter . ': ' . $name,
+                'label' => $letter.': '.$name,
                 'content' => $body,
                 'image_url' => '',
                 'answer' => '',
@@ -664,17 +664,17 @@ class TelcTemplateFactory
         $solutions = $data['solutions'] ?? $data['answers'] ?? [];
 
         foreach ($statements as $num => $statementText) {
-            $num = (int)$num;
+            $num = (int) $num;
             $correctAnswer = '';
             if (isset($solutions[$num])) {
                 $correctAnswer = strtolower(trim($solutions[$num]));
-            } elseif (isset($solutions[(string)$num])) {
-                $correctAnswer = strtolower(trim($solutions[(string)$num]));
+            } elseif (isset($solutions[(string) $num])) {
+                $correctAnswer = strtolower(trim($solutions[(string) $num]));
             }
 
             $elements[] = self::input(
-                $idPrefix . '-' . $num,
-                'Aufgabe ' . $num,
+                $idPrefix.'-'.$num,
+                'Aufgabe '.$num,
                 'matching',
                 $correctAnswer,
                 2,
@@ -685,7 +685,6 @@ class TelcTemplateFactory
 
         return $elements;
     }
-
 
     /**
      * @return array<string, mixed>

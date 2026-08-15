@@ -700,13 +700,13 @@ class ExamDashboard extends Component
         $parts = explode(':', $label, 2);
         $letter = count($parts) === 2 ? trim($parts[0]) : 'a';
 
-        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['label'] = $letter . ': ' . trim($value);
+        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['label'] = $letter.': '.trim($value);
         $this->save();
     }
 
     public function updateMatchingStatementLabel(int $sectionIndex, int $elementIndex, string $value): void
     {
-        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['label'] = 'Aufgabe ' . trim($value);
+        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['label'] = 'Aufgabe '.trim($value);
         $this->save();
     }
 
@@ -726,18 +726,18 @@ class ExamDashboard extends Component
         }
 
         $nextLetter = 'a';
-        if (!empty($letters)) {
+        if (! empty($letters)) {
             $lastLetter = max($letters);
             if (strlen($lastLetter) === 1) {
                 $nextLetter = chr(min(255, ord($lastLetter) + 1));
             }
         }
 
-        $newId = 'el-' . Str::random(8);
+        $newId = 'el-'.Str::random(8);
         $this->template['sections'][$sectionIndex]['elements'][] = [
             'id' => $newId,
             'type' => 'goethe_portrait',
-            'label' => $nextLetter . ': Neue Person',
+            'label' => $nextLetter.': Neue Person',
             'content' => '',
             'image_url' => '',
             'answer' => '',
@@ -757,12 +757,12 @@ class ExamDashboard extends Component
             if (($el['type'] ?? '') === 'matching') {
                 preg_match('/\d+/', $el['label'] ?? '', $m);
                 if (isset($m[0])) {
-                    $nums[] = (int)$m[0];
+                    $nums[] = (int) $m[0];
                 }
             }
         }
 
-        $nextNum = !empty($nums) ? max($nums) + 1 : 24;
+        $nextNum = ! empty($nums) ? max($nums) + 1 : 24;
 
         // Find available letters for options
         $letters = [];
@@ -775,13 +775,13 @@ class ExamDashboard extends Component
             }
         }
         sort($letters);
-        $optionsList = implode(',', $letters) . ',0';
+        $optionsList = implode(',', $letters).',0';
 
-        $newId = 'el-' . Str::random(8);
+        $newId = 'el-'.Str::random(8);
         $this->template['sections'][$sectionIndex]['elements'][] = [
             'id' => $newId,
             'type' => 'matching',
-            'label' => 'Aufgabe ' . $nextNum,
+            'label' => 'Aufgabe '.$nextNum,
             'content' => '',
             'instruction' => '',
             'options' => $optionsList,
