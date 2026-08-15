@@ -349,263 +349,384 @@
                             </div>
 
                             <div class="telc-element-list">
-                                @foreach (($section['elements'] ?? []) as $elementIndex => $element)
-                                    <article
-                                        class="telc-element-editor"
-                                        draggable="true"
-                                        x-on:dragstart="$event.dataTransfer.setData('text/plain', '{{ $elementIndex }}')"
-                                        x-on:dragover.prevent
-                                        x-on:drop.prevent="$wire.moveElement({{ $sectionIndex }}, parseInt($event.dataTransfer.getData('text/plain')), {{ $elementIndex }})"
-                                    >
-                                        <div class="telc-element-toolbar">
-                                            <span class="telc-drag">⋮⋮</span>
-                                            <strong>{{ $elementTypes[$element['type']] ?? $element['type'] }}</strong>
-                                            <button type="button" wire:click="duplicateElement({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-link-button">Duplicate</button>
-                                            <button type="button" wire:click="removeElement({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-link-button danger">Remove</button>
+                                @if (in_array($section['layout_style'] ?? '', ['teil4', 'goethe_b2_teil1', 'goethe_b2_teil4', 'goethe_b2_teil5', 'goethe_b1_teil4'], true))
+                                    {{-- Unified Matching Section Editor --}}
+                                    <div class="matching-section-editor" style="background: #ffffff; padding: 1.5rem; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 1rem; display: flex; flex-direction: column; gap: 1.5rem;" wire:key="matching-section-editor-{{ $sectionIndex }}">
+                                        <div style="border-bottom: 2px solid #cbd5e1; padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                            <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0; color: #1e293b;">Zuordnungs-Aufgaben Manager (Teil 4 & co.)</h3>
                                         </div>
 
-                                        <div class="telc-element-fields">
-                                            <label>Label</label>
-                                            <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.label" class="telc-input">
-                                            <label>Instruction / Question Text</label>
-                                            <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.instruction" class="telc-textarea" style="min-height: 3rem;" placeholder="e.g. Question text or section instruction (For matching/Teil 3, list sentences as a: Sentence 1, b: Sentence 2...)"></textarea>
+                                        @php
+                                            // Find text header element (contains title, eyebrow, instruction/example)
+                                            $textElIdx = null;
+                                            foreach ($section['elements'] ?? [] as $idx => $el) {
+                                                if (($el['type'] ?? '') === 'text') {
+                                                    $textElIdx = $idx;
+                                                    break;
+                                                }
+                                            }
+                                        @endphp
 
-                                            @if ($element['type'] === 'audio')
-                                                <label>Audio file</label>
-                                                <div class="telc-audio-upload">
-                                                    <input type="file" wire:model="audioUpload" accept="audio/*">
-                                                    <button type="button" wire:click="uploadAudio({{ $sectionIndex }}, {{ $elementIndex }})" wire:loading.attr="disabled" wire:target="audioUpload, uploadAudio" class="telc-button primary">
-                                                        <span wire:loading.remove wire:target="audioUpload, uploadAudio">Upload</span>
-                                                        <span wire:loading wire:target="audioUpload">Wird geladen...</span>
-                                                        <span wire:loading wire:target="uploadAudio">Wird gespeichert...</span>
-                                                    </button>
-                                                    <div wire:loading wire:target="audioUpload" style="font-size:0.8rem;color:#d8232a;font-weight:600;margin-top:0.25rem;">
-                                                        ⏳ Audio-Datei wird geladen... Klicken Sie nach dem Laden auf Upload.
+                                        @if ($textElIdx !== null)
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: #f8fafc; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                                <div style="grid-column: span 2; font-weight: bold; font-size: 0.95rem; color: #475569; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                                    <span>📝 Kopfzeilen & Beispiel</span>
+                                                </div>
+                                                <div>
+                                                    <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.25rem;">Über-Überschrift (Eyebrow)</label>
+                                                    <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $textElIdx }}.label" class="telc-input" style="width: 100%;">
+                                                </div>
+                                                <div>
+                                                    <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.25rem;">Haupttitel (Title)</label>
+                                                    <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $textElIdx }}.content" class="telc-input" style="width: 100%;">
+                                                </div>
+                                                <div>
+                                                    <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.25rem;">Beispiel Aussage (Example Statement)</label>
+                                                    <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $textElIdx }}.instruction" class="telc-textarea" style="width: 100%; min-height: 2.5rem;"></textarea>
+                                                </div>
+                                                <div>
+                                                    <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.25rem;">Beispiel Lösung (Example Solution)</label>
+                                                    <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $textElIdx }}.options" class="telc-input" style="width: 80px; text-align: center;">
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        {{-- Text Passages --}}
+                                        <div>
+                                            <div style="font-weight: 700; font-size: 0.95rem; color: #1e293b; margin-bottom: 0.75rem; border-bottom: 1.5px solid #edf2f7; padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                                <span>👥 Personen & Texte (Passagen)</span>
+                                                <button type="button" wire:click="addMatchingPassage({{ $sectionIndex }})" class="telc-button primary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; min-height: auto; font-weight: 700;">+ Person hinzufügen</button>
+                                            </div>
+
+                                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                                @foreach ($section['elements'] ?? [] as $elementIndex => $element)
+                                                    @if (($element['type'] ?? '') === 'goethe_portrait')
+                                                        @php
+                                                            $parts = explode(':', $element['label'] ?? '', 2);
+                                                            $letter = count($parts) === 2 ? trim($parts[0]) : '';
+                                                            $nameVal = count($parts) === 2 ? trim($parts[1]) : ($element['label'] ?? '');
+                                                        @endphp
+                                                        <div style="border: 1px solid #cbd5e1; padding: 1rem; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.02);" wire:key="portrait-{{ $sectionIndex }}-{{ $elementIndex }}">
+                                                            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
+                                                                <span style="background: #1e293b; color: #ffffff; font-weight: 800; font-size: 0.9rem; width: 1.8rem; height: 1.8rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; text-transform: uppercase;">
+                                                                    {{ $letter ?: '?' }}
+                                                                </span>
+                                                                <input type="text" 
+                                                                    value="{{ $nameVal }}" 
+                                                                    wire:input.debounce.500ms="updateMatchingPassageLabel({{ $sectionIndex }}, {{ $elementIndex }}, $event.target.value)"
+                                                                    placeholder="Name (z. B. Hella Brückner, Professorin für Wirtschaftspsychologie)" 
+                                                                    class="telc-input" style="flex: 1; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+                                                                
+                                                                <button type="button" wire:click="removeElement({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-icon-button danger" style="padding: 0.25rem 0.5rem; min-height: auto;" title="Löschen">×</button>
+                                                            </div>
+                                                            <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" 
+                                                                placeholder="Meinungstext / Beschreibung..." 
+                                                                class="telc-textarea" style="width: 100%; min-height: 4.5rem; font-size: 0.85rem;"></textarea>
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+
+                                        {{-- Statements Questions --}}
+                                        <div>
+                                            <div style="font-weight: 700; font-size: 0.95rem; color: #1e293b; margin-bottom: 0.75rem; border-bottom: 1.5px solid #edf2f7; padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                                <span>❓ Aussagen & Lösungen</span>
+                                                <button type="button" wire:click="addMatchingStatement({{ $sectionIndex }})" class="telc-button primary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; min-height: auto; font-weight: 700;">+ Aussage hinzufügen</button>
+                                            </div>
+
+                                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                                @foreach ($section['elements'] ?? [] as $elementIndex => $element)
+                                                    @if (($element['type'] ?? '') === 'matching')
+                                                        @php
+                                                            preg_match('/\d+/', $element['label'] ?? '', $m);
+                                                            $num = $m[0] ?? $loop->iteration;
+                                                        @endphp
+                                                        <div style="display: flex; gap: 0.75rem; align-items: center; background: #fafafa; padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0;" wire:key="matching-q-{{ $sectionIndex }}-{{ $elementIndex }}">
+                                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.15rem;">
+                                                                <span style="font-weight: bold; font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Aufgabe</span>
+                                                                <input type="text" 
+                                                                    value="{{ $num }}" 
+                                                                    wire:input.debounce.500ms="updateMatchingStatementLabel({{ $sectionIndex }}, {{ $elementIndex }}, $event.target.value)"
+                                                                    class="telc-input" style="width: 50px; text-align: center; font-weight: bold; padding: 0.25rem 0; font-size: 0.85rem;">
+                                                            </div>
+                                                            <div style="flex: 1;">
+                                                                <span style="font-weight: bold; font-size: 0.75rem; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 0.15rem;">Aussage Text</span>
+                                                                <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.instruction" 
+                                                                    placeholder="Text der Aussage..." 
+                                                                    class="telc-textarea" style="width: 100%; min-height: 2.2rem; font-size: 0.85rem; padding: 0.35rem 0.5rem;"></textarea>
+                                                            </div>
+                                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.15rem;">
+                                                                <span style="font-weight: bold; font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Antwort</span>
+                                                                <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.answer" 
+                                                                    class="telc-input" style="width: 50px; text-align: center; font-weight: bold; padding: 0.25rem 0; font-size: 0.85rem; border-color: #6366f1;">
+                                                            </div>
+                                                            <button type="button" wire:click="removeElement({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-icon-button danger" style="align-self: center; padding: 0.25rem 0.5rem; min-height: auto;" title="Löschen">×</button>
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    @foreach (($section['elements'] ?? []) as $elementIndex => $element)
+                                        <article
+                                            class="telc-element-editor"
+                                            draggable="true"
+                                            x-on:dragstart="$event.dataTransfer.setData('text/plain', '{{ $elementIndex }}')"
+                                            x-on:dragover.prevent
+                                            x-on:drop.prevent="$wire.moveElement({{ $sectionIndex }}, parseInt($event.dataTransfer.getData('text/plain')), {{ $elementIndex }})"
+                                        >
+                                            <div class="telc-element-toolbar">
+                                                <span class="telc-drag">⋮⋮</span>
+                                                <strong>{{ $elementTypes[$element['type']] ?? $element['type'] }}</strong>
+                                                <button type="button" wire:click="duplicateElement({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-link-button">Duplicate</button>
+                                                <button type="button" wire:click="removeElement({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-link-button danger">Remove</button>
+                                            </div>
+
+                                            <div class="telc-element-fields">
+                                                <label>Label</label>
+                                                <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.label" class="telc-input">
+                                                <label>Instruction / Question Text</label>
+                                                <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.instruction" class="telc-textarea" style="min-height: 3rem;" placeholder="e.g. Question text or section instruction (For matching/Teil 3, list sentences as a: Sentence 1, b: Sentence 2...)"></textarea>
+
+                                                @if ($element['type'] === 'audio')
+                                                    <label>Audio file</label>
+                                                    <div class="telc-audio-upload">
+                                                        <input type="file" wire:model="audioUpload" accept="audio/*">
+                                                        <button type="button" wire:click="uploadAudio({{ $sectionIndex }}, {{ $elementIndex }})" wire:loading.attr="disabled" wire:target="audioUpload, uploadAudio" class="telc-button primary">
+                                                            <span wire:loading.remove wire:target="audioUpload, uploadAudio">Upload</span>
+                                                            <span wire:loading wire:target="audioUpload">Wird geladen...</span>
+                                                            <span wire:loading wire:target="uploadAudio">Wird gespeichert...</span>
+                                                        </button>
+                                                        <div wire:loading wire:target="audioUpload" style="font-size:0.8rem;color:#d8232a;font-weight:600;margin-top:0.25rem;">
+                                                            ⏳ Audio-Datei wird geladen... Klicken Sie nach dem Laden auf Upload.
+                                                        </div>
+                                                        @error('audioUpload') <span class="telc-error">{{ $message }}</span> @enderror
+                                                        @if (! empty($element['content']))
+                                                            <audio controls src="{{ $element['content'] }}" class="telc-audio-preview"></audio>
+                                                        @endif
                                                     </div>
-                                                    @error('audioUpload') <span class="telc-error">{{ $message }}</span> @enderror
-                                                    @if (! empty($element['content']))
-                                                        <audio controls src="{{ $element['content'] }}" class="telc-audio-preview"></audio>
-                                                    @endif
-                                                </div>
-                                            @elseif ($element['type'] === 'image')
-                                                <label>Image file</label>
-                                                <div class="telc-image-upload" style="margin-bottom: 1rem;">
-                                                    <input type="file" wire:model="imageUpload" accept="image/*">
-                                                    <button type="button" wire:click="uploadImage({{ $sectionIndex }}, {{ $elementIndex }}, 'content')" wire:loading.attr="disabled" wire:target="imageUpload, uploadImage" class="telc-button primary" style="margin-top:0.5rem;">
-                                                        <span wire:loading.remove wire:target="imageUpload, uploadImage">Upload Image</span>
-                                                        <span wire:loading wire:target="imageUpload">Wird geladen...</span>
-                                                        <span wire:loading wire:target="uploadImage">Wird gespeichert...</span>
-                                                    </button>
-                                                    @error('imageUpload') <span class="telc-error">{{ $message }}</span> @enderror
-                                                    @if (! empty($element['content']))
-                                                        <div style="margin-top: 0.5rem;">
-                                                            <img src="{{ $element['content'] }}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd;" alt="Preview">
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                                <label>Image path / URL override</label>
-                                                <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-input">
-                                            @elseif ($element['type'] === 'goethe_portrait')
-                                                <label>Portrait photo</label>
-                                                <div class="telc-image-upload" style="margin-bottom: 1rem;">
-                                                    <input type="file" wire:model="imageUpload" accept="image/*">
-                                                    <button type="button" wire:click="uploadImage({{ $sectionIndex }}, {{ $elementIndex }}, 'image_url')" wire:loading.attr="disabled" wire:target="imageUpload, uploadImage" class="telc-button primary" style="margin-top:0.5rem;">
-                                                        <span wire:loading.remove wire:target="imageUpload, uploadImage">Upload Portrait</span>
-                                                        <span wire:loading wire:target="imageUpload">Wird geladen...</span>
-                                                        <span wire:loading wire:target="uploadImage">Wird gespeichert...</span>
-                                                    </button>
-                                                    @error('imageUpload') <span class="telc-error">{{ $message }}</span> @enderror
-                                                    @if (! empty($element['image_url']))
-                                                        <div style="margin-top: 0.5rem;">
-                                                            <img src="{{ $element['image_url'] }}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd;" alt="Preview">
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                                <label>Portrait image URL override</label>
-                                                <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.image_url" class="telc-input">
-                                                <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height: 6rem;"></textarea>
-                                             @else
-                                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
-                                                     <label style="margin-bottom: 0;">Content, image path, or audio URL</label>
-                                                     <span style="font-size: 0.72rem; color: #6b7280; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: monospace;">
-                                                         Formatierung: <strong>**Fett**</strong>, <em>*Kursiv*</em>, # Überschrift
-                                                     </span>
-                                                 </div>
-                                                 <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height: 6rem;"></textarea>
-                                             @endif
+                                                @elseif ($element['type'] === 'image')
+                                                    <label>Image file</label>
+                                                    <div class="telc-image-upload" style="margin-bottom: 1rem;">
+                                                        <input type="file" wire:model="imageUpload" accept="image/*">
+                                                        <button type="button" wire:click="uploadImage({{ $sectionIndex }}, {{ $elementIndex }}, 'content')" wire:loading.attr="disabled" wire:target="imageUpload, uploadImage" class="telc-button primary" style="margin-top:0.5rem;">
+                                                            <span wire:loading.remove wire:target="imageUpload, uploadImage">Upload Image</span>
+                                                            <span wire:loading wire:target="imageUpload">Wird geladen...</span>
+                                                            <span wire:loading wire:target="uploadImage">Wird gespeichert...</span>
+                                                        </button>
+                                                        @error('imageUpload') <span class="telc-error">{{ $message }}</span> @enderror
+                                                        @if (! empty($element['content']))
+                                                            <div style="margin-top: 0.5rem;">
+                                                                <img src="{{ $element['content'] }}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd;" alt="Preview">
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                    <label>Image path / URL override</label>
+                                                    <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-input">
+                                                @elseif ($element['type'] === 'goethe_portrait')
+                                                    <label>Portrait photo</label>
+                                                    <div class="telc-image-upload" style="margin-bottom: 1rem;">
+                                                        <input type="file" wire:model="imageUpload" accept="image/*">
+                                                        <button type="button" wire:click="uploadImage({{ $sectionIndex }}, {{ $elementIndex }}, 'image_url')" wire:loading.attr="disabled" wire:target="imageUpload, uploadImage" class="telc-button primary" style="margin-top:0.5rem;">
+                                                            <span wire:loading.remove wire:target="imageUpload, uploadImage">Upload Portrait</span>
+                                                            <span wire:loading wire:target="imageUpload">Wird geladen...</span>
+                                                            <span wire:loading wire:target="uploadImage">Wird gespeichert...</span>
+                                                        </button>
+                                                        @error('imageUpload') <span class="telc-error">{{ $message }}</span> @enderror
+                                                        @if (! empty($element['image_url']))
+                                                            <div style="margin-top: 0.5rem;">
+                                                                <img src="{{ $element['image_url'] }}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd;" alt="Preview">
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                    <label>Portrait image URL override</label>
+                                                    <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.image_url" class="telc-input">
+                                                    <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height: 6rem;"></textarea>
+                                                 @else
+                                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                                                         <label style="margin-bottom: 0;">Content, image path, or audio URL</label>
+                                                         <span style="font-size: 0.72rem; color: #6b7280; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: monospace;">
+                                                             Formatierung: <strong>**Fett**</strong>, <em>*Kursiv*</em>, # Überschrift
+                                                         </span>
+                                                     </div>
+                                                     <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height: 6rem;"></textarea>
+                                                 @endif
 
-                                            @if (in_array($element['type'], ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true))
-                                                <div class="telc-options-editor" wire:key="options-editor-{{ $element['id'] }}" style="grid-column: span 2; margin-bottom: 1rem; padding: 1rem; background: #fafafa; border: 1px solid #e2e8f0; border-radius: 6px;">
-                                                    <label style="font-weight: 700; display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: #374151;">Antwort-Optionen (Liste)</label>
-                                                    @php
-                                                        $elOptionsList = $this->editingOptions[$element['id']] ?? null;
-                                                        if ($elOptionsList === null) {
-                                                            $this->loadEditingOptions($element['id'], $element['options'] ?? '');
-                                                            $elOptionsList = $this->editingOptions[$element['id']];
-                                                        }
-                                                    @endphp
+                                                @if (in_array($element['type'], ['multiple_choice', 'matching', 'fill_blank', 'true_false'], true))
+                                                    <div class="telc-options-editor" wire:key="options-editor-{{ $element['id'] }}" style="grid-column: span 2; margin-bottom: 1rem; padding: 1rem; background: #fafafa; border: 1px solid #e2e8f0; border-radius: 6px;">
+                                                        <label style="font-weight: 700; display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: #374151;">Antwort-Optionen (Liste)</label>
+                                                        @php
+                                                            $elOptionsList = $this->editingOptions[$element['id']] ?? null;
+                                                            if ($elOptionsList === null) {
+                                                                $this->loadEditingOptions($element['id'], $element['options'] ?? '');
+                                                                $elOptionsList = $this->editingOptions[$element['id']];
+                                                            }
+                                                        @endphp
 
-                                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                                        @foreach ($elOptionsList as $optIdx => $opt)
-                                                            <div style="display: flex; gap: 0.5rem; align-items: center;" wire:key="opt-row-{{ $element['id'] }}-{{ $optIdx }}">
-                                                                <input type="text" 
-                                                                       wire:model.live="editingOptions.{{ $element['id'] }}.{{ $optIdx }}.key" 
-                                                                       wire:change="syncElementOptions({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                       placeholder="Key (z.B. a)" 
-                                                                       class="telc-input" 
-                                                                       style="max-width: 80px; text-align: center; font-weight: bold; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
-                                                                <input type="text" 
-                                                                       wire:model.live="editingOptions.{{ $element['id'] }}.{{ $optIdx }}.text" 
-                                                                       wire:change="syncElementOptions({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
-                                                                       placeholder="Optionstext (optional)" 
-                                                                       class="telc-input" 
-                                                                       style="flex: 1; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
-                                                                <button type="button" 
-                                                                        wire:click="removeEditingOption({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}', {{ $optIdx }})" 
-                                                                        class="telc-icon-button danger" 
-                                                                        style="padding: 0.25rem 0.5rem; min-height: auto;"
-                                                                        title="Option löschen">
-                                                                    ×
-                                                                </button>
+                                                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                                            @foreach ($elOptionsList as $optIdx => $opt)
+                                                                <div style="display: flex; gap: 0.5rem; align-items: center;" wire:key="opt-row-{{ $element['id'] }}-{{ $optIdx }}">
+                                                                    <input type="text" 
+                                                                           wire:model.live="editingOptions.{{ $element['id'] }}.{{ $optIdx }}.key" 
+                                                                           wire:change="syncElementOptions({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
+                                                                           placeholder="Key (z.B. a)" 
+                                                                           class="telc-input" 
+                                                                           style="max-width: 80px; text-align: center; font-weight: bold; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+                                                                    <input type="text" 
+                                                                           wire:model.live="editingOptions.{{ $element['id'] }}.{{ $optIdx }}.text" 
+                                                                           wire:change="syncElementOptions({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')"
+                                                                           placeholder="Optionstext (optional)" 
+                                                                           class="telc-input" 
+                                                                           style="flex: 1; padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+                                                                    <button type="button" 
+                                                                            wire:click="removeEditingOption({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}', {{ $optIdx }})" 
+                                                                            class="telc-icon-button danger" 
+                                                                            style="padding: 0.25rem 0.5rem; min-height: auto;"
+                                                                            title="Option löschen">
+                                                                        ×
+                                                                    </button>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+
+                                                        <div style="display: flex; gap: 0.5rem;">
+                                                            <button type="button" 
+                                                                    wire:click="addEditingOption({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')" 
+                                                                    class="telc-link-button" 
+                                                                    style="font-size: 0.8rem; color: #4f46e5; border: 1px dashed #cbd5e1; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                                                                + Option hinzufügen
+                                                            </button>
+                                                            <span style="font-size: 0.75rem; color: #6b7280; align-self: center;">
+                                                                (Wird im Hintergrund als strukturiertes JSON gespeichert)
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <label>Correct Answer</label>
+                                                    <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.answer" class="telc-input">
+
+                                                    <label>Points</label>
+                                                    <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.points" class="telc-input small">
+                                                @endif
+
+                                                @if (in_array($element['type'], ['multiple_choice', 'matching', 'fill_blank', 'true_false', 'inline_gap', 'interactive_text'], true))
+                                                    <div style="grid-column: span 2; margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">
+                                                        <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Erklärung (Antwort-Erläuterung)</label>
+                                                        <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.explanation" class="telc-textarea" style="min-height:4rem" placeholder="Optional: Eigene Erklärung verfassen. Leer lassen für KI-Auto-Generierung."></textarea>
+                                                        <div style="display:flex;gap:0.5rem;margin-top:0.5rem;align-items:center;">
+                                                            <button type="button" wire:click="generateExplanation({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-link-button" style="font-size:0.8rem;color:#6366f1;" wire:loading.attr="disabled">
+                                                                🤖 Mit KI generieren
+                                                            </button>
+                                                            @if (!empty($element['explanation']))
+                                                                <span style="font-size:0.75rem;color:#16a34a;">✓ Erklärung vorhanden</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                @if ($element['type'] === 'inline_gap')
+                                                     <div style="grid-column: span 2; display: grid; grid-template-columns: 1fr 2.2fr; gap: 2rem; margin-top: 1rem; width: 100%;">
+                                                         <div>
+                                                             <label>Paragraph (use --0--, --1-- etc. for gaps)</label>
+                                                             <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height:16rem; width: 100%;" placeholder="Liebe Daniela, ... denn --0-- wollte ich dir ..."></textarea>
+
+                                                             <label style="margin-top: 1rem; display: block;">Points per gap</label>
+                                                             <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.points" class="telc-input small">
+                                                         </div>
+
+                                                         <div>
+                                                             @php
+                                                                 $gapData = is_string($element['options'] ?? null) ? (json_decode($element['options'], true) ?: []) : ($element['options'] ?? []);
+                                                                 // Match gaps count in the text
+                                                                 preg_match_all('/--(\d+)--/', $element['content'] ?? '', $matches);
+                                                                 $gKeys = array_unique($matches[1]);
+                                                             @endphp
+
+                                                             <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem; max-height: 25rem; overflow-y: auto; width: 100%;">
+                                                                 <strong style="display: block; margin-bottom: 0.75rem; font-size: 0.85rem; color: #374151;">Gaps Options Manager</strong>
+
+                                                                 @foreach ($gKeys as $gKey)
+                                                                     @php
+                                                                         $gapIdx = (int) $gKey;
+                                                                         $cur = $gapData[$gapIdx] ?? ['options' => 'a|Option A,b|Option B,c|Option C,d|Option D', 'answer' => 'a'];
+                                                                         // Parse options list
+                                                                         $parts = explode(',', $cur['options']);
+                                                                         $optList = [];
+                                                                         foreach ($parts as $p) {
+                                                                             $pair = explode('|', $p, 2);
+                                                                             $optList[trim($pair[0])] = $pair[1] ?? '';
+                                                                         }
+                                                                     @endphp
+                                                                     <div style="margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #e5e7eb; font-size: 0.85rem;" wire:key="inline-gap-{{ $sectionIndex }}-{{ $elementIndex }}-{{ $gapIdx }}">
+                                                                         <strong style="color: #6366f1; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Gap #{{ $gapIdx }}</strong>
+
+                                                                         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
+                                                                             @foreach (['a', 'b', 'c', 'd'] as $letter)
+                                                                                 <div>
+                                                                                     <label style="font-size: 0.7rem; color: #4b5563; display: block; text-transform: uppercase; font-weight: 600; margin-bottom: 0.2rem;">Option {{ $letter }}</label>
+                                                                                     <input type="text" 
+                                                                                            value="{{ $optList[$letter] ?? '' }}" 
+                                                                                            wire:input.debounce.500ms="setInlineGapOptionText({{ $sectionIndex }}, {{ $elementIndex }}, {{ $gapIdx }}, '{{ $letter }}', $event.target.value)"
+                                                                                            class="telc-input" style="padding: 0.35rem 0.5rem; font-size: 0.85rem; width: 100%;">
+                                                                                     <button type="button" 
+                                                                                             wire:click="setInlineGapCorrectAnswer({{ $sectionIndex }}, {{ $elementIndex }}, {{ $gapIdx }}, '{{ $letter }}')"
+                                                                                             style="margin-top: 0.35rem; font-size: 0.75rem; width: 100%; border: 1px solid #ccc; cursor: pointer; border-radius: 4px; padding: 4px 0; background: {{ ($cur['answer'] ?? '') === $letter ? '#4ade80' : '#f3f4f6' }}; font-weight: {{ ($cur['answer'] ?? '') === $letter ? 'bold' : 'normal' }};">
+                                                                                         {{ ($cur['answer'] ?? '') === $letter ? '✓ Correct' : 'Set Correct' }}
+                                                                                     </button>
+                                                                                 </div>
+                                                                             @endforeach
+                                                                         </div>
+                                                                     </div>
+                                                                 @endforeach
+                                                             </div>
+                                                         </div>
+                                                     </div>
+                                                 @endif
+
+                                                @if ($element['type'] === 'interactive_text')
+                                                    <label>Text with [[gap:1]] placeholders</label>
+                                                    <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height:8rem" placeholder="Heute ist ein schöner [[gap:1]]. Wir gehen in den [[gap:2]]."></textarea>
+
+                                                    <label>Points</label>
+                                                    <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.points" class="telc-input small">
+
+                                                    <div class="telc-gap-manager" style="grid-column: span 2; margin-top: 1rem;">
+                                                        <label style="display:flex;align-items:center;justify-content:space-between">
+                                                            <span>Gap definitions</span>
+                                                            <button type="button" wire:click="syncGapIds({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-link-button" style="font-size:.8rem">Sync gaps from text</button>
+                                                        </label>
+
+                                                        @php $gaps = $element['gaps'] ?? []; @endphp
+                                                        @foreach ($gaps as $gId => $gDef)
+                                                            <div class="telc-gap-editor" wire:key="gap-{{ $sectionIndex }}-{{ $elementIndex }}-{{ $gId }}">
+                                                                <div class="telc-gap-header">
+                                                                    <strong>Gap {{ $gId }}</strong>
+                                                                </div>
+
+                                                                <label>Type</label>
+                                                                <select wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.gaps.{{ $gId }}.type" class="telc-select">
+                                                                    <option value="dropdown">Dropdown</option>
+                                                                    <option value="text">Text input</option>
+                                                                </select>
+
+                                                                <label>Options (comma-separated, e.g. a:Tag,b:Baum,c:Hund)</label>
+                                                                <input type="text"
+                                                                    wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.gaps.{{ $gId }}.options"
+                                                                    class="telc-input"
+                                                                    placeholder="a:Tag,b:Baum,c:Hund">
+
+                                                                <label>Correct answer</label>
+                                                                <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.gaps.{{ $gId }}.answer" class="telc-input" placeholder="a">
                                                             </div>
                                                         @endforeach
                                                     </div>
-
-                                                    <div style="display: flex; gap: 0.5rem;">
-                                                        <button type="button" 
-                                                                wire:click="addEditingOption({{ $sectionIndex }}, {{ $elementIndex }}, '{{ $element['id'] }}')" 
-                                                                class="telc-link-button" 
-                                                                style="font-size: 0.8rem; color: #4f46e5; border: 1px dashed #cbd5e1; padding: 0.25rem 0.5rem; border-radius: 4px;">
-                                                            + Option hinzufügen
-                                                        </button>
-                                                        <span style="font-size: 0.75rem; color: #6b7280; align-self: center;">
-                                                            (Wird im Hintergrund als strukturiertes JSON gespeichert)
-                                                        </span>
-                                                    </div>
-                                                </div>
-
-                                                <label>Correct Answer</label>
-                                                <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.answer" class="telc-input">
-
-                                                <label>Points</label>
-                                                <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.points" class="telc-input small">
-                                            @endif
-
-                                            @if (in_array($element['type'], ['multiple_choice', 'matching', 'fill_blank', 'true_false', 'inline_gap', 'interactive_text'], true))
-                                                <div style="grid-column: span 2; margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">
-                                                    <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Erklärung (Antwort-Erläuterung)</label>
-                                                    <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.explanation" class="telc-textarea" style="min-height:4rem" placeholder="Optional: Eigene Erklärung verfassen. Leer lassen für KI-Auto-Generierung."></textarea>
-                                                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;align-items:center;">
-                                                        <button type="button" wire:click="generateExplanation({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-link-button" style="font-size:0.8rem;color:#6366f1;" wire:loading.attr="disabled">
-                                                            🤖 Mit KI generieren
-                                                        </button>
-                                                        @if (!empty($element['explanation']))
-                                                            <span style="font-size:0.75rem;color:#16a34a;">✓ Erklärung vorhanden</span>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            @endif
-
-                                            @if ($element['type'] === 'inline_gap')
-                                                 <div style="grid-column: span 2; display: grid; grid-template-columns: 1fr 2.2fr; gap: 2rem; margin-top: 1rem; width: 100%;">
-                                                     <div>
-                                                         <label>Paragraph (use --0--, --1-- etc. for gaps)</label>
-                                                         <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height:16rem; width: 100%;" placeholder="Liebe Daniela, ... denn --0-- wollte ich dir ..."></textarea>
-
-                                                         <label style="margin-top: 1rem; display: block;">Points per gap</label>
-                                                         <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.points" class="telc-input small">
-                                                     </div>
-
-                                                     <div>
-                                                         @php
-                                                             $gapData = is_string($element['options'] ?? null) ? (json_decode($element['options'], true) ?: []) : ($element['options'] ?? []);
-                                                             // Match gaps count in the text
-                                                             preg_match_all('/--(\d+)--/', $element['content'] ?? '', $matches);
-                                                             $gKeys = array_unique($matches[1]);
-                                                         @endphp
-
-                                                         <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem; max-height: 25rem; overflow-y: auto; width: 100%;">
-                                                             <strong style="display: block; margin-bottom: 0.75rem; font-size: 0.85rem; color: #374151;">Gaps Options Manager</strong>
-                                                             
-                                                             @foreach ($gKeys as $gKey)
-                                                                 @php
-                                                                     $gapIdx = (int) $gKey;
-                                                                     $cur = $gapData[$gapIdx] ?? ['options' => 'a|Option A,b|Option B,c|Option C,d|Option D', 'answer' => 'a'];
-                                                                     // Parse options list
-                                                                     $parts = explode(',', $cur['options']);
-                                                                     $optList = [];
-                                                                     foreach ($parts as $p) {
-                                                                         $pair = explode('|', $p, 2);
-                                                                         $optList[trim($pair[0])] = $pair[1] ?? '';
-                                                                     }
-                                                                 @endphp
-                                                                 <div style="margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #e5e7eb; font-size: 0.85rem;" wire:key="inline-gap-{{ $sectionIndex }}-{{ $elementIndex }}-{{ $gapIdx }}">
-                                                                     <strong style="color: #6366f1; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Gap #{{ $gapIdx }}</strong>
-                                                                     
-                                                                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
-                                                                         @foreach (['a', 'b', 'c', 'd'] as $letter)
-                                                                             <div>
-                                                                                 <label style="font-size: 0.7rem; color: #4b5563; display: block; text-transform: uppercase; font-weight: 600; margin-bottom: 0.2rem;">Option {{ $letter }}</label>
-                                                                                 <input type="text" 
-                                                                                        value="{{ $optList[$letter] ?? '' }}" 
-                                                                                        wire:input.debounce.500ms="setInlineGapOptionText({{ $sectionIndex }}, {{ $elementIndex }}, {{ $gapIdx }}, '{{ $letter }}', $event.target.value)"
-                                                                                        class="telc-input" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; width: 100%;">
-                                                                                 <button type="button" 
-                                                                                         wire:click="setInlineGapCorrectAnswer({{ $sectionIndex }}, {{ $elementIndex }}, {{ $gapIdx }}, '{{ $letter }}')"
-                                                                                         style="margin-top: 0.35rem; font-size: 0.75rem; width: 100%; border: 1px solid #ccc; cursor: pointer; border-radius: 4px; padding: 4px 0; background: {{ ($cur['answer'] ?? '') === $letter ? '#4ade80' : '#f3f4f6' }}; font-weight: {{ ($cur['answer'] ?? '') === $letter ? 'bold' : 'normal' }};">
-                                                                                     {{ ($cur['answer'] ?? '') === $letter ? '✓ Correct' : 'Set Correct' }}
-                                                                                 </button>
-                                                                             </div>
-                                                                         @endforeach
-                                                                     </div>
-                                                                 </div>
-                                                             @endforeach
-                                                         </div>
-                                                     </div>
-                                                 </div>
-                                             @endif
-
-                                            @if ($element['type'] === 'interactive_text')
-                                                <label>Text with [[gap:1]] placeholders</label>
-                                                <textarea wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.content" class="telc-textarea" style="min-height:8rem" placeholder="Heute ist ein schöner [[gap:1]]. Wir gehen in den [[gap:2]]."></textarea>
-
-                                                <label>Points</label>
-                                                <input type="number" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.points" class="telc-input small">
-
-                                                <div class="telc-gap-manager" style="grid-column: span 2; margin-top: 1rem;">
-                                                    <label style="display:flex;align-items:center;justify-content:space-between">
-                                                        <span>Gap definitions</span>
-                                                        <button type="button" wire:click="syncGapIds({{ $sectionIndex }}, {{ $elementIndex }})" class="telc-link-button" style="font-size:.8rem">Sync gaps from text</button>
-                                                    </label>
-
-                                                    @php $gaps = $element['gaps'] ?? []; @endphp
-                                                    @foreach ($gaps as $gId => $gDef)
-                                                        <div class="telc-gap-editor" wire:key="gap-{{ $sectionIndex }}-{{ $elementIndex }}-{{ $gId }}">
-                                                            <div class="telc-gap-header">
-                                                                <strong>Gap {{ $gId }}</strong>
-                                                            </div>
-
-                                                            <label>Type</label>
-                                                            <select wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.gaps.{{ $gId }}.type" class="telc-select">
-                                                                <option value="dropdown">Dropdown</option>
-                                                                <option value="text">Text input</option>
-                                                            </select>
-
-                                                            <label>Options (comma-separated, e.g. a:Tag,b:Baum,c:Hund)</label>
-                                                            <input type="text"
-                                                                wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.gaps.{{ $gId }}.options"
-                                                                class="telc-input"
-                                                                placeholder="a:Tag,b:Baum,c:Hund">
-
-                                                            <label>Correct answer</label>
-                                                            <input type="text" wire:model.live="template.sections.{{ $sectionIndex }}.elements.{{ $elementIndex }}.gaps.{{ $gId }}.answer" class="telc-input" placeholder="a">
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </article>
-                                @endforeach
+                                                @endif
+                                            </div>
+                                        </article>
+                                    @endforeach
+                                @endif
                             </div>
                         </section>
                     @endforeach

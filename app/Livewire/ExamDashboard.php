@@ -694,6 +694,104 @@ class ExamDashboard extends Component
         }
     }
 
+    public function updateMatchingPassageLabel(int $sectionIndex, int $elementIndex, string $value): void
+    {
+        $label = $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['label'] ?? '';
+        $parts = explode(':', $label, 2);
+        $letter = count($parts) === 2 ? trim($parts[0]) : 'a';
+
+        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['label'] = $letter . ': ' . trim($value);
+        $this->save();
+    }
+
+    public function updateMatchingStatementLabel(int $sectionIndex, int $elementIndex, string $value): void
+    {
+        $this->template['sections'][$sectionIndex]['elements'][$elementIndex]['label'] = 'Aufgabe ' . trim($value);
+        $this->save();
+    }
+
+    public function addMatchingPassage(int $sectionIndex): void
+    {
+        $elements = $this->template['sections'][$sectionIndex]['elements'] ?? [];
+
+        // Find next letter
+        $letters = [];
+        foreach ($elements as $el) {
+            if (($el['type'] ?? '') === 'goethe_portrait') {
+                $labelParts = explode(':', $el['label'] ?? '', 2);
+                if (count($labelParts) === 2) {
+                    $letters[] = strtolower(trim($labelParts[0]));
+                }
+            }
+        }
+
+        $nextLetter = 'a';
+        if (!empty($letters)) {
+            $lastLetter = max($letters);
+            if (strlen($lastLetter) === 1) {
+                $nextLetter = chr(min(255, ord($lastLetter) + 1));
+            }
+        }
+
+        $newId = 'el-' . Str::random(8);
+        $this->template['sections'][$sectionIndex]['elements'][] = [
+            'id' => $newId,
+            'type' => 'goethe_portrait',
+            'label' => $nextLetter . ': Neue Person',
+            'content' => '',
+            'image_url' => '',
+            'answer' => '',
+            'points' => 0,
+        ];
+
+        $this->save();
+    }
+
+    public function addMatchingStatement(int $sectionIndex): void
+    {
+        $elements = $this->template['sections'][$sectionIndex]['elements'] ?? [];
+
+        // Find next statement number
+        $nums = [];
+        foreach ($elements as $el) {
+            if (($el['type'] ?? '') === 'matching') {
+                preg_match('/\d+/', $el['label'] ?? '', $m);
+                if (isset($m[0])) {
+                    $nums[] = (int)$m[0];
+                }
+            }
+        }
+
+        $nextNum = !empty($nums) ? max($nums) + 1 : 24;
+
+        // Find available letters for options
+        $letters = [];
+        foreach ($elements as $el) {
+            if (($el['type'] ?? '') === 'goethe_portrait') {
+                $labelParts = explode(':', $el['label'] ?? '', 2);
+                if (count($labelParts) === 2) {
+                    $letters[] = strtolower(trim($labelParts[0]));
+                }
+            }
+        }
+        sort($letters);
+        $optionsList = implode(',', $letters) . ',0';
+
+        $newId = 'el-' . Str::random(8);
+        $this->template['sections'][$sectionIndex]['elements'][] = [
+            'id' => $newId,
+            'type' => 'matching',
+            'label' => 'Aufgabe ' . $nextNum,
+            'content' => '',
+            'instruction' => '',
+            'options' => $optionsList,
+            'answer' => '',
+            'points' => 2,
+        ];
+
+        $this->save();
+    }
+
     public function uploadAudio(int $sectionIndex, int $elementIndex): void
     {
         $this->validate([
