@@ -260,6 +260,37 @@
                 </div>
 
                 <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+                    <h2>Import / Export (JSON Copy-Paste)</h2>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem; line-height: 1.3;">
+                        Sie können den gesamten Prüfungsinhalt als JSON-Struktur kopieren oder bearbeitete Daten hier einfügen, um sie direkt zu importieren.
+                    </p>
+                    
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <button type="button" wire:click="loadTemplateForExport" class="telc-button" style="flex: 1; font-size: 0.8rem; padding: 0.4rem;">
+                            Als JSON exportieren
+                        </button>
+                    </div>
+
+                    <textarea wire:model="pasteJson" class="telc-input" style="height: 150px; font-family: monospace; font-size: 0.75rem; resize: vertical;" placeholder="Hier JSON-Daten einfügen..."></textarea>
+                    
+                    <button type="button" wire:click="importJson" class="telc-button primary" style="margin-top: 0.5rem; width: 100%; font-weight: 700;">
+                        JSON-Daten importieren
+                    </button>
+
+                    @if (session()->has('import_success'))
+                        <div style="margin-top: 0.5rem; padding: 0.5rem; background: #e6f4ea; border: 1px solid #a7f3d0; border-radius: 6px; color: #137333; font-size: 0.8rem; font-weight: 600;">
+                            ✓ {{ session('import_success') }}
+                        </div>
+                    @endif
+
+                    @if (session()->has('import_error'))
+                        <div style="margin-top: 0.5rem; padding: 0.5rem; background: #fdf2f2; border: 1px solid #fecaca; border-radius: 6px; color: #b91c1c; font-size: 0.8rem; font-weight: 600;">
+                            ⚠ {{ session('import_error') }}
+                        </div>
+                    @endif
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
                     <h2>Umfrage-Einstellungen</h2>
                     <label>Google Form URL</label>
                     <input type="url" wire:model.live="googleFormUrl" class="telc-input" placeholder="https://docs.google.com/forms/d/...">

@@ -34,6 +34,8 @@ class ExamDashboard extends Component
 
     public string $mode = 'overview';
 
+    public string $pasteJson = '';
+
     /** @var array<string, mixed> */
     public array $template = [];
 
@@ -1453,4 +1455,50 @@ class ExamDashboard extends Component
         $this->answers = [];
         $this->activeSection = 0;
     }
+
+    public function loadTemplateForExport(): void
+    {
+        if ($this->selectedTemplateId) {
+            $record = ExamTemplate::find($this->selectedTemplateId);
+            if ($record) {
+                $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'exam_provider', 'price', 'is_free', 'is_published']);
+                $this->pasteJson = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            }
+        }
+    }
+
+    public function importJson(): void
+    {
+        if (!$this->pasteJson) {
+            session()->flash('import_error', 'Bitte fügen Sie zuerst JSON-Daten ein.');
+            return;
+        }
+
+        $decoded = json_decode($this->pasteJson, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            session()->flash('import_error', 'Ungültiges JSON-Format: ' . json_last_error_msg());
+            return;
+        }
+
+        if (!is_array($decoded) || empty($decoded['title']) || empty($decoded['level']) || empty($decoded['sections'])) {
+            session()->flash('import_error', 'Das JSON muss mindestens die Felder "title", "level" und "sections" enthalten.');
+            return;
+        }
+
+        if ($this->selectedTemplateId) {
+            $record = ExamTemplate::find($this->selectedTemplateId);
+            if ($record) {
+                $record->update($decoded);
+                $this->loadTemplate($record->id);
+                session()->flash('import_success', 'Prüfungsvorlage erfolgreich über JSON aktualisiert!');
+                return;
+            }
+        }
+
+        $decoded['is_template'] = false;
+        $record = ExamTemplate::create($decoded);
+        $this->loadTemplate($record->id);
+        session()->flash('import_success', 'Neue Prüfung erfolgreich aus JSON erstellt!');
+    }
 }
+

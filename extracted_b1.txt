@@ -1,0 +1,2449 @@
+
+--- PAGE 1 ---
+B1
+ÜBUNGSTEST 1
+ZERTIFIKAT DEUTSCH
+Prüfungsvorbereitung
+www.telc.net
+Com
+m
+on
+European FrameworkofReference
+Überarbeitete
+Auflage
+2019
+--- PAGE 2 ---
+
+--- PAGE 3 ---
+B1
+ ÜBUNGSTEST 1  
+ZERTIFIKAT DEUTSCH
+Prüfungsvorbereitung
+--- PAGE 4 ---
+Das Zertifikat Deutsch (telc Deutsch B1) wurde von der gemeinnützigen telc GmbH, dem Österreichischen 
+Sprachdiplom (ösd), der Schweizerischen Konferenz der Kantonalen Erziehungsdirektoren (EKD), vertreten 
+durch das Institut für deutsche Sprache der Universität Freiburg (Schweiz), und dem Goethe-Institut e. V. 
+entwickelt.
+Diese Publikation und ihre Teile sind urheberrechtlich geschützt.
+Jede Verwendung in anderen als den gesetzlich zugelassenen Fällen bedarf  
+deshalb der schriftlichen Einwilligung des Herausgebers.
+Herausgegeben von der telc gGmbH, Frankfurt am Main, www.telc.net
+Alle Rechte vorbehalten
+13. Auflage 2020
+© 2020 by telc gGmbH, Frankfurt am Main
+Printed in Germany
+ISBN:
+ Testheft 978-3-933908-02-5
+ Audio-CD 978-3-933908-93-3
+Bestellnummer / Order No. :
+ Testheft 5061-B00-010301
+ Audio-CD 5061-CD0-010101
+--- PAGE 5 ---
+3
+Sie möchten einen international anerkannten Nachweis über Ihre Sprachkenntnisse erwerben? Sie sind 
+Kursleiterin oder Kursleiter und möchten im Unterricht eine telc Prüfung erproben? Anhand dieses Übungs-
+tests können Sie sich ein Bild davon machen, was in der Prüfung verlangt wird.
+Unser Angebot
+Die telc gGmbH ist ein gemeinnütziges, international ausgerichtetes Bildungsunternehmen mit Sitz in 
+Frankfurt am Main. In enger Kooperation mit über 1.500 Lizenzpartnern in Deutschland und weiteren 1.500 
+vor allem in Europa bieten wir unter der Marke telc – language tests eine standardisierte Zertifizierung von 
+Sprachkompetenz an. Unter dem Label telc Training führen wir qualifizierende Seminare und Lehrgänge 
+durch und lizenzieren Prüferinnen und Prüfer. Als ergänzendes Angebot entwickeln wir auch Lehr- und 
+Lernmaterialien. Angebote für das digitale Lernen und Testen runden unser Portfolio ab.
+Mit allgemeinsprachlichen und berufsbezogenen Prüfungen leisten wir einen Beitrag zu Mehrsprachigkeit 
+und sprachlicher Vielfalt in Europa. Unsere Prüfungen sind abgestimmt auf den Bedarf von Lernenden aus 
+der ganzen Welt. Wir zertifizieren sprachliche Handlungsfähigkeit für den Alltag, für das Studium und den 
+Beruf.
+Die telc gGmbH ist eine Tochtergesellschaft des Deutschen Volkshochschul-Verbands e. V. Wir stehen für 
+lebenslanges Lernen. Wir engagieren uns in besonderer Weise für Sprache und Integration sowie für 
+Mobilität in Deutschland und Europa. Unsere Zertifikate sind anerkannt von Arbeitgebern, Schulen und 
+Hochschulen sowie von Ämtern und Behörden. Wir stellen unseren Teilnehmenden ein in dieser Form 
+einzigartiges System zur Verfügung, das bedarfsgerechte Testformate und flexible Prüfungstermine mit 
+objektiven und transparenten Prüfungsbedingungen verbindet.
+Unser Netzwerk
+Die jahre- und jahrzehntelange enge Kooperation mit vielen und ganz unterschiedlichen telc Partnern 
+macht uns stark. Sie fordert uns heraus und motiviert uns immer wieder hochwertige, jeweils passende 
+Angebote zu machen. Seit der Implementierung der telc Zertifikate in den 1960er Jahren hat sich manches 
+geändert. telc – language tests sind immer mit der Zeit gegangen. Neue Impulse aus Wissenschaft und 
+Praxis nehmen wir auf und setzen sie in handlungsorientierte, valide Formate um. Als Vollmitglied der ALTE 
+(Association of Language Testers in Europe) und als Mitglied von EQUALS entwickeln wir Qualität nach 
+europäischen Maßgaben. Die telc gGmbH ist nach der internationalen Norm DIN EN ISO 9001:2015 
+zertifiziert. Einen Überblick über unser Programm finden Sie unter www.telc.net.
+Jürgen Keicher 
+Geschäftsführer telc gGmbH
+Liebe Leserin, lieber Leser,
+
+--- PAGE 6 ---
+4
+Inhalt
+Test
+Testformat telc Deutsch B1/Zertifikat Deutsch __________________________ 5 
+Leseverstehen  ___________________________________________________________________________________ 6
+Sprachbausteine  ______________________________________________________________________________12
+Hörverstehen  ___________________________________________________________________________________ 14
+Schriftlicher Ausdruck  ____________________________________________________________________ 17
+Mündlicher Ausdruck  ______________________________________________________________________18
+Informationen
+Antwortbogen S30  _________________________________________________________________________22
+Markierungen auf dem Antwortbogen S30  ______________________________ 28
+Schriftliche Prüfung  ________________________________________________________________________29
+Mündliche Prüfung  __________________________________________________________________________30
+Bewertungsbogen M10  _________________________________________________________________33
+Bewertungskriterien Mündlicher Ausdruck  ________________________________34
+Bewertungskriterien Schriftlicher Ausdruck  ______________________________ 36
+Punkte und Gewichtung  ________________________________________________________________39
+Lösungsschlüssel  ____________________________________________________________________________ 41
+Hörtexte  ____________________________________________________________________________________________ 42
+--- PAGE 7 ---
+5
+Übungstest 1
+Testformat
+Subtest Ziel Aufgabentyp Zeit
+Schriftliche Prüfung
+1 Leseverstehen
+90 Min. 
+ Teil 1
+ Teil 2
+ Teil 3
+Globalverstehen
+Detailverstehen
+Selektives Verstehen
+5 Zuordnungsaufgaben
+5 Multiple-Choice-Aufgaben
+10 Zuordnungsaufgaben
+2 Sprachbausteine
+ Teil 1
+ Teil 2
+Grammatik
+Lexik
+10 Multiple-Choice-Aufgaben
+10 Zuordnungsaufgaben
+3 Hörverstehen
+ca. 
+30 Min.
+ Teil 1
+ Teil 2
+ Teil 3
+Globalverstehen
+Detailverstehen
+Selektives Verstehen
+5 Richtig-Falsch-Aufgaben
+10 Richtig-Falsch-Aufgaben
+5 Richtig-Falsch-Aufgaben
+4 Schriftlicher Ausdruck
+30 Min.Schreiben einer informellen 
+oder halbformellen E-Mail
+Schreibaufgabe mit 
+4 Leitpunkten
+Vorbereitungszeit 20 Min.
+5 Mündlicher Ausdruck
+ca. 
+15 Min.
+ Teil 1
+ Teil 2
+ Teil 3
+Einander kennenlernen 
+Über ein Thema sprechen 
+Gemeinsam etwas planen
+Prüfungsgespräch mit 
+zwei Teilnehmenden
+Mündliche Prüfung
+telc Deutsch B1/Zertifikat Deutsch 
+--- PAGE 8 ---
+6
+90 Minuten  Leseverstehen und Sprachbausteine
+Übungstest 1 
+Leseverstehen
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Leseverstehen Teil 1
+Lesen Sie die Überschriften a–j und die Texte 1–5. Finden Sie für jeden Text die passende Überschrift.
+Sie können jede Überschrift nur einmal benutzen.
+Markieren Sie Ihre Lösungen für die Aufgaben 1–5 auf dem Antwortbogen.
+a Immer mehr deutsche Familien reisen mit der Bahn
+b Buchtipp: Hilfe bei Schlafproblemen
+c Der Computer: Liebstes Hobby von Deutschlands Frauen
+d Neu bei der Bahn: Spezielle Informationen und Angebote für Radfahrer
+e Neu am Markt: Billige Schlaftabletten
+f Familien reisen billiger
+g Urlaub mit dem Fahrrad in Deutschland immer beliebter
+h Kultur im Urlaub: Interessen je nach Alter unterschiedlich
+i Umfrage: Wer verwendet den Computer am häufigsten?
+j Deutschland: Immer mehr Touristen reisen in den Westen
+--- PAGE 9 ---
+90 Minuten  Leseverstehen und Sprachbausteine
+7
+Übungstest 1 
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Leseverstehen
+Wer  ist   der typische Computerfan? Das B.A.T. 
+Freizeitforschungsinstitut Hamburg ermittelte 
+einige Eigenschaften: Er ist männlich, jung und 
+hat einen höheren Schulabschluss. Bei der 
+Beschäftigung am heimischen Computer ste-
+hen T extverarbeitung und Spiele ganz oben, es 
+folgen private Buchhaltung, Grafikprogramme 
+und T abellenkalkulation.
+1
+„Bahn&Bike“ heißt ein 222-seitiger Prospekt, 
+den die Deutsche Bahn AG in Zusammenarbeit 
+mit der Deutschen Zentrale für Tourismus her -
+ausgebracht hat und der wichtige Informationen 
+für jene bereitstellt, die ihren Radurlaub mit 
+Bahnfahren verbinden wollen. Das Motto lautet: 
+Hin mit der Bahn – das Rad vor Ort mieten. Der 
+Prospekt enthält Angaben zur Streckenlänge 
+und Wegbeschaffenheit, Adressen von Verleih-
+stationen, verweist auf Sehenswürdigkeiten so-
+wie Unterkünfte und wird durch Karten ergänzt. 
+Die Broschüre kostet 5 Euro und ist im Buchhan-
+del beziehungsweise an Fahrkarten schaltern zu 
+beziehen.
+Ausführliche Informationen zum Thema „Schlaf-
+störungen“ finden Sie im gleichnamigen Patien-
+tenratgeber von Dr. med. Fritz Hohagen. Sie er-
+fahren, was den Schlaf stört und was Sie dagegen 
+unternehmen können. Für 9,95 Euro erhalten 
+Sie das Buch in Apotheken oder direkt beim 
+Wort&Bild Verlag, 82065 Baierbrunn.
+Jetzt wird für Familien Reisen mit der Bahn zwi-
+schen Österreich und Deutschland noch ein gu-
+tes Stück günstiger. Denn ab 6. Oktober gibt es 
+den Familien-Super-Sparpreis. Ein echter Traum-
+preis für die ganze Familie – vom Baby bis zum 
+Großpapa – da kann man wirklich sparen. Der 
+Familien-Super-Sparpreis gilt für Familien, be -
+stehend aus ein oder zwei Erwachsenen 
+(Eltern, auch Großeltern) und deren Kin -
+dern/Enkelkindern bis zum vollendeten 
+17. Lebensjahr, wobei mindestens ein 
+Kind/Enkelkind an der Reise teilnehmen 
+muss.
+4
+T ouristen zwischen 14 und 29 Jahren sowie 
+zwischen 40 und 49 Jahren haben ein 
+besonders großes Interesse an der Kultur 
+des jeweiligen Reiselandes, während die 
+Gruppe der 30- bis 39-jährigen im Urlaub 
+„eine Kulturpause einlegt“. Dies geht aus der 
+neuesten Analyse der Forschungsgemeinschaft 
+Urlaub und Reisen e. V. hervor. Urlauber aus 
+Ostdeutschland, so die Studie, zeigen wie-
+derum mehr Kulturinteresse als Reisende aus 
+dem Westen. Grundsätzlich gelte: Je höher das 
+Einkommen und die Schulbildung sind, umso 
+mehr besteht im Urlaub der Wunsch, Land und 
+Leute kennenzulernen. 
+5
+2
+3
+--- PAGE 10 ---
+8
+90 Minuten  Leseverstehen und Sprachbausteine
+Übungstest 1 
+Leseverstehen
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Leseverstehen Teil 2
+Lesen Sie den Text und die Aufgaben 6–10. Welche Lösung (a, b oder c) ist jeweils richtig?
+Markieren Sie Ihre Lösungen für die Aufgaben 6–10 auf dem Antwortbogen.
+Büro-Werkstatt: Chance für behinderte Menschen
+Computerarbeit im Auftrag privater Firmen – jeder Dritte findet nach einem fünfmonatigen Kurs einen 
+Job. Interessierte Unternehmen werden noch gesucht.
+Margit, die junge Frau im Rollstuhl, erledigt die Lohnverrechnung für einen Verlag. Reinhard, seit 
+der Geburt gehbehindert, tippt für die Direktion von Hewlett Packard Protokolle und Preislisten. 
+Martin, seine Unterarme sind verkürzt, layou tet die Speisekarte eines Wiener Restaurants.
+Drei  junge  körperbehinderte Menschen am Computer – alle drei können auf eine abgeschlos-
+sene kaufmännische Ausbildung verweisen. Dennoch hat man sie auf dem Arbeitsamt als „schwer 
+vermittelbar“ eingestuft – was de facto nicht ver  mittelbar bedeutet. Zurzeit arbeiten Margit, 
+Reinhard und Martin – gemeinsam mit sie  ben anderen behinderten Menschen – in der „Büro-
+Werkstatt“ in Wien-Stadlau. Hier werden körperbehinderte Schul abgänger auf das Berufsleben 
+vorbereitet. In einem fünf  mona ti gen Kurs lernen sie, das in der Schule Gelernte in die Praxis 
+umzusetzen. Ihre Dienste werden von Privatfirmen (darunter auch die OMV und zwei Banken) 
+zuge kauft.
+Gleichzeitig wird ihnen bei der Jobsuche geholfen. „Leicht ist das nicht“, sagt Betreuer Günther 
+Hos. „Es gibt so viele Arbeitslose, die nicht behindert sind. Wer nimmt schon einen Mitarbeiter 
+mit Handicap?“ Zwar wären die Firmen gesetzlich verpflichtet, pro 25 Be  schäf tigte einen 
+Behinderten einzustellen. Die meis ten Firmen nützen jedoch die Möglichkeit, sich „freizukaufen“ 
+(die sogenannte „Ausgleichstaxe“ beträgt  rund 150 Euro  monatlich).
+Trotz der Rahmenbedingungen kann Hos mit einer durchaus positiven  Bilanz aufwarten: „Immerhin 
+haben wir seit der Vereinsgründung vor drei Jahren ein Drittel unserer Leute unterge  bracht.“ 
+Auch ein Dienst an der Allgemeinheit, denn jede Vermittlung bedeutet: ein Arbeits  loser weniger, 
+ein Steuerzahler mehr.
+Gegründet wurde die Büro-Werkstatt von einer Lehrerin: Heide Hanisch, die in einer Wiener  
+berufsbildenden Schule Geografie und Geschichte unter richtet, wollte nicht länger hinneh men, 
+dass ihre behinderten Schüler erst ausgebildet werden, um dann als Arbeitnehmer nicht gebraucht 
+zu werden.
+Nähere Informationen, auch für interessierte Firmen: „Büro-Werkstatt“ in Wien-Stadlau,  
+Telefon: 0222/283 85 75.
+--- PAGE 11 ---
+90 Minuten  Leseverstehen und Sprachbausteine
+9
+Übungstest 1 
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Leseverstehen
+6 In einem fünfmonatigen Kurs können die Teilnehmer
+  a eine berufliche Ausbildung abschließen.
+  b l ernen, was sie in der Schule verpasst haben.
+  c praktische Erfahrungen mit der Büroarbeit sammeln.
+7 Die Büro-Werkstatt versucht außerdem,
+  a a uch jenen Arbeitslosen zu helfen, die nicht behindert sind. 
+  b Behinderte auf die Abschlussprüfungen vorzubereiten. 
+  c f ür die behinderten Menschen eine Arbeit zu finden.
+8 Laut Gesetz müssen österreichische Firmen pro 25 Beschäftigte
+  a eine besondere Steuer zahlen.  
+  b einen Behinderten einstellen oder eine monatliche Gebühr bezahlen. 
+  c f ür jeden Behinderten monatlich 150 Euro bezahlen.
+9 Seit der Vereinsgründung
+  a k onnte für ein Drittel der behinderten Kursteilnehmer eine Arbeit gefunden werden.
+  b k onnte Günther Hos für den Verein schon viel Geld sparen.
+  c zahlen Arbeitslose um ein Drittel weniger Steuern.
+10 Die Lehrerin, die die Büro-Werkstatt gegründet hat,
+  a w ollte etwas tun, damit Behinderte einen Arbeitsplatz erhalten. 
+  b w ollte nicht länger Geografie und Geschichte unterrichten.
+  c w ird nach der Ausbildung der Behinderten nicht mehr gebraucht.
+--- PAGE 12 ---
+10
+90 Minuten  Leseverstehen und Sprachbausteine
+Übungstest 1 
+Leseverstehen
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Leseverstehen Teil 3
+Lesen Sie die Situationen 11–20 und die Anzeigen a–l. Finden Sie für jede Situation die passende  
+Anzeige. Sie können jede Anzeige nur einmal benutzen. 
+Markieren Sie Ihre Lösungen für die Aufgaben 11–20 auf dem Antwortbogen. 
+Wenn Sie zu einer Situation keine Anzeige finden, markieren Sie ein x.
+11 Sie möchten mit Freunden in einem Restaurant essen. Da das Wetter schön ist, möchten 
+ Sie gerne draußen sitzen.
+12 Sie möchten heute nicht selbst kochen, sondern lieber ein warmes Essen kaufen und mit nach   
+ Hause nehmen.
+13 In den Sommerferien möchten Sie gerne in die USA fliegen. Sie brauchen dort auch eine    
+ Unterkunft.
+14 Reisebüros bieten billigere Flüge an, wenn man in letzter Minute bucht. Sie suchen so einen Flug.
+15 Ihre Tochter, die studiert, möchte in die USA fliegen. Sie suchen einen billigen Flug für sie. 
+16 Ihr Sohn ist schlecht in Mathematik und braucht deshalb noch Unterricht außerhalb der Schule.
+17 Das Kind Ihrer Freunde hat Probleme beim Sprechen und braucht deshalb Hilfe. 
+18 Sie haben einen jungen Franzosen zu Besuch. Sie möchten, dass er in einen Deutschkurs geht. 
+19 Sie möchten, dass Ihr Sohn in einen Jugendclub geht.
+20 Sie interessieren sich für die Probleme ausländischer Jugendlicher in Deutschland.
+--- PAGE 13 ---
+90 Minuten  Leseverstehen und Sprachbausteine
+11
+Übungstest 1 
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Leseverstehen
+Thai-China-Vietnam
+Asiatisches Spezialitäten-
+Restaurant
+Bong - Hong
+81379 Boschetsrieder  Straße 140
+Tel./Fax 089/785 56 52
+täglich von 11.30 – 14.30 Uhr
+und 17.30 – 23.00 Uhr
+Kein Ruhetag
+Alle Gerichte auch zum Mitnehmen
+und Heimservice
+Ristorante
+OLINDO
+Italienisches Restaurant
+• hausgemachte Nudeln
+• Fischspezialitäten
+• Mittagsmenues ab 7.50 Euro
+Bei schönem Wetter Gartenbetrieb
+Fallmerayerstr. 16
+München-Schwabing
+NEUNEU
+      Wir wünschen
+   unseren Kunden
+ und allen, die es
+noch werden wollen,
+schöne Ferien und
+gute Erholung.
+… sind Sie für den Urlaub auch gut versichert?
+Fragen Sie:
+Helmut Schwabe
+Herzogstraße 88 · Vers.-Büro
+Tel.: 089-303097, Fax 059-3073802
+VERMITTLUNG FÜR DIE UNTERNEHMEN DER
+VERSICHERUNGSKAMMER BAYERN
+SEATOP
+Reisen
+Der Flug- und Hotelspezialist
+WELTWEIT REISEN
+Mietwagen
+Hotelvermittlung – Rundreisen –
+Sommertermine nach USA noch
+Plätze frei
+Tel. 53 91 84  ·  Fax 53 67 78
+Kreittmayr
+Kneipe mit Biergarten
+Billard und Kegelbahnen
+Jeden Fr . oder Sa. liv e
+Bundesliga- Topspiele
+Kreittmayrstr . 15
+Tel. 523 17 34
+Mo. – Fr. 11.00 – 1.00
+Sa. + So . 17.00 – 1.00
+Für Studenten/Jugendliche
+New York/Boston ....................329,–
+Los Angeles ............................429,–
+Miami/Chicago ........................349,–
+Mexico ....................................499,–
+Hongkong ...............................529,–
+Amsterdam ...............................99,–
+London......................................99,–
+Edinburgh ...............................129,–
+Barcelona..................................99,–
+Stockholm ...............................159,–
+Helsinki ...................................199,–
+Paris..........................................99,–
+Madrid.....................................129,–
+Tel Aviv....................................299,–
+Alle Preise zzgl. Sicherheitsgebühr u. Steuern
+SPRACHREISEN & ABENTEUERREISEN
+A travel division of the Council on International Educational Exchange (EIEE)
+Spezialpreise auch für JEDERMANN!
+COUNCIL TRAVEL
+Adalbertstr . 32, 80799 München 40
+Tel: 089/39 50 22  Fax: 39 70 04
+Internationaler Stammtisch
+Deutsche und ausländische Jugendliche in München
+ist das Thema, das der Internationale Stammtisch am Montag,
+den 4. September , um 19.30 Uhr im Ratskelle r
+„Moriskengewölbe“ (Marienplatz) diskutieren wird .
+a
+b c
+d e
+f
+Unterricht
+Nachhilfe in Mathe-Physik mit viel Geduld u.
+Erfahrung von Gymnasiallehrer, Tel. 260 95 57
+Mathe/Physik/Chemie,  Nachhilfe f. alle Kl.,
+Gymn., Realschule, FOS, Abi-Vorbereitung,
+Schulwechsel, Hausbes. f. ganz MÜ. ohne
+Zuschlag Tel. 089/834 04 40 o. 36 14 55 1
+***Erf. Dipl.-Math. gibt*** MATHE (alles für Abi
+u. Studium) PHYSIK (für ABI), Tel. 271 29 32
+City-Reisebüro
+Klenzestr. 7  ·  80469 München
+Campmobile
+USA/CANADA
+z.B. San Francisco/
+Los Angeles
+ab “ 35,– pro Tag
+Früh buchen lohnt!
+Telefon 089 290 45 65
+g
+h i
+l
+k
+j
+K u r s e
+Für Erwachsene und Kinder mit (Sprach-)Schwierigkeiten
+Gisela Geiger
+Leopoldstraße 83 · 80802 München · Telefon 39 99 95
+S P  R A C H B Ö R S E
+Deutsch als Fremdsprache · Fremdsprachen · Kindersprachkurse
+• Prüfungskurse
+• Geschäftsdeutsch
+• muttersprachl. Lehrkräfte
+• Minigruppen und Einzelunterricht
+• schon für Kinder ab 4 Jahren
+Sprachbörse: Nähe Rotkreuzplatz · Tel. 16 14 79 · Schulstraße 31
+--- PAGE 14 ---
+90 Minuten  Leseverstehen und Sprachbausteine
+Übungstest 1
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+12
+Sprachbausteine
+Sprachbausteine Teil 1
+Lesen Sie den Text und schließen Sie die Lücken 21–30. Welche Lösung (a, b oder c) ist jeweils richtig?
+Markieren Sie Ihre Lösungen für die Aufgaben 21–30 auf dem Antwortbogen.
+21 a aber
+ b denn
+ c sondern
+22 a eine
+ b einen
+ c einer
+23 a bin
+ b habe
+ c wurde
+24 a anstrengend
+ b anstrengende
+ c anstrengendes
+25 a trotzdem
+ b wegen
+ c weshalb
+26 a bis
+ b in
+ c nach
+27 a gelernt
+ b lernen
+ c lernte
+28 a dem
+ b denen
+ c die
+29 a meine
+ b meinen
+ c meiner
+30 a dir
+ b Ihnen
+ c uns
+Liebe Karin, 
+ 
+nach meinem Praktikum in Frankreich bin ich jetzt wieder zu Hause. Wie du ja weißt, wollte 
+ich eigentlich nach Paris,  das hat dann leider nicht geklappt. Doch dann habe 
+ich eine Stelle als Praktikant bei  Firma in Straßburg gefunden. 
+ 
+Dort  ich drei Monate geblieben. Die Arbeit war sehr  – ich musste 
+schon um 8.00 Uhr im Büro sein –, hat mir aber  sehr gut gefallen. 
+Ich habe  dieser Zeit in verschiedenen Abteilungen gearbeitet und so nicht nur 
+etwas über die Herstellung von Fernsehgeräten  , sondern auch über den Verkauf. 
+Und die Kollegen, mit  ich am meisten zu tun hatte, waren wirklich sehr nett. 
+ 
+Nach dem Praktikum habe ich noch zwei  Wochen Urlaub bei  Freunden 
+gemacht.  Darüber erzähle ich    bald mehr – für heute muss ich Schluss machen. 
+ 
+Liebe Grüße 
+Fritz
+21
+22
+23 24
+25
+26
+27
+28
+29
+30
+--- PAGE 15 ---
+90 Minuten  Leseverstehen und Sprachbausteine
+Übungstest 1
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+13
+Sprachbausteine
+Sprachbausteine Teil 2
+Lesen Sie den Text und schließen Sie die Lücken 31–40. Benutzen Sie die Wörter a–o.  
+Jedes Wort passt nur einmal.
+Markieren Sie Ihre Lösungen für die Aufgaben 31–40 auf dem Antwortbogen.
+Hotel-Pension Janosch
+ruhige Lage, Wanderwege, Bademöglichkeiten, 
+T ennis, Freizeitprogramm für Kinder, 
+Familienappartements: 1 Woche pro Person  
+nur € 99,– inkl. Frühstück, spezielle Kinderermäßigung.
+Anfragen an: Herbert Janosch, Griesweg 3, A-5020 Innsbruck
+Sehr geehrter Herr Janosch,
+ 
+ich habe Ihre Anzeige gelesen und interessiere mich sehr  Ihr Angebot. Ich möchte mit 
+meiner Familie vom 10.–24. August in Österreich Urlaub machen und hätte deshalb  
+noch nähere Informationen. 
+Meine Frau und mich interessiert ganz  das Freizeitprogramm für Kinder,  
+wir zwei Kinder (3 und 8 Jahre) haben. Gibt es Schwimm- und T enniskurse für Kinder und 
+ ja, was kosten sie? In Ihrer Anzeige steht auch, dass Sie für die Unterkunft günstige 
+Angebote für Kinder haben. Wie viel  wir pro Woche für unsere Kinder bezahlen? 
+Und  noch eine letzte Frage: Wir haben einen kleinen Hund, von dem sich meine Kinder 
+nicht trennen können und den wir  auch mitnehmen müssten. Wäre das möglich?  
+ 
+Bitte schreiben Sie uns so bald wie möglich,  wir uns bald ent scheiden können. 
+Außerdem wären wir Ihnen sehr , wenn Sie uns einige Prospekte oder Bilder Ihrer 
+Pension sowie der Umgebung zusenden würden.
+ 
+Mit freundlichen Grüßen 
+Ihr Anton Müller
+31
+32
+33 34
+35
+36
+37
+38
+39
+40
+a BESONDERS f DANKBAR k MIT
+b DA g DESHALB l MÜSSTEN
+c DAFÜR h FÜR m SCHLIESSLICH
+d DAMALS i GERNE n WANN
+e DAMIT j KÖNNTEN o WENN
+--- PAGE 16 ---
+14
+ca. 30 Minuten Hörverstehen
+Übungstest 1
+Hörverstehen
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Hörverstehen Teil 1
+Sie hören nun fünf kurze Texte. Dazu sollen Sie fünf Aufgaben lösen. 
+Sie hören diese Texte nur einmal.
+Entscheiden Sie beim Hören, ob die Aussagen 41-45 richtig oder falsch sind. Markieren Sie Ihre Lösungen 
+auf dem Antwortbogen bei den Aufgaben 41-45. Markieren Sie PLUS (+) gleich richtig und  
+MINUS (–) gleich falsch auf dem Antwortbogen. 
+Lesen Sie jetzt die Aufgaben 41-45. Sie haben dazu 30 Sekunden Zeit.
+41 Die Sprecherin muss im Haushalt fast alles alleine machen. 
+42 Der Sprecher wäscht das Geschirr und die Wäsche.
+43 Die Sprecherin ist berufstätig und hat keine Zeit für die Hausarbeit. 
+44 Der Sprecher teilt sich mit seiner Partnerin die Arbeit je nach Situation auf. 
+45 Die Sprecherin ist froh, dass ihr Mann so viele Hausarbeiten übernimmt.
+--- PAGE 17 ---
+ca. 30 Minuten Hörverstehen
+15
+Übungstest 1
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Hörverstehen
+Hörverstehen Teil 2
+Sie hören nun ein Gespräch. Dazu sollen Sie zehn Aufgaben lösen. 
+Sie hören das Gespräch zweimal. 
+Entscheiden Sie beim Hören, ob die Aussagen 46-55 richtig oder falsch sind. Markieren Sie Ihre Lösungen 
+auf dem Antwortbogen bei den Aufgaben 46-55. Markieren Sie PLUS (+) gleich richtig und  
+MINUS (–) gleich falsch auf dem Antwortbogen. 
+Lesen Sie jetzt die Aufgaben 46-55. Sie haben dazu eine Minute Zeit.
+46 Der Sportverein plant eine große Feier. 
+47 Der Journalist unterhält sich mit einer Vertreterin des Sportvereins. 
+48 Viele Papiere aus den Anfängen des Vereins sind im Krieg verloren gegangen. 
+49 Der Verein veröffentlicht jedes Jahr eine Festzeitung. 
+50 Der Verein hatte von Anfang an auch Frauen als Mitglieder.
+51 Heute gibt es im Verein mehr Frauen als Männer. 
+52 Im Verein kann man Sport im Freien und in der Halle treiben.
+53 Die Mitglieder müssen die Kosten für ihren Verein alleine tragen. 
+54 Der Sportverein bietet auch Schwimmkurse an.
+55 Einige Leute, die im Verein ausgebildet wurden, arbeiten dort heute als Lehrer. 
+--- PAGE 18 ---
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+16
+ca. 30 Minuten Hörverstehen
+Übungstest 1
+Hörverstehen
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Hörverstehen Teil 3
+Sie hören nun fünf kurze Texte. Dazu sollen Sie fünf Aufgaben lösen. Sie hören jeden Text zweimal.
+Entscheiden Sie beim Hören, ob die Aussagen 56-60 richtig oder falsch sind. 
+Markieren Sie Ihre Lösungen für die Aufgaben 56-60 auf dem Antwortbogen. 
+Markieren Sie PLUS (+) gleich richtig und MINUS (–) gleich falsch.
+56 Das Büro ist in der Schillerstraße. 
+57 Der Film „Sommer“ läuft im Filmcasino. 
+58 Im Süden Bayerns wird es am Nachmittag schön und nicht sehr warm. 
+59 Im Zugrestaurant können Sie auch Zeitungen kaufen. 
+60 Damenröcke kosten heute 39 Euro.
+--- PAGE 19 ---
+30 Minuten  Schriftlicher Ausdruck
+17
+Übungstest 1 
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Schriftlicher Ausdruck
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Schriftlicher Ausdruck
+Sie haben von einer Freundin folgende E-Mail erhalten:
+Überlegen Sie sich vor dem Schreiben eine passende Reihenfolge der Punkte, einen passenden Betreff, 
+eine passende Anrede, Einleitung und einen passenden Schluss.
+Antworten Sie auf die E-Mail. Schreiben Sie etwas zu allen vier Punkten:
+• welche Ausflüge Sie mit Marianne machen wollen
+• was die beste Jahreszeit für die Reise ist
+• welche Kleidung sie mitnehmen soll 
+• wie sie sich am besten auf die Reise vorbereiten kann
+ 
+Liebe/r  ,
+danke für deine nette Einladung! Ich komme dich sehr gerne besuchen, um dein Land kennen-
+zulernen - wie du weißt, war ich ja noch nie da. Wann wäre die beste Zeit, dich zu besuchen? 
+Ich weiß noch nicht einmal, ob es bei euch im Sommer sehr heiß wird – allzu große Hitze mag 
+ich nämlich nicht so sehr. Und gibt es sonst noch irgendwelche Dinge, die ich wissen sollte, 
+bevor ich diese Reise mache?
+ 
+Bitte schreib mir möglichst bald, damit ich mich gut auf die Reise vorbereiten kann. 
+Herzliche Grüße
+Marianne
+--- PAGE 20 ---
+18
+ca. 15 Minuten Mündlicher Ausdruck
+Übungstest 1
+Mündlicher Ausdruck
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Mündlicher Ausdruck
+Teilnehmer/in A und B
+Teil 1 Einander kennenlernen
+Unterhalten Sie sich mit Ihrer Partnerin bzw. Ihrem Partner über folgende Themen:
+Name
+Woher sie oder er kommt
+Wie sie oder er wohnt (Wohnung, Haus, Garten …)
+Familie
+Wo sie oder er Deutsch gelernt hat
+Was sie oder er macht (Schule, Studium, Beruf …)
+Sprachen (welche? wie lange? warum?)
+Die Prüfenden können außerdem noch weitere Fragen stellen.
+Mögliche Zusatzthemen für Prüfende sind
+– wie er oder sie das Wochenende verbringt
+– welche Hobbys er oder sie hat
+--- PAGE 21 ---
+ca. 15 Minuten Mündlicher Ausdruck
+19
+Übungstest 1
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Mündlicher Ausdruck
+Teilnehmer/in A
+Teil 2 Über ein Thema sprechen
+Sie haben in einer Zeitschrift etwas zum Thema „Gruppenreisen“ gelesen. Berichten Sie Ihrer Gesprächs-
+partnerin/Ihrem Gesprächspartner darüber.
+Ihre Gesprächspartnerin/Ihr Gesprächspartner hat eine andere Meinung dazu gelesen und berichtet Ihnen 
+auch darüber.
+Unterhalten Sie sich dann mit Ihrer Gesprächspartnerin/Ihrem Gesprächspartner über das Thema. Sagen 
+Sie Ihre Meinung und erzählen Sie von eigenen Erfahrungen. 
+Sabine Klostermann, 33 Jahre, Bürokauffrau
+„Ich verreise gern in einer Gruppe. 
+Allein reisen macht mir keinen Spaß. 
+Bei Gruppenreisen kann man neue 
+Leute kennen lernen und hat immer 
+Gesellschaft. Außerdem ist ein Rei -
+seführer dabei, der einem die Se -
+henswürdigkeiten zeigt.“  
+Gruppenreisen
+
+--- PAGE 22 ---
+20
+ca. 15 Minuten Mündlicher Ausdruck
+Übungstest 1
+Mündlicher Ausdruck
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Teilnehmer/in B 
+Teil 2 Über ein Thema sprechen
+Sie haben in einer Zeitschrift etwas zum Thema „Gruppenreisen“ gelesen. Berichten Sie Ihrer Gesprächs-
+partnerin/Ihrem Gesprächspartner darüber.
+Ihre Gesprächspartnerin/Ihr Gesprächspartner hat eine andere Meinung dazu gelesen und berichtet Ihnen 
+auch darüber.
+Unterhalten Sie sich dann mit Ihrer Gesprächspartnerin/Ihrem Gesprächspartner über das Thema. Sagen 
+Sie Ihre Meinung und erzählen Sie von eigenen Erfahrungen. 
+Jens Mühle, 39 Jahre, Physiker
+„Wenn man mit einer Gruppe unter-
+wegs ist, gibt es meist ein festes Pro-
+gramm. Daher reise ich immer allein. 
+Manchmal möchte ich ausschlafen, 
+manchmal etwas besichtigen. Ganz 
+nach Lust und Laune. In einer Gruppe 
+wäre das nicht möglich.“  
+Gruppenreisen
+
+--- PAGE 23 ---
+ca. 15 Minuten Mündlicher Ausdruck
+21
+Übungstest 1
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+© telc gGmbH, Frankfurt a. M., telc Deutsch B1, 2020
+Mündlicher Ausdruck
+Teilnehmer/in A und B
+Teil 3 Gemeinsam etwas planen
+Sie haben zwei Wochen Urlaub gemacht und in dieser Zeit einige nette Deutsche kennen gelernt. Vor dem 
+Ende des Urlaubs und bevor Ihre Bekannten alle wieder nach Hause fahren, möchten Sie eine Abschiedspar-
+ty feiern. Sie haben die Aufgabe, zusammen mit Ihrem Gesprächspartner/Ihrer Gesprächspartnerin diese 
+Party zu planen. Überlegen Sie sich, was alles zu tun ist und wer welche Aufgaben übernimmt. Sie haben 
+sich schon diese Liste gemacht. 
+Party
+• Wann?
+• Wo?
+• Essen
+• Getränke
+• Wer bezahlt wofür?
+• ...
+Entscheiden Sie zuerst, was Sie machen möchten und warum. 
+Tragen Sie Ihrem Partner Ihre Ideen vor und begründen Sie sie.
+Reagieren Sie auf die Ideen Ihres Partners bzw. Ihrer Partnerin und die Begründungen.
+Einigen Sie sich auf einen gemeinsamen Programmvorschlag.
+--- PAGE 24 ---
+Answer Sheet S30
+© telc g GmbH   9994-S3 0- 13 99 01
+  
+    
+www.telc.net 2232649334
+Geburtsort  ·  Pl ace of Bi rth  ·  Luga r de nacim ie nto  ·  Li eu de  naissan ce  ·  Luogo di  nascita  ·  Doğu m yeri  
+. .
+Pr üfung sdat um  ·  Da te  of Examin ation  ·  Fecha del examen  ·  Da te  d’ ex amen  ·  Data dell ’esa me  ·  Sına v tari hi  ·  
+. .2 0 1 9 0 7 1 7
+. .
+Geburtsdatum  ·  Date of Birth  ·  Fecha de nacimiento  ·  Date de naissance  ·  Data di nascita  ·  Doğum tarihi  
+. .19 95 0 42 3
+Beispiel: 23. April 1995
+Example: 23 April 1995
+Example: 17 July 2019
+Beispiel: 17. Juli 2019
+Fa mi liennam e  ·  Surnam e  ·  Ap elli do  ·  No m  ·  Cognome   ·  Soya dı  ·  
+Vorname  ·  First Na me  ·  Nombre  ·  Prénom  ·  Nome  ·  Adı  ·
+001 - Deut sch 
+002 - English 
+003 - Fr ançais  
+004 - Es paño l 
+0 05 - It aliano  
+0 06 - Po rt ug uê s 
+007 - Ma gy ar  
+008 - Polski  
+009 - 
+010 - Český jazy k
+011 - Türk çe  
+012 - 
+013 - ≹䈝 
+000 - andere/oth er
+Mu tterspra che  ·  Fi rst Language  ·  Lengua materna   ·  Langue maternel le  ·  Ma dreli ngua  ·  An ad ili  ·  
+mä nnlich  ·  male  ·  masculino  ·  masculin  ·  maschile  ·  er kek  
+weibli ch  ·  female  ·  fe menino  ·  féminin  ·  femminile   ·  kadın   
+Ge schlec ht  ·  Sex  ·  Sexo  ·  Sexe  ·  Sesso  ·  Cinsiyet i·
+Prüfun gsze ntru m  ·  Ex ami nation Cent re   ·  Ce ntro ex ami nador   ·  Ce nt re  d’ ex am en  ·  Centr o d’ esam e  ·  Sınav me rk ez i  ·  
+-S10-
+Testversion  ·  Test Version  ·  Versión del exam en  ·  Version d’exa me n  ·  Versione d’esame  ·  Sına v sü rü mü   ·  
+20190228_9994-S30-139901_HF_EAN.indd   1 28.02.2019   12:54:38
+--- PAGE 25 ---
+Answer Sheet S30
+© telc g GmbH   9994-S3 0- 13 99 01
+  
+    
+www.telc.net 2232649334
+Geburtsort  ·  Pl ace of Bi rth  ·  Luga r de nacim ie nto  ·  Li eu de  naissan ce  ·  Luogo di  nascita  ·  Doğu m yeri  
+. .
+Pr üfung sdat um  ·  Da te  of Examin ation  ·  Fecha del examen  ·  Da te  d’ ex amen  ·  Data dell ’esa me  ·  Sına v tari hi  ·  
+. .2 0 1 9 0 7 1 7
+. .
+Geburtsdatum  ·  Date of Birth  ·  Fecha de nacimiento  ·  Date de naissance  ·  Data di nascita  ·  Doğum tarihi  
+. .19 95 0 42 3
+Beispiel: 23. April 1995
+Example: 23 April 1995
+Example: 17 July 2019
+Beispiel: 17. Juli 2019
+Fa mi liennam e  ·  Surnam e  ·  Ap elli do  ·  No m  ·  Cognome   ·  Soya dı  ·  
+Vorname  ·  First Na me  ·  Nombre  ·  Prénom  ·  Nome  ·  Adı  ·
+001 - Deut sch 
+002 - English 
+003 - Fr ançais  
+004 - Es paño l 
+0 05 - It aliano  
+0 06 - Po rt ug uê s 
+007 - Ma gy ar  
+008 - Polski  
+009 - 
+010 - Český jazy k
+011 - Türk çe  
+012 - 
+013 - ≹䈝 
+000 - andere/oth er
+Mu tterspra che  ·  Fi rst Language  ·  Lengua materna   ·  Langue maternel le  ·  Ma dreli ngua  ·  An ad ili  ·  
+mä nnlich  ·  male  ·  masculino  ·  masculin  ·  maschile  ·  er kek  
+weibli ch  ·  female  ·  fe menino  ·  féminin  ·  femminile   ·  kadın   
+Ge schlec ht  ·  Sex  ·  Sexo  ·  Sexe  ·  Sesso  ·  Cinsiyet i·
+Prüfun gsze ntru m  ·  Ex ami nation Cent re   ·  Ce ntro ex ami nador   ·  Ce nt re  d’ ex am en  ·  Centr o d’ esam e  ·  Sınav me rk ez i  ·  
+-S10-
+Testversion  ·  Test Version  ·  Versión del exam en  ·  Version d’exa me n  ·  Versione d’esame  ·  Sına v sü rü mü   ·  
+20190228_9994-S30-139901_HF_EAN.indd   1 28.02.2019   12:54:38
+. .
+SNT MNT S Q P
+2
+11
+22
+33
+44
+55
+66
+77
+88
+99
+10 10
+ab cd ef gh ij
+ab cd ef gh ij
+ab cd ef gh ij
+ab cd ef gh ij
+ab cd ef gh ij
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+ab c
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+ab cd ef gh ij kl mn o
+ab cd ef gh ij kl mn o
+ab cd ef gh ij kl mn o
+ab cd e f gh ij kl mn o
+ab cd ef gh ij kl mn o
+ab cd e f gh ij kl mn o
+ab cd ef gh ij kl mn o
+ab cd ef gh ij kl mn o
+ab cd ef gh ij kl mn o
+ab cd ef gh ij kl mn o
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+7581649336
+ab cd ef gh ij kl x abc de fg hi jk lx1111
+2121
+1313
+4141
+1515
+16
+17
+18
+19
+20
+17
+18
+19
+20
+16
+ab cd ef gh ij kl x
+ab cd ef gh ij kl x
+ab cd ef gh ij kl x
+ab cd ef gh ij kl x
+abc de fg hi jk lx
+abc de fg hi jk lx
+abc de fg hi jk lx
+abc de fg hi jk lx
+20190228_9994-S30-139901_HF_EAN.indd   2 28.02.2019   12:54:40
+--- PAGE 26 ---
++–41
+42
+43
+44
+45
++–
++–
++–
++–
+46
+47
+48
+49
+50
++–
++–
++–
++–
++–
+51
+52
+53
+54
+55
++–
++–
++–
++–
++–
+56
+57
+58
+59
+60
++–
++–
++–
++–
++–
+3
+8471649335
+20190228_9994-S30-139901_HF_EAN.indd   3 28.02.2019   12:54:41
+--- PAGE 27 ---
++–41
+42
+43
+44
+45
++–
++–
++–
++–
+46
+47
+48
+49
+50
++–
++–
++–
++–
++–
+51
+52
+53
+54
+55
++–
++–
++–
++–
++–
+56
+57
+58
+59
+60
++–
++–
++–
++–
++–
+3
+8471649335
+20190228_9994-S30-139901_HF_EAN.indd   3 28.02.2019   12:54:41
+Code Examiner 1
+A BCD
+AB CD
+AB CD
+AB CD
+4
+3
+2
+1
+Part 1
+A BCD
+A BCD
+AB CD
+AB CD
+4
+3
+2
+1
+Part 2
+AB CD
+AB CD
+AB CD
+AB CD
+1
+2
+3
+4
+Part 3
+Code Examiner 2
+AB CD
+AB CD
+AB CD
+AB CD
+4
+3
+2
+1
+Part 3
+AB CD
+AB CD
+AB CD
+AB CD
+4
+3
+2
+1
+Part 2
+AB CD
+AB CD
+AB CD
+AB CD
+4
+3
+2
+1
+Part 1
+Familienname  ·  Surname  ·  Apellido  ·  Nom  ·  Cognome  ·  Soyadı  ·  Фамилия
+Vorname  ·  First Name  ·  Nombre  ·  Prénom  ·  Nome  ·  Adı  ·  Имя
+AB CD
+A BC D
+A BC D
+A BC D
+4
+3
+2
+1
+Part 2
+AB CD
+AB CD
+A BCD
+A BCD
+4
+3
+2
+1
+Part 3
+AB CD
+AB CD
+AB CD
+AB CD
+4
+3
+2
+1
+Part 1
+Examiner 1Examiner 2
+4
+-M10-
+Test Version
+Agreed Marks
+5069649335
+20190228_9994-S30-139901_HF_EAN.indd   4 28.02.2019   12:54:41
+--- PAGE 28 ---
+Testversion  ·  Test Version  ·  Versión del examen  ·  Version d’examen  ·  Versione d’esame  ·  Sınav sürümü  ·  Тестовая версия   
+Familienname  ·  Surname  ·  Apellido  ·  Nom  ·  Cognome  ·  Soyadı  ·  Фамилия   
+Vorname  ·  First Name  ·  Nombre  ·  Prénom  ·  Nome  ·  Adı  ·  Имя
+5
+5133649337
+for
+Raters
+20190228_9994-S30-139901_HF_EAN.indd   5 28.02.2019   12:54:42
+--- PAGE 29 ---
+Testversion  ·  Test Version  ·  Versión del examen  ·  Version d’examen  ·  Versione d’esame  ·  Sınav sürümü  ·  Тестовая версия   
+Familienname  ·  Surname  ·  Apellido  ·  Nom  ·  Cognome  ·  Soyadı  ·  Фамилия   
+Vorname  ·  First Name  ·  Nombre  ·  Prénom  ·  Nome  ·  Adı  ·  Имя
+5
+5133649337
+for
+Raters
+20190228_9994-S30-139901_HF_EAN.indd   5 28.02.2019   12:54:42
+Code Rater 1 Code Rater 2 Code telc Rater
+Rating 1 Rating 2t elc Rating 
+I
+IIII
+I
+IIIIII
+II
+I
+DCBA
+6
+DCBADCBA
+DCBA DCBA
+DCBADCBAIII DCBA
+DCBA
+Thema verfehlt?
+Wrong topic?
+Aufgabenbewältigung
+Task managemen t
+Komm. Gestaltung
+Comm. Design
+Formale Richtigkeit
+Accuracy
+Aufgabenbewältigung
+Task management
+Komm. Gestaltung
+Comm. Design
+Formale Richtigkeit
+Accuracy
+Aufgabenbewältigung
+Task management
+Komm. Gestaltung
+Comm. Design
+Formale Richtigkeit
+Accuracy
+Thema verfehlt?
+Wrong topic?
+Thema verfehlt?
+Wrong topic?
+onseyonseyonsey
+6613649331
+20190228_9994-S30-139901_HF_EAN.indd   6 28.02.2019   12:54:42
+--- PAGE 30 ---
+Informationen
+Übungstest 1
+28
+Markierungen auf dem   
+Antwortbogen S30
+Felder, die die Teilnehmerinnen und Teilnehmer ausfüllen
+Der Antwortbogen S30 ist ein dünnes Heft mit perforierten Blättern. Auf diesen übertragen die Teilneh -
+merinnen und Teilnehmer ihre Lösungen. Nur die Lösungen auf dem Antwortbogen S30 – deutlich markierte 
+Felder – werden erfasst und fließen somit in die Gesamtbewertung ein.
+Auf Seite 1 enthält der Antwortbogen ein Feld, in das die Teilnehmerinnen und Teilnehmer die vollständige 
+Fachnummer und Testversion eintragen. Diese befindet sich auf dem Aufgabenheft S10 unten links und 
+an der Tafel.
+Die Felder für die persönlichen Daten erscheinen in allen telc Sprachen, die Subtests hingegen werden 
+mit Piktogrammen dargestellt. Zum Ausfüllen der ovalen Antwortfelder sowie der personen- und 
+prüfungsbezogenen Datenfelder sollte ein weicher Bleistift benutzt werden. 
+Felder, die die Prüferinnen und Prüfer bzw. Bewerterinnen und Bewerter ausfüllen
+Die Prüferinnen bzw. Prüfer markieren auf Seite 4 das Ergebnis der Mündlichen Prüfung. Die Bewerterinnen 
+und Bewerter markieren auf Seite 6 ihre Bewertungen für den Subtest Schriftlicher Ausdruck. 
+www.telc.netTestversion 1061-S10-230101
+Schriftliche Prüfung
+1  Leseverstehen
+2  Sprachbausteine
+3  Hörverstehen
+DEUTSCH
+4 S chriftlicher Ausdruck 
+B1
+1061-S10-230101
+20181015_1023-S10-230101_JC_EAN.indd   1 15.10.18   15:34
+Answer Sheet S30
+© telc g GmbH   9994-S3 0- 13 99 01
+  
+    
+www.telc.net 2232649334
+Geburtsort  ·  Pl ace of Bi rth  ·  Luga r de nacim ie nto  ·  Li eu de  naissan ce  ·  Luogo di  nascita  ·  Doğu m yeri  
+. .
+Pr üfung sdat um  ·  Da te  of Examin ation  ·  Fecha del examen  ·  Da te  d’ ex amen  ·  Data dell ’esa me  ·  Sına v tari hi  ·  
+. .2 0 1 9 0 7 1 7
+. .
+Geburtsdatum  ·  Date of Birth  ·  Fecha de nacimiento  ·  Date de naissance  ·  Data di nascita  ·  Doğum tarihi  
+. .19 95 0 42 3
+Beispiel: 23. April 1995
+Example: 23 April 1995
+Example: 17 July 2019
+Beispiel: 17. Juli 2019
+Fa mi liennam e  ·  Surnam e  ·  Ap elli do  ·  No m  ·  Cognome   ·  Soya dı  ·  
+Vorname  ·  First Na me  ·  Nombre  ·  Prénom  ·  Nome  ·  Adı  ·
+001 - Deut sch 
+002 - English 
+003 - Fr ançais  
+004 - Es paño l 
+0 05 - It aliano  
+0 06 - Po rt ug uê s 
+007 - Ma gy ar  
+008 - Polski  
+009 - 
+010 - Český jazy k
+011 - Türk çe  
+012 - 
+013 - ≹䈝 
+000 - andere/oth er
+Mu tterspra che  ·  Fi rst Language  ·  Lengua materna   ·  Langue maternel le  ·  Ma dreli ngua  ·  An ad ili  ·  
+mä nnlich  ·  male  ·  masculino  ·  masculin  ·  maschile  ·  er kek  
+weibli ch  ·  female  ·  fe menino  ·  féminin  ·  femminile   ·  kadın   
+Ge schlec ht  ·  Sex  ·  Sexo  ·  Sexe  ·  Sesso  ·  Cinsiyet i·
+Prüfun gsze ntru m  ·  Ex ami nation Cent re   ·  Ce ntro ex ami nador   ·  Ce nt re  d’ ex am en  ·  Centr o d’ esam e  ·  Sınav me rk ez i  ·  
+-S10-
+Testversion  ·  Test Version  ·  Versión del exam en  ·  Version d’exa me n  ·  Versione d’esame  ·  Sına v sü rü mü   ·  
+20190228_9994-S30-139901_HF_EAN.indd   1 28.02.2019   12:54:38
+   
+ richtig  falsch
+--- PAGE 31 ---
+Informationen
+Übungstest 1
+29
+Schriftliche Prüfung
+Die Schriftliche Prüfung dauert 150 Minuten und besteht aus den Subtests Leseverstehen , Sprachbau-
+steine, Hörverstehen und Schriftlicher Ausdruck.
+Vor Beginn der Prüfung füllen die Teilnehmerinnen und Teilnehmer alle Datenfelder des Antwortbogens 
+S30 aus. Um Missverständnisse zu vermeiden, schreibt die Prüfungsaufsicht den Namen des Prüfungs -
+zentrums, die Datumsangabe sowie die vollständige Nummer der Testversion, die links unten auf dem 
+Aufgabenheft S10 angegeben ist, an die Tafel. Die Prüfungsaufsicht informiert die Teilnehmenden, dass 
+Hilfsmittel wie Wörterbücher, Handys oder sonstige elektronische Geräte nicht erlaubt sind (Prüfungsord-
+nung) und jeder Täuschungsversuch zum sofortigen Ausschluss  von der Prüfung führen würde.
+Nachdem die Teilnehmenden ihre persönlichen Daten auf dem Antwortbogen S30 eingetragen haben, 
+teilt die Prüfungsaufsicht die Aufgabenhefte aus. Ab diesem Moment stehen den Teilnehmenden 90 Mi-
+nuten für die Subtests Leseverstehen und Sprachbausteine zur Verfügung. Die Uhrzeit für Beginn und Ende 
+dieses Prüfungsabschnitts sollte für alle Teilnehmenden gut sichtbar vermerkt werden. Am Ende der 
+Bearbeitungszeit für die Subtests Leseverstehen und Sprachbausteine sammelt die Prüfungsaufsicht Sei-
+te 2 des Antwortbogens S30 ein.
+Im Anschluss fahren die Teilnehmenden mit dem Subtest Hörverstehen  fort. Das Abspielen der Tonauf -
+nahmen darf während dieses Subtests nicht unterbrochen werden. Nach dem Subtest Hörverstehen sam-
+melt die Prüfungsaufsicht Seite 3 des Antwortbogens S30 ein. 
+Nach 30 Minuten, die für den Subtest Schriftlicher Ausdruck zur Verfügung stehen, sammelt die Aufsicht 
+Seite 5 und 6 des Antwortbogens S30 sowie alle Aufgabenhefte und Notizen der Teilnehmenden ein. Die 
+Schriftliche Prüfung ist damit beendet.
+ 
+--- PAGE 32 ---
+Informationen
+Übungstest 1
+30
+Mündliche Prüfung
+Bei der Mündlichen Prüfung ist für eine Paarprüfung eine Dauer von ca. 15 Minuten vorgesehen. Die 
+Prüfung wird grundsätzlich als Paarprüfung durchgeführt, d. h., pro Prüfungsdurchgang wird eine Zweier-
+gruppe gebildet. Die bzw. der Prüfungsverantwortliche entscheidet über die geeignete Zusammensetzung 
+der Prüfungsgruppen. Meldet sich nur eine Person zur Prüfung an, darf eine Einzelprüfung abgenommen 
+werden. In diesem Fall übernimmt eine bzw. einer der beiden Prüfenden die Rolle der bzw. des zweiten 
+Prüfungsteilnehmenden. Die Mündliche Prüfung wird von zwei telc lizenzierten Prüfenden durchgeführt.
+Vor der Prüfung sollte ein Zeitplan erstellt werden, der für jeden Prüfungsdurchgang 20 Minuten vorsieht. 
+Da jeweils eine Vorbereitungszeit von 20 Minuten vor der Prüfung vorgesehen ist, sind für das erste Paar 
+20 Minuten einzuplanen, bevor die Prüfung beginnt.
+Die Mündliche Prüfung besteht aus der Vorbereitung sowie den Teilen Einander kennenlernen , Über ein 
+Thema sprechen und Gemeinsam etwas planen.
+Vorbereitung
+Im Vorbereitungsraum erhalten die Teilnehmerinnen bzw. Teilnehmer alle Aufgabenblätter. Um sich auf die    
+Prüfung vorzubereiten, haben sie 20 Minuten Zeit. 
+Die Teilnehmenden dürfen sich während der Vorbereitungszeit Notizen machen, die sie im Prüfungsge -
+spräch verwenden können. Dazu werden vom Prüfungszentrum gestempelte Blätter zur Verfügung gestellt, 
+die im Vorbereitungsraum bereitliegen müssen. Für ihre Vorbereitungen verwenden die Teilnehmenden 
+ausschließlich diese gestempelten Blätter. Auf den Aufgabenblättern dürfen keine Notizen gemacht wer-
+den. Die Teilnehmenden dürfen lediglich ihre Notizen in den Prüfungsraum mitnehmen. Während der 
+Prüfung sollten diese nicht vom Blatt abgelesen werden.
+Im Vorbereitungsraum muss eine Aufsichtsperson sicherstellen, dass die Teilnehmenden während der 
+Vorbereitungszeit nicht miteinander reden und keine Hilfsmittel wie Wörterbücher, Handys oder sonstige 
+elektronische Geräte etc. benutzen.
+Teil 1 Einander kennenlernen (ca. 3 Minuten)
+Im ersten T eil der Mündlichen Prüfung haben die Teilnehmenden die Gelegenheit, sich mit ihrer Gesprächs-
+partnerin bzw. ihrem Gesprächspartner bekanntzumachen. Sie sollen über sich erzählen und der Ge -
+sprächspartnerin bzw. dem -partner Fragen stellen. Die Stichpunkte auf dem Aufgabenblatt dienen zur 
+Orientierung, wobei die Teilnehmenden auch über andere Themen sprechen können. Die Prüfenden kön-
+nen ein zusätzliches Thema, das nicht auf dem Aufgabenblatt steht, ansprechen.
+Teil 2 Über ein Thema sprechen (ca. 6 Minuten)
+Im zweiten T eil der Mündlichen Prüfung haben die Teilnehmenden unterschiedliche Aufgabenblätter mit 
+kontroversen Meinungen zu einem Thema. Zunächst informieren sie einander über diese Meinungen. 
+Danach tauschen sie sich über das Thema aus, wobei sie auch über ihre eigenen Erfahrungen berichten 
+und ihre Ansichten äußern sollen.
+Teil 3 Gemeinsam etwas planen (ca. 6 Minuten)
+Im letzten T eil der Mündlichen Prüfung sollen die T eilnehmenden gemeinsam ein vorgegebenes Vorhaben 
+(Veranstaltung, Feier, Konzert, Ausstellung, Sportereignis etc.) organisieren. Dabei sollen sie selbst Ideen 
+und Vorschläge einbringen und auf Vorschläge reagieren. Sie sollen klären, was zu tun ist und wer welche 
+Aufgabe übernimmt.
+--- PAGE 33 ---
+Informationen
+Übungstest 1
+31
+Was wird von den Teilnehmerinnen und Teilnehmern erwartet? 
+Die Teilnehmenden sollen so miteinander reden und auf die Äußerungen der Partnerin oder des Partners 
+eingehen, dass ein möglichst lebendiges und authentisches Gespräch entsteht. Nachfragen und gegen -
+seitige Hilfestellungen werden positiv bewertet.
+Was tun die Prüferinnen und Prüfer?
+In allen Prüfungsteilen kommt es darauf an, dass die Teilnehmenden ein möglichst natürliches Gespräch 
+führen. Der gewünschte Gesprächsverlauf sollte durch die richtige Sitzordnung unterstützt werden. So 
+sollten sich die Teilnehmenden gegenseitig gut im Blick haben, damit sie möglichst wenig versucht sind, 
+in Richtung der Prüfenden zu sprechen. Die Entfernung zwischen den Teilnehmenden und Prüfenden sollte 
+so groß sein, dass das Gespräch zwischen den Teilnehmenden nicht von den Prüfenden, die währenddes-
+sen ihre Bewertung vornehmen, gestört wird.
+Die Prüferinnen und Prüfer achten darauf, dass die Zeitvorgaben eingehalten werden, und leiten von einem 
+Prüfungsteil zum nächsten über. Eine Prüferin bzw. ein Prüfer übernimmt die Rolle der Moderatorin bzw. 
+des Moderators (Interlokutor). Die bzw. der andere Prüfende hat die Rolle der Beobachterin bzw. des Be-
+obachters (Assessor). Es wird empfohlen, die Rollenverteilung zwischen Interlokutor und Assessor während 
+eines Prüfungsgesprächs beizubehalten. 
+Die Prüferin bzw. der Prüfer, die/der als Interlokutor das Gespräch leitet, stellt den Teilnehmenden die 
+zweite Prüferin bzw. den zweiten Prüfer und sich selbst vor. Danach erläutert sie/er kurz, dass die Mündliche 
+Prüfung aus drei Teilen besteht, und beginnt mit dem ersten Teil der Prüfung.
+Wenn die Teilnehmenden den ersten Teil der Mündlichen Prüfung – Einander kennenlernen – abgeschlos-
+sen haben, leitet der Interlokutor zum zweiten Teil – Über ein Thema sprechen – und im Anschluss daran 
+zum dritten Teil – Gemeinsam etwas planen – über.
+Der Redeanteil des Interlokutors ist während des gesamten Prüfungsgesprächs möglichst gering. Er 
+schreitet nur dann ein, wenn eine oder einer der Teilnehmenden im Gespräch zu stark dominiert oder sich 
+nicht aktiv beteiligt. In diesem Fall spricht er die Teilnehmerin bzw. den Teilnehmer mit dem geringeren 
+Redeanteil direkt an, um sie oder ihn in das Gespräch einzubeziehen.
+Sollte das Gespräch aufgrund von Missverständnissen oder zu großen sprachlichen Defiziten an einem 
+Punkt stocken oder abbrechen, greift der Interlokutor vorsichtig ein und bringt es wieder in Gang. Geeig-
+net sind vor allem offene Fragen wie „Was genau meinen Sie damit?“, „Könnten Sie das näher erklären?“ 
+oder auch das Wiederholen bzw. Aufgreifen von Aussagen der Teilnehmenden.
+Details zum Ablauf
+Jedes Prüfungsgespräch ist anders, keins gleicht dem anderen. Die folgenden Ausführungen stellen den 
+möglichen Ablauf eines Prüfungsgesprächs dar und geben Beispiele für Einleitungen, Überleitungen und 
+Gesprächsimpulse. Sie sollen die Atmosphäre während der Prüfung und die Aufgaben der Prüferinnen 
+bzw. Prüfer veranschaulichen. Um die Teilnehmerinnen und Teilnehmer zum Sprechen zu motivieren und 
+das Gespräch in Gang zu halten, sollten die Prüferinnen bzw. Prüfer möglichst offene Fragen (W-Fragen: 
+„Was meinen Sie …?“, „Wie war das …?“) stellen.
+--- PAGE 34 ---
+Informationen
+Übungstest 1
+32
+Teil 1: Einander kennenlernen
+Die Prüferinnen bzw. Prüfer stellen sich vor und der Interlo-
+kutor bittet die Teilnehmerinnen und Teilnehmer, sich einan-
+der vorzustellen.
+Der Interlokutor wendet sich an Teilnehmerin/Teilnehmer A.
+Außerdem kann der Interlokutor noch ein weiteres Thema 
+ansprechen. 
+Willkommen bei der Mündlichen Prüfung telc Deutsch B1. 
+Mein Name ist …, und das ist meine Kollegin/mein Kollege 
+… Die Mündliche Prüfung hat drei Teile.
+Beginnen wir nun mit Teil 1. Wollen Sie beginnen? 
+„...“ 
+Teil 2: Über ein Thema sprechen
+Der Interlokutor leitet über zu Teil 2 des Prüfungsgesprächs. 
+Wenn die T eilnehmenden ins Stocken kommen oder den 
+Redebeitrag abbrechen, gibt der Interlokutor Gesprächsim-
+pulse.
+Er wendet sich an Teilnehmerin/Teilnehmer B. 
+Er wendet sich an Teilnehmerin/Teilnehmer A.
+Der Interlokutor fordert nun die Teilnehmenden auf, sich zu 
+dem Thema auszutauschen und auch ihre eigenen Erfah -
+rungen und Meinungen dazu einzubringen.
+Vielen Dank. Nun kommen wir zu Teil 2. Sie haben beide 
+unterschiedliche Aufgabenblätter mit Meinungen  zu einem 
+Thema bekommen.
+Frau/Herr ..., möchten Sie anfangen? Worum geht es auf 
+dem Blatt, das Sie bekommen haben?
+Frau/Herr ..., und worum geht es auf dem Blatt, das Sie be-
+kommen haben?
+Wie sehen Sie beide das? Wie ist Ihre Meinung dazu?
+Teil 3: Gemeinsam etwas planen
+Der Interlokutor leitet über zu Teil 3. Wenn die Teilneh -
+menden ins Stocken kommen oder eine/r der Teilneh -
+menden das Gespräch zu stark dominiert, gibt der Interlo -
+kutor entsprechende Gesprächsimpulse.
+Er wendet sich an Teilnehmerin/Teilnehmer A. 
+Er wendet sich an Teilnehmerin/Teilnehmer B.
+Vielen Dank. Nun machen wir weiter mit Teil 3. Das Aufga -
+benblatt dazu kennen Sie ja schon. Sie sollen gemeinsam 
+etwas planen. Zum Schluss einigen Sie sich bitte darüber, 
+was zu tun ist und wer welche Aufgabe übernimmt.
+Fangen Sie doch bitte an, Frau/Herr ..., und sagen Sie, wel -
+che Vorschläge Sie haben. 
+Frau/Herr ..., sagen Sie bitte Ihre Meinung dazu und machen 
+Sie auch Vorschläge. 
+Ende der Prüfung
+Der Interlokutor beendet die Prüfung. Vielen Dank. Die Prüfung ist beendet. Das Ergebnis wird Ih -
+nen in wenigen Wochen mitgeteilt.
+Bewertungen und Beschlussfassung
+Während des Prüfungsgesprächs steht beiden Prüfenden je ein Bewertungsbogen M10 zur Verfügung. 
+Darauf halten sie unabhängig voneinander ihre jeweiligen Bewertungen fest. Jeder Prüfungsteil wird nach 
+den vier Bewertungskriterien für den Mündlichen Ausdruck  bewertet. Nachdem die Teilnehmenden den 
+Raum verlassen haben, vergleichen die Prüfenden ihre Bewertungen und einigen sich auf eine Endbewer-
+tung. Im Anschluss daran übertragen sie ihre eigenen Bewertungen sowie die gemeinsame Bewertung 
+mit einem Bleistift auf den Antwortbogen S30 der/des Teilnehmenden. Für die Beschlussfassung und 
+Übertragung auf den S30 stehen den Prüfenden ca. 5 Minuten zur Verfügung.
+--- PAGE 35 ---
+telc gGmbH
+1
+Ausdrucksfähigkeit
+Expression
+Expresión
+Capacité d’expression
+Capacità espressiva
+Anlatım
+Выразительность
+312
+B
+2
+Aufgabenbewältigung
+Task Management
+Cumplimiento de la tarea
+Réalisation de la tâche
+Padronanza del compito
+Görevi yerine getirme
+Умение справляться
+с задачей
+3
+Formale Richtigkeit
+Language
+Corrección lingüística
+Correction linguistique
+Biçimsel doğruluk
+Correttezza formale
+Формальная 
+правильность
+4
+Aussprache /Intonation
+Pronunciation /Intonation
+Pronunciación/E ntonación
+Prononciation/I ntonation
+Pronuncia/Intonazione
+Söyleyiş  / Tonlama
+Произношение и
+интонация
+312
+TEIL  •  PART  •  PAR TE  •  PAR TIE  
+PARTE   •  BÖLÜM  •  ЧАСТЬ  •  ﺟﺰء
+TEIL  •  PART  •  PAR TE  •  PAR TIE  
+PARTE   •  BÖLÜM  •   ЧАСТЬ  •  ﺟﺰء
+Vorname • First name • Nombre • Prénom
+Nome • Adı • Им я • اﻻﺳﻢ
+Vorname • First name • Nombre • Prénom
+Nome • Adı • Им я • اﻻﺳﻢ
+Nachname • Surname • Apellido • Nom
+Cognome • Soyadı • Фамилия  • اﺳﻢ اﻟﻌﺎﺋﻠﺔ
+Nachname • Surname • Apellido • Nom
+Cognome • Soyadı • Фамилия  • اﺳﻢ اﻟﻌﺎﺋﻠﺔ
+A
+Teilnehmende/r • Test Taker Candidato • Candidat
+Кандидат •  ﻣﺸﺎرك/ﻣﺸﺎرﻛﺔCandidato • Katılımcı  
+Teilnehmende/r • Test Taker
+Candidato • Katılımcı
+M10
+Prüfungszentrum • Examination centre • Centro examinador • Centre d’examen • Centro d’esame • Sınav merkezi • Экзаменационное учреждение  • ﻣﺮﻛﺰ اﻻﻣﺘﺤﺎن
+Datum • Date • Fecha • Date • Data • Tarih • Д ата • اﻟﺘﺎرPrüfende/r • Examiner • Examinador • Examinateur • Esaminatore • Sınav yetkilisi • Экзаменатор • اﻟﻤُﻤﺘﺤﻦ/اﻟﻤُﻤﺘﺤﻨﺔ
+AB CD AB CD AB CD AB CD AB CD AB CD
+AB CD AB CD AB CD AB CD AB CD AB CD
+AB CD AB CD AB CD AB CD AB CD AB CD
+AB CD AB CD AB CD AB CD AB CD AB CD
+Candidato • Candidat
+Кандидат •  ﻣﺸﺎرك/ﻣﺸﺎرﻛﺔ 
+اﻟﻘﺪرة ﻋﻠﻰ اﻟﺘﻌﺒ
+ﺗﻨﻔ
+ﺳﻼﻣﺔ اﻟﺘﻌﺒ
+ﻣﺨﺎرج اﻟﺤﺮوف/ ﻧﺒﺮة اﻟﺼﻮت
+20190424_9994-M10-000000_HF_EAN.indd   2 24.04.2019   12:21:35
+--- PAGE 36 ---
+Informationen
+Übungstest 1
+34
+Bewertungskriterien   
+Mündlicher Ausdruck
+Die Mündliche Prüfung besteht aus drei Teilen. Diese werden unabhängig voneinander nach folgenden 
+vier Kriterien bewertet:
+  Kriterium 1 Ausdrucksfähigkeit
+  Kriterium 2 Aufgabenbewältigung
+  Kriterium 3 Formale Richtigkeit
+  Kriterium 4 Aussprache und Intonation
+Kriterium 1 Ausdrucksfähigkeit
+Bewertet werden:
+• die inhalts- und rollenbezogene Ausdrucksweise
+• der Wortschatz
+• die Verwirklichung der Sprechabsicht
+Die Ausdrucksfähigkeit ist
+Punkte
+Teil 1 Teil 2 u. 3
+A voll angemessen. 4 8
+B im Großen und Ganzen angemessen. 3 6
+C kaum noch akzeptabel. 1 2
+D durchgehend nicht ausreichend. 0 0
+Kriterium 2 Aufgabenbewältigung
+Bewertet werden:
+• die Gesprächsbeteiligung
+• die Verwendung von Strategien (Diskursstrategien und, falls erforderlich, Kompensationsstrategien)
+• die Flüssigkeit der Rede
+Die Aufgabenbewältigung ist
+Punkte
+Teil 1 Teil 2 u. 3
+A voll angemessen. 4 8
+B im Großen und Ganzen angemessen. 3 6
+C kaum noch akzeptabel. 1 2
+D durchgehend nicht ausreichend. 0 0
+--- PAGE 37 ---
+Informationen
+Übungstest 1
+35
+Kriterium 3 Formale Richtigkeit
+Bewertet werden Syntax und Morphologie.
+Die/ Der Teilnehmende macht
+Punkte
+Teil 1 Teil 2 u. 3
+A keine oder nur vereinzelte Fehler. 4 8
+B Fehler, die das Verständnis nicht beeinträchtigen. 3 6
+C Fehler an zentralen Stellen, die das Verständnis erheblich 
+ beeinträchtigen. 1 2
+D so viele Fehler, dass die Kommunikation zu scheitern droht bzw. 
+scheitert.
+0 0
+Kriterium 4 Aussprache und Intonation
+Abweichungen von Aussprache und Intonation
+Punkte
+Teil 1 Teil 2 u. 3
+A beeinträchtigen das Verständnis nicht. 3 6
+B erschweren gelegentlich das Verständnis. 2 4
+C erschweren das Verständnis erheblich. 1 2
+D machen das Verständnis (nahezu) unmöglich. 0 0
+telc Prüferinnen und Prüfer
+Die Prüferinnen und Prüfer, die die mündliche Leistung der Teilnehmenden bewerten, haben eine gültige 
+telc Prüferlizenz Deutsch B1–B2. Sie erhalten diese Lizenz durch die erfolgreiche Teilnahme an telc Prü-
+ferqualifizierungen. Voraussetzung für die Teilnahme sind Unterrichtserfahrung in Deutsch als Fremdspra-
+che sowie Kenntnis der Kompetenzstufen und des handlungsorientierten Ansatzes des Gemeinsamen 
+europäischen Referenzrahmens für Sprachen. telc Prüferlizenzen haben eine Gültigkeit von drei Jahren. Die 
+Verlängerung um je weitere drei Jahre erfolgt durch eine erneute telc Prüferqualifizierung (Auffrischung).
+Wie wird bewertet?
+Während des Gesprächs bewerten die Prüfenden unabhängig voneinander die sprachlichen Leistungen 
+der Prüfungsteilnehmenden und halten die jeweiligen Bewertungen auf ihrem Bewertungsbogen M10 fest. 
+Nachdem die Teilnehmenden den Raum verlassen haben, gleichen die Prüfenden ihre Ergebnisse ab und 
+einigen sich auf eine gemeinsame Bewertung. Danach übertragen sie die Bewertungen, die sie unabhän-
+gig voneinander gemacht haben, und die gemeinsame Bewertung auf Seite 4 des Antwortbogens S30.
+Berechnung des Teilergebnisses der Mündlichen Prüfung
+Die Teilnehmenden können im ersten Teil – Einander kennenlernen – maximal 15 Punkte, in dem zweiten 
+Teil – Über ein Thema sprechen – und in dem dritten Teil – Gemeinsam etwas planen – jeweils maximal 
+30 Punkte erreichen. In der gesamten Mündlichen Prüfung sind also 75 Punkte möglich. Dies entspricht 
+einem Anteil von 25 Prozent der Höchstpunktzahl von insgesamt 300.
+--- PAGE 38 ---
+Informationen
+Übungstest 1
+36
+Bewertungskriterien  
+Schriftlicher Ausdruck
+  Inhaltliche Angemessenheit
+A B C D*
+Kriterium I: 
+Aufgabenbewältigung
+Alle vier Leitpunkte  werden 
+inhaltlich angemessen 
+bearbeitet.
+Drei Leitpunkte  werden 
+inhaltlich angemessen 
+bearbeitet.
+Zwei Leitpunkte  werden 
+inhaltlich angemessen 
+bearbeitet.
+Nur ein oder kein Leit -
+punkt wird inhaltlich 
+angemessen bearbeitet.
+*  Hat der T ext mit dem Schreibanlass keine oder kaum eine Verbindung, muss bei allen Kriterien D vergeben werden. Auf dem Antwortbogen S30 wird dann bei Thema verfehlt 
+das Feld ja markiert. Ist nur die Situierung verfehlt oder nur ein oder kein Leitpunkt inhaltlich angemessen bearbeitet, wird zwar Kriterium I auf D gesetzt, aber dennoch die 
+sprachliche Angemessenheit, d. h. Kriterium II und III, bewertet.
+  
+  Sprachliche Angemessenheit
+A B C D
+B1 gut erfüllt B1 erfüllt A2 A1 oder darunter
+Schreib-
+leistung 
+liegt …
+… im oberen Bereich des 
+Zielniveaus.
+… auf dem Zielniveau. … auf der Stufe unterhalb 
+des Zielniveaus.
+… zwei Stufen oder mehr 
+unter dem Zielniveau.
+Kriterium II:
+Kommunikative Gestaltung
+Kann mit Hilfe von ge-
+bräuchlichsten Redemitteln 
+ein breites Spektrum von 
+Sprachfunktionen realisie -
+ren und auf sie reagieren.
+Verfügt über ein hinrei -
+chend breites Spektrum 
+sprachlicher Mittel , um gut 
+zurechtzukommen. Der 
+Wortschatz reicht aus, um 
+die wichtigsten Aspekte 
+eines Gedankens schriftlich 
+mit hinreichender Genauig -
+keit zu erklären und eigene 
+Überlegungen auszudrü -
+cken, macht aber noch 
+Fehler, wenn es darum geht, 
+komplexere Sachverhalte 
+auszudrücken.
+Kann eine Reihe von 
+Einzelelementen  zu einer 
+linearen, zusammenhän -
+genden Äußerung verbin -
+den.
+Kann mit Hilfe von ge-
+bräuchlichsten Redemitteln 
+ein hinreichend breites 
+Spektrum von Sprachfunkti -
+onen realisieren und auf sie 
+reagieren.
+Verfügt über genügend 
+sprachliche Mittel , um 
+zurechtzukommen. Der 
+Wortschatz reicht aus, um 
+– manchmal mit Hilfe von 
+einigen Umschreibungen – 
+über vertraute Themen 
+schreiben zu können, macht 
+aber noch elementare 
+Fehler, wenn es darum geht, 
+komplexere Sachverhalte 
+auszudrücken. Kann eine 
+Reihe von kurzen und 
+einfachen Einzelelemen -
+ten zu einer linearen, 
+zusammenhängenden 
+Äußerung verbinden.
+Kann elementare Sprach -
+funktionen anwenden, z. B. 
+auf einfache Art Informatio -
+nen austauschen oder 
+Bitten vorbringen.
+Verfügt über ein Repertoire 
+an elementaren sprachli -
+chen Mitteln , die es 
+ermöglichen, Alltagssituati -
+onen mit voraussagbaren 
+Inhalten zu bewältigen. 
+Verfügt über genügend 
+Wortschatz, um in vertrauten 
+Situationen routinemäßige 
+alltägliche Angelegenheiten 
+zu erledigen.
+Kann die häufigsten 
+Konnektoren  (und, aber, 
+weil) benutzen, um einfache 
+Sätze und Wortgruppen 
+miteinander zu verbinden.
+Kann einen elementaren 
+sozialen Kontakt herstellen, 
+indem die einfachsten 
+alltäglichen Höflichkeits -
+formeln zur Begrüßung und 
+Verabschiedung benutzt 
+werden.
+Verfügt über ein sehr 
+elementares Spektrum 
+einfacher Wendungen  in 
+Bezug auf persönliche 
+Dinge und Bedürfnisse 
+konkreter Art. Verfügt über 
+einen elementaren Vorrat 
+an einzelnen Wörtern und 
+Wendungen, die sich auf 
+bestimmte konkrete 
+Situationen beziehen. 
+Kann Wörter und Wort -
+gruppen durch sehr 
+einfache Konnektoren  
+wie und oder dann 
+verbinden.
+Kriterium III:
+Formale Richtigkeit
+Zeigt im Allgemeinen eine 
+gute Beherrschung der 
+Grammatik trotz Einflüssen 
+der Erstsprache. Zwar 
+kommen vereinzelt 
+systematische Fehler  vor, 
+aber es bleibt klar, was 
+ausgedrückt werden soll.
+Rechtschreibung, Zeichen -
+setzung und Gestaltung sind 
+exakt genug, sodass man 
+den Text meistens gut 
+verstehen kann.
+Zeigt eine ausreichende 
+Beherrschung der Gramma -
+tik trotz deutlicher Einflüsse 
+der Erstsprache. Zwar kom -
+men systematische Fehler  
+vor, aber es bleibt überwie -
+gend klar, was ausgedrückt 
+werden soll.
+Rechtschreibung, Zeichen -
+setzung und Gestaltung sind 
+exakt genug, sodass man 
+den Text meistens verstehen 
+kann.
+Kann einige einfache 
+Strukturen korrekt verwen -
+den, macht aber noch 
+systematische, elementa -
+re Fehler, hat z. B. die 
+Tendenz, Zeitformen zu 
+vermischen oder zu 
+vergessen, die Subjekt-
+Verb-Kongruenz zu 
+markieren. Trotzdem wird in 
+der Regel klar, was 
+ausgedrückt werden soll.
+Die Rechtschreibung ist 
+häufig phonetisch. 
+Zeigt nur eine begrenzte 
+Beherrschung einiger 
+weniger einfacher 
+grammatischer Struktu -
+ren und Satzmuster in 
+einem auswendig gelernten 
+Repertoire.
+Kann vertraute Wörter und 
+kurze Redewendungen 
+abschreiben. 
+Man kann den Text nur 
+ansatzweise verstehen.
+--- PAGE 39 ---
+Informationen
+Übungstest 1
+37
+Kriterium I Aufgabenbewältigung
+Der T ext dokumentiert die Realisierung der Aufgabenstellung bezüglich persönlicher oder halbformeller 
+E-Mails. Die Lernenden können Beschreibungen zu Themen aus dem alltäglichen (beruflichen) Bereich 
+und dem persönlichen Interessengebiet formulieren und dazu Stellung nehmen. Die Realisierung ist sowohl 
+inhaltlich als auch im Ausdruck dem Niveau B1 angemessen. 
+Ein Leitpunkt gilt als erfüllt, wenn
+• er sinnvoll bearbeitet und noch verständlich ist und sich auf die Aufgabenstellung bezieht. Z. B. kann 
+der Vorschlag, gemeinsam etwas zu unternehmen, angenommen, abgelehnt oder mit einem Gegen-
+vorschlag beantwortet werden.
+• es sich nur um einen, ggf. nur kurzen, Satz handelt.
+• er zusammen mit einem zweiten Leitpunkt in nur einem Satz behandelt wird.
+• bei einer Aufgabenstellung bestehend aus zwei Komponenten oder im Plural nur eine Antwort formu-
+liert ist.
+Bezieht sich der T ext nicht oder kaum auf die Aufgabenstellung, gilt Thema verfehlt und damit D in allen 
+Kriterien. Greift der T ext zwar das Thema der Aufgabe auf, passt aber nicht zur Situierung, wird lediglich 
+Kriterium I mit D bewertet.
+Beispiel: 
+Man soll eine Einladung vom Kursleiter annehmen. 
+Thema verfehlt: Der Prüfungsteilnehmende schreibt eine Entschuldigung an den Kursleiter. 
+Situierung verfehlt: Der Prüfungsteilnehmende schreibt eine Einladung an den Kursleiter.
+Kriterium II Kommunikative Gestaltung
+Hier geht es um das Spektrum der Ausdrucksmöglichkeiten sowie um Strukturierung und T extlogik. Bewertet 
+werden sowohl Kohäsion als auch Kohärenz (T extlogik, Konnektoren, Register, Wortschatzspektrum) unter 
+anderem durch diskurssteuernde Verknüpfungselemente, die die Äußerungseinheiten zu einem semanti-
+schen Gefüge verbinden. Bei dieser Aufgabe soll eine persönliche oder halbformelle E-Mail verfasst werden. 
+Daher sind T extsortenmerkmale des Briefes (Absender, Empfänger, Datum, Betreffzeile) nicht gefordert.
+A wird nicht gegeben,
+• wenn die T extsortenmerkmale einer persönlichen oder halbformellen E-Mail fehlen.
+• wenn das falsche Register gewählt wurde oder der Gebrauch schwankt.
+• wenn die Leitpunkte unverbunden nebeneinander stehen.
+• wenn die Sätze überwiegend mit Ich oder Wir beginnen.
+C oder D wird gegeben,
+• bei gravierenden Verstößen in puncto Adressatenbezug und Register, wenn der T ext dadurch an zent-
+ralen Stellen unklar bzw. widersprüchlich wird, auch wenn Anrede, Grußformel etc. stimmen, und/oder 
+bei völlig fehlenden oder unsinnigen Verknüpfungen.
+Kriterium III Formale Richtigkeit
+Hier gilt das Primat der Verständlichkeit. So fallen z. B. Endungsfehler und Genusfehler weniger ins Gewicht 
+als Kongruenzfehler etc.
+Sofern Fehler ein zügiges Erfassen des T extinhaltes nicht behindern, ist je nach T ext- und Fehlermenge 
+sowie nach Fehlerart die Bewertung A oder B möglich.
+Wird Kriterium III mit D bewertet, können die Kriterien I und II mit C, B oder A bewertet sein.
+--- PAGE 40 ---
+Informationen
+Übungstest 1
+38
+telc Bewerterinnen und Bewerter
+Die Bewerterinnen und Bewerter, die die Schreibleistung der Teilnehmenden bewerten, besitzen die gültige 
+telc Bewerterlizenz Deutsch A1–A2–B1–B2. Diese erhalten sie durch die erfolgreiche Teilnahme an einer 
+telc Bewerterqualifizierung. Voraussetzung für die Teilnahme sind Unterrichtserfahrung in Deutsch als 
+Fremdsprache sowie Kenntnis der Kompetenzstufen und des handlungsorientierten Ansatzes des Gemein-
+samen europäischen Referenzrahmens für Sprachen. telc Bewerterlizenzen haben eine Gültigkeit von drei 
+Jahren. Die Verlängerung um je weitere drei Jahre erfolgt durch eine erneute telc Bewerterqualifizierung 
+(Auffrischung).
+Alle Bewerterinnen und Bewerter verfügen über substanzielle Erfahrungen im Umgang mit telc Prüfungen. 
+Sie wurden im Hinblick auf das Testformat geschult und besuchen fortwährend Kalibrierungsveranstal -
+tungen. So ist gewährleistet, dass sie die Bewertungsrichtlinien konsistent anwenden.
+Wie wird bewertet?
+Jede Schreibleistung wird von zwei telc lizenzierten Bewerterinnen bzw. Bewertern bewertet. Die Zweitbe-
+wertung soll die Erstbewertung bestätigen oder gegebenenfalls modifizieren. Weichen die Bewertungen 
+voneinander ab,  überstimmt die zweite Bewertung die Erstbewertung. In der telc Zentrale werden Stich -
+proben durchgeführt, um die Qualität der Bewertungen sicherzustellen. Die telc Bewertung ist die Endbe-
+wertung.
+Berechnung des Teilergebnisses des Schriftlichen Ausdrucks
+Die Punktzahl im Subtest Schriftlicher Ausdruck ist die Summe der Punkte, die für die drei Kriterien ver-
+geben wurden. In der telc Zentrale wird diese Punktzahl mit drei multipliziert, d. h., eine Teilnehmerin bzw. 
+ein Teilnehmer kann in diesem Subtest maximal 45 Punkte erreichen. Dies entspricht 15 % der maximal 
+erreichbaren Gesamtpunktzahl von 300 Punkten.
+Kriterium A B C D
+I Aufgabenbewältigung 5 3 1 0
+II Kommunikative Gestaltung 5 3 1 0
+III Formale Richtigkeit 5 3 1 0
+--- PAGE 41 ---
+Informationen
+Übungstest 1
+39
+Punkte und Gewichtung
+Subtest Aufgabe Punkte Punkte
+max.
+Gewichtung
+Schriftliche Prüfung
+1 Leseverstehen
+Teil 1
+Teil 2
+Teil 3
+1–5
+6–10
+11–2 0
+25
+25
+25
+75 25 %
+2 Sprachbausteine
+Teil 1
+Teil 2
+21–30
+31–40
+15
+15
+30 10 %
+3 Hörverstehen
+Teil 1
+Teil 2
+Teil 3
+41–45
+46–55
+56–60
+25
+25
+25
+75 25 %
+4 Schriftlicher Ausdruck
+E-Mail 45 15 %
+Teilergebnis I 225 75 %
+Mündliche Prüfung
+5 Mündlicher Ausdruck
+Teil 1
+Teil 2
+Teil 3
+Einander kennenlernen
+Über ein Thema sprechen
+Gemeinsam etwas planen
+15
+30
+30
+75 25 %
+Teilergebnis II 75 25 %
+Teilergebnis I (Schriftliche Prüfung)
+Teilergebnis II (Mündliche Prüfung)
+225
+75
+75 %
+25 %
+Gesamtpunktzahl 300 100 %
+--- PAGE 42 ---
+Informationen
+Übungstest 1
+40
+Wo und wie werden die Prüfungen ausgewertet?
+Die Prüfungsergebnisse werden in der Zentrale der telc gGmbH ermittelt. Die Auswertung erfolgt elek -
+tronisch. Jeder Antwortbogen S30 wird gescannt und datenbankgestützt mit den hinter  legten richtigen 
+Lösungen abgeglichen. Anhand der ermittelten Daten wird für jede Teilnehmerin und jeden Teilnehmer 
+das Testergebnis – aufgeschlüsselt nach Fertigkeiten – festgestellt. Auf dieser Basis wird bei bestandener 
+Prüfung ein Zertifikat ausgestellt. Bei nicht bestandener Prüfung erhalten die Teilnehmenden einen Er -
+gebnisbogen. Zugleich dienen die Daten, die durch die elektronische Auswertung aller Testergebnisse 
+ermittelt werden, der kontinuierlichen Überprüfung und Verbesserung der Testqualität.
+Wer erhält ein Zertifikat?
+Um die Prüfung zu bestehen, müssen die Teilnehmerinnen und Teilnehmer sowohl in der Schriftlichen als 
+auch in der Mündlichen Prüfung jeweils 60 % der möglichen Höchstpunktzahl erreichen. Dies entspricht 
+135 Punkten in der Schriftlichen und 45 Punkten in der Mündlichen Prüfung.
+Noten
+Haben die Teilnehmenden in beiden Prüfungsteilen die erforderliche Mindestpunktzahl erreicht, werden 
+die beiden Teilergebnisse addiert, um das Gesamtergebnis zu berechnen. Die Endnote errechnet sich wie 
+folgt:
+270–300 Punkte sehr gut
+240–269,5 Punkte gut 
+210–239,5 Punkte befriedigend
+180-209,5 Punkte ausreichend
+0-179,5 Punkte nicht bestanden
+Wiederholung der Prüfung
+Wenn Teilnehmende in einer Prüfung einen der beiden Prüfungsteile (die Schriftliche oder die Münd liche 
+Prüfung) entweder nicht bestanden oder nicht abgelegt haben, können sie den betreffenden Teil innerhalb 
+des Kalenderjahres, in dem die Prüfung stattgefunden hat, oder im darauffolgenden Kalenderjahr wieder-
+holen bzw. ablegen. Grundsätzlich kann man die Gesamtprüfung beliebig oft wiederholen. Wird ein Prü -
+fungsteil wiederholt, gilt ausschließlich und unwiderruflich das Ergebnis der Wiederholungsprüfung.
+--- PAGE 43 ---
+41
+Übungstest 1
+Leseverstehen, Teil 1
+1 i
+2 d
+3 b
+4 f
+5 h
+Leseverstehen, Teil 2
+6 c
+7 c
+8 b
+9 a
+10 a
+Leseverstehen, Teil 3
+11 b
+12 a
+13 d
+14 x
+15 e
+16 i
+17 k
+18 l
+19 x
+20 g
+Sprachbausteine, Teil 1
+21 a
+22 c
+23 a
+24 a
+25 a
+26 b
+27 a
+28 b
+29 b
+30 a
+Sprachbausteine, Teil 2
+31 h
+32 i
+33 a
+34 b
+35 o
+36 l
+37 m
+38 g
+39 e
+40 f
+Hörverstehen, Teil 1
+41 +
+42 –
+43 –
+44 +
+45 –
+Hörverstehen, Teil 2
+46 +
+47 +
+48 –
+49 –
+50 –
+51 +
+52 +
+53 –
+54 –
+55 +
+Hörverstehen, Teil 3
+56 +
+57 –
+58 +
+59 –
+60 +
+Lösungsschlüssel
+--- PAGE 44 ---
+42
+Übungstest 1 
+Hörverstehen, Teil 1
+Wir beschäftigen uns heute mit der Frage „Gleichberechti-
+gung im Haushalt“ und konfrontierten über 50 verheiratete 
+ Paare mit der Frage: „Wie teilen Sie sich die Arbeit im Haus-
+halt?“ Hören Sie dazu einige Stellungnahmen:
+41
+Na, eigentlich mach alles ich, ich bin zu Haus, daher koch 
+ich, ich wasch ab, ich bügle, ich versorge das Kind, na ja 
+mein Mann macht vielleicht den Abwasch und den Garten 
+– für den ist er zuständig und einkaufen gehn wir beide.
+42
+Wo ich im Haushalt helfe, ach Gott kochen kochen tu immer 
+ich, das macht mir großen Spaß.  Dafür wäscht meine Frau 
+eben ab ähm ... Wäsche waschen mach ich nicht so gerne 
+das macht sie, dafür geh ich immer gerne einkaufen und 
+Garten, Blumengießen, dass ich ein bisschen aus dem 
+Haus rauskomme.
+43
+Tja, bei uns ist das so, mein Mann ist voll berufstätig, ich bin 
+zu Hause mit unseren zwei kleinen Kindern, 3 und 5 Jahre 
+alt, tja, und dann schaut’s so aus, dass ich koche, abwasche, 
+ähm, aufräumen, das muss auch ich machen, vor allem die 
+Kinderzimmer schauen ja wirklich immer schrecklich aus. 
+Wäschewaschen mach auch ich, ebenso das Bügeln. Das 
+Einkaufen übernimmt er, putzen tu ich und im Sommer be-
+treut er den Garten und gießt die Blumen, denn Gartenar -
+beit ist etwas, das kann ich nicht, das mag ich nicht.
+44
+Puh, wissen Sie, bei uns ist das eigentlich ganz unterschied-
+lich, das hängt von der Situation ab. Meistens koche ich und 
+gehe auch einkaufen, während meine Partnerin sich eher 
+mit Aufräumen und Abwaschen beschäftigt. Äh, die Wä -
+sche, die teilen wir uns und, äh, Garten haben wir keinen, 
+daher fällt das weg.
+45
+Also mein Mann, der ist ziemlich faul, der macht überhaupt 
+nur, was ihm Spaß macht. Einkaufen geht er ja – aber er hält 
+sich nicht an die Liste, die ich ihm aufschreibe, er kauft 
+immer irgendwas, meistens zu teure Sachen. Ab und zu 
+kocht er, aber das Abwaschen überlässt er mir, na, aufräu -
+men tut er sowieso nicht, die Wäsche schmeißt er einfach 
+ins Eck, das ist meine Sache, von Putzen kann keine Rede 
+sein, also und um den Garten kümmert sich bei uns eigen -
+lich überhaupt keiner – der verwildert.
+Hörverstehen, Teil 2
+J.: =  Journalist
+S.: =  Frau Seiffert
+J.: Der Turn- und Sportverein Neustadt wird in diesem Jahr 
+100 Jahre alt und feiert diesen Geburtstag mit einem gro -
+ßen Programm.  Ich begrüße dazu heute hier im Studio eine 
+Vertreterin des Turn- und Sportvereins Neustadt, Frau Seif-
+fert. Guten Tag!
+S.: Guten Tag!
+J.: Frau Seiffert, welche Aufgaben haben Sie denn im Ver -
+ein?
+S.: Ja, also ich führe bei allen Sitzungen Protokoll. Ich 
+schreibe also alles auf, worüber diskutiert wird und was 
+beschlossen wird. Schriftführerin heißt das.
+J.: Aha. Vielleicht liegen Ihnen als Schriftführerin da sogar 
+noch Papiere aus den ersten Vereinsjahren vor... ?
+S.: Ja, so ist es. Unsere Kollegen früher waren nämlich äu -
+ßerst sorgfältig. So konnten wir in unserer Festzeitung zum 
+100. Geburtstag das Programm von der ersten Hauptver -
+sammlung des Vereins veröffentlichen. Das macht sich sehr 
+nett.
+J.: Unglaublich, dass trotz der zwei Kriege in diesem Jahr -
+hundert solche Papiere und Unterlagen noch vorhanden 
+sind.  Also, ich nehme mal an, als Ihr Verein vor 100 Jahren 
+gegründet wurde, war Sport doch sicher nur eine Sache für 
+Männer?
+S.: Ja, klar. Am Anfang war Sport reine Männersache. Es 
+hat 16 Jahre gedauert, bis bei uns die ersten Frauen dazu-
+kamen.  Das war ein echter Fortschritt für die Zeit damals, 
+Anfang des 20. Jahrhunderts.
+J.: Ja, das kann man sich gut vorstellen. Wie viele Frauen 
+haben Sie denn heute im Verein im Vergleich zu Männern?
+S.: Ja, also heute sind es ziemlich viele. Über 50 Prozent der 
+Mitglieder sind Frauen, d. h. mehr als 1000 der insgesamt 
+2000 Mitglieder.
+J.: Ihr Verein hat ja hier in Neustadt eine schöne Anlage mit 
+Sportplätzen im Freien und einer großen Halle. Wer finan -
+ziert denn das eigentlich alles?
+S.: Ja, also 50 Prozent des Geldes, das wir brauchen, be -
+kommen wir durch unsere Mitglieder, in Form von Mitglieds-
+beiträgen, den Rest bekommen wir von der Stadt und vom 
+Deutschen Sportbund dazu.
+J.: Wenn man sich Ihr Angebot ansieht, dann staunt man.  
+Da gibt es alles, was zur Zeit gefragt ist: von Aerobic über 
+sportliches Gehen bis hin zu Mutter-Kind-Gymnastik.
+S.: Ja, das stimmt. Im Grunde genommen bieten wir fast 
+jede Sportart an, außer Schwimmen. Es gibt im Nachbarort 
+ein großes Schwimmbad mit einem Extra-Schwimmverein. 
+Also, da wäre es Unsinn, wenn wir eine eigene Abteilung 
+für Schwimmen aufmachen würden.
+J.: Woher kommen denn Ihre Trainer und die Lehrer für alle 
+diese vielen Sportarten?
+S.: Ja, also die meisten kommen aus dem Verein selber.  Wir 
+bilden ja viele Leute aus, die später Sport studieren oder 
+Leistungssport machen. Diese Leute bitten wir oft, im ei -
+genen Verein zu unterrichten.
+J.: Ja, klar – so bleiben Ihnen die Talente praktisch erhalten.  
+Frau Seiffert, ich bedanke mich für Ihren Besuch hier in 
+unserem Studio und wünsche Ihrem Verein auch für die 
+nächsten 100 Jahre alles Gute.
+S.: Danke.
+Hörtexte
+--- PAGE 45 ---
+43
+Übungstest 1
+Hörverstehen, Teil 3
+56
+Also, wenn Sie aus dem Bahnhof rauskommen, sind Sie in 
+der Schillerstraße. Gehen Sie dann nach rechts und immer 
+geradeaus, bis Sie zu einer Kreuzung kommen. Das ist die 
+Königstraße. Überqueren Sie die Königstraße, bleiben Sie 
+aber in der Schillerstraße. Wir sind dann ein Stückchen wei-
+ter, gegenüber vom Kino Gloria.
+57
+Guten Tag, meine Damen und Herren. Wir bringen Ihnen 
+jetzt einen Ausschnitt aus dem Programm der Zürcher Film-
+theater. 
+Filmcasino: „Frühstück bei Tiffany“, 18 Uhr 30 und  
+   20 Uhr 30.
+City Kino 1: „Sommer“, 18 Uhr 45 und 21 Uhr
+City Kino 2: „Starke Jungs“, 18 Uhr 15 und 19 Uhr 45
+Das Kino Gloria-Palast ist zur Zeit ... 
+58
+Und nun der Wetterbericht des Wetteramtes München für 
+Montag, den 28. Oktober. Südbayern: Anfangs noch verein-
+zelt Regen, später zunehmend sonnig mit Höchsttempera -
+turen bis 18 Grad. Nachts geringer Bodenfrost. Nordbay -
+ern: Wechselhaft mit Schauern, dabei mild und sehr windig. 
+Temperaturen nachts bis -2 Grad.
+59
+Guten Tag. Wir begrüßen alle neu hinzugestiegenen Fahr -
+gäste im ICE Riemenschneider auf der Fahrt von Hamburg 
+nach Nürnberg. Unser Zugrestaurant finden Sie zwischen 
+der 1. und 2. Wagenklasse, wo Sie das Speisewagen-Team 
+ab 1 1.30 Uhr gern zum Mittagessen erwartet. Verehrte 
+Fahrgäste, auch eine Minibar befindet sich im Zug. Sollten 
+Sie Appetit haben auf einen kleinen Imbiss oder auf kalte 
+und warme Getränke, diese Dinge können Sie im Abteil 
+kaufen. Die Minibar kommt durch die zweite Wagenklasse. 
+Weitere Auskünfte und Informationen erhalten Sie beim 
+ICE-Team dieses Zuges. Wir wünschen Ihnen eine ange -
+nehme Reise.
+60
+Das ist Spitze. Sommerschlussverkauf. Jetzt bei uns mit Su -
+perangeboten. Ja, bei uns gibt’s zum Beispiel damenhafte 
+Röcke für nur 39 Euro und modische Pullover in lässiger Wei-
+te. Wählen Sie aus verschiedenen Farben und Formen – das 
+Stück nur 19 Euro. Und das gibt’s ganz aktuell – für Sie, mei-
+ne Herren: Oberhemden in großer Auswahl, pflegeleicht, für 
+nur 5 Euro. Oder die modischen City-Hosen für Herren, voll -
+waschbar und echt günstig, nur 10 Euro. Greifen Sie zu, so -
+lange der Vorrat reicht.
+--- PAGE 46 ---
+Weitere Informationen und kostenlose Übungstests ﬁ  nden Sie unter www.telc.net .
+Oder lassen Sie sich persönlich beraten:  Telefon +49 (0) 69 95 62 46-10 
+Motivierter lernen, grenzenlos kommunizieren:
+• Zertiﬁ  kate in zehn Sprachen auf allen Kompetenzstufen
+•   Die ideale beruﬂ  iche und private Weiterbildung
+• Prüfungstermine nach Wunsch in einem der über 3.000 telc Prüfungszentren weltweit
+telc Sprachenzertiﬁ  kate:
+Der Erfolg spricht für sich!
+Anzeigen DIN A4_Deutsch_sw_HF_CS6.indd   1 7/10/2012   12:08:28 PM
+--- PAGE 47 ---
+Weitere Informationen und kostenlose Übungstests ﬁ  nden Sie unter www.telc.net .
+Oder lassen Sie sich persönlich beraten:  Telefon +49 (0) 69 95 62 46-10 
+Motivierter lernen, grenzenlos kommunizieren:
+• Zertiﬁ  kate in zehn Sprachen auf allen Kompetenzstufen
+•   Die ideale beruﬂ  iche und private Weiterbildung
+• Prüfungstermine nach Wunsch in einem der über 3.000 telc Prüfungszentren weltweit
+telc Sprachenzertiﬁ  kate:
+Der Erfolg spricht für sich!
+Anzeigen DIN A4_Deutsch_sw_HF_CS6.indd   1 7/10/2012   12:08:28 PM
+Unsere Sprachenzertifikate
+Übungstests zu allen Prüfungen kostenlos unter www.telc.net  
+ITALIANO
+ITALIANO
+ITALIANO
+telc Italiano B2
+telc Italiano B1
+telc Italiano A2
+telc Italiano A1
+A1
+A1
+A1
+A2
+A2
+A2
+B2
+B2
+B2
+B1
+B1
+B1
+PУССКИЙ 
+PУССКИЙ 
+PУССКИЙ 
+ЯЗЫК
+ЯЗЫК
+ЯЗЫК
+telc  Русский язык B2
+telc  Русский язык B1
+telc  Русский язык A2
+telc  Русский язык A1
+A1
+A1
+A1
+A2
+A2
+A2
+B2
+B2
+B2
+B1
+B1
+B1
+PORTUGUÊS
+PORTUGUÊS
+PORTUGUÊS
+telc Português B1  
+B1
+B1
+B1
+FRANÇAIS
+FRANÇAIS
+FRANÇAIS
+telc Français B2
+telc Français B1
+telc Français B1 Ecole
+telc Français B1 
+pour la Profession
+telc Français A2
+telc Français A2 Ecole
+telc Français A1
+telc Français A1 Junior
+A2
+A2
+A2
+B2
+B2
+B2
+B1
+B1
+B1
+A1
+A1
+A1
+ENGLISH
+ENGLISH
+ENGLISH
+C1
+C1
+C1
+C2
+C2
+C2
+B1
+B1
+B1
+A2·B1
+A2·B1
+A2·B1
+A2
+A2
+A2
+A1
+A1
+A1
+B2·C1
+B2·C1
+B2·C1
+B2
+B2
+B2
+B1·B2
+B1·B2
+B1·B2
+telc English  C2
+telc English C1
+telc English B2·C1 Business
+telc English B2 ·C1 University
+telc English B2
+telc English B2 School 
+telc English B2 Business
+telc English B2 Technical
+telc English B1·B2
+telc English B1 ·B2  School
+telc English B1 ·B2 Business
+telc English B1
+telc English B1 School
+telc English B1 Business
+telc English B1 Hotel and 
+Restaurant
+telc English A2·B1
+telc English A2·B1 School
+telc English A2·B1 Business
+telc English A2
+telc English A2 School
+telc English A1
+telc English A1 Junior
+TÜRKÇE
+TÜRKÇE
+TÜRKÇE
+telc Türkçe C1
+telc Türkçe B2
+telc Türkçe B2 Okul
+telc Türkçe B1
+telc Türkçe B1 Okul
+telc Türkçe A2
+telc Türkçe A2 Okul
+telc Türkçe A2 İlkokul
+telc Türkçe A1
+C1
+C1
+C1
+B2
+B2
+B2
+B1
+B1
+B1
+A1
+A1
+A1
+A2
+A2
+A2
+اﻟﻠﻐﺔ اﻟﻌﺮﺑﯿﺔ
+اﻟﻠﻐﺔ اﻟﻌﺮﺑﯿﺔ
+اﻟﻠﻐﺔ اﻟﻌﺮﺑﯿﺔ
+B1
+B1
+B1
+ telcاﻟﻠﻐﺔ اﻟﻌﺮﺑﯿﺔ B1  
+ESPAÑOL
+ESPAÑOL
+ESPAÑOL
+telc Español B2
+telc Español B2 Escuela
+telc Español B1
+telc Español B1 Escuela
+telc Español A2·B1 Escuela
+telc Español A2
+telc Español A2 Escuela
+telc Español A1
+telc Español A1 Escuela
+telc Español A1 Júnior
+A2
+A2
+A2
+B2
+B2
+B2
+B1
+B1
+B1
+A1
+A1
+A1
+A2·B1
+A2·B1
+A2·B1
+JĘZYK POLSKI
+JĘZYK POLSKI
+JĘZYK POLSKI
+telc Język polski B1 ·B2  Szkoła  
+B1·B2
+B1·B2
+B1·B2
+DEUTSCH
+DEUTSCH
+DEUTSCH
+C1
+C1
+C1
+C2
+C2
+C2
+B1·B2
+B1·B2
+B1·B2
+B2·C1
+B2·C1
+B2·C1
+B1
+B1
+B1
+B2
+B2
+B2
+A2·B1
+A2·B1
+A2·B1
+A2
+A2
+A2
+A1
+A1
+A1
+telc Deutsch C2
+telc Deutsch C1
+telc Deutsch C1 Beruf
+telc Deutsch C1 Hochschule
+telc Deutsch B2·C1 Beruf 
+telc Deutsch B2·C1 Medizin 
+telc Deutsch B2 ·C1 Medizin
+Fachsprachprüfung
+telc Deutsch B2+ Beruf
+telc Deutsch B2 Medizin 
+Zugangsprüfung
+telc Deutsch B2
+telc Deutsch B1 ·B2 Beruf
+telc Deutsch B1 ·B2 Pﬂ  ege 
+telc Deutsch B1+ Beruf 
+Zertiﬁ  kat Deutsch 
+Zertiﬁ  kat Deutsch für 
+Jugendliche 
+Deutsch-Test für Zuwanderer
+telc Deutsch A2+ Beruf 
+Start Deutsch 2 
+telc Deutsch A2 Schule
+Start Deutsch 1 
+telc Deutsch A1 
+für Zuwanderer
+telc Deutsch A1 Junior
+20161101_3704-F02-120003_HF_Produktuebersicht_hoch_Deutsch.indd   1 01.11.2016   12:15:34
+--- PAGE 48 ---
+Prüfungsvorbereitung
+ÜBUNGSTEST 1
+ZERTIFIKAT DEUTSCH
+Standardisiert, objektiv in der Bewertung, transparent in den Anforderungen – 
+das sind die unverwechselbaren Qualitätsmerkmale der telc Sprachprüfungen. 
+Klar verständliche Aufgabenstellungen, ein festes Anforderungsproﬁ  l in Ge-
+stalt von Lernzielen und allgemein verbindliche Bewertungsrichtlinien sichern 
+diesen hohen Anspruch in allen telc Sprachprüfungen. Dieser Übungstest 
+dient der wirklichkeits getreuen Simulation der Prüfung zum Zertiﬁ  kat Deutsch 
+unter inhaltlichen und organisatorischen Gesichtspunkten, zur Vorbereitung 
+von Prüfungs teilnehmenden, zum Üben, zur Schulung von Prüfenden, zur all-
+gemeinen Information.
+www.telc.net
+5061-B00-010301
