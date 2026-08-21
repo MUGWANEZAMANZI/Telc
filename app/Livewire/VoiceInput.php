@@ -622,12 +622,31 @@ Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt vo
         $this->totalExamTime = array_sum(array_column($this->teilTimings, 'seconds'));
     }
 
+    private function parseNumber(string $numStr): int
+    {
+        $numStr = strtolower(trim($numStr));
+        if (is_numeric($numStr)) {
+            return (int) $numStr;
+        }
+        $map = [
+            'eins' => 1, 'zwei' => 2, 'drei' => 3, 'vier' => 4, 'fünf' => 5,
+            'i' => 1, 'ii' => 2, 'iii' => 3, 'iv' => 4, 'v' => 5,
+        ];
+
+        return $map[$numStr] ?? 0;
+    }
+
     private function detectTeilTransition(string $aiResponse): void
     {
-        if (preg_match('/Teil\s+(\d)/i', $aiResponse, $m)) {
-            $newTeil = (int) $m[1];
-            if ($newTeil > $this->currentTeil && $newTeil <= count($this->teilTimings)) {
-                $this->advanceTeil();
+        if (preg_match_all('/Teil\s+(\d+|eins|zwei|drei|vier|fünf|i+)/i', $aiResponse, $matches)) {
+            foreach ($matches[1] as $match) {
+                $newTeil = $this->parseNumber($match);
+                if ($newTeil > $this->currentTeil && $newTeil <= count($this->teilTimings)) {
+                    while ($this->currentTeil < $newTeil) {
+                        $this->advanceTeil();
+                    }
+                    break;
+                }
             }
         }
     }
