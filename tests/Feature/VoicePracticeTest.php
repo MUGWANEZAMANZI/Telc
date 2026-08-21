@@ -20,19 +20,19 @@ test('voice topics are seeded on mount if database is empty', function () {
 test('voice practice can filter topics by provider and level', function () {
     VoiceTopic::query()->delete();
 
-    VoiceTopic::create(['title' => 'Topic 1 B2 telc', 'level' => 'B2', 'exam_provider' => 'telc', 'is_active' => true]);
-    VoiceTopic::create(['title' => 'Topic 2 B2 goethe', 'level' => 'B2', 'exam_provider' => 'goethe', 'is_active' => true]);
-    VoiceTopic::create(['title' => 'Topic 3 C1 telc', 'level' => 'C1', 'exam_provider' => 'telc', 'is_active' => true]);
+    VoiceTopic::create(['title' => 'Topic 1 B2 goethe', 'level' => 'B2', 'exam_provider' => 'goethe', 'is_active' => true]);
+    VoiceTopic::create(['title' => 'Topic 2 B2 telc', 'level' => 'B2', 'exam_provider' => 'telc', 'is_active' => true]);
+    VoiceTopic::create(['title' => 'Topic 3 C1 goethe', 'level' => 'C1', 'exam_provider' => 'goethe', 'is_active' => true]);
 
     Livewire::test(VoiceInput::class)
-        ->set('selectedProvider', 'telc')
-        ->set('selectedLevel', 'B2')
-        ->assertSee('Topic 1 B2 telc')
-        ->assertDontSee('Topic 2 B2 goethe')
-        ->assertDontSee('Topic 3 C1 telc')
         ->set('selectedProvider', 'goethe')
-        ->assertSee('Topic 2 B2 goethe')
-        ->assertDontSee('Topic 1 B2 telc');
+        ->set('selectedLevel', 'B2')
+        ->assertSee('Topic 1 B2 goethe')
+        ->assertDontSee('Topic 2 B2 telc')
+        ->assertDontSee('Topic 3 C1 goethe')
+        ->set('selectedLevel', 'C1')
+        ->assertSee('Topic 3 C1 goethe')
+        ->assertDontSee('Topic 1 B2 goethe');
 });
 
 test('non-subscribed users are limited to 2 speaking practices', function () {
