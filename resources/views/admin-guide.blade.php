@@ -40,6 +40,10 @@
                     <p>Standardprüfungen werden über <code>TelcTemplateFactory.php</code> geladen und mit dem Seeder in die SQLite-Datenbank übertragen. Admins können jederzeit benutzerdefinierte Kopien dieser Prüfungen erstellen oder bestehende ändern.</p>
                 </div>
                 <div class="guide-item-card">
+                    <h3>Mündliche Prüfungen (Sprechen)</h3>
+                    <p>Für alle TELC-Prüfungsvorlagen (B1, B2, C1) wurde das Modul „Sprechen“ (Mündliche Prüfung) entfernt, da mündliche Prüfungen als separate Prüfungen durchgeführt werden. Der Prüfungs-Timer und die Abschnitte passen sich automatisch an.</p>
+                </div>
+                <div class="guide-item-card">
                     <h3>Theme-Anpassungen</h3>
                     <p>Jeder Modellsatz kann über eigene Farbwerte (Primär-/Hintergrundfarben) und Schriftarten (z. B. <i>Instrument Sans</i>, <i>Plus Jakarta Sans</i>) verfügen. Diese können direkt im Dashboard angepasst und live geschaltet werden.</p>
                 </div>
@@ -83,6 +87,11 @@
                         <li><strong>Correct Answer:</strong> Die richtige Lösung (z. B. <code>a</code>, <code>b</code>, <code>+</code>, <code>x</code>) muss immer kleingeschrieben eingetragen werden.</li>
                         <li><strong>Explanation (KI-Erläuterung):</strong> Tragen Sie eine kurze Erklärung ein, warum diese Antwort richtig ist. Klicken Sie auf 🤖 <i>"Mit KI generieren"</i>, um automatisch über Gemini eine präzise, pädagogische Erklärung erstellen zu lassen.</li>
                     </ul>
+                </div>
+
+                <div class="guide-item-card" style="margin-bottom: 1.5rem;">
+                    <h3>2.4 Sprechprüfungen (Sprechen) und Themenwahl</h3>
+                    <p>Da mündliche Prüfungen als eigenständige Module konzipiert sind, erfolgt die Themenzuweisung bei TELC-Präsentationen im Hintergrund vollkommen automatisch. Für Goethe-Prüfungen wählen die Lernenden ihr Thema nach Abschluss von Teil 1 interaktiv aus. Übergänge und Timing-Steuerungen zwischen den Teilen werden live von der KI geregelt.</p>
                 </div>
             </div>
         </section>

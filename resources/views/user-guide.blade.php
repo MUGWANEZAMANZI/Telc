@@ -94,8 +94,12 @@
 
             <div class="guide-sub-grid">
                 <div class="guide-item-card">
-                    <h3>Themenauswahl</h3>
-                    <p>Wählen Sie ein mündliches Thema aus der Liste oder lassen Sie die KI ein neues, niveaugerechtes Thema erzeugen. Sie können zwischen Präsentation, Reaktion auf einen Vortrag oder einer spontanen Diskussion wählen.</p>
+                    <h3>Themenauswahl & Niveaus (A1–C1)</h3>
+                    <p>Wählen Sie Ihr gewünschtes Sprachniveau (A1, A2, B1, B2 oder C1). Bei <strong>Goethe-Prüfungen</strong> wählen Sie nach dem Start Ihr Thema manuell aus. Bei <strong>TELC-Prüfungen</strong> erfolgt die Zuweisung des Sprechthemas im Hintergrund vollkommen automatisch, ganz ohne manuelle Vorauswahl.</p>
+                </div>
+                <div class="guide-item-card">
+                    <h3>Dynamischer Ablauf & Timings</h3>
+                    <p>Die KI steuert den Übergang zwischen den verschiedenen Prüfungsteilen (z. B. von Teil 1 zu Teil 2) vollautomatisch. Sobald Sie einen Teil abgeschlossen haben, wechselt das System zum nächsten Teil und startet den Timer für diesen Abschnitt.</p>
                 </div>
                 <div class="guide-item-card">
                     <h3>Spracherkennung & Antworten</h3>
