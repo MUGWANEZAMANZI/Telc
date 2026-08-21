@@ -75,6 +75,13 @@ class VoiceInput extends Component
         $this->seedVoiceTopicsIfEmpty();
     }
 
+    public function updatedSelectedProvider(string $value): void
+    {
+        if ($value === 'goethe' && $this->selectedLevel === 'A1') {
+            $this->selectedLevel = 'A2';
+        }
+    }
+
     private function seedVoiceTopicsIfEmpty(): void
     {
         if (VoiceTopic::count() === 0) {

@@ -353,7 +353,10 @@
                 <div>
                     <label style="font-size: 0.85rem; color: #666; font-weight: 700; display: block; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Sprachniveau</label>
                     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        @foreach(['B1','B2','C1'] as $lvl)
+                        @php
+                            $levels = $selectedProvider === 'telc' ? ['A1', 'A2', 'B1', 'B2', 'C1'] : ['A2', 'B1', 'B2', 'C1'];
+                        @endphp
+                        @foreach($levels as $lvl)
                             <button type="button" wire:click="$set('selectedLevel', '{{ $lvl }}')" class="tab-btn {{ $selectedLevel === $lvl ? 'active' : '' }}" style="flex: 1; min-width: 48px; text-align: center; font-size: 0.85rem;">{{ $lvl }}</button>
                         @endforeach
                     </div>
