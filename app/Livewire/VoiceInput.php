@@ -163,7 +163,19 @@ class VoiceInput extends Component
             }
         }
 
-        if (! $this->hasPresentationInTeil2() && ! $this->activeVoiceTopicId) {
+        if ($this->selectedProvider === 'telc') {
+            $topic = VoiceTopic::query()
+                ->where('exam_provider', 'telc')
+                ->where('level', $this->selectedLevel)
+                ->where('is_active', true)
+                ->inRandomOrder()
+                ->first();
+            if ($topic) {
+                $this->activeVoiceTopicId = $topic->id;
+            }
+        }
+
+        if ($this->selectedProvider !== 'telc' && ! $this->hasPresentationInTeil2() && ! $this->activeVoiceTopicId) {
             $this->addError('exam', 'Bitte wählen Sie zuerst ein Thema aus.');
 
             return;
@@ -315,8 +327,7 @@ class VoiceInput extends Component
 
     public function hasPresentationInTeil2(): bool
     {
-        return ($this->selectedProvider === 'telc' && $this->selectedLevel === 'B1') ||
-               ($this->selectedProvider === 'goethe' && $this->selectedLevel === 'B1');
+        return $this->selectedProvider === 'goethe' && $this->selectedLevel === 'B1';
     }
 
     public function advanceTeil(): void

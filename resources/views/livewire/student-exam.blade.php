@@ -38,6 +38,10 @@
             line-height: 1.85;
         }
 
+        style {
+            display: none !important;
+        }
+
         .premium-document,
         .premium-document > header,
         .premium-document .telc-section-stack,

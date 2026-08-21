@@ -2047,7 +2047,7 @@ if (!function_exists('parseTeilContent')) {
                             </div>
                         @endif
                 @elseif (in_array($element['type'] ?? '', ['multiple_choice', 'true_false']))
-                    @if (str_starts_with($elId, 'C1-LV2-'))
+                    @if (str_starts_with($elId, 'C1-LV2-') || str_starts_with($elId, 'B1-LV2-'))
                         @php
                             $decodedOptions = [];
                             $rawOptions = $element['options'] ?? '[]';

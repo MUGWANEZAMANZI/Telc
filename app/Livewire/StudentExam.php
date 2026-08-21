@@ -540,7 +540,7 @@ class StudentExam extends Component
             $this->completedSectionIds = $stored['_completed_sections'] ?? [];
             $this->result = $stored['_result'] ?? null;
             $status = $this->getTemplateFreeStatus($record);
-            $this->activeSection = min($enrollment->active_section, $status['is_free'] ? ($status['free_sections'] - 1) : 999);
+            $this->activeSection = min($enrollment->active_section, max(0, count($this->template['sections']) - 1));
             $this->remainingSeconds = $enrollment->remaining_seconds ?? 0;
             $this->started = $this->remainingSeconds > 0;
 
@@ -1820,23 +1820,24 @@ Gib am Ende die Gesamtpunktzahl im Format 'SCORE: X/{$maxPoints}' an.";
     private function loadTemplateData(ExamTemplate $record): void
     {
         $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'is_free', 'exam_provider']);
+        $provider = strtolower($data['exam_provider'] ?? $record->exam_provider ?? 'telc');
         $status = $this->getTemplateFreeStatus($record);
-        if ($status['is_free']) {
-            $sections = [];
-            foreach ($data['sections'] as $section) {
-                $hasSpeaking = false;
-                foreach ($section['elements'] ?? [] as $el) {
-                    if (($el['type'] ?? '') === 'speaking') {
-                        $hasSpeaking = true;
-                        break;
-                    }
-                }
-                if (! $hasSpeaking) {
-                    $sections[] = $section;
+
+        $sections = [];
+        foreach ($data['sections'] as $section) {
+            $hasSpeaking = false;
+            foreach ($section['elements'] ?? [] as $el) {
+                if (($el['type'] ?? '') === 'speaking') {
+                    $hasSpeaking = true;
+                    break;
                 }
             }
-            $data['sections'] = $sections;
+            if (($provider === 'telc' && $hasSpeaking) || ($status['is_free'] && $hasSpeaking)) {
+                continue;
+            }
+            $sections[] = $section;
         }
+        $data['sections'] = $sections;
         $this->template = $data;
         $this->initializeMissingAnswers();
     }

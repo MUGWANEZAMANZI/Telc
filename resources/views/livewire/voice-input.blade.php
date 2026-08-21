@@ -366,7 +366,11 @@
                 </div>
             @endif
 
-            @if($this->hasPresentationInTeil2())
+            @if ($selectedProvider === 'telc')
+                <div style="margin-bottom: 1.5rem; background: #fafafa; border: 1px dashed #d9dde5; border-radius: 8px; padding: 2rem; text-align: center; color: #666;" class="dark:bg-zinc-900 dark:border-zinc-800">
+                    💡 Diese Prüfung hat keine manuelle Themenauswahl. Die Themen werden während der Sprechprüfung automatisch bestimmt.
+                </div>
+            @elseif($this->hasPresentationInTeil2())
                 <div style="margin-bottom: 1.5rem; background: #fafafa; border: 1px dashed #d9dde5; border-radius: 8px; padding: 2rem; text-align: center; color: #666;" class="dark:bg-zinc-900 dark:border-zinc-800">
                     💡 Das Thema für Ihre Präsentation wird nach Teil 1 ausgewählt.
                 </div>
@@ -399,7 +403,7 @@
                     @click="startExamAction()"
                     class="tab-btn active" 
                     style="padding: 0.8rem 2.5rem; font-size: 1rem;"
-                    @if(!$activeVoiceTopicId && !$this->hasPresentationInTeil2()) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
+                    @if($selectedProvider !== 'telc' && !$activeVoiceTopicId && !$this->hasPresentationInTeil2()) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
                     Sprechprüfung starten →
                 </button>
             </div>

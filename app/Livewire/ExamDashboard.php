@@ -1462,26 +1462,29 @@ class ExamDashboard extends Component
             $record = ExamTemplate::find($this->selectedTemplateId);
             if ($record) {
                 $data = $record->only(['title', 'level', 'source_pdf', 'theme', 'timings', 'sections', 'exam_provider', 'price', 'is_free', 'is_published']);
-                $this->pasteJson = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                $this->pasteJson = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) ?: '';
             }
         }
     }
 
     public function importJson(): void
     {
-        if (!$this->pasteJson) {
+        if (! $this->pasteJson) {
             session()->flash('import_error', 'Bitte fügen Sie zuerst JSON-Daten ein.');
+
             return;
         }
 
         $decoded = json_decode($this->pasteJson, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            session()->flash('import_error', 'Ungültiges JSON-Format: ' . json_last_error_msg());
+            session()->flash('import_error', 'Ungültiges JSON-Format: '.json_last_error_msg());
+
             return;
         }
 
-        if (!is_array($decoded) || empty($decoded['title']) || empty($decoded['level']) || empty($decoded['sections'])) {
+        if (! is_array($decoded) || empty($decoded['title']) || empty($decoded['level']) || empty($decoded['sections'])) {
             session()->flash('import_error', 'Das JSON muss mindestens die Felder "title", "level" und "sections" enthalten.');
+
             return;
         }
 
@@ -1491,6 +1494,7 @@ class ExamDashboard extends Component
                 $record->update($decoded);
                 $this->loadTemplate($record->id);
                 session()->flash('import_success', 'Prüfungsvorlage erfolgreich über JSON aktualisiert!');
+
                 return;
             }
         }
@@ -1501,4 +1505,3 @@ class ExamDashboard extends Component
         session()->flash('import_success', 'Neue Prüfung erfolgreich aus JSON erstellt!');
     }
 }
-

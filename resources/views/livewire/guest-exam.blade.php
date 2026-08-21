@@ -4,6 +4,10 @@
         <p style="color:#fff;font-weight:700;font-size:1rem;margin-top:1rem;font-family:'Plus Jakarta Sans',sans-serif;">Prüfung wird ausgewertet...</p>
     </div>
     <style>
+        style {
+            display: none !important;
+        }
+
         .guest-exam-shell { font-family: 'Plus Jakarta Sans', sans-serif; }
 
         .free-notification { position: fixed; top: 1rem; right: 1rem; z-index: 1000; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 0.6rem 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 0.5rem; }

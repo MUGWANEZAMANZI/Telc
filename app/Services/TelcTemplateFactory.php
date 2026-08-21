@@ -43,91 +43,90 @@ class TelcTemplateFactory
                 ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 90],
                 ['label' => 'Hoerverstehen', 'minutes' => 30],
                 ['label' => 'Schriftlicher Ausdruck', 'minutes' => 30],
-                ['label' => 'Muendliche Pruefung', 'minutes' => 15],
             ],
             'sections' => [
                 self::section('b1-reading-language', 'Leseverstehen und Sprachbausteine', 90, [
                     self::text('B1-LV1-text', 'Leseverstehen Teil 1',
-                        "a  Immer mehr deutsche Familien reisen mit der Bahn\n" .
-                        "b  Buchtipp: Hilfe bei Schlafproblemen\n" .
-                        "c  Der Computer: Liebstes Hobby von Deutschlands Frauen\n" .
-                        "d  Neu bei der Bahn: Spezielle Informationen und Angebote für Radfahrer\n" .
-                        "e  Neu am Markt: Billige Schlaftabletten\n" .
-                        "f  Familien reisen billiger\n" .
-                        "g  Urlaub mit dem Fahrrad in Deutschland immer beliebter\n" .
-                        "h  Kultur im Urlaub: Interessen je nach Alter unterschiedlich\n" .
-                        "i  Umfrage: Wer verwendet den Computer am häufigsten?\n" .
-                        "j  Deutschland: Immer mehr Touristen reisen in den Westen\n\n" .
-                        "--------------------------------------------------\n\n" .
-                        "1\nWer ist der typische Computerfan? Das B.A.T. Freizeitforschungsinstitut Hamburg ermittelte einige Eigenschaften: Er ist männlich, jung und hat einen höheren Schulabschluss. Bei der Beschäftigung am heimischen Computer stehen Textverarbeitung und Spiele ganz oben, es folgen private Buchhaltung, Grafikprogramme und Tabellenkalkulation.\n\n" .
-                        "2\n„Bahn&Bike“ heißt ein 222-seitiger Prospekt, den die Deutsche Bahn AG in Zusammenarbeit mit der Deutschen Zentrale für Tourismus herausgebracht hat und der wichtige Informationen für jene bereitstellt, die ihren Radurlaub mit Bahnfahren verbinden wollen. Das Motto lautet: Hin mit der Bahn – das Rad vor Ort mieten. Der Prospekt enthält Angaben zur Streckenlänge und Wegbeschaffenheit, Adressen von Verleihstationen, verweist auf Sehenswürdigkeiten sowie Unterkünfte und wird durch Karten ergänzt. Die Broschüre kostet 5 Euro und ist im Buchhandel beziehungsweise an Fahrkartenschaltern zu beziehen.\n\n" .
-                        "3\nAusführliche Informationen zum Thema „Schlafstörungen“ finden Sie im gleichnamigen Patientenratgeber von Dr. med. Fritz Hohagen. Sie erfahren, was den Schlaf stört und was Sie dagegen unternehmen können. Für 9,95 Euro erhalten Sie das Buch in Apotheken oder direkt beim Wort&Bild Verlag, 82065 Baierbrunn.\n\n" .
-                        "4\nJetzt wird für Familien Reisen mit der Bahn zwischen Österreich und Deutschland noch ein gutes Stück günstiger. Denn ab 6. Oktober gibt es den Familien-Super-Sparpreis. Ein echter Traumpreis für die ganze Familie – vom Baby bis zum Großpapa – da kann man wirklich sparen. Der Familien-Super-Sparpreis gilt für Familien, bestehend aus ein oder zwei Erwachsenen (Eltern, auch Großeltern) und deren Kindern/Enkelkindern bis zum vollendeten 17. Lebensjahr, wobei mindestens ein Kind/Enkelkind an der Reise teilnehmen muss.\n\n" .
+                        "a  Immer mehr deutsche Familien reisen mit der Bahn\n".
+                        "b  Buchtipp: Hilfe bei Schlafproblemen\n".
+                        "c  Der Computer: Liebstes Hobby von Deutschlands Frauen\n".
+                        "d  Neu bei der Bahn: Spezielle Informationen und Angebote für Radfahrer\n".
+                        "e  Neu am Markt: Billige Schlaftabletten\n".
+                        "f  Familien reisen billiger\n".
+                        "g  Urlaub mit dem Fahrrad in Deutschland immer beliebter\n".
+                        "h  Kultur im Urlaub: Interessen je nach Alter unterschiedlich\n".
+                        "i  Umfrage: Wer verwendet den Computer am häufigsten?\n".
+                        "j  Deutschland: Immer mehr Touristen reisen in den Westen\n\n".
+                        "--------------------------------------------------\n\n".
+                        "1\nWer ist der typische Computerfan? Das B.A.T. Freizeitforschungsinstitut Hamburg ermittelte einige Eigenschaften: Er ist männlich, jung und hat einen höheren Schulabschluss. Bei der Beschäftigung am heimischen Computer stehen Textverarbeitung und Spiele ganz oben, es folgen private Buchhaltung, Grafikprogramme und Tabellenkalkulation.\n\n".
+                        "2\n„Bahn&Bike“ heißt ein 222-seitiger Prospekt, den die Deutsche Bahn AG in Zusammenarbeit mit der Deutschen Zentrale für Tourismus herausgebracht hat und der wichtige Informationen für jene bereitstellt, die ihren Radurlaub mit Bahnfahren verbinden wollen. Das Motto lautet: Hin mit der Bahn – das Rad vor Ort mieten. Der Prospekt enthält Angaben zur Streckenlänge und Wegbeschaffenheit, Adressen von Verleihstationen, verweist auf Sehenswürdigkeiten sowie Unterkünfte und wird durch Karten ergänzt. Die Broschüre kostet 5 Euro und ist im Buchhandel beziehungsweise an Fahrkartenschaltern zu beziehen.\n\n".
+                        "3\nAusführliche Informationen zum Thema „Schlafstörungen“ finden Sie im gleichnamigen Patientenratgeber von Dr. med. Fritz Hohagen. Sie erfahren, was den Schlaf stört und was Sie dagegen unternehmen können. Für 9,95 Euro erhalten Sie das Buch in Apotheken oder direkt beim Wort&Bild Verlag, 82065 Baierbrunn.\n\n".
+                        "4\nJetzt wird für Familien Reisen mit der Bahn zwischen Österreich und Deutschland noch ein gutes Stück günstiger. Denn ab 6. Oktober gibt es den Familien-Super-Sparpreis. Ein echter Traumpreis für die ganze Familie – vom Baby bis zum Großpapa – da kann man wirklich sparen. Der Familien-Super-Sparpreis gilt für Familien, bestehend aus ein oder zwei Erwachsenen (Eltern, auch Großeltern) und deren Kindern/Enkelkindern bis zum vollendeten 17. Lebensjahr, wobei mindestens ein Kind/Enkelkind an der Reise teilnehmen muss.\n\n".
                         "5\nTouristen zwischen 14 und 29 Jahren sowie zwischen 40 und 49 Jahren haben ein besonders großes Interesse an der Kultur des jeweiligen Reiselandes, während die Gruppe der 30- bis 39-jährigen im Urlaub „eine Kulturpause einlegt“. Dies geht aus der neuesten Analyse der Forschungsgemeinschaft Urlaub und Reisen e.V. hervor. Urlauber aus Ostdeutschland, so die Studie, zeigen wiederum mehr Kulturinteresse als Reisende aus dem Westen. Grundsätzlich gelte: Je höher das Einkommen und die Schulbildung sind, umso mehr besteht im Urlaub der Wunsch, Land und Leute kennenzulernen.",
                         'Lesen Sie die Überschriften a–j und die Texte 1–5. Finden Sie für jeden Text die passende Überschrift. Sie können jede Überschrift nur einmal benutzen. Markieren Sie Ihre Lösungen für die Aufgaben 1–5 auf dem Antwortbogen.'
                     ),
                     ...self::answerElements('B1-LV1-', 1, ['i', 'd', 'b', 'f', 'h'], 'matching', 2, 'a,b,c,d,e,f,g,h,i,j'),
                     self::text('B1-LV2-text', 'Leseverstehen Teil 2',
-                        "Büro-Werkstatt: Chance für behinderte Menschen\n" .
-                        "Computerarbeit im Auftrag privater Firmen – jeder Dritte findet nach einem fünfmonatigen Kurs einen Job. Interessierte Unternehmen werden noch gesucht.\n\n" .
-                        "Margit, die junge Frau im Rollstuhl, erledigt die Lohnverrechnung für einen Verlag. Reinhard, seit der Geburt gehbehindert, tippt für die Direktion von Hewlett Packard Protokolle und Preislisten. Martin, seine Unterarme sind verkürzt, layoutet die Speisekarte eines Wiener Restaurants.\n\n" .
-                        "Drei junge körperbehinderte Menschen am Computer – alle drei können auf eine abgeschlossene kaufmännische Ausbildung verweisen. Dennoch hat man sie auf dem Arbeitsamt als „schwer vermittelbar“ eingestuft – was de facto nicht vermittelbar bedeutet. Zurzeit arbeiten Margit, Reinhard und Martin – gemeinsam mit sieben anderen behinderten Menschen – in der „Büro-Werkstatt“ in Wien-Stadlau. Hier werden körperbehinderte Schulabgänger auf das Berufsleben vorbereitet. In einem fünfmonatigen Kurs lernen sie, das in der Schule Gelernte in die Praxis umzusetzen. Ihre Dienste werden von Privatfirmen (darunter auch die OMV und zwei Banken) zugekauft.\n\n" .
-                        "Gleichzeitig wird ihnen bei der Jobsuche geholfen. „Leicht ist das nicht“, sagt Betreuer Günther Hos. „Es gibt so viele Arbeitslose, die nicht behindert sind. Wer nimmt schon einen Mitarbeiter mit Handicap?“ Zwar wären die Firmen gesetzlich verpflichtet, pro 25 Beschäftigte einen Behinderten einzustellen. Die meisten Firmen nützen jedoch die Möglichkeit, sich „freizukaufen“ (die sogenannte „Ausgleichstaxe“ beträgt rund 150 Euro monatlich).\n\n" .
-                        "Trotz der Rahmenbedingungen kann Hos mit einer durchaus positiven Bilanz aufwarten: „Immerhin haben wir seit der Vereinsgründung vor drei Jahren ein Drittel unserer Leute untergebracht.“ Auch ein Dienst an der Allgemeinheit, denn jede Vermittlung bedeutet: ein Arbeitsloser weniger, ein Steuerzahler mehr.\n\n" .
-                        "Gegründet wurde die Büro-Werkstatt von einer Lehrerin: Heide Hanisch, die in einer Wiener berufsbildenden Schule Geografie und Geschichte unterrichtet, wollte nicht länger hinnehmen, dass ihre behinderten Schüler erst ausgebildet werden, um dann als Arbeitnehmer nicht gebraucht zu werden.\n\n" .
-                        "Nähere Informationen, auch für interessierte Firmen: „Büro-Werkstatt“ in Wien-Stadlau, Telefon: 0222/283 85 75.",
+                        "Büro-Werkstatt: Chance für behinderte Menschen\n".
+                        "Computerarbeit im Auftrag privater Firmen – jeder Dritte findet nach einem fünfmonatigen Kurs einen Job. Interessierte Unternehmen werden noch gesucht.\n\n".
+                        "Margit, die junge Frau im Rollstuhl, erledigt die Lohnverrechnung für einen Verlag. Reinhard, seit der Geburt gehbehindert, tippt für die Direktion von Hewlett Packard Protokolle und Preislisten. Martin, seine Unterarme sind verkürzt, layoutet die Speisekarte eines Wiener Restaurants.\n\n".
+                        "Drei junge körperbehinderte Menschen am Computer – alle drei können auf eine abgeschlossene kaufmännische Ausbildung verweisen. Dennoch hat man sie auf dem Arbeitsamt als „schwer vermittelbar“ eingestuft – was de facto nicht vermittelbar bedeutet. Zurzeit arbeiten Margit, Reinhard und Martin – gemeinsam mit sieben anderen behinderten Menschen – in der „Büro-Werkstatt“ in Wien-Stadlau. Hier werden körperbehinderte Schulabgänger auf das Berufsleben vorbereitet. In einem fünfmonatigen Kurs lernen sie, das in der Schule Gelernte in die Praxis umzusetzen. Ihre Dienste werden von Privatfirmen (darunter auch die OMV und zwei Banken) zugekauft.\n\n".
+                        "Gleichzeitig wird ihnen bei der Jobsuche geholfen. „Leicht ist das nicht“, sagt Betreuer Günther Hos. „Es gibt so viele Arbeitslose, die nicht behindert sind. Wer nimmt schon einen Mitarbeiter mit Handicap?“ Zwar wären die Firmen gesetzlich verpflichtet, pro 25 Beschäftigte einen Behinderten einzustellen. Die meisten Firmen nützen jedoch die Möglichkeit, sich „freizukaufen“ (die sogenannte „Ausgleichstaxe“ beträgt rund 150 Euro monatlich).\n\n".
+                        "Trotz der Rahmenbedingungen kann Hos mit einer durchaus positiven Bilanz aufwarten: „Immerhin haben wir seit der Vereinsgründung vor drei Jahren ein Drittel unserer Leute untergebracht.“ Auch ein Dienst an der Allgemeinheit, denn jede Vermittlung bedeutet: ein Arbeitsloser weniger, ein Steuerzahler mehr.\n\n".
+                        "Gegründet wurde die Büro-Werkstatt von einer Lehrerin: Heide Hanisch, die in einer Wiener berufsbildenden Schule Geografie und Geschichte unterrichtet, wollte nicht länger hinnehmen, dass ihre behinderten Schüler erst ausgebildet werden, um dann als Arbeitnehmer nicht gebraucht zu werden.\n\n".
+                        'Nähere Informationen, auch für interessierte Firmen: „Büro-Werkstatt“ in Wien-Stadlau, Telefon: 0222/283 85 75.',
                         'Lesen Sie den Text und die Aufgaben 6–10. Welche Lösung (a, b oder c) ist jeweils richtig? Markieren Sie Ihre Lösungen für die Aufgaben 6–10 auf dem Antwortbogen.'
                     ),
                     self::input('B1-LV2-6', 'Aufgabe 6', 'multiple_choice', 'c', 2, self::encode([
                         ['key' => 'a', 'text' => 'eine berufliche Ausbildung abschließen.'],
                         ['key' => 'b', 'text' => 'lernen, was sie in der Schule verpasst haben.'],
-                        ['key' => 'c', 'text' => 'praktische Erfahrungen mit der Büroarbeit sammeln.']
+                        ['key' => 'c', 'text' => 'praktische Erfahrungen mit der Büroarbeit sammeln.'],
                     ]), 'In einem fünfmonatigen Kurs können die Teilnehmer'),
                     self::input('B1-LV2-7', 'Aufgabe 7', 'multiple_choice', 'c', 2, self::encode([
                         ['key' => 'a', 'text' => 'auch jenen Arbeitslosen zu helfen, die nicht behindert sind.'],
                         ['key' => 'b', 'text' => 'Behinderte auf die Abschlussprüfungen vorzubereiten.'],
-                        ['key' => 'c', 'text' => 'für die behinderten Menschen eine Arbeit zu finden.']
+                        ['key' => 'c', 'text' => 'für die behinderten Menschen eine Arbeit zu finden.'],
                     ]), 'Die Büro-Werkstatt versucht außerdem,'),
                     self::input('B1-LV2-8', 'Aufgabe 8', 'multiple_choice', 'b', 2, self::encode([
                         ['key' => 'a', 'text' => 'eine besondere Steuer zahlen.'],
                         ['key' => 'b', 'text' => 'einen Behinderten einstellen oder eine monatliche Gebühr bezahlen.'],
-                        ['key' => 'c', 'text' => 'für jeden Behinderten monatlich 150 Euro bezahlen.']
+                        ['key' => 'c', 'text' => 'für jeden Behinderten monatlich 150 Euro bezahlen.'],
                     ]), 'Laut Gesetz müssen österreichische Firmen pro 25 Beschäftigte'),
                     self::input('B1-LV2-9', 'Aufgabe 9', 'multiple_choice', 'a', 2, self::encode([
                         ['key' => 'a', 'text' => 'konnte für ein Drittel der behinderten Kursteilnehmer eine Arbeit gefunden werden.'],
                         ['key' => 'b', 'text' => 'konnte Günther Hos für den Verein schon viel Geld sparen.'],
-                        ['key' => 'c', 'text' => 'zahlen Arbeitslose um ein Drittel weniger Steuern.']
+                        ['key' => 'c', 'text' => 'zahlen Arbeitslose um ein Drittel weniger Steuern.'],
                     ]), 'Seit der Vereinsgründung'),
                     self::input('B1-LV2-10', 'Aufgabe 10', 'multiple_choice', 'a', 2, self::encode([
                         ['key' => 'a', 'text' => 'wollte etwas tun, damit Behinderte einen Arbeitsplatz erhalten.'],
                         ['key' => 'b', 'text' => 'wollte nicht länger Geografie und Geschichte unterrichten.'],
-                        ['key' => 'c', 'text' => 'wird nach der Ausbildung der Behinderten nicht mehr gebraucht.']
+                        ['key' => 'c', 'text' => 'wird nach der Ausbildung der Behinderten nicht mehr gebraucht.'],
                     ]), 'Die Lehrerin, die die Büro-Werkstatt gegründet hat,'),
                     self::text('B1-LV3-text', 'Leseverstehen Teil 3',
-                        "Situationen:\n" .
-                        "11  Sie möchten mit Freunden in einem Restaurant essen. Da das Wetter schön ist, möchten Sie gerne draußen sitzen.\n" .
-                        "12  Sie möchten heute nicht selbst kochen, sondern lieber ein warmes Essen kaufen und mit nach Hause nehmen.\n" .
-                        "13  In den Sommerferien möchten Sie gerne in die USA fliegen. Sie brauchen dort auch eine Unterkunft.\n" .
-                        "14  Reisebüros bieten billigere Flüge an, wenn man in letzter Minute bucht. Sie suchen so einen Flug.\n" .
-                        "15  Ihre Tochter, die studiert, möchte in die USA fliegen. Sie suchen einen billigen Flug für sie.\n" .
-                        "16  Ihr Sohn ist schlecht in Mathematik und braucht deshalb noch Unterricht außerhalb der Schule.\n" .
-                        "17  Das Kind Ihrer Freunde hat Probleme beim Sprechen und braucht deshalb Hilfe.\n" .
-                        "18  Sie haben einen jungen Franzosen zu Besuch. Sie möchten, dass er in einen Deutschkurs geht.\n" .
-                        "19  Sie möchten, dass Ihr Sohn in einen Jugendclub geht.\n" .
-                        "20  Sie interessieren sich für die Probleme ausländischer Jugendlicher in Deutschland.\n\n" .
-                        "--------------------------------------------------\n\n" .
-                        "Anzeigen:\n\n" .
-                        "a\nThai-China-Vietnam Restaurant Bong-Hong\nBoschetsrieder Straße 140 · Tel. 089/785 56 52\nTäglich 11.30–14.30 und 17.30–23.00 Uhr. Kein Ruhetag.\nAlle Gerichte auch zum Mitnehmen und Heimservice.\n\n" .
-                        "b\nRistorante OLINDO · Italienisches Restaurant\nHausgemachte Nudeln, Fischspezialitäten, Mittagsmenues ab 7.50 Euro.\nBei schönem Wetter Gartenbetrieb.\nFallmerayerstr. 16, München-Schwabing.\n\n" .
-                        "c\n... sind Sie für den Urlaub auch gut versichert? Fragen Sie:\nHelmut Schwabe · Herzogstraße 88 · Vers.-Büro · Tel. 089-303097\nVermittlung für die Versicherungskammer Bayern.\n\n" .
-                        "d\nSEATOP Reisen · Der Flug- und Hotelspezialist\nWeltweit Reisen · Mietwagen · Hotelvermittlung · Rundreisen\nSommertermine nach USA noch Plätze frei · Tel. 53 91 84\n\n" .
-                        "e\nCOUNCIL TRAVEL\nFür Studenten/Jugendliche: New York/Boston 329,- · Los Angeles 429,- · Miami/Chicago 349,-\nSpezialpreise auch für JEDERMANN!\nAdalbertstr. 32, München 40 · Tel. 089/39 50 22\n\n" .
-                        "f\nKreittmayr · Kneipe mit Biergarten\nBillard und Kegelbahnen · Jeden Fr. oder Sa. live Bundesliga-Topspiele.\nKreittmayrstr. 15 · Tel. 523 17 34\n\n" .
-                        "g\nInternationaler Stammtisch\nDeutsche und ausländische Jugendliche in München ist das Thema am Montag, den 4. September, um 19.30 Uhr im Ratskeller \"Moriskengewölbe\" (Marienplatz).\n\n" .
-                        "h\nCity-Reisebüro · Klenzestr. 7 · München\nCampmobile USA/CANADA z.B. San Francisco/Los Angeles ab € 35,- pro Tag. Früh buchen lohnt!\nTelefon 089 290 45 65\n\n" .
-                        "i\nUnterricht\nNachhilfe in Mathe-Physik mit viel Geduld u. Erfahrung von Gymnasiallehrer · Tel. 260 95 57\nMathe/Physik/Chemie Nachhilfe für alle Klassen, Gymn., Realschule, FOS, Abi-Vorbereitung · Hausbesuche.\n\n" .
-                        "j\nUnterricht\n***Erf. Dipl.-Math. gibt*** MATHE (alles für Abi u. Studium) PHYSIK (für ABI) · Tel. 271 29 32\n\n" .
-                        "k\nKurse\nFür Erwachsene und Kinder mit (Sprach-)Schwierigkeiten · Gisela Geiger\nLeopoldstraße 83, München · Tel. 39 99 95\n\n" .
+                        "Situationen:\n".
+                        "11  Sie möchten mit Freunden in einem Restaurant essen. Da das Wetter schön ist, möchten Sie gerne draußen sitzen.\n".
+                        "12  Sie möchten heute nicht selbst kochen, sondern lieber ein warmes Essen kaufen und mit nach Hause nehmen.\n".
+                        "13  In den Sommerferien möchten Sie gerne in die USA fliegen. Sie brauchen dort auch eine Unterkunft.\n".
+                        "14  Reisebüros bieten billigere Flüge an, wenn man in letzter Minute bucht. Sie suchen so einen Flug.\n".
+                        "15  Ihre Tochter, die studiert, möchte in die USA fliegen. Sie suchen einen billigen Flug für sie.\n".
+                        "16  Ihr Sohn ist schlecht in Mathematik und braucht deshalb noch Unterricht außerhalb der Schule.\n".
+                        "17  Das Kind Ihrer Freunde hat Probleme beim Sprechen und braucht deshalb Hilfe.\n".
+                        "18  Sie haben einen jungen Franzosen zu Besuch. Sie möchten, dass er in einen Deutschkurs geht.\n".
+                        "19  Sie möchten, dass Ihr Sohn in einen Jugendclub geht.\n".
+                        "20  Sie interessieren sich für die Probleme ausländischer Jugendlicher in Deutschland.\n\n".
+                        "--------------------------------------------------\n\n".
+                        "Anzeigen:\n\n".
+                        "a\nThai-China-Vietnam Restaurant Bong-Hong\nBoschetsrieder Straße 140 · Tel. 089/785 56 52\nTäglich 11.30–14.30 und 17.30–23.00 Uhr. Kein Ruhetag.\nAlle Gerichte auch zum Mitnehmen und Heimservice.\n\n".
+                        "b\nRistorante OLINDO · Italienisches Restaurant\nHausgemachte Nudeln, Fischspezialitäten, Mittagsmenues ab 7.50 Euro.\nBei schönem Wetter Gartenbetrieb.\nFallmerayerstr. 16, München-Schwabing.\n\n".
+                        "c\n... sind Sie für den Urlaub auch gut versichert? Fragen Sie:\nHelmut Schwabe · Herzogstraße 88 · Vers.-Büro · Tel. 089-303097\nVermittlung für die Versicherungskammer Bayern.\n\n".
+                        "d\nSEATOP Reisen · Der Flug- und Hotelspezialist\nWeltweit Reisen · Mietwagen · Hotelvermittlung · Rundreisen\nSommertermine nach USA noch Plätze frei · Tel. 53 91 84\n\n".
+                        "e\nCOUNCIL TRAVEL\nFür Studenten/Jugendliche: New York/Boston 329,- · Los Angeles 429,- · Miami/Chicago 349,-\nSpezialpreise auch für JEDERMANN!\nAdalbertstr. 32, München 40 · Tel. 089/39 50 22\n\n".
+                        "f\nKreittmayr · Kneipe mit Biergarten\nBillard und Kegelbahnen · Jeden Fr. oder Sa. live Bundesliga-Topspiele.\nKreittmayrstr. 15 · Tel. 523 17 34\n\n".
+                        "g\nInternationaler Stammtisch\nDeutsche und ausländische Jugendliche in München ist das Thema am Montag, den 4. September, um 19.30 Uhr im Ratskeller \"Moriskengewölbe\" (Marienplatz).\n\n".
+                        "h\nCity-Reisebüro · Klenzestr. 7 · München\nCampmobile USA/CANADA z.B. San Francisco/Los Angeles ab € 35,- pro Tag. Früh buchen lohnt!\nTelefon 089 290 45 65\n\n".
+                        "i\nUnterricht\nNachhilfe in Mathe-Physik mit viel Geduld u. Erfahrung von Gymnasiallehrer · Tel. 260 95 57\nMathe/Physik/Chemie Nachhilfe für alle Klassen, Gymn., Realschule, FOS, Abi-Vorbereitung · Hausbesuche.\n\n".
+                        "j\nUnterricht\n***Erf. Dipl.-Math. gibt*** MATHE (alles für Abi u. Studium) PHYSIK (für ABI) · Tel. 271 29 32\n\n".
+                        "k\nKurse\nFür Erwachsene und Kinder mit (Sprach-)Schwierigkeiten · Gisela Geiger\nLeopoldstraße 83, München · Tel. 39 99 95\n\n".
                         "l\nSPRACHBÖRSE\nDeutsch als Fremdsprache · Fremdsprachen · Kindersprachkurse\nPrüfungskurse · Geschäftsdeutsch · Muttersprachliche Lehrkräfte · Minigruppen\nSchulstraße 31, München · Tel. 16 14 79",
                         'Lesen Sie die Situationen 11–20 und die Anzeigen a–l. Finden Sie für jede Situation die passende Anzeige. Sie können jede Anzeige nur einmal benutzen. Markieren Sie Ihre Lösungen für die Aufgaben 11–20 auf dem Antwortbogen. Wenn Sie zu einer Situation keine Anzeige finden, markieren Sie ein x.'
                     ),
@@ -164,41 +163,41 @@ class TelcTemplateFactory
                 self::section('b1-listening', 'Hörverstehen', 30, [
                     self::audio('B1-audio', 'Hörverstehen Audio', '/goethe-assets/telc_deutsch_b1_zd_uebungstest_4.mp3'),
                     self::text('B1-HV1-text', 'Hörverstehen Teil 1',
-                        "Sie hören nun fünf kurze Texte. Dazu sollen Sie fünf Aufgaben lösen. Sie hören diese Texte nur einmal.\n" .
-                        "Entscheiden Sie beim Hören, ob die Aussagen 41-45 richtig oder falsch sind. Markieren Sie PLUS (+) gleich richtig und MINUS (–) gleich falsch auf dem Antwortbogen.",
-                        "Aussagen:\n" .
-                        "41  Die Sprecherin muss im Haushalt fast alles alleine machen.\n" .
-                        "42  Der Sprecher wäscht das Geschirr und die Wäsche.\n" .
-                        "43  Die Sprecherin ist berufstätig und hat keine Zeit für die Hausarbeit.\n" .
-                        "44  Der Sprecher teilt sich mit seiner Partnerin die Arbeit je nach Situation auf.\n" .
-                        "45  Die Sprecherin ist froh, dass ihr Mann so viele Hausarbeiten übernimmt."
+                        "Sie hören nun fünf kurze Texte. Dazu sollen Sie fünf Aufgaben lösen. Sie hören diese Texte nur einmal.\n".
+                        'Entscheiden Sie beim Hören, ob die Aussagen 41-45 richtig oder falsch sind. Markieren Sie PLUS (+) gleich richtig und MINUS (–) gleich falsch auf dem Antwortbogen.',
+                        "Aussagen:\n".
+                        "41  Die Sprecherin muss im Haushalt fast alles alleine machen.\n".
+                        "42  Der Sprecher wäscht das Geschirr und die Wäsche.\n".
+                        "43  Die Sprecherin ist berufstätig und hat keine Zeit für die Hausarbeit.\n".
+                        "44  Der Sprecher teilt sich mit seiner Partnerin die Arbeit je nach Situation auf.\n".
+                        '45  Die Sprecherin ist froh, dass ihr Mann so viele Hausarbeiten übernimmt.'
                     ),
                     ...self::answerElements('B1-HV1-', 41, ['+', '-', '-', '+', '-'], 'true_false', 2, '+,-'),
                     self::text('B1-HV2-text', 'Hörverstehen Teil 2',
-                        "Sie hören nun ein Gespräch. Dazu sollen Sie zehn Aufgaben lösen. Sie hören das Gespräch zweimal.\n" .
-                        "Entscheiden Sie beim Hören, ob die Aussagen 46-55 richtig oder falsch sind. Markieren Sie PLUS (+) gleich richtig und MINUS (–) gleich falsch.",
-                        "Aussagen:\n" .
-                        "46  Der Sportverein plant eine große Feier.\n" .
-                        "47  Der Journalist unterhält sich mit einer Vertreterin des Sportvereins.\n" .
-                        "48  Viele Papiere aus den Anfängen des Vereins sind im Krieg verloren gegangen.\n" .
-                        "49  Der Verein veröffentlicht jedes Jahr eine Festzeitung.\n" .
-                        "50  Der Verein hatte von Anfang an auch Frauen als Mitglieder.\n" .
-                        "51  Heute gibt es im Verein mehr Frauen als Männer.\n" .
-                        "52  Im Verein kann man Sport im Freien und in der Halle treiben.\n" .
-                        "53  Die Mitglieder müssen die Kosten für ihren Verein alleine tragen.\n" .
-                        "54  Der Sportverein bietet auch Schwimmkurse an.\n" .
-                        "55  Einige Leute, die im Verein ausgebildet wurden, arbeiten dort heute als Lehrer."
+                        "Sie hören nun ein Gespräch. Dazu sollen Sie zehn Aufgaben lösen. Sie hören das Gespräch zweimal.\n".
+                        'Entscheiden Sie beim Hören, ob die Aussagen 46-55 richtig oder falsch sind. Markieren Sie PLUS (+) gleich richtig und MINUS (–) gleich falsch.',
+                        "Aussagen:\n".
+                        "46  Der Sportverein plant eine große Feier.\n".
+                        "47  Der Journalist unterhält sich mit einer Vertreterin des Sportvereins.\n".
+                        "48  Viele Papiere aus den Anfängen des Vereins sind im Krieg verloren gegangen.\n".
+                        "49  Der Verein veröffentlicht jedes Jahr eine Festzeitung.\n".
+                        "50  Der Verein hatte von Anfang an auch Frauen als Mitglieder.\n".
+                        "51  Heute gibt es im Verein mehr Frauen als Männer.\n".
+                        "52  Im Verein kann man Sport im Freien und in der Halle treiben.\n".
+                        "53  Die Mitglieder müssen die Kosten für ihren Verein alleine tragen.\n".
+                        "54  Der Sportverein bietet auch Schwimmkurse an.\n".
+                        '55  Einige Leute, die im Verein ausgebildet wurden, arbeiten dort heute als Lehrer.'
                     ),
                     ...self::answerElements('B1-HV2-', 46, ['+', '+', '-', '-', '-', '+', '+', '-', '-', '+'], 'true_false', 2, '+,-'),
                     self::text('B1-HV3-text', 'Hörverstehen Teil 3',
-                        "Sie hören nun fünf kurze Texte. Dazu sollen Sie fünf Aufgaben lösen. Sie hören jeden Text zweimal.\n" .
-                        "Entscheiden Sie beim Hören, ob die Aussagen 56-60 richtig oder falsch sind. Markieren Sie PLUS (+) gleich richtig und MINUS (–) gleich falsch.",
-                        "Aussagen:\n" .
-                        "56  Das Büro ist in der Schillerstraße.\n" .
-                        "57  Der Film „Sommer“ läuft im Filmcasino.\n" .
-                        "58  Im Süden Bayerns wird es am Nachmittag schön und nicht sehr warm.\n" .
-                        "59  Im Zugrestaurant können Sie auch Zeitungen kaufen.\n" .
-                        "60  Damenröcke kosten heute 39 Euro."
+                        "Sie hören nun fünf kurze Texte. Dazu sollen Sie fünf Aufgaben lösen. Sie hören jeden Text zweimal.\n".
+                        'Entscheiden Sie beim Hören, ob die Aussagen 56-60 richtig oder falsch sind. Markieren Sie PLUS (+) gleich richtig und MINUS (–) gleich falsch.',
+                        "Aussagen:\n".
+                        "56  Das Büro ist in der Schillerstraße.\n".
+                        "57  Der Film „Sommer“ läuft im Filmcasino.\n".
+                        "58  Im Süden Bayerns wird es am Nachmittag schön und nicht sehr warm.\n".
+                        "59  Im Zugrestaurant können Sie auch Zeitungen kaufen.\n".
+                        '60  Damenröcke kosten heute 39 Euro.'
                     ),
                     ...self::answerElements('B1-HV3-', 56, ['+', '-', '+', '-', '+'], 'true_false', 2, '+,-'),
                 ], self::pages(6, 8)),
@@ -207,25 +206,19 @@ class TelcTemplateFactory
                         "Sehr geehrte Damen und Herren,\nich schreibe Ihnen, um mich über...",
                         48,
                         null,
-                        "Sie haben von einer Freundin folgende E-Mail erhalten:\n\n" .
-                        "Liebe/er  ,\n" .
-                        "danke für deine nette Einladung! Ich komme dich sehr gerne besuchen, um dein Land kennen- zu lernen - wie du weißt, war ich ja noch nie da. Wann wäre die beste Zeit, dich zu besuchen? Ich weiß noch nicht einmal, ob es bei euch im Sommer sehr heiß wird – allzu große Hitze mag ich nämlich nicht so sehr. Und gibt es sonst noch irgendwelche Dinge, die ich wissen sollte, bevor ich diese Reise mache?\n" .
-                        "Bitte schreib mir möglichst bald, damit ich mich gut auf die Reise vorbereiten kann.\n\n" .
-                        "Herzliche Grüße\nMarianne\n\n" .
-                        "--------------------------------------------------\n\n" .
-                        "Antworten Sie auf die E-Mail. Schreiben Sie etwas zu allen vier Punkten:\n" .
-                        "• welche Ausflüge Sie mit Marianne machen wollen\n" .
-                        "• was die beste Jahreszeit für die Reise ist\n" .
-                        "• welche Kleidung sie mitnehmen soll\n" .
-                        "• wie sie sich am besten auf die Reise vorbereiten kann"
+                        "Sie haben von einer Freundin folgende E-Mail erhalten:\n\n".
+                        "Liebe/er  ,\n".
+                        "danke für deine nette Einladung! Ich komme dich sehr gerne besuchen, um dein Land kennen- zu lernen - wie du weißt, war ich ja noch nie da. Wann wäre die beste Zeit, dich zu besuchen? Ich weiß noch nicht einmal, ob es bei euch im Sommer sehr heiß wird – allzu große Hitze mag ich nämlich nicht so sehr. Und gibt es sonst noch irgendwelche Dinge, die ich wissen sollte, bevor ich diese Reise mache?\n".
+                        "Bitte schreib mir möglichst bald, damit ich mich gut auf die Reise vorbereiten kann.\n\n".
+                        "Herzliche Grüße\nMarianne\n\n".
+                        "--------------------------------------------------\n\n".
+                        "Antworten Sie auf die E-Mail. Schreiben Sie etwas zu allen vier Punkten:\n".
+                        "• welche Ausflüge Sie mit Marianne machen wollen\n".
+                        "• was die beste Jahreszeit für die Reise ist\n".
+                        "• welche Kleidung sie mitnehmen soll\n".
+                        '• wie sie sich am besten auf die Reise vorbereiten kann'
                     ),
                 ], self::pages(9, 9)),
-                self::section('b1-speaking', 'Mündliche Prüfung', 15, [
-                    self::speakingElement('B1-SP-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie ein Thema aus: 1. Mein Lieblingshobby oder 2. Meine letzte Reise', 6),
-                    self::speakingElement('B1-SP-1b', '1b: Zusammenfassung und Reaktion', 'Hören Sie die KI-Präsentation zum anderen Thema und antworten Sie darauf (ca. 2 Minuten).', 4),
-                    self::speakingElement('B1-SP-2', '2: Diskussion', 'Diskussion (ca. 5 Minuten). Thema: Sollten Kinder in der Schule ein Smartphone benutzen dürfen?', 6),
-                    self::speakingElement('B1-SP-GLOBAL', 'Punkte für sprachliche Angemessenheit', 'Gesamtbewertung: Flüssigkeit, Wortschatz, Grammatik, Aussprache', 32),
-                ], self::pages(10, 11)),
             ],
         ];
     }
@@ -244,8 +237,6 @@ class TelcTemplateFactory
                 ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 90],
                 ['label' => 'Hörverstehen', 'minutes' => 30],
                 ['label' => 'Schriftlicher Ausdruck', 'minutes' => 30],
-                ['label' => 'Vorbereitungszeit Mündliche Prüfung', 'minutes' => 20],
-                ['label' => 'Mündlicher Ausdruck', 'minutes' => 16],
             ],
             'sections' => [
                 self::section('b2-reading-language', 'Leseverstehen und Sprachbausteine', 90, [
@@ -405,12 +396,6 @@ class TelcTemplateFactory
                 self::section('b2-writing', 'Schriftlicher Ausdruck', 30, [
                     self::input('B2-WRITE-1', 'Aufgabe Schriftlicher Ausdruck', 'writing', "Sehr geehrte Damen und Herren,\nmit großem Interesse habe ich Ihre Anzeige für den Deutsch-Intensivkurs im Sommer gelesen. Da ich meine Sprachkenntnisse für mein bevorstehendes Studium verbessern möchte, interessiere ich mich sehr für eine Teilnahme.\nKönnten Sie mir bitte weitere Informationen bezüglich der Kursgebühren, der genauen Unterrichtszeiten und der maximalen Teilnehmerzahl zusenden? Gibt es zudem Unterkünfte, die Sie für ausländische Studenten empfehlen können?\nIch bedanke mich im Voraus für Ihre Bemühungen und freue mich auf Ihre Antwort.\n\nMit freundlichen Grüßen\nMaria Lopez", 48),
                 ], self::pages(16, 16)),
-                self::section('b2-speaking', 'Mündliche Prüfung', 16, [
-                    self::speakingElement('B2-SP-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie ein Thema: 1. Die Bedeutung von Social Media für junge Menschen / 2. Mein Traumberuf und wie ich ihn erreichen will', 6),
-                    self::speakingElement('B2-SP-1b', '1b: Zusammenfassung und Reaktion', 'Hören Sie die KI-Präsentation zum anderen Thema und antworten Sie darauf (ca. 2 Minuten).', 4),
-                    self::speakingElement('B2-SP-2', '2: Diskussion', 'Diskussion (ca. 6 Minuten). Thema: Sollten Unternehmen Homeoffice für alle Mitarbeiter verpflichtend machen?', 6),
-                    self::speakingElement('B2-SP-GLOBAL', 'Punkte für sprachliche Angemessenheit', 'Gesamtbewertung: Flüssigkeit, Wortschatz, Grammatische Richtigkeit, Aussprache/Intonation', 32),
-                ], self::pages(17, 18)),
             ],
         ];
     }
@@ -2187,7 +2172,6 @@ class TelcTemplateFactory
                 ['label' => 'Leseverstehen und Sprachbausteine', 'minutes' => 90],
                 ['label' => 'Hoerverstehen', 'minutes' => 40],
                 ['label' => 'Schriftlicher Ausdruck', 'minutes' => 70],
-                ['label' => 'Mündliche Prüfung', 'minutes' => 16],
             ],
             'sections' => [
                 array_merge(self::section('telc-c1-reading-language', 'Leseverstehen und Sprachbausteine', 90, [
@@ -2382,12 +2366,6 @@ c) spendet sein Trinkgeld grundsätzlich.'),
                     self::input('telc-c1-write-1', 'Teil 1 — Diskussionsbeitrag für ein Forum', 'writing', "In der Diskussion im Kurs hat Maria argumentiert, dass ein Pflichtfach für digitale Kompetenzen in der Schule wichtig ist, damit alle Schülerinnen und Schüler gleichzeitig mit dem digitalen Wandel Schritt halten können. Sie schrieb: ″Ohne digitale Grundbildung verlieren junge Menschen den Anschluss an die Arbeitswelt von morgen. Das Problem ist nicht das Internet selbst, sondern die fehlende Unterstützung durch Lehrkräfte, die selbst noch nicht ausreichend geschult wurden.″\n\nAntwort des Diskussionspartners: ″Ein Pflichtfach ist problematisch, weil viele Schülerinnen und Schüler ohnehin schon durch andere Fächer wie Politik oder Geografie kritisch mit digitalen Medien konfrontiert werden. Zudem fehlt es an ausreichend qualifiziertem Personal, um ein weiteres Fach anzubieten.″", 48, null, "Schreiben Sie einen Diskussionsbeitrag für ein Internet-Forum (ca. 120–150 Wörter).\n\nIn einem Kurs wird diskutiert, ob Schülerinnen und Schüler in der Schule ein Pflichtfach ‚Digitale Kompetenzen‘ einführen sollen. Nehmen Sie Bezug auf die Beiträge von Maria und einem anderen Kursteilnehmer. Formulieren Sie Ihre Position und nennen Sie mindestens zwei Argumente."),
                     self::input('telc-c1-write-2', 'Teil 2 — Nachricht', 'writing', '', 48, null, "Schreiben Sie eine Nachricht (ca. 50–80 Wörter) an einen Mitbewohner im Studentenwohnheim.\n\nIhr Mitbewohner hat Ihre Teekanne und Tassen immer wieder benutzt, ohne sie danach zu spülen. Bitten Sie höflich, aber bestimmt um Rücksichtnahme und erklären Sie kurz, warum Ihnen das wichtig ist."),
                 ], self::pages(22, 22)),
-                self::section('telc-c1-speaking', 'Mündliche Prüfung', 16, [
-                    self::speakingElement('telc-c1-sp-1a', '1a: Präsentation', 'Präsentation (ca. 3 Minuten). Wählen Sie eines der Themen:\n1. Was ist der Nationalsport in einem Land Ihrer Wahl und welche Bedeutung hat er für die Gesellschaft?\noder\n2. Wer gehört Ihrer Meinung nach zu den einflussreichsten lebenden Personen weltweit? Wodurch zeichnet sich diese Person aus?', 6),
-                    self::speakingElement('telc-c1-sp-1b', '1b: Zusammenfassung und Anschlussfragen', 'Zusammenfassung/Anschlussfragen (ca. 2 Minuten). Hören Sie sich die KI-Präsentation zum anderen Thema an und antworten Sie darauf.', 4),
-                    self::speakingElement('telc-c1-sp-2', '2: Diskussion', 'Diskussion (6 Minuten). Diskutieren Sie das folgende Thema: Beziehungen mit großem Altersunterschied sind immer problematisch.', 6),
-                    self::speakingElement('telc-c1-sp-global', 'Punkte für sprachliche Angemessenheit', 'Gesamtbewertung für sprachliche Angemessenheit (Flüssigkeit, Repertoire, Grammatische Richtigkeit, Aussprache/Intonation)', 32),
-                ], self::pages(23, 24)),
             ],
         ];
     }

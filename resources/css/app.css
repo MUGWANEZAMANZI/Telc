@@ -71,7 +71,7 @@ select:focus[data-flux-control] {
     @apply size-4;
 } */
 
-[x-cloak] {
+[x-cloak], style {
     display: none !important;
 }
 
