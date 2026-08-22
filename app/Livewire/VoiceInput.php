@@ -75,33 +75,36 @@ class VoiceInput extends Component
         $this->seedVoiceTopicsIfEmpty();
     }
 
-    public function updatedSelectedProvider(string $value): void
-    {
-        if ($value === 'goethe' && $this->selectedLevel === 'A1') {
-            $this->selectedLevel = 'A2';
-        }
-    }
+
 
     private function seedVoiceTopicsIfEmpty(): void
     {
-        if (VoiceTopic::count() === 0) {
-            $topics = [
-                ['title' => 'Mein Zuhause und meine Familie', 'counter_topic' => 'Leben in der Großstadt vs. auf dem Land', 'level' => 'A1', 'exam_provider' => 'telc', 'is_active' => true],
-                ['title' => 'Meine Freizeit und Hobbys', 'counter_topic' => 'Digitale Medien und Freizeitgestaltung', 'level' => 'A2', 'exam_provider' => 'telc', 'is_active' => true],
-                ['title' => 'Meine Arbeitswelt', 'counter_topic' => 'Arbeit und Lebensqualität', 'level' => 'B1', 'exam_provider' => 'telc', 'is_active' => true],
-                ['title' => 'Bildung und Weiterbildung', 'counter_topic' => 'Bildung im digitalen Zeitalter', 'level' => 'B2', 'exam_provider' => 'telc', 'is_active' => true],
-                ['title' => 'Gesellschaft und Politik', 'counter_topic' => 'Demokratie und gesellschaftlicher Wandel', 'level' => 'C1', 'exam_provider' => 'telc', 'is_active' => true],
-                ['title' => 'Umweltschutz und Nachhaltigkeit', 'counter_topic' => 'Wirtschaftswachstum vs. Umweltschutz', 'level' => 'C2', 'exam_provider' => 'telc', 'is_active' => true],
+        $topics = [
+            ['title' => 'Mein Zuhause und meine Familie', 'counter_topic' => 'Leben in der Großstadt vs. auf dem Land', 'level' => 'A1', 'exam_provider' => 'telc', 'is_active' => true],
+            ['title' => 'Meine Freizeit und Hobbys', 'counter_topic' => 'Digitale Medien und Freizeitgestaltung', 'level' => 'A2', 'exam_provider' => 'telc', 'is_active' => true],
+            ['title' => 'Meine Arbeitswelt', 'counter_topic' => 'Arbeit und Lebensqualität', 'level' => 'B1', 'exam_provider' => 'telc', 'is_active' => true],
+            ['title' => 'Bildung und Weiterbildung', 'counter_topic' => 'Bildung im digitalen Zeitalter', 'level' => 'B2', 'exam_provider' => 'telc', 'is_active' => true],
+            ['title' => 'Gesellschaft und Politik', 'counter_topic' => 'Demokratie und gesellschaftlicher Wandel', 'level' => 'C1', 'exam_provider' => 'telc', 'is_active' => true],
+            ['title' => 'Umweltschutz und Nachhaltigkeit', 'counter_topic' => 'Wirtschaftswachstum vs. Umweltschutz', 'level' => 'C2', 'exam_provider' => 'telc', 'is_active' => true],
 
-                // Goethe topics
-                ['title' => 'Mein Alltag und meine Freizeit', 'counter_topic' => 'Digitale Medien im Alltag', 'level' => 'A2', 'exam_provider' => 'goethe', 'is_active' => true],
-                ['title' => 'Brauchen Kinder Mobiltelefone?', 'counter_topic' => 'Haustiere – Ja oder Nein?', 'level' => 'B1', 'exam_provider' => 'goethe', 'is_active' => true],
-                ['title' => 'Alternative Wohnformen', 'counter_topic' => 'Konsumverhalten von Jugendlichen', 'level' => 'B2', 'exam_provider' => 'goethe', 'is_active' => true],
-                ['title' => 'Chancen und Risiken des lebenslangen Lernens', 'counter_topic' => 'Digitalisierung in der Bildung', 'level' => 'C1', 'exam_provider' => 'goethe', 'is_active' => true],
-            ];
-            foreach ($topics as $topic) {
-                VoiceTopic::create($topic);
-            }
+            // Goethe topics
+            ['title' => 'Meine Familie und meine Freunde', 'counter_topic' => 'Hobbys und Freizeit', 'level' => 'A1', 'exam_provider' => 'goethe', 'is_active' => true],
+            ['title' => 'Einkaufen und Essen', 'counter_topic' => 'Reisen und Urlaub', 'level' => 'A1', 'exam_provider' => 'goethe', 'is_active' => true],
+            ['title' => 'Mein Alltag und meine Freizeit', 'counter_topic' => 'Digitale Medien im Alltag', 'level' => 'A2', 'exam_provider' => 'goethe', 'is_active' => true],
+            ['title' => 'Brauchen Kinder Mobiltelefone?', 'counter_topic' => 'Haustiere – Ja oder Nein?', 'level' => 'B1', 'exam_provider' => 'goethe', 'is_active' => true],
+            ['title' => 'Alternative Wohnformen', 'counter_topic' => 'Konsumverhalten von Jugendlichen', 'level' => 'B2', 'exam_provider' => 'goethe', 'is_active' => true],
+            ['title' => 'Chancen und Risiken des lebenslangen Lernens', 'counter_topic' => 'Digitalisierung in der Bildung', 'level' => 'C1', 'exam_provider' => 'goethe', 'is_active' => true],
+        ];
+
+        foreach ($topics as $topic) {
+            VoiceTopic::firstOrCreate(
+                [
+                    'title' => $topic['title'],
+                    'level' => $topic['level'],
+                    'exam_provider' => $topic['exam_provider']
+                ],
+                $topic
+            );
         }
     }
 
@@ -560,6 +563,7 @@ Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt vo
             $this->selectedProvider === 'telc' && $this->selectedLevel === 'B1' => 75,
             $this->selectedProvider === 'telc' && $this->selectedLevel === 'B2' => 75,
             $this->selectedProvider === 'telc' && $this->selectedLevel === 'C1' => 48,
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'A1' => 15,
             $this->selectedProvider === 'goethe' && $this->selectedLevel === 'A2' => 15,
             $this->selectedProvider === 'goethe' && $this->selectedLevel === 'B1' => 100,
             $this->selectedProvider === 'goethe' && $this->selectedLevel === 'B2' => 100,
@@ -572,6 +576,11 @@ Gib eine Gesamtpunktzahl und eine kurze Bewertung. Format: SCORE: X/Y gefolgt vo
     {
         $this->teilTimings = match (true) {
             $this->selectedProvider === 'telc' && $this->selectedLevel === 'A1' => [
+                ['teil' => 1, 'label' => 'Teil 1 — Sich vorstellen', 'seconds' => 120],
+                ['teil' => 2, 'label' => 'Teil 2 — Fragen stellen', 'seconds' => 180],
+                ['teil' => 3, 'label' => 'Teil 3 — Bitten formulieren', 'seconds' => 180],
+            ],
+            $this->selectedProvider === 'goethe' && $this->selectedLevel === 'A1' => [
                 ['teil' => 1, 'label' => 'Teil 1 — Sich vorstellen', 'seconds' => 120],
                 ['teil' => 2, 'label' => 'Teil 2 — Fragen stellen', 'seconds' => 180],
                 ['teil' => 3, 'label' => 'Teil 3 — Bitten formulieren', 'seconds' => 180],
