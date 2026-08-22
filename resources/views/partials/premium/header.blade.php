@@ -10,22 +10,32 @@
                             <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #666666; display: block; margin-bottom: 0.5rem;">Offizielles Zertifikatsergebnis</span>
                             <h3 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: #1a1a1a; margin-bottom: 1.5rem;">{{ $template['level'] ?? 'C1' }} Deutschprüfung</h3>
 
-                            <div style="display: grid; grid-cols: 2; gap: 1.5rem; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; padding: 1.5rem 0; margin-bottom: 1.5rem;">
-                                <div style="text-align: center; border-right: 1px solid #e5e5e5; padding-right: 1rem;">
+                            @if (($result['oral_max'] ?? 0) > 0)
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; padding: 1.5rem 0; margin-bottom: 1.5rem;">
+                                    <div style="text-align: center; border-right: 1px solid #e5e5e5; padding-right: 1rem;">
+                                        <span style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: #666666; display: block;">Schriftlicher Teil</span>
+                                        <strong style="font-size: 1.8rem; color: #1a1a1a; display: block; margin-top: 0.25rem;">{{ $result['written_earned'] ?? 0 }} / {{ $result['written_max'] ?? 166 }}</strong>
+                                        <span style="font-size: 0.85rem; font-weight: 600; color: {{ ($result['written_earned'] ?? 0) >= (($result['written_max'] ?? 166) * 0.6) ? '#137333' : '#c5221f' }};">
+                                            {{ ($result['written_earned'] ?? 0) >= (($result['written_max'] ?? 166) * 0.6) ? 'Bestanden' : 'Nicht bestanden' }}
+                                        </span>
+                                    </div>
+                                    <div style="text-align: center; padding-left: 1rem;">
+                                        <span style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: #666666; display: block;">Mündlicher Teil</span>
+                                        <strong style="font-size: 1.8rem; color: #1a1a1a; display: block; margin-top: 0.25rem;">{{ $result['oral_earned'] ?? 0 }} / {{ $result['oral_max'] ?? 48 }}</strong>
+                                        <span style="font-size: 0.85rem; font-weight: 600; color: {{ ($result['oral_earned'] ?? 0) >= (($result['oral_max'] ?? 48) * 0.6) ? '#137333' : '#c5221f' }};">
+                                            {{ ($result['oral_earned'] ?? 0) >= (($result['oral_max'] ?? 48) * 0.6) ? 'Bestanden' : 'Nicht bestanden' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            @else
+                                <div style="border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; padding: 1.5rem 0; margin-bottom: 1.5rem; text-align: center;">
                                     <span style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: #666666; display: block;">Schriftlicher Teil</span>
                                     <strong style="font-size: 1.8rem; color: #1a1a1a; display: block; margin-top: 0.25rem;">{{ $result['written_earned'] ?? 0 }} / {{ $result['written_max'] ?? 166 }}</strong>
                                     <span style="font-size: 0.85rem; font-weight: 600; color: {{ ($result['written_earned'] ?? 0) >= (($result['written_max'] ?? 166) * 0.6) ? '#137333' : '#c5221f' }};">
                                         {{ ($result['written_earned'] ?? 0) >= (($result['written_max'] ?? 166) * 0.6) ? 'Bestanden' : 'Nicht bestanden' }}
                                     </span>
                                 </div>
-                                <div style="text-align: center; padding-left: 1rem;">
-                                    <span style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: #666666; display: block;">Mündlicher Teil</span>
-                                    <strong style="font-size: 1.8rem; color: #1a1a1a; display: block; margin-top: 0.25rem;">{{ $result['oral_earned'] ?? 0 }} / {{ $result['oral_max'] ?? 48 }}</strong>
-                                    <span style="font-size: 0.85rem; font-weight: 600; color: {{ ($result['oral_earned'] ?? 0) >= (($result['oral_max'] ?? 48) * 0.6) ? '#137333' : '#c5221f' }};">
-                                        {{ ($result['oral_earned'] ?? 0) >= (($result['oral_max'] ?? 48) * 0.6) ? 'Bestanden' : 'Nicht bestanden' }}
-                                    </span>
-                                </div>
-                            </div>
+                            @endif
 
                             <div style="margin-bottom: 1rem;">
                                 <span style="font-size: 0.9rem; color: #666666;">Gesamtpunktzahl:</span>
