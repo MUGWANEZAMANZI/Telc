@@ -75,8 +75,6 @@ class VoiceInput extends Component
         $this->seedVoiceTopicsIfEmpty();
     }
 
-
-
     private function seedVoiceTopicsIfEmpty(): void
     {
         $topics = [
@@ -101,7 +99,7 @@ class VoiceInput extends Component
                 [
                     'title' => $topic['title'],
                     'level' => $topic['level'],
-                    'exam_provider' => $topic['exam_provider']
+                    'exam_provider' => $topic['exam_provider'],
                 ],
                 $topic
             );
