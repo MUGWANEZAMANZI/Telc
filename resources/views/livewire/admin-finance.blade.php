@@ -51,22 +51,23 @@
 
     @if (!Auth::user()?->isInvestor())
     <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 2.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 2.5rem;">
-        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 0 0 0.25rem; color: #111827;">30 Tage kostenloses Probeabo einrichten</h3>
-        <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem;">Wählen Sie einen Teilnehmer und ein Abonnement aus, um eine 30-tägige kostenlose Testversion zu aktivieren. Der Teilnehmer erhält automatische Erinnerungsmails vor Ablauf.</p>
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 0 0 0.25rem; color: #111827;">Kostenloses Probeabo für alle Benutzer einrichten</h3>
+        <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem;">Wählen Sie das Startdatum, das Enddatum und ein Abonnement-Modell aus, um eine kostenlose Testversion für alle Benutzer zu aktivieren.</p>
 
         <form wire:submit.prevent="createFreeTrial" style="display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: flex-end;">
-            <div style="flex: 1; min-width: 250px;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #374151; margin-bottom: 0.5rem;">Teilnehmer</label>
-                <select wire:model="selectedUserForTrial" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff; font-size: 0.95rem;">
-                    <option value="">-- Teilnehmer auswählen --</option>
-                    @foreach ($allUsers as $u)
-                        <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->email }})</option>
-                    @endforeach
-                </select>
-                @error('selectedUserForTrial') <span style="color: #dc2626; font-size: 0.85rem;">{{ $message }}</span> @enderror
+            <div style="flex: 1; min-width: 200px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #374151; margin-bottom: 0.5rem;">Startdatum</label>
+                <input type="date" wire:model="trialStartDate" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff; font-size: 0.95rem;">
+                @error('trialStartDate') <span style="color: #dc2626; font-size: 0.85rem;">{{ $message }}</span> @enderror
             </div>
 
-            <div style="flex: 1; min-width: 250px;">
+            <div style="flex: 1; min-width: 200px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #374151; margin-bottom: 0.5rem;">Enddatum</label>
+                <input type="date" wire:model="trialEndDate" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff; font-size: 0.95rem;">
+                @error('trialEndDate') <span style="color: #dc2626; font-size: 0.85rem;">{{ $message }}</span> @enderror
+            </div>
+
+            <div style="flex: 1; min-width: 200px;">
                 <label style="display: block; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #374151; margin-bottom: 0.5rem;">Abonnement-Modell</label>
                 <select wire:model="selectedPlanForTrial" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff; font-size: 0.95rem;">
                     <option value="">-- Abo-Modell auswählen --</option>

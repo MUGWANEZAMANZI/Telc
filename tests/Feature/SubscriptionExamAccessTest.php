@@ -136,7 +136,7 @@ test('non-subscribed users can access free exams but non-free exams require paym
     expect($status2['free_sections'])->toBe(0);
 });
 
-test('admin can create a 30-day manual free trial for a user', function () {
+test('admin can create a manual free trial with start and end dates for all users', function () {
     $plan = Plan::create([
         'name' => 'Trial Target Plan',
         'price' => 19.99,
@@ -147,6 +147,7 @@ test('admin can create a 30-day manual free trial for a user', function () {
     ]);
 
     $student = User::factory()->create(['role' => 'student']);
+    $student2 = User::factory()->create(['role' => 'student']);
     $owner = User::factory()->create(['role' => 'owner']); // Owner acts as admin
 
     $this->actingAs($owner);
@@ -164,20 +165,23 @@ test('admin can create a 30-day manual free trial for a user', function () {
     ]);
 
     Livewire::test(AdminFinance::class)
-        ->set('selectedUserForTrial', $student->id)
+        ->set('trialStartDate', now()->format('Y-m-d'))
+        ->set('trialEndDate', now()->addDays(30)->format('Y-m-d'))
         ->set('selectedPlanForTrial', $plan->id)
         ->call('createFreeTrial')
         ->assertHasNoErrors()
-        ->assertSet('successMessage', "30-tägiges kostenloses Probeabo (Trial Target Plan) für {$student->name} wurde erfolgreich aktiviert.");
+        ->assertSet('successMessage', "Kostenloses Probeabo (Trial Target Plan) wurde für alle Benutzer erfolgreich aktiviert.");
 
-    // Assert new subscription was created with 30 days duration
-    $newSub = Subscription::where('user_id', $student->id)
-        ->where('provider', 'manual_admin')
-        ->first();
+    // Assert new subscriptions were created for both students and owner with 30 days duration
+    foreach ([$student, $student2, $owner] as $user) {
+        $newSub = Subscription::where('user_id', $user->id)
+            ->where('provider', 'manual_admin')
+            ->first();
 
-    expect($newSub)->not->toBeNull();
-    expect($newSub->status)->toBe('active');
-    expect((int) abs($newSub->ends_at->diffInDays($newSub->starts_at)))->toBe(30);
+        expect($newSub)->not->toBeNull();
+        expect($newSub->status)->toBe('active');
+        expect((int) abs($newSub->ends_at->diffInDays($newSub->starts_at)))->toBe(30);
+    }
 
     // Assert old subscription status is cancelled
     $oldSub->refresh();
@@ -205,8 +209,9 @@ test('investor can view finance statistics but cannot perform write operations',
         ->assertViewHas('totalPaymentsCount', 0)
         ->assertViewHas('totalTrialsCount', 0)
         ->assertViewHas('paidUsersCount', 0)
-        ->assertDontSee('30 Tage kostenloses Probeabo einrichten')
-        ->set('selectedUserForTrial', $student->id)
+        ->assertDontSee('Kostenloses Probeabo für alle Benutzer einrichten')
+        ->set('trialStartDate', now()->format('Y-m-d'))
+        ->set('trialEndDate', now()->addDays(30)->format('Y-m-d'))
         ->set('selectedPlanForTrial', $plan->id)
         ->call('createFreeTrial')
         ->assertStatus(403);

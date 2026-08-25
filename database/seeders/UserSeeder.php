@@ -13,9 +13,14 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Remove dummy users with example.net, example.com
+        User::where('email', 'like', '%example.net')
+            ->orWhere('email', 'like', '%example.com')
+            ->delete();
+
         // Admin
         User::updateOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'admin@telc.de'],
             [
                 'name' => 'Admin User',
                 'password' => Hash::make('password'),
@@ -27,7 +32,7 @@ class UserSeeder extends Seeder
 
         // Standard student
         User::updateOrCreate(
-            ['email' => 'student@example.com'],
+            ['email' => 'student@telc.de'],
             [
                 'name' => 'Student User',
                 'password' => Hash::make('password'),
@@ -37,12 +42,19 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Dummy students
-        User::factory()->count(10)->create([
-            'role' => 'student',
-            'login_count' => fn () => rand(1, 20),
-            'last_login_at' => fn () => now()->subDays(rand(0, 14))->subHours(rand(0, 23)),
-        ]);
+        // Dummy students - using @telc.de domain
+        for ($i = 1; $i <= 10; $i++) {
+            User::updateOrCreate(
+                ['email' => "dummy_student{$i}@telc.de"],
+                [
+                    'name' => fake()->name(),
+                    'password' => Hash::make('password'),
+                    'role' => 'student',
+                    'login_count' => rand(1, 20),
+                    'last_login_at' => now()->subDays(rand(0, 14))->subHours(rand(0, 23)),
+                ]
+            );
+        }
 
         User::updateOrCreate(
             ['email' => 'mmaudace@gmail.com'],

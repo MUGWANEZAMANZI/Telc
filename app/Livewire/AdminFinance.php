@@ -14,7 +14,9 @@ use Livewire\Component;
 
 class AdminFinance extends Component
 {
-    public ?int $selectedUserForTrial = null;
+    public ?string $trialStartDate = null;
+
+    public ?string $trialEndDate = null;
 
     public ?int $selectedPlanForTrial = null;
 
@@ -23,6 +25,8 @@ class AdminFinance extends Component
     public function mount(): void
     {
         abort_unless(Auth::user()?->isOwner() || Auth::user()?->isInvestor(), 403);
+        $this->trialStartDate = now()->format('Y-m-d');
+        $this->trialEndDate = now()->addDays(30)->format('Y-m-d');
     }
 
     public function render(): View
@@ -140,37 +144,41 @@ class AdminFinance extends Component
         abort_unless(Auth::user()?->isOwner(), 403);
         $this->successMessage = null;
         $this->validate([
-            'selectedUserForTrial' => 'required|exists:users,id',
             'selectedPlanForTrial' => 'required|exists:plans,id',
+            'trialStartDate' => 'required|date',
+            'trialEndDate' => 'required|date|after_or_equal:trialStartDate',
         ]);
 
-        // Cancel any existing active subscriptions for this user
-        Subscription::query()
-            ->where('user_id', $this->selectedUserForTrial)
-            ->where('status', 'active')
-            ->update(['status' => 'cancelled']);
-
-        // Create the 30-day manual/free-trial subscription
-        Subscription::create([
-            'user_id' => $this->selectedUserForTrial,
-            'plan_id' => $this->selectedPlanForTrial,
-            'type' => 'plan',
-            'provider' => 'manual_admin',
-            'provider_order_id' => 'trial_'.uniqid(),
-            'status' => 'active',
-            'price_paid' => 0.00,
-            'duration_months' => 1,
-            'starts_at' => now(),
-            'ends_at' => now()->addDays(30),
-        ]);
-
-        $user = User::findOrFail($this->selectedUserForTrial);
         $plan = Plan::findOrFail($this->selectedPlanForTrial);
+        $users = User::all();
 
-        $this->successMessage = "30-tägiges kostenloses Probeabo ({$plan->name}) für {$user->name} wurde erfolgreich aktiviert.";
+        DB::transaction(function () use ($users, $plan) {
+            foreach ($users as $user) {
+                // Cancel any existing active subscriptions for this user
+                Subscription::query()
+                    ->where('user_id', $user->id)
+                    ->where('status', 'active')
+                    ->update(['status' => 'cancelled']);
+
+                // Create the manual/free-trial subscription
+                Subscription::create([
+                    'user_id' => $user->id,
+                    'plan_id' => $plan->id,
+                    'type' => 'plan',
+                    'provider' => 'manual_admin',
+                    'provider_order_id' => 'trial_'.uniqid(),
+                    'status' => 'active',
+                    'price_paid' => 0.00,
+                    'duration_months' => max(1, (int) \Illuminate\Support\Carbon::parse($this->trialStartDate)->diffInMonths(\Illuminate\Support\Carbon::parse($this->trialEndDate))),
+                    'starts_at' => \Illuminate\Support\Carbon::parse($this->trialStartDate),
+                    'ends_at' => \Illuminate\Support\Carbon::parse($this->trialEndDate),
+                ]);
+            }
+        });
+
+        $this->successMessage = "Kostenloses Probeabo ({$plan->name}) wurde für alle Benutzer erfolgreich aktiviert.";
         session()->flash('payment_message', $this->successMessage);
 
-        $this->selectedUserForTrial = null;
         $this->selectedPlanForTrial = null;
     }
 }
