@@ -170,7 +170,7 @@ test('admin can create a manual free trial with start and end dates for all user
         ->set('selectedPlanForTrial', $plan->id)
         ->call('createFreeTrial')
         ->assertHasNoErrors()
-        ->assertSet('successMessage', "Kostenloses Probeabo (Trial Target Plan) wurde für alle Benutzer erfolgreich aktiviert.");
+        ->assertSet('successMessage', 'Kostenloses Probeabo (Trial Target Plan) wurde für alle Benutzer erfolgreich aktiviert.');
 
     // Assert new subscriptions were created for both students and owner with 30 days duration
     foreach ([$student, $student2, $owner] as $user) {

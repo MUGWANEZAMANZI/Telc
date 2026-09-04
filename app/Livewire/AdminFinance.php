@@ -6,6 +6,7 @@ use App\Models\ExamEnrollment;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -169,9 +170,9 @@ class AdminFinance extends Component
                     'provider_order_id' => 'trial_'.uniqid(),
                     'status' => 'active',
                     'price_paid' => 0.00,
-                    'duration_months' => max(1, (int) \Illuminate\Support\Carbon::parse($this->trialStartDate)->diffInMonths(\Illuminate\Support\Carbon::parse($this->trialEndDate))),
-                    'starts_at' => \Illuminate\Support\Carbon::parse($this->trialStartDate),
-                    'ends_at' => \Illuminate\Support\Carbon::parse($this->trialEndDate),
+                    'duration_months' => max(1, (int) Carbon::parse($this->trialStartDate)->diffInMonths(Carbon::parse($this->trialEndDate))),
+                    'starts_at' => Carbon::parse($this->trialStartDate),
+                    'ends_at' => Carbon::parse($this->trialEndDate),
                 ]);
             }
         });
