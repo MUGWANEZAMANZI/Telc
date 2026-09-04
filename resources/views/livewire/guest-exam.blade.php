@@ -315,9 +315,9 @@
         {{-- Free exam landing --}}
         <section class="exam-store">
             <div class="exam-store-header">
-                <p>Free Exam</p>
-                <h1>Try an exam before subscribing</h1>
-                <span>Select a level below to begin your free trial.</span>
+                <p>Kostenlose Prüfung</p>
+                <h1>Testen Sie eine Prüfung vor dem Abonnement</h1>
+                <span>Wählen Sie unten ein Niveau aus, um Ihre kostenlose Testversion zu starten.</span>
             </div>
 
             @if ($freeExamsCompleted >= 1 && !$isBlocked)
@@ -345,19 +345,19 @@
 
             @if (empty($template))
                 <div class="telc-panel">
-                    <h2>No exam is published for this level yet.</h2>
-                    <p>An administrator should publish a template first.</p>
+                    <h2>Für dieses Niveau ist noch keine Prüfung veröffentlicht.</h2>
+                    <p>Ein Administrator muss zuerst eine Vorlage veröffentlichen.</p>
                 </div>
             @else
                 <div class="max-w-md mx-auto mb-16">
                     <div class="bg-white border border-zinc-200 rounded-2xl p-8 text-center shadow-sm">
                         <span class="inline-block text-xs font-bold uppercase tracking-widest text-yellow-600 mb-2">{{ $template['level'] ?? '' }}</span>
                         <h2 class="text-xl font-bold text-zinc-900 mb-1">{{ $template['title'] ?? '' }}</h2>
-                        <p class="text-sm text-zinc-500 mb-6">Complete the exam to see your results</p>
+                        <p class="text-sm text-zinc-500 mb-6">Schließen Sie die Prüfung ab, um Ihre Ergebnisse zu sehen</p>
                         <button type="button" wire:click="startSection(0)"
                             class="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 transition">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z" /></svg>
-                            Start Exam
+                            Prüfung starten
                         </button>
                     </div>
                 </div>
@@ -387,8 +387,8 @@
                             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="width: 48px; height: 48px; margin: 0 auto 1rem; color: #555;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
-                            <h3 style="font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 0.5rem;">Section completed</h3>
-                            <p style="color: #666; font-size: 0.9rem;">This section cannot be retaken.</p>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 0.5rem;">Abschnitt abgeschlossen</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Dieser Abschnitt kann nicht wiederholt werden.</p>
                         </div>
                     </div>
                 @elseif ($currentSection)

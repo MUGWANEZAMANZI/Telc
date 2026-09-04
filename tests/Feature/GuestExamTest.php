@@ -40,7 +40,7 @@ test('guest users see the module with sections as chapters', function () {
 
     Livewire::test(GuestExam::class)
         ->assertSee('Test Free Exam B1')
-        ->assertSee('Start Exam');
+        ->assertSee('Prüfung starten');
 });
 
 test('level query param selects the correct exam', function () {
