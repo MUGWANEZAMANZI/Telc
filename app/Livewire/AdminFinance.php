@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\ExamEnrollment;
 use App\Models\Plan;
+use App\Models\Setting;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -152,6 +153,10 @@ class AdminFinance extends Component
 
         $plan = Plan::findOrFail($this->selectedPlanForTrial);
         $users = User::all();
+
+        Setting::updateOrCreate(['key' => 'trial_start_date'], ['value' => $this->trialStartDate]);
+        Setting::updateOrCreate(['key' => 'trial_end_date'], ['value' => $this->trialEndDate]);
+        Setting::updateOrCreate(['key' => 'trial_plan_name'], ['value' => $plan->name]);
 
         DB::transaction(function () use ($users, $plan) {
             foreach ($users as $user) {

@@ -47,6 +47,67 @@
     </head>
     <body class="bg-stone-50 text-stone-900 min-h-screen flex flex-col justify-between overflow-x-hidden relative" x-data="{ showSticky: false }" @scroll.window="showSticky = window.pageYOffset > 500">
 
+        @php
+            $trialStartRaw = \App\Models\Setting::value('trial_start_date');
+            $trialEndRaw = \App\Models\Setting::value('trial_end_date');
+            
+            $hasActiveTrial = false;
+            $trialStartFormatted = '';
+            $trialEndFormatted = '';
+
+            if ($trialStartRaw && $trialEndRaw) {
+                $startDate = \Illuminate\Support\Carbon::parse($trialStartRaw);
+                $endDate = \Illuminate\Support\Carbon::parse($trialEndRaw)->endOfDay();
+                if (now()->lte($endDate)) {
+                    $hasActiveTrial = true;
+                    $trialStartFormatted = $startDate->format('d.m.Y');
+                    $trialEndFormatted = $endDate->format('d.m.Y');
+                }
+            }
+
+            if (!$hasActiveTrial) {
+                $latestTrialSub = \App\Models\Subscription::where('provider', 'manual_admin')
+                    ->where('status', 'active')
+                    ->whereNotNull('ends_at')
+                    ->where('ends_at', '>=', now())
+                    ->latest()
+                    ->first();
+
+                if ($latestTrialSub) {
+                    $hasActiveTrial = true;
+                    $trialStartFormatted = $latestTrialSub->starts_at?->format('d.m.Y') ?? now()->format('d.m.Y');
+                    $trialEndFormatted = $latestTrialSub->ends_at?->format('d.m.Y');
+                }
+            }
+        @endphp
+
+        @if ($hasActiveTrial)
+            <div x-data="{ dismissed: sessionStorage.getItem('trial_banner_dismissed') === 'true' }"
+                 x-show="!dismissed"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 max-h-12"
+                 x-transition:leave-end="opacity-0 max-h-0"
+                 class="w-full bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-zinc-950 font-semibold px-4 py-2 flex items-center justify-between text-xs sm:text-sm shadow-md relative z-50 border-b border-amber-300/50">
+                <div class="flex items-center gap-2 mx-auto text-center truncate">
+                    <span class="inline-flex items-center justify-center bg-black/15 text-zinc-950 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full border border-black/10 shrink-0">
+                        🎁 KOSTENLOSE TESTPHASE
+                    </span>
+                    <span class="truncate">
+                        Gratis Testzeitraum vom <strong>{{ $trialStartFormatted }}</strong> bis <strong>{{ $trialEndFormatted }}</strong>! Jetzt alle Prüfungen kostenlos absolvieren.
+                    </span>
+                </div>
+                <button type="button" 
+                        @click="dismissed = true; sessionStorage.setItem('trial_banner_dismissed', 'true')"
+                        class="text-zinc-900 hover:text-black hover:bg-black/10 rounded-full p-1 transition-colors duration-150 shrink-0 ml-2"
+                        title="Schließen"
+                        aria-label="Banner schließen">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        @endif
+
         <!-- AI Background Orbs -->
         <div class="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
             <div class="absolute -top-40 -left-40 w-96 h-96 bg-red-100/40 rounded-full blur-3xl animate-[pulse_6s_infinite_ease-in-out]"></div>
