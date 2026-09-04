@@ -85,20 +85,20 @@
             <div x-data="{ dismissed: sessionStorage.getItem('trial_banner_dismissed') === 'true' }"
                  x-show="!dismissed"
                  x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100 max-h-12"
+                 x-transition:leave-start="opacity-100 max-h-24"
                  x-transition:leave-end="opacity-0 max-h-0"
-                 class="w-full bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-zinc-950 font-semibold px-4 py-2 flex items-center justify-between text-xs sm:text-sm shadow-md relative z-50 border-b border-amber-300/50">
-                <div class="flex items-center gap-2 mx-auto text-center truncate">
-                    <span class="inline-flex items-center justify-center bg-black/15 text-zinc-950 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full border border-black/10 shrink-0">
+                 class="w-full bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-zinc-950 font-semibold px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between text-xs sm:text-sm shadow-md relative z-50 border-b border-amber-300/50">
+                <div class="flex flex-wrap sm:flex-nowrap items-center justify-center gap-1.5 sm:gap-2 mx-auto text-center leading-snug">
+                    <span class="inline-flex items-center justify-center bg-black/15 text-zinc-950 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border border-black/10 shrink-0">
                         🎁 KOSTENLOSE TESTPHASE
                     </span>
-                    <span class="truncate">
+                    <span class="text-zinc-950">
                         Gratis Testzeitraum vom <strong>{{ $trialStartFormatted }}</strong> bis <strong>{{ $trialEndFormatted }}</strong>! Jetzt alle Prüfungen kostenlos absolvieren.
                     </span>
                 </div>
                 <button type="button" 
                         @click="dismissed = true; sessionStorage.setItem('trial_banner_dismissed', 'true')"
-                        class="text-zinc-900 hover:text-black hover:bg-black/10 rounded-full p-1 transition-colors duration-150 shrink-0 ml-2"
+                        class="text-zinc-900 hover:text-black hover:bg-black/10 rounded-full p-1 transition-colors duration-150 shrink-0 ml-2 self-center"
                         title="Schließen"
                         aria-label="Banner schließen">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
