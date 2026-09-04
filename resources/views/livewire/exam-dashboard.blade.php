@@ -919,11 +919,11 @@
                     @forelse ($pendingPayments as $payment)
                         <tr style="border-bottom: 1px solid #edf0f4;">
                             <td style="padding: 0.75rem;">
-                                <strong>{{ $payment->user->name }}</strong><br>
-                                <small style="color: #666666;">{{ $payment->user->email }}</small>
+                                <strong>{{ $payment->user?->name ?? 'Gelöschter Benutzer' }}</strong><br>
+                                <small style="color: #666666;">{{ $payment->user?->email ?? '-' }}</small>
                             </td>
                             <td style="padding: 0.75rem;">
-                                {{ $payment->examTemplate->title ?? 'TELC' }} ({{ $payment->examTemplate->level }})
+                                {{ $payment->examTemplate?->title ?? 'TELC' }} ({{ $payment->examTemplate?->level ?? '-' }})
                             </td>
                             <td style="padding: 0.75rem;">
                                 <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px;">{{ $payment->transaction_id }}</code>

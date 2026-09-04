@@ -23,12 +23,12 @@
                     <tbody>
                         @forelse ($expiring as $sub)
                             <tr style="border-bottom: 1px solid #edf0f4;">
-                                <td style="padding: 0.75rem; font-weight: 700;">{{ $sub->user->name }}</td>
+                                <td style="padding: 0.75rem; font-weight: 700;">{{ $sub->user?->name ?? 'Gelöschter Benutzer' }}</td>
                                 <td style="padding: 0.75rem;">
-                                    <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.85rem;">{{ $sub->user->email }}</code>
+                                    <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.85rem;">{{ $sub->user?->email ?? '-' }}</code>
                                 </td>
-                                <td style="padding: 0.75rem;">{{ $sub->plan->name }}</td>
-                                <td style="padding: 0.75rem; color: #d8232a; font-weight: 700;">{{ $sub->ends_at->format('d.m.Y') }}</td>
+                                <td style="padding: 0.75rem;">{{ $sub->plan?->name ?? 'Unbekannter Tarif' }}</td>
+                                <td style="padding: 0.75rem; color: #d8232a; font-weight: 700;">{{ $sub->ends_at?->format('d.m.Y') }}</td>
                             </tr>
                         @empty
                             <tr>
@@ -56,10 +56,10 @@
                         @forelse ($history as $sub)
                             <tr style="border-bottom: 1px solid #edf0f4;">
                                 <td style="padding: 0.75rem;">
-                                    <strong>{{ $sub->user->name }}</strong><br>
-                                    <small style="color: #666666;">{{ $sub->user->email }}</small>
+                                    <strong>{{ $sub->user?->name ?? 'Gelöschter Benutzer' }}</strong><br>
+                                    <small style="color: #666666;">{{ $sub->user?->email ?? '-' }}</small>
                                 </td>
-                                <td style="padding: 0.75rem;">{{ $sub->plan->name }} ({{ number_format($sub->price_paid, 2) }} €)</td>
+                                <td style="padding: 0.75rem;">{{ $sub->plan?->name ?? 'Unbekannter Tarif' }} ({{ number_format($sub->price_paid ?? 0, 2) }} €)</td>
                                 <td style="padding: 0.75rem;">
                                     <span style="display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; {{ $sub->status === 'active' ? 'background: #e6f4ea; color: #137333;' : 'background: #fce8e6; color: #c5221f;' }}">
                                         {{ $sub->status }}
@@ -89,9 +89,9 @@
                 <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 1.5rem; color: #111827;">Aktives Abonnement</h3>
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; background: #fafafa; padding: 1.5rem; border-radius: 8px; border: 1px solid #f0f0f0;">
                     <div>
-                            <strong style="font-size: 1.35rem; color: #111827; display: block; margin-bottom: 0.25rem;">{{ $subscription->plan->name }}</strong>
+                            <strong style="font-size: 1.35rem; color: #111827; display: block; margin-bottom: 0.25rem;">{{ $subscription->plan?->name ?? 'Abonnement' }}</strong>
                         <span style="font-size: 0.95rem; color: #666666;">
-                            {{ number_format($subscription->price_paid, 2) }} {{ strtoupper($subscription->plan->currency) }} für {{ $subscription->duration_months }} Monat(e)
+                            {{ number_format($subscription->price_paid ?? 0, 2) }} {{ strtoupper($subscription->plan?->currency ?? 'EUR') }} für {{ $subscription->duration_months }} Monat(e)
                         </span>
                         @if ($subscription->ends_at)
                             <div style="margin-top: 0.75rem; font-size: 0.9rem; color: #d8232a; font-weight: 700;">

@@ -106,10 +106,10 @@
                     @forelse ($pendingPayments as $payment)
                         <tr style="border-bottom: 1px solid #edf0f4;">
                             <td style="padding: 0.75rem;">
-                                <strong>{{ $payment->user->name }}</strong><br>
-                                <small style="color: #666666;">{{ $payment->user->email }}</small>
+                                <strong>{{ $payment->user?->name ?? 'Gelöschter Benutzer' }}</strong><br>
+                                <small style="color: #666666;">{{ $payment->user?->email ?? '-' }}</small>
                             </td>
-                            <td style="padding: 0.75rem;">{{ $payment->examTemplate->title }} ({{ $payment->examTemplate->level }})</td>
+                            <td style="padding: 0.75rem;">{{ $payment->examTemplate?->title ?? 'TELC' }} ({{ $payment->examTemplate?->level ?? '-' }})</td>
                             <td style="padding: 0.75rem;">
                                 <code style="background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.8rem;">{{ $payment->transaction_id ?: '—' }}</code>
                             </td>
@@ -158,10 +158,10 @@
                         <tr style="border-bottom: 1px solid #edf0f4;">
                             <td style="padding: 0.75rem;">{{ $tx->enrolled_at?->format('d.m.Y') ?: '—' }}</td>
                             <td style="padding: 0.75rem;">
-                                <strong>{{ $tx->user->name }}</strong><br>
-                                <small style="color: #666666;">{{ $tx->user->email }}</small>
+                                <strong>{{ $tx->user?->name ?? 'Gelöschter Benutzer' }}</strong><br>
+                                <small style="color: #666666;">{{ $tx->user?->email ?? '-' }}</small>
                             </td>
-                            <td style="padding: 0.75rem;">{{ $tx->examTemplate->title }} ({{ $tx->examTemplate->level }})</td>
+                            <td style="padding: 0.75rem;">{{ $tx->examTemplate?->title ?? 'TELC' }} ({{ $tx->examTemplate?->level ?? '-' }})</td>
                             <td style="padding: 0.75rem; font-weight: 700;">{{ number_format($tx->examTemplate->price ?? 0, 2) }} €</td>
                             <td style="padding: 0.75rem;">
                                 @if ($tx->payment_status === 'paid')
