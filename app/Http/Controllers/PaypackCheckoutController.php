@@ -56,6 +56,21 @@ class PaypackCheckoutController extends Controller
                 'paypack_phone' => $phone,
             ]);
 
+            // Save pending subscription in DB for automated background sync
+            Subscription::updateOrCreate(
+                ['provider_order_id' => $ref],
+                [
+                    'user_id' => $request->user()->id,
+                    'plan_id' => $plan->id,
+                    'provider' => 'paypack',
+                    'status' => 'pending',
+                    'price_paid' => $amount,
+                    'duration_months' => $duration,
+                    'starts_at' => now(),
+                    'ends_at' => null,
+                ]
+            );
+
             return response()->json([
                 'status' => $status,
                 'ref' => $ref,

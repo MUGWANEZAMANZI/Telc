@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('subscriptions:remind')->daily();
 Schedule::command('scheduled-emails:send')->everyFiveMinutes();
+Schedule::command('paypack:sync-pending')->everyMinute();
