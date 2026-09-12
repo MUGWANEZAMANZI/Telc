@@ -55,7 +55,7 @@ This software is proprietary and belongs to **HASENGINEZA Theodore**.
    Ensure you set the following crucial variables:
    * `GEMINI_API_KEY`: Google AI Studio developer API key.
    * `DB_CONNECTION`: `sqlite` (default) or `mysql`.
-   * PayPal, Stripe, and Revolut credentials.
+   * PayPal and Paypack credentials.
 
 3. **Install Dependencies**:
    ```bash

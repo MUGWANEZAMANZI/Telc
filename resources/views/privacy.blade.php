@@ -63,7 +63,7 @@
 
             <section class="space-y-3">
                 <h2 class="text-lg font-extrabold uppercase tracking-tight text-zinc-900">6. Zahlungsabwicklung</h2>
-                <p>Für die Abwicklung von Zahlungen setzen wir auf die Zahlungsdienstleister PayPal und Revolut. Ihre Zahlungsdaten werden ausschließlich an diese Dienstleister übermittelt und auf deren Servern verarbeitet. Eine Speicherung Ihrer vollständigen Kreditkartennummer erfolgt bei uns nicht.</p>
+                <p>Für die Abwicklung von Zahlungen setzen wir auf die Zahlungsdienstleister PayPal und Paypack (Mobile Money). Ihre Zahlungsdaten werden ausschließlich an diese Dienstleister übermittelt und auf deren Servern verarbeitet. Eine Speicherung vertraulicher Finanzdaten erfolgt bei uns nicht.</p>
                 <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragsdurchführung).</p>
             </section>
 

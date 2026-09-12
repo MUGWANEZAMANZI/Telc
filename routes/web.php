@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\PayPalCheckoutController;
-use App\Http\Controllers\RevolutCheckoutController;
+use App\Http\Controllers\PaypackCheckoutController;
 use App\Livewire\AdminBlog;
 use App\Livewire\AdminBooks;
 use App\Livewire\AdminEmailScheduler;
@@ -105,14 +105,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('paypal/success', [PayPalCheckoutController::class, 'success'])->name('paypal.success');
     Route::get('paypal/cancel', [PayPalCheckoutController::class, 'cancel'])->name('paypal.cancel');
 
-    // Revolut
-    Route::post('revolut/create-order', [RevolutCheckoutController::class, 'createOrder'])->name('revolut.create');
-    Route::get('revolut/success', [RevolutCheckoutController::class, 'success'])->name('revolut.success');
-    Route::get('revolut/cancel', [RevolutCheckoutController::class, 'cancel'])->name('revolut.cancel');
+    // Paypack
+    Route::post('paypack/cashin', [PaypackCheckoutController::class, 'processCashin'])->name('paypack.cashin');
+    Route::get('paypack/status/{ref}', [PaypackCheckoutController::class, 'checkStatus'])->name('paypack.status');
 });
 
 Route::post('paypal/webhook', [PayPalCheckoutController::class, 'webhook']);
-Route::post('api/webhooks/revolut', [RevolutCheckoutController::class, 'webhook']);
+Route::post('api/webhooks/paypack', [PaypackCheckoutController::class, 'webhook']);
 
 Route::get('/goethe-assets/{file}', function (string $file) {
     abort_unless(str_ends_with($file, '.mp3'), 404);

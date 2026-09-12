@@ -98,7 +98,7 @@
                                 📅 Zugang endet am: {{ $subscription->ends_at->format('d.m.Y H:i') }} Uhr
                             </div>
                             <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">
-                                Bezahlt via {{ $subscription->provider === 'revolut' ? 'Revolut' : 'PayPal' }} · {{ number_format($subscription->price_paid, 2) }} € für {{ $subscription->duration_months }} Monat(e)
+                                Bezahlt via {{ $subscription->provider === 'paypack' ? 'Paypack (Mobile Money)' : ($subscription->provider === 'revolut' ? 'Revolut' : 'PayPal') }} · {{ number_format($subscription->price_paid, 2) }} € für {{ $subscription->duration_months }} Monat(e)
                             </div>
                         @endif
                     </div>

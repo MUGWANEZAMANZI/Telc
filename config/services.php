@@ -39,10 +39,10 @@ return [
         'product_id' => env('PAYPAL_PRODUCT_ID'),
     ],
 
-    'revolut' => [
-        'secret' => env('REVOLUT_MERCHANT_SECRET_KEY'),
-        'public' => env('REVOLUT_MERCHANT_PUBLIC_KEY'),
-        'sandbox' => env('REVOLUT_SANDBOX', true),
+    'paypack' => [
+        'client_id' => env('PAYPACK_CLIENT_ID'),
+        'client_secret' => env('PAYPACK_CLIENT_SECRET'),
+        'webhook_mode' => env('PAYPACK_WEBHOOK_MODE', 'development'),
     ],
 
     'google_forms' => [

@@ -43,7 +43,7 @@
 
             <section class="space-y-3">
                 <h2 class="text-lg font-extrabold uppercase tracking-tight text-zinc-900">§ 4 Preise und Zahlung</h2>
-                <p>Alle Preise verstehen sich in Euro (EUR) und inklusive der gesetzlichen Mehrwertsteuer, sofern nicht anders angegeben. Die Zahlung erfolgt über die angebotenen Zahlungsprovider (PayPal, Revolut). Eine Rechnung wird dem Nutzer nach erfolgreichem Zahlungseingang zur Verfügung gestellt.</p>
+                <p>Alle Preise verstehen sich in Euro (EUR) und inklusive der gesetzlichen Mehrwertsteuer, sofern nicht anders angegeben. Die Zahlung erfolgt über die angebotenen Zahlungsprovider (PayPal, Paypack Mobile Money). Eine Rechnung wird dem Nutzer nach erfolgreichem Zahlungseingang zur Verfügung gestellt.</p>
             </section>
 
             <section class="space-y-3">

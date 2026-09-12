@@ -158,7 +158,7 @@
 
         {{-- Footer --}}
         <div class="mt-6 border-t border-zinc-200/80 pt-4 text-center text-zinc-500 text-[0.65rem] leading-relaxed">
-            <p>&copy; {{ date('Y') }} Erfolg. Alle Preise inkl. gesetzlicher MwSt. Zahlungen werden sicher über Revolut und PayPal abgewickelt.</p>
+            <p>&copy; {{ date('Y') }} Erfolg. Alle Preise inkl. gesetzlicher MwSt. Zahlungen werden sicher über Paypack (Mobile Money) und PayPal abgewickelt.</p>
         </div>
     </div>
 
@@ -166,32 +166,48 @@
     <div id="paymentModal" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center backdrop-blur-md transition-all duration-300">
         <div class="bg-white p-8 md:p-10 max-w-lg w-[90%] rounded-2xl shadow-2xl border-l-4 border-[#d8232a] text-left transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
             <h3 class="font-serif text-2xl md:text-3xl font-bold mb-2 text-zinc-900">Zahlungsmethode wählen</h3>
-            <p class="text-zinc-500 text-sm mb-6 leading-relaxed">Bitte wählen Sie eine Zahlungsmethode.</p>
+            <p class="text-zinc-500 text-sm mb-6 leading-relaxed">Bitte wählen Sie eine Zahlungsmethode zur Freischaltung aus.</p>
 
-            <div id="revolut-section" class="hidden flex-col gap-3 mb-6">
-                <div class="border-2 border-zinc-950 p-4 rounded-xl bg-zinc-50">
-                    <strong class="text-sm text-zinc-900 block mb-4">Mit Revolut bezahlen</strong>
-                    <div id="revolut-pay-button"></div>
-                    <div id="revolut-loading" class="text-center py-4">
-                        <div class="loading-spinner"></div>
-                        <p class="text-xs text-zinc-500 mt-2">Zahlung wird vorbereitet...</p>
-                    </div>
-                    <div id="revolut-error" class="hidden text-[#d8232a] text-xs mt-2 font-medium"></div>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-3 mb-8">
+            <div class="flex flex-col gap-3 mb-6">
+                {{-- PayPal Option --}}
                 <a id="paypalBtn" href="#" class="flex items-center justify-between border-2 border-zinc-200 hover:border-zinc-950 p-4 rounded-xl bg-zinc-50 hover:bg-white transition-all duration-200 text-decoration-none text-inherit box-border">
                     <strong class="text-sm text-zinc-900">Mit PayPal bezahlen</strong>
                     <span class="text-xs text-[#d8232a] font-bold">Weiter →</span>
                 </a>
-                <button type="button" disabled class="flex items-center justify-between border-2 border-zinc-200 p-4 rounded-xl bg-zinc-50 opacity-50 cursor-not-allowed pointer-events-none text-left box-border font-inherit text-inherit w-full">
+
+                {{-- Paypack Option Toggle --}}
+                <button type="button" onclick="showPaypackSection()" class="flex items-center justify-between border-2 border-zinc-200 hover:border-zinc-950 p-4 rounded-xl bg-zinc-50 hover:bg-white transition-all duration-200 text-left box-border font-inherit text-inherit w-full cursor-pointer">
                     <div>
-                        <strong class="text-sm text-zinc-400">Mit Kreditkarte (Revolut) zahlen</strong>
-                        <span class="text-xs text-zinc-400 block font-medium">Coming soon</span>
+                        <strong class="text-sm text-zinc-900 block">Mit Paypack (Mobile Money) bezahlen</strong>
+                        <span class="text-xs text-zinc-500 block font-medium">MTN Mobile Money & Airtel Money</span>
                     </div>
-                    <span class="text-xs text-zinc-400 font-bold">Demnächst</span>
+                    <span class="text-xs text-[#d8232a] font-bold">Auswählen →</span>
                 </button>
+            </div>
+
+            {{-- Paypack Mobile Money Form Section --}}
+            <div id="paypack-section" class="hidden flex-col gap-3 mb-6 border-t border-zinc-200 pt-4">
+                <div class="border-2 border-zinc-950 p-4 rounded-xl bg-zinc-50">
+                    <strong class="text-sm text-zinc-900 block mb-2">Paypack Mobile Money</strong>
+                    <p class="text-xs text-zinc-600 mb-4">Geben Sie Ihre Mobiltelefonnummer (MTN / Airtel) ein, um die Zahlung anzufordern.</p>
+                    
+                    <div class="mb-4">
+                        <label for="paypack-phone" class="block text-xs font-bold text-zinc-700 mb-1">Telefonnummer</label>
+                        <input type="tel" id="paypack-phone" placeholder="078xxxxxxx" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                    </div>
+
+                    <button type="button" id="paypack-submit-btn" onclick="initiatePaypackCashin()" class="w-full py-2.5 px-4 rounded-lg font-extrabold text-xs transition-all duration-200 bg-zinc-900 text-white hover:bg-zinc-800 shadow-md cursor-pointer">
+                        Zahlung anfordern
+                    </button>
+
+                    <div id="paypack-loading" class="hidden text-center py-4">
+                        <div class="loading-spinner"></div>
+                        <p id="paypack-status-msg" class="text-xs text-zinc-600 mt-2 font-medium">Zahlung wird verarbeitet...</p>
+                    </div>
+
+                    <div id="paypack-error" class="hidden text-[#d8232a] text-xs mt-3 font-medium bg-red-50 p-3 rounded-lg border border-red-100"></div>
+                    <div id="paypack-success" class="hidden text-emerald-700 text-xs mt-3 font-medium bg-emerald-50 p-3 rounded-lg border border-emerald-100"></div>
+                </div>
             </div>
 
             <div class="flex justify-end">
@@ -204,46 +220,12 @@
         let selectedPlanId = null;
         let selectedDuration = 1;
         let selectedItemType = 'plan';
-
-        function selectDuration(el, planId, totalPrice, monthlyPrice, months) {
-            // Find all options in the container and reset their classes
-            el.parentElement.querySelectorAll('.duration-option').forEach(o => {
-                o.classList.remove('bg-white', 'text-zinc-900', 'border', 'border-zinc-200/50', 'shadow-sm', 'selected');
-                o.classList.add('bg-transparent', 'text-zinc-600', 'hover:text-zinc-900');
-            });
-            
-            // Mark the selected one
-            el.classList.remove('bg-transparent', 'text-zinc-600', 'hover:text-zinc-900');
-            el.classList.add('bg-white', 'text-zinc-900', 'border', 'border-zinc-200/50', 'shadow-sm', 'selected');
-
-            // Update top price display
-            const priceEl = document.getElementById(`price-display-${planId}`);
-            if (priceEl) {
-                priceEl.textContent = monthlyPrice.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            }
-
-            // Update subtext display
-            const subtextEl = document.getElementById(`subtext-display-${planId}`);
-            if (subtextEl) {
-                if (months === 1) {
-                    subtextEl.textContent = 'Monatliche Abrechnung';
-                } else {
-                    subtextEl.textContent = `Gesamtpreis: ${totalPrice.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € (alle ${months} Monate abgerechnet)`;
-                }
-            }
-        }
-
-        function getSelectedDuration(planId) {
-            const selector = document.querySelector(`.duration-selector[data-plan-id="${planId}"]`);
-            if (! selector) return 1;
-            const selected = selector.querySelector('.duration-option.selected');
-            return selected ? parseInt(selected.dataset.months) : 1;
-        }
+        let paypackPollInterval = null;
 
         function openPaymentModal(planId, type, duration) {
             selectedPlanId = planId;
             selectedItemType = type || 'plan';
-            selectedDuration = duration || getSelectedDuration(planId);
+            selectedDuration = duration || 1;
 
             const paypalUrl = type === 'plan'
                 ? '{{ route('paypal.plan.checkout') }}?plan_id=' + planId + '&duration=' + selectedDuration
@@ -257,15 +239,12 @@
                 paypalBtn.style.display = 'none';
             }
 
-            document.getElementById('revolut-section').style.display = 'none';
-            document.getElementById('revolut-pay-button').innerHTML = '';
-            document.getElementById('revolut-error').style.display = 'none';
+            hidePaypackSection();
 
             const modal = document.getElementById('paymentModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             
-            // Trigger animation frame for transition
             setTimeout(() => {
                 const content = document.getElementById('modalContent');
                 content.classList.remove('scale-95', 'opacity-0');
@@ -274,6 +253,11 @@
         }
 
         function closePaymentModal() {
+            if (paypackPollInterval) {
+                clearInterval(paypackPollInterval);
+                paypackPollInterval = null;
+            }
+
             const content = document.getElementById('modalContent');
             content.classList.remove('scale-100', 'opacity-100');
             content.classList.add('scale-95', 'opacity-0');
@@ -282,30 +266,57 @@
                 const modal = document.getElementById('paymentModal');
                 modal.classList.remove('flex');
                 modal.classList.add('hidden');
-                document.getElementById('revolut-section').style.display = 'none';
+                hidePaypackSection();
             }, 300);
         }
 
-        async function initRevolutPay() {
-            const revolutSection = document.getElementById('revolut-section');
-            const revolutButton = document.getElementById('revolut-pay-button');
-            const revolutLoading = document.getElementById('revolut-loading');
-            const revolutError = document.getElementById('revolut-error');
+        function showPaypackSection() {
+            const section = document.getElementById('paypack-section');
+            section.classList.remove('hidden');
+            section.classList.add('flex');
+        }
 
-            revolutSection.classList.remove('hidden');
-            revolutSection.classList.add('flex');
-            revolutLoading.style.display = 'block';
-            revolutError.style.display = 'none';
-            revolutError.classList.add('hidden');
+        function hidePaypackSection() {
+            const section = document.getElementById('paypack-section');
+            section.classList.remove('flex');
+            section.classList.add('hidden');
+            document.getElementById('paypack-error').classList.add('hidden');
+            document.getElementById('paypack-success').classList.add('hidden');
+            document.getElementById('paypack-loading').classList.add('hidden');
+            document.getElementById('paypack-submit-btn').style.display = 'block';
+        }
+
+        async function initiatePaypackCashin() {
+            const phoneInput = document.getElementById('paypack-phone');
+            const phone = phoneInput.value.trim();
+            const submitBtn = document.getElementById('paypack-submit-btn');
+            const loading = document.getElementById('paypack-loading');
+            const statusMsg = document.getElementById('paypack-status-msg');
+            const errorDiv = document.getElementById('paypack-error');
+            const successDiv = document.getElementById('paypack-success');
+
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+
+            if (!phone) {
+                errorDiv.textContent = 'Bitte geben Sie Ihre Mobiltelefonnummer ein.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            submitBtn.style.display = 'none';
+            loading.classList.remove('hidden');
+            statusMsg.textContent = 'Zahlungsaufforderung wird gesendet...';
 
             try {
-                const response = await fetch('{{ route('revolut.create') }}', {
+                const response = await fetch('{{ route('paypack.cashin') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
+                        phone: phone,
                         type: selectedItemType,
                         id: selectedPlanId,
                         duration_months: selectedDuration,
@@ -315,54 +326,83 @@
                 const data = await response.json();
 
                 if (data.error) {
-                    revolutError.textContent = data.error;
-                    revolutError.style.display = 'block';
-                    revolutError.classList.remove('hidden');
-                    revolutLoading.style.display = 'none';
+                    errorDiv.textContent = data.error;
+                    errorDiv.classList.remove('hidden');
+                    loading.classList.add('hidden');
+                    submitBtn.style.display = 'block';
                     return;
                 }
 
-                revolutLoading.style.display = 'none';
+                statusMsg.textContent = data.message || 'Bitte bestätigen Sie die PIN-Eingabe auf Ihrem Telefon.';
+                
+                if (data.ref) {
+                    startPaypackPolling(data.ref);
+                }
+            } catch (e) {
+                errorDiv.textContent = 'Zahlungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.';
+                errorDiv.classList.remove('hidden');
+                loading.classList.add('hidden');
+                submitBtn.style.display = 'block';
+            }
+        }
 
-                // Load Revolut SDK and mount the button
-                if (typeof RevolutCheckout === 'undefined') {
-                    await new Promise((resolve, reject) => {
-                        const script = document.createElement('script');
-                        script.src = 'https://merchant.revolut.com/embed.js';
-                        script.onload = resolve;
-                        script.onerror = () => {
-                            revolutError.textContent = 'Revolut SDK konnte nicht geladen werden.';
-                            revolutError.style.display = 'block';
-                            revolutError.classList.remove('hidden');
-                            reject();
-                        };
-                        document.head.appendChild(script);
-                    });
+        function startPaypackPolling(ref) {
+            if (paypackPollInterval) {
+                clearInterval(paypackPollInterval);
+            }
+
+            const loading = document.getElementById('paypack-loading');
+            const statusMsg = document.getElementById('paypack-status-msg');
+            const errorDiv = document.getElementById('paypack-error');
+            const successDiv = document.getElementById('paypack-success');
+
+            let attempts = 0;
+            const maxAttempts = 40; // ~2 minutes polling
+
+            paypackPollInterval = setInterval(async () => {
+                attempts++;
+                if (attempts > maxAttempts) {
+                    clearInterval(paypackPollInterval);
+                    paypackPollInterval = null;
+                    loading.classList.add('hidden');
+                    errorDiv.textContent = 'Zeitüberschreitung. Bitte prüfen Sie Ihren Abrechnungsstatus im Konto.';
+                    errorDiv.classList.remove('hidden');
+                    document.getElementById('paypack-submit-btn').style.display = 'block';
+                    return;
                 }
 
-                const rc = await RevolutCheckout(data.public_id, data.mode);
-                const revolutPay = rc.revolutPay({
-                    target: revolutButton,
-                    onSuccess() {
-                        window.location.href = '{{ route('revolut.success') }}';
-                    },
-                    onError(error) {
-                        revolutError.textContent = 'Zahlung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler');
-                        revolutError.style.display = 'block';
-                        revolutError.classList.remove('hidden');
-                    },
-                    onCancel() {
-                        revolutSection.classList.remove('flex');
-                        revolutSection.classList.add('hidden');
-                        revolutButton.innerHTML = '';
+                try {
+                    const statusRoute = '{{ route('paypack.status', ':ref') }}'.replace(':ref', ref);
+                    const response = await fetch(statusRoute, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.status === 'successful') {
+                        clearInterval(paypackPollInterval);
+                        paypackPollInterval = null;
+                        loading.classList.add('hidden');
+                        successDiv.textContent = data.message || 'Zahlung erfolgreich!';
+                        successDiv.classList.remove('hidden');
+                        setTimeout(() => {
+                            window.location.href = data.redirect || '{{ route('billing') }}';
+                        }, 1200);
+                    } else if (data.status === 'failed') {
+                        clearInterval(paypackPollInterval);
+                        paypackPollInterval = null;
+                        loading.classList.add('hidden');
+                        errorDiv.textContent = data.message || 'Zahlung fehlgeschlagen.';
+                        errorDiv.classList.remove('hidden');
+                        document.getElementById('paypack-submit-btn').style.display = 'block';
                     }
-                });
-            } catch (e) {
-                revolutError.textContent = 'Zahlungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.';
-                revolutError.style.display = 'block';
-                revolutError.classList.remove('hidden');
-                revolutLoading.style.display = 'none';
-            }
+                } catch (err) {
+                    console.error('Polling error', err);
+                }
+            }, 3000);
         }
 
         document.getElementById('paymentModal').addEventListener('click', function(e) {
