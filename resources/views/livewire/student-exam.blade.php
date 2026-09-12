@@ -759,10 +759,6 @@
                                 <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit PayPal bezahlen (Einmalig 5,00 €)</strong>
                                 <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Jetzt freischalten</span>
                             </button>
-                            <button type="button" wire:click="selectPayment('revolut')" style="display: flex; align-items: center; justify-content: space-between; border: 2px solid #1a1a1a; padding: 1rem; border-radius: 4px; background: #fafafa; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%;">
-                                <strong style="font-size: 0.95rem; color: #1a1a1a;">Mit Kreditkarte (Revolut) zahlen</strong>
-                                <span style="font-size: 0.85rem; color: #d8232a; font-weight: 600;">Jetzt bezahlen</span>
-                            </button>
                         </div>
 
                         <div style="display: flex; justify-content: flex-end; gap: 1rem;">
@@ -1327,106 +1323,8 @@
         </div>
     @endif
 
-    {{-- Revolut Payment Modal --}}
-<div id="revolutModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1001; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div style="background: #ffffff; padding: 2.5rem; max-width: 480px; width: 90%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid #d8232a; font-family: 'Plus Jakarta Sans', sans-serif; text-align: left;">
-        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 0.5rem; color: #1a1a1a;">Revolut Bezahlung</h3>
-        <p style="color: #666666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">Schliessen Sie die Zahlung mit Revolut ab.</p>
-        <div id="revolut-exam-button"></div>
-        <div id="revolut-exam-loading" style="text-align: center; padding: 1rem;">
-            <div class="loading-spinner" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #e5e5e5; border-top-color: #1a1a1a; border-radius: 50%; animation: spin 0.6s linear infinite;"></div>
-            <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Zahlung wird vorbereitet...</p>
-        </div>
-        <div id="revolut-exam-error" style="display: none; color: #d8232a; font-size: 0.85rem; margin-top: 0.5rem;"></div>
-        <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-            <button type="button" onclick="closeRevolutModal()" style="border: none; background: none; padding: 0.5rem 1rem; cursor: pointer; color: #666666; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Abbrechen</button>
-        </div>
-    </div>
-</div>
-
 @push('scripts')
 <script>
-    let revolutExamTemplateId = null;
-
-    document.addEventListener('open-revolut-modal', function(event) {
-        revolutExamTemplateId = event.detail.templateId;
-        document.getElementById('revolutModal').style.display = 'flex';
-        initRevolutExamPay();
-    });
-
-    async function initRevolutExamPay() {
-        const button = document.getElementById('revolut-exam-button');
-        const loading = document.getElementById('revolut-exam-loading');
-        const error = document.getElementById('revolut-exam-error');
-
-        button.innerHTML = '';
-        loading.style.display = 'block';
-        error.style.display = 'none';
-
-        try {
-            const response = await fetch('{{ route('revolut.create') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    type: 'exam',
-                    id: revolutExamTemplateId
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.error) {
-                error.textContent = data.error;
-                error.style.display = 'block';
-                loading.style.display = 'none';
-                return;
-            }
-
-            loading.style.display = 'none';
-
-            if (typeof RevolutCheckout === 'undefined') {
-                await new Promise((resolve, reject) => {
-                    const script = document.createElement('script');
-                    script.src = 'https://merchant.revolut.com/embed.js';
-                    script.onload = resolve;
-                    script.onerror = () => {
-                        error.textContent = 'Revolut SDK konnte nicht geladen werden.';
-                        error.style.display = 'block';
-                        reject();
-                    };
-                    document.head.appendChild(script);
-                });
-            }
-
-            const rc = await RevolutCheckout(data.public_id, data.mode);
-            rc.revolutPay({
-                target: button,
-                onSuccess() {
-                    window.location.href = '{{ route('revolut.success') }}';
-                },
-                onError(e) {
-                    error.textContent = 'Zahlung fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler');
-                    error.style.display = 'block';
-                },
-                onCancel() {
-                    closeRevolutModal();
-                }
-            });
-        } catch (e) {
-            error.textContent = 'Zahlungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.';
-            error.style.display = 'block';
-            loading.style.display = 'none';
-        }
-    }
-
-    function closeRevolutModal() {
-        document.getElementById('revolutModal').style.display = 'none';
-        document.getElementById('revolut-exam-button').innerHTML = '';
-    }
-
     // Interactive Explanations Display
     window.examResultDetails = @json($result ? $result['details'] : null);
 

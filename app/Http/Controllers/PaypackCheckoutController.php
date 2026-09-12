@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SubscriptionConfirmedMail;
-use App\Models\ExamEnrollment;
-use App\Models\ExamTemplate;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
@@ -88,7 +86,7 @@ class PaypackCheckoutController extends Controller
     {
         try {
             $service = app(PaypackService::class);
-            
+
             // First check if already recorded as active in DB
             $existingSub = Subscription::query()->where('provider_order_id', $ref)->first();
             if ($existingSub && $existingSub->status === 'active') {
@@ -182,6 +180,7 @@ class PaypackCheckoutController extends Controller
                 if ($existingSub->status !== 'active') {
                     $existingSub->update(['status' => 'active']);
                 }
+
                 return response('OK', 200);
             }
 

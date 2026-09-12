@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Mail\SubscriptionConfirmedMail;
-use App\Models\Plan;
 use App\Models\Subscription;
 use App\Services\PaypackService;
 use Illuminate\Console\Command;
@@ -102,8 +101,7 @@ class SyncPaypackTransactions extends Command
     /**
      * Activate pending subscription and notify user.
      *
-     * @param Subscription $sub
-     * @param array<string, mixed> $txData
+     * @param  array<string, mixed>  $txData
      */
     protected function activateSubscription(Subscription $sub, array $txData): void
     {

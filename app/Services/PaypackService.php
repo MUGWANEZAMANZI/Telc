@@ -37,8 +37,8 @@ class PaypackService
     /**
      * Request cashin from a mobile money phone number.
      *
-     * @param string $phone Phone number e.g. "078xxxxxxx"
-     * @param float|int $amount Amount to charge
+     * @param  string  $phone  Phone number e.g. "078xxxxxxx"
+     * @param  float|int  $amount  Amount to charge
      * @return array<string, mixed>
      */
     public function cashin(string $phone, float|int $amount): array
@@ -82,7 +82,6 @@ class PaypackService
     /**
      * Fetch transaction by reference.
      *
-     * @param string $ref
      * @return array<string, mixed>
      */
     public function getTransaction(string $ref): array
@@ -113,7 +112,7 @@ class PaypackService
     /**
      * Fetch events log.
      *
-     * @param array<string, mixed> $params
+     * @param  array<string, mixed>  $params
      * @return array<string, mixed>
      */
     public function getEvents(array $params = []): array
