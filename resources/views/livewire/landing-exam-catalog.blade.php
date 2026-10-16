@@ -55,7 +55,12 @@
                 {{-- Free Exams --}}
                 @if ($freeExams->isNotEmpty())
                     <div class="flex-1">
-                        <h3 class="text-lg font-bold uppercase tracking-wider text-stone-700 mb-4">Kostenlose Übungen</h3>
+                        <h3 class="text-lg font-bold uppercase tracking-wider text-stone-700 mb-4 flex items-center gap-2">
+                            Kostenlose Übungen
+                            <span class="inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 text-xs font-extrabold bg-yellow-100 text-yellow-700 rounded-full border border-yellow-200">
+                                {{ $freeExams->count() }}
+                            </span>
+                        </h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             @foreach ($freeExams as $index => $exam)
                                 <article class="bg-white border border-stone-200 rounded-xl p-6 flex flex-col justify-between transition-all duration-200 hover:border-yellow-500 hover:shadow-md"
@@ -93,12 +98,28 @@
 
                         {{-- See More Toggle --}}
                         @if ($freeExams->count() > 2)
-                            <div class="mt-4 text-center">
+                            <div class="mt-5 flex flex-col items-center gap-2.5">
+                                <div x-show="!showAllFree" class="flex items-center gap-1.5" aria-hidden="true">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 inline-block"></span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-yellow-300 inline-block"></span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-stone-200 inline-block"></span>
+                                </div>
                                 <button type="button"
                                         @click="showAllFree = !showAllFree"
-                                        class="text-sm font-bold text-yellow-600 hover:text-yellow-700 underline underline-offset-4 transition-colors">
-                                    <span x-show="!showAllFree">Mehr kostenlose Übungen anzeigen &darr;</span>
-                                    <span x-show="showAllFree">Weniger anzeigen &uarr;</span>
+                                        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider border-2 transition-all duration-200 hover:shadow-md"
+                                        :class="showAllFree ? 'border-stone-200 bg-white text-stone-500 hover:border-stone-300' : 'border-yellow-500 bg-yellow-50 text-yellow-700 hover:bg-yellow-100'">
+                                    <span x-show="!showAllFree" class="flex items-center gap-1.5">
+                                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                        {{ $freeExams->count() - 2 }} weitere kostenlose Übungen
+                                    </span>
+                                    <span x-show="showAllFree" class="flex items-center gap-1.5">
+                                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/>
+                                        </svg>
+                                        Weniger anzeigen
+                                    </span>
                                 </button>
                             </div>
                         @endif
@@ -109,7 +130,12 @@
             {{-- Paid Exams --}}
             @if ($paidExams->isNotEmpty())
                 <div>
-                    <h3 class="text-lg font-bold uppercase tracking-wider text-stone-700 mb-4">Premium-Prüfungen</h3>
+                    <h3 class="text-lg font-bold uppercase tracking-wider text-stone-700 mb-4 flex items-center gap-2">
+                        Premium-Prüfungen
+                        <span class="inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 text-xs font-extrabold bg-stone-100 text-stone-600 rounded-full border border-stone-200">
+                            {{ $paidExams->count() }}
+                        </span>
+                    </h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach ($paidExams as $index => $exam)
                             <article class="bg-white border-2 border-stone-300 rounded-xl p-6 flex flex-col justify-between transition-all duration-200 hover:border-stone-900 hover:shadow-lg"
@@ -145,12 +171,28 @@
 
                     {{-- See More Toggle for Paid Exams --}}
                     @if ($paidExams->count() > 3)
-                        <div class="mt-6 text-center">
+                        <div class="mt-6 flex flex-col items-center gap-2.5">
+                            <div x-show="!showAllPaid" class="flex items-center gap-1.5" aria-hidden="true">
+                                <span class="w-2.5 h-2.5 rounded-full bg-stone-500 inline-block"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-stone-400 inline-block"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-stone-200 inline-block"></span>
+                            </div>
                             <button type="button"
                                     @click="showAllPaid = !showAllPaid"
-                                    class="text-sm font-bold text-stone-900 hover:text-stone-700 underline underline-offset-4 transition-colors">
-                                <span x-show="!showAllPaid">Mehr Premium-Prüfungen anzeigen &darr;</span>
-                                <span x-show="showAllPaid">Weniger anzeigen &uarr;</span>
+                                    class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider border-2 transition-all duration-200 hover:shadow-md"
+                                    :class="showAllPaid ? 'border-stone-200 bg-white text-stone-500 hover:border-stone-300' : 'border-stone-900 bg-stone-900 text-white hover:bg-stone-700'">
+                                <span x-show="!showAllPaid" class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                    {{ $paidExams->count() - 3 }} weitere Premium-Prüfungen
+                                </span>
+                                <span x-show="showAllPaid" class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/>
+                                    </svg>
+                                    Weniger anzeigen
+                                </span>
                             </button>
                         </div>
                     @endif
